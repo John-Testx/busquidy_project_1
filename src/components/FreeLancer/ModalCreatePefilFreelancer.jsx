@@ -294,7 +294,7 @@ function ModalCreatePerfilFreelancer({ closeModal, id_usuario }) {
 
     try {
         const token = localStorage.getItem('token');
-        const response = await fetch('http://localhost:3001/api/create-perfil-freelancer', {
+        const response = await fetch('http://localhost:3001/api/freelancer/create-perfil-freelancer', {
             method: "POST",
             headers: {
                 "Authorization": `Bearer ${token}`,

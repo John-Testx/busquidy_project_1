@@ -70,7 +70,7 @@ function Home() {
            } else {
                try {
                    const response = await axios.post(
-                       `${process.env.REACT_APP_API_URL}/commit_transaction`,
+                       `${process.env.REACT_APP_API_URL}/payments/commit_transaction`,
                        { token: token_ws }
                    );
 

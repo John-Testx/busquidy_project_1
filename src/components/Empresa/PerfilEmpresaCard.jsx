@@ -13,7 +13,7 @@ function PerfilEmpresaCard({ userType, id_usuario }) {
     const cargarPerfilEmpresa = async () => {
         if (userType === 'empresa') {
             try {
-                const response = await axios.get(`http://localhost:3001/api/perfil-empresa/${id_usuario}`);
+                const response = await axios.get(`http://localhost:3001/api/empresa/get/perfil-empresa/${id_usuario}`);
                 console.log('data:', response.data);
                 setPerfilData(response.data);
             } catch (error) {

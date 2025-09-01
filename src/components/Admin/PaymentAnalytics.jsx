@@ -15,8 +15,8 @@ const PaymentAnalytics = () => {
     const fetchPagos = async () => {
       try {
         const [proyectosResponse, suscripcionesResponse] = await Promise.all([
-          axios.get('http://localhost:3001/api/pagos-proyectos'),
-          axios.get('http://localhost:3001/api/pagos-suscripciones')
+          axios.get('http://localhost:3001/api/payments/pagos-proyectos'),
+          axios.get('http://localhost:3001/api/payments/pagos-suscripciones')
         ]);
         setProyectosPagos(proyectosResponse.data);
         setSuscripcionesPagos(suscripcionesResponse.data);

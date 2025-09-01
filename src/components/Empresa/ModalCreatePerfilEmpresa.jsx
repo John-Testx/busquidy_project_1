@@ -42,7 +42,7 @@ function ModalCreatePerfilEmpresa({ closeModal, id_usuario }) {
         e.preventDefault();
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.post('http://localhost:3001/api/create-perfil-empresa', 
+            const response = await axios.post('http://localhost:3001/api/empresa/create-perfil-empresa', 
                 {
                     empresaData: empresaData,
                     representanteData: representanteData,

@@ -15,7 +15,7 @@ const UserTable = () => {
     // Función para cargar la lista de usuarios desde la base de datos
     const cargarUsuarios = async () => {
         try {
-            const response = await axios.get('http://localhost:3001/api/usuarios');
+            const response = await axios.get('http://localhost:3001/api/users/get/usuarios');
             
             // Agrega este console.log para verificar los datos recibidos
             console.log('Datos de usuarios:', response.data);
@@ -32,7 +32,7 @@ const UserTable = () => {
     const eliminarUsuario = async (id_usuario) => {
         try {
             // Ajusta la ruta según tu configuración del servidor
-            await axios.delete(`http://localhost:3001/api/usuarios/${id_usuario}`);
+            await axios.delete(`http://localhost:3001/api/users/delete/${id_usuario}`);
 
             // Recarga la lista de usuarios después de la eliminación
             cargarUsuarios();

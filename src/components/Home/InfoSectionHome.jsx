@@ -13,7 +13,7 @@ const InfoSectionHome = ({tipo_usuario, id_usuario}) => {
     const openModalPagarSuscripcion = async () => {
         if (tipo_usuario === 'freelancer') {
             try {
-                const response = await axios.get(`http://localhost:3001/api/freelancer/${id_usuario}`);
+                const response = await axios.get(`http://localhost:3001/api/freelancer/get/${id_usuario}`);
                 if (response.data.isPerfilIncompleto) {
                     setMessage('Completa tu perfil para ser Busquidy +.');
                     setShowMessageModal(true);

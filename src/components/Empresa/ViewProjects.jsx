@@ -80,7 +80,7 @@ function ViewProjects({ userType, id_usuario }) {
     const openModalProject = async () => {
         if (userType === 'empresa') {
             try {
-                const response = await axios.get(`http://localhost:3001/api/empresa/${id_usuario}`);
+                const response = await axios.get(`http://localhost:3001/api/empresa/get/${id_usuario}`);
                 
                 if (response.data && typeof response.data.isPerfilIncompleto === "boolean") {
                     setIsPerfilIncompleto(response.data.isPerfilIncompleto);
@@ -116,7 +116,7 @@ function ViewProjects({ userType, id_usuario }) {
             try {
                 setLoading(true);
                 setError(null);
-                const response = await fetch(`http://localhost:3001/api/proyectos/${id_usuario}`);
+                const response = await fetch(`http://localhost:3001/api/projects/get/${id_usuario}`);
                 if (!response.ok) {
                     // Silenciar ciertos códigos de error si es necesario
                     if (response.status === 404) {
@@ -154,7 +154,7 @@ function ViewProjects({ userType, id_usuario }) {
     const handleDelete = async () => {
         try {
             setLoading(true);
-            const response = await fetch(`http://localhost:3001/api/proyecto/${projectToDelete}`, {
+            const response = await fetch(`http://localhost:3001/api/projects/delete/${projectToDelete}`, {
                 method: 'DELETE'
             });
 

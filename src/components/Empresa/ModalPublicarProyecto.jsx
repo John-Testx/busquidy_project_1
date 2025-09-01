@@ -29,7 +29,7 @@ const ModalPublicarProyecto = ({ id_usuario, id_proyecto, closeModal, projectTit
             };
     
             const response = await axios.post(
-                `${process.env.REACT_APP_API_URL}/create_transaction_project`,
+                `${process.env.REACT_APP_API_URL}/payments/create_transaction_suscription`,
                 paymentData,
                 { headers: { 'Content-Type': 'application/json' } }
             );

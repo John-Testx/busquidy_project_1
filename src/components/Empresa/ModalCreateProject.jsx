@@ -45,7 +45,7 @@ function ModalCreateProject({ closeModal, id_usuario, addProject }) {
     
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch("http://localhost:3001/api/create-project", {
+            const response = await fetch("http://localhost:3001/api/projects/create-project", {
                 method: "POST",
                 headers: {
                     "Authorization": `Bearer ${token}`,

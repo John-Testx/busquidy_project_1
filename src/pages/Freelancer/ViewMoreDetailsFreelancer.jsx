@@ -58,7 +58,7 @@ function ViewMoreDetailsFreelancer() {
 
     const fetchPerfilFreelancer = async (id_usuario) => {
         try {
-            const response = await axios.get(`http://localhost:3001/api/freelancer/${id_usuario}`);
+            const response = await axios.get(`http://localhost:3001/api/freelancer/get/${id_usuario}`);
             console.log("Se verificó el perfil freelancer");
             setIsPerfilIncompleto(response.data.isPerfilIncompleto);
         } catch (error) {

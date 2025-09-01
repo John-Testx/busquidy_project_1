@@ -27,7 +27,7 @@ function CreateProfileCv({ id_usuario }) {
         formData.append("id_usuario", id_usuario);
     
         try {
-            const response = await fetch("http://localhost:3001/api/upload-cv", {
+            const response = await fetch("http://localhost:3001/api/freelancer/upload-cv", {
                 method: "POST",
                 body: formData,
             });

@@ -46,7 +46,7 @@ const CompanyReviewModal = ({
       if (userType === 'empresa') {
         response = await axios.get(`http://localhost:3001/api/empresa/${id_usuario}`);
       } else if (userType === 'freelancer') {
-        response = await axios.get(`http://localhost:3001/api/freelancer/${id_usuario}`);
+        response = await axios.get(`http://localhost:3001/api/freelancer/get/${id_usuario}`);
       } else {
         throw new Error('Tipo de usuario no válido');
       }
@@ -94,7 +94,7 @@ const CompanyReviewModal = ({
     setError('');
 
     try {
-      const response = await axios.post('http://localhost:3001/api/reviews', {
+      const response = await axios.post('http://localhost:3001/api/empresa/reviews', {
         id_usuario: id_usuario,
         calificacion: rating,
         comentario: comment,

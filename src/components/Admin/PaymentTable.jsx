@@ -27,7 +27,7 @@ function PaymentTable() {
     // Cargar datos de pagos de proyectos
     const cargarPagosProyectos = async () => {
         try {
-            const response = await axios.get(`http://localhost:3001/api/pagos-proyectos`);
+            const response = await axios.get(`http://localhost:3001/api/payments/pagos-proyectos`);
             setPagoProyecto(response.data);
         } catch (error) {
             console.error('Error al cargar los pagos de proyectos:', error);
@@ -37,7 +37,7 @@ function PaymentTable() {
     // Cargar datos de pagos de suscripciones
     const cargarPagosSuscripciones = async () => {
         try {
-            const response = await axios.get(`http://localhost:3001/api/pagos-suscripciones`);
+            const response = await axios.get(`http://localhost:3001/api/payments/pagos-suscripciones`);
             setPagoSuscripcion(response.data);
         } catch (error) {
             console.error('Error al cargar los pagos de suscripciones:', error);

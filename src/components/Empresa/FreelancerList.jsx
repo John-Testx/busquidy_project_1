@@ -51,7 +51,7 @@ function FreelancerList({ userType, id_usuario }) {
 
     const cargarFreelancers = async () => {
         try {
-            const response = await axios.get('http://localhost:3001/api/freelancer');
+            const response = await axios.get('http://localhost:3001/api/freelancer/list');
             const freelancerData = response.data.map(freelancer => ({
                 id: freelancer.id_freelancer,
                 nombre: freelancer.nombre,
@@ -74,7 +74,7 @@ function FreelancerList({ userType, id_usuario }) {
     const verificarPerfilFreelancer = async () => {
         if (userType === 'freelancer') {
             try {
-                const response = await axios.get(`http://localhost:3001/api/freelancer/${id_usuario}`);
+                const response = await axios.get(`http://localhost:3001/api/freelancer/get/${id_usuario}`);
                 if (response.data.isPerfilIncompleto) {
                     setMessage('Completa tu perfil para aparecer en la lista de freelancers.');
                     setShowMessageModal(true);

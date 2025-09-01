@@ -62,7 +62,7 @@ const ModalPagoSuscripcion = ({ id_usuario, tipo_usuario, closeModal }) => {
             };
             
             const response = await axios.post(
-                `${process.env.REACT_APP_API_URL}/create_transaction_suscription`,
+                `${process.env.REACT_APP_API_URL}/payments/create_transaction_suscription`,
                 paymentData,
                 { headers: { 'Content-Type': 'application/json' } }
             );

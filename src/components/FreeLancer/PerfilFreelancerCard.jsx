@@ -25,7 +25,7 @@ function PerfilFreelancerCard({ userType, id_usuario }) {
 
     const cargarPerfilFreelancer = async () => {
         try {
-            const response = await axios.get(`http://localhost:3001/api/perfil-freelancer/${id_usuario}`);
+            const response = await axios.get(`http://localhost:3001/api/freelancer/perfil-freelancer/${id_usuario}`);
             setPerfilFreelancerData(response.data);
             calcularProgreso(response.data);
         } catch (error) {
@@ -109,7 +109,7 @@ function PerfilFreelancerCard({ userType, id_usuario }) {
             console.log('Datos enviados al backend:', updatedData);
             console.log(`Actualizando datos para la sección ${section}:`, updatedData);
 
-            const response = await axios.put(`http://localhost:3001/api/update-freelancer/${id_usuario}/${section}`, updatedData);
+            const response = await axios.put(`http://localhost:3001/api/freelancer/update-freelancer/${id_usuario}/${section}`, updatedData);
             // Manejar la respuesta del servidor
             if (response.status === 200) {
                 console.log('Datos actualizados correctamente:', response.data);
@@ -261,7 +261,7 @@ function PerfilFreelancerCard({ userType, id_usuario }) {
 
     const eliminarIdioma = async (id_idioma) => {
         try {
-            const response = await fetch(`http://localhost:3001/api/delete-idioma-habilidad/${id_usuario}/idiomas/${id_idioma}`, {
+            const response = await fetch(`http://localhost:3001/api/freelancer/delete-idioma-habilidad/${id_usuario}/idiomas/${id_idioma}`, {
                 method: 'DELETE'
             });
     
@@ -284,7 +284,7 @@ function PerfilFreelancerCard({ userType, id_usuario }) {
     
     const eliminarHabilidad = async (id_habilidad) => {
         try {
-            const response = await fetch(`http://localhost:3001/api/delete-idioma-habilidad/${id_usuario}/habilidades/${id_habilidad}`, {
+            const response = await fetch(`http://localhost:3001/api/freelancer/delete-idioma-habilidad/${id_usuario}/habilidades/${id_habilidad}`, {
                 method: 'DELETE'
             });
     

@@ -39,7 +39,7 @@ function ProjectTable() {
     const cargarAdminProyectos = async () => {
         try {
             setError(null);
-            const response = await axios.get(`http://localhost:3001/api/proyectos`);
+            const response = await axios.get(`http://localhost:3001/api/projects/getProjects`);
             setProjects(response.data);
         } catch (error) {
             setError(error.message);
@@ -63,7 +63,7 @@ function ProjectTable() {
         try {
             setLoading(true);
             const response = await axios.put(
-                `http://localhost:3001/api/update-proyecto-state/${projectToDespost}`,
+                `http://localhost:3001/api/projects/update-proyecto-state/${projectToDespost}`,
                 { estado_publicacion: "cancelado" } // Asegúrate de que este campo coincida con tu base de datos
             );
     
@@ -100,7 +100,7 @@ function ProjectTable() {
     const handleDeleteProjects = async () => {
         try {
             setLoading(true);
-            const response = await fetch(`http://localhost:3001/api/proyecto/${projectToDelete}`, {
+            const response = await fetch(`http://localhost:3001/api/projects/delete/${projectToDelete}`, {
                 method: 'DELETE'
             });
 

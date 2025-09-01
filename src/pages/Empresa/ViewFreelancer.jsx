@@ -28,7 +28,7 @@ function ViewFreelancer() {
     useEffect(() => {
         const fetchFreelancerData = async () => {
             try {
-                const response = await axios.get(`http://localhost:3001/api/freelancer-perfil/${id}`);
+                const response = await axios.get(`http://localhost:3001/api/freelancer/freelancer-perfil/${id}`);
                 console.log("Datos recibidos del backend:", response.data);
                 setFreelancer(response.data);
             } catch (error) {

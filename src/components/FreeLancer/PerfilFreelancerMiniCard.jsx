@@ -16,7 +16,7 @@ function PerfilFreelancerMiniCard({ userType, id_usuario }) {
     const cargarPerfilFreelancer = async () => {
         if (userType === 'freelancer') {
             try {
-                const response = await axios.get(`http://localhost:3001/api/perfil-freelancer/${id_usuario}`);
+                const response = await axios.get(`http://localhost:3001/api/freelancer/perfil-freelancer/${id_usuario}`);
                 setPerfilData(response.data);
             } catch (error) {
                 console.error('Error al cargar perfil:', error);
@@ -57,7 +57,7 @@ function PerfilFreelancerMiniCard({ userType, id_usuario }) {
             console.log('Datos enviados al backend:', updatedData);
             console.log(`Actualizando datos para la sección ${section}:`, updatedData);
 
-            const response = await axios.put(`http://localhost:3001/api/update-freelancer/${id_usuario}/${section}`, updatedData);
+            const response = await axios.put(`http://localhost:3001/api/freelancer/update-freelancer/${id_usuario}/${section}`, updatedData);
             // Manejar la respuesta del servidor
             if (response.status === 200) {
                 console.log('Datos actualizados correctamente:', response.data);

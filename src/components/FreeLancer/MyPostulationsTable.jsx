@@ -16,7 +16,7 @@ const MyPostulationsTable = ({ id_usuario }) => {
             }
     
             try {
-                const response = await axios.get(`http://localhost:3001/api/postulaciones/${id_usuario}`);
+                const response = await axios.get(`http://localhost:3001/api/freelancer/postulaciones/${id_usuario}`);
     
                 if (response.data) {
                     setPostulations(response.data);
@@ -57,7 +57,7 @@ const MyPostulationsTable = ({ id_usuario }) => {
     // Eliminar una postulación
     const handleDeletePostulation = async (id_postulacion) => {
         try {
-            const response = await fetch(`http://localhost:3001/api/delete-postulacion/${id_postulacion}`, {
+            const response = await fetch(`http://localhost:3001/api/freelancer/delete-postulacion/${id_postulacion}`, {
                 method: 'DELETE'
             });
 

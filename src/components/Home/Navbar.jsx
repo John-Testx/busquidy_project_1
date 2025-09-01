@@ -107,7 +107,7 @@ function Navbar() {
         setLoading(true);
 
         try {
-            const response = await fetch('http://localhost:3001/api/register', {
+            const response = await fetch('http://localhost:3001/api/users/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ correo, contraseña, tipo_usuario: tipoUsuario }),
@@ -171,7 +171,7 @@ function Navbar() {
         setError('');
 
         try {
-            const response = await fetch('http://localhost:3001/api/login', {
+            const response = await fetch('http://localhost:3001/api/users/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ correo, contraseña }),

@@ -8,7 +8,7 @@ function Dashboard() {
 
     useEffect(() => {
         // Obtener usuarios
-        fetch('http://localhost:3001/api/usuarios')
+        fetch('http://localhost:3001/api/users/get/usuarios')
             .then(response => response.json())
             .then(data => {
                 // Filtrar usuarios que no son administradores
@@ -23,7 +23,7 @@ function Dashboard() {
             .catch(error => console.error("Error al obtener usuarios:", error));
     
         // Obtener proyectos
-        fetch('http://localhost:3001/api/proyectos')
+        fetch('http://localhost:3001/api/projects/getProjects')
             .then(response => response.json())
             .then(data => {
                 // Contar publicaciones activas

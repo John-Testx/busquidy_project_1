@@ -59,7 +59,7 @@ function ViewPerfilEmpresa() {
 
     const fetchPerfilEmpresa = async (id_usuario) => {
         try {
-            const response = await axios.get(`http://localhost:3001/api/empresa/${id_usuario}`);
+            const response = await axios.get(`http://localhost:3001/api/empresa/get/${id_usuario}`);
             console.log("Se verificó el perfil de la empresa");
             setIsPerfilIncompleto(response.data.isPerfilIncompleto);
         } catch (error) {

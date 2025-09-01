@@ -712,7 +712,7 @@ const ModalAdd = ({ isOpen, onClose, onConfirm, id_usuario, itemType, initialDat
             console.log('Datos a enviar:', formData);
             console.log(`Agregando datos para el tipo: ${itemType}`);
 
-            const response = await axios.post(`http://localhost:3001/api/add-freelancer/${id_usuario}/${itemType}`, formData);
+            const response = await axios.post(`http://localhost:3001/api/freelancer/add-freelancer/${id_usuario}/${itemType}`, formData);
 
             if (response.status === 200 || response.status === 201) {
                 console.log('Datos agregados correctamente:', response.data);

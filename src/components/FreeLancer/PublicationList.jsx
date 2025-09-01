@@ -16,7 +16,7 @@ function PublicationList({ userType, id_usuario, filters }) {
         const fetchAppliedPublications = async () => {
             if (userType === 'freelancer' && id_usuario) {
                 try {
-                    const response = await axios.get(`http://localhost:3001/api/postulaciones/${id_usuario}`);
+                    const response = await axios.get(`http://localhost:3001/api/freelancer/postulaciones/${id_usuario}`);
                     setAppliedPublications(response.data.map(app => app.id_publicacion));
                 } catch (error) {
                     console.error('Error fetching applied publications:', error);
@@ -30,7 +30,7 @@ function PublicationList({ userType, id_usuario, filters }) {
     useEffect(() => {
         const fetchPublications = async () => {
             try {
-                const response = await axios.get('http://localhost:3001/api/publicacion');
+                const response = await axios.get('http://localhost:3001/api/projects/publicacion');
                 const activePublications = response.data.filter(pub => pub.estado_publicacion === 'activo');
                 setPublications(activePublications);
             } catch (error) {
@@ -164,7 +164,7 @@ function PublicationList({ userType, id_usuario, filters }) {
                 return { success: false, message }
             }
 
-            const response = await axios.post(`http://localhost:3001/api/postulacion/${id_publicacion}`, {
+            const response = await axios.post(`http://localhost:3001/api/freelancer/postulacion/${id_publicacion}`, {
                 id_usuario,
                 id_publicacion: id_publicacion
             });
