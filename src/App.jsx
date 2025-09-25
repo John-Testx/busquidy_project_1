@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {BrowserRouter as Router, Route, Routes} from "react-router-dom";
 import {jwtDecode} from 'jwt-decode';
+import io from "socket.io-client";
 import Home from "./pages/General/Home";
 import AdminHome from "./pages/Admin/AdminHome";
 import LoginAdmin from "./pages/Admin/LoginAdmin";
@@ -30,6 +31,8 @@ import ViewFreelancer from "./pages/Empresa/ViewFreelancer";
 function App() {
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [connectedUsers, setConnectedUsers] = useState(0);
+  const socketRef = useRef(null);
 
   useEffect(() => {
     const checkAuth = () => {
@@ -58,9 +61,31 @@ function App() {
       setTimeout(() => setLoading(false), 500); // Retraso antes de ocultar la pantalla de carga
     };
 
+    
     checkAuth();
-    window.addEventListener('storage', checkAuth); // Escucha cambios en `localStorage` para sincronizar autenticación
-    return () => window.removeEventListener('storage', checkAuth);
+
+    // Create socket only once
+    if (!socketRef.current) {
+      socketRef.current = io("http://192.168.1.81:3001", {
+        transports: ["websocket"],
+        withCredentials: true
+      });
+
+      socketRef.current.on("usersCount", (count) => {
+        setConnectedUsers(count);
+      });
+    }
+
+    window.addEventListener("storage", checkAuth);
+
+    return () => {
+      window.removeEventListener("storage", checkAuth);
+      if (socketRef.current) {
+        socketRef.current.disconnect();
+        socketRef.current = null;
+      }
+    };
+      
   }, []);
 
   if (loading) {
@@ -76,7 +101,7 @@ function App() {
           <Routes>
             <Route path= "/" element={<Home />} />
             <Route path= "/loginadmin" element={<LoginAdmin />} />
-            <Route path= "/adminhome" element={<AdminHome />} />
+            <Route path= "/adminhome" element={<AdminHome  connectedUsers={connectedUsers}/>} />
             <Route path= "/freelancer" element={<FreeLancer />} />
             <Route path= "/empresa" element={<Empresa />} />
             <Route path= "/projectlist" element={<ProjectList />} />

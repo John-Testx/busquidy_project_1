@@ -48,6 +48,26 @@
     overflow-x: auto;
   }
   
+  .user-table + .admin-table-search input,
+  .table-container .admin-table-search input,
+  .admin-table-search input {
+    width: 100%;
+    max-width: 400px;
+    margin: 16px auto 24px auto;
+    display: block;
+    padding: 10px 16px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: border-color 0.2s;
+    background: #fff;
+  }
+
+  .admin-table-search {
+  max-width: 400px;
+  margin: 0 auto;
+  }
+
   .user-table {
     width: 100%;
     border-collapse: collapse;

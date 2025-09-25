@@ -1,24 +1,5 @@
 const express = require("express");
-const PaymentService = require("./paymentService");
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const {verifyToken, validatePaymentData, validateUser, upload} = require("./middlewares/auth");
-const pdfParse = require("pdf-parse");
-const mammoth = require("mammoth");
 const router = express.Router();
-const fs = require("fs");
-const {procesarCV} = require("./cvService");
-const {pool,
-  insertarUsuario,
-  getUserById,
-  getEmpresaByUserId,
-  getFreelancerByUserId,
-  buscarEmpresaByUserId,
-  buscarFreelancerByUserId,
-  getRepresentanteByUserId,
-  checkDuplicateProject,
-  guardarPerfilEnDB,
-} = require("./db");
 const sendError = (res, status, message) => res.status(status).json({message});
 
 const empresaRoutes = require("./empresaRoutes");

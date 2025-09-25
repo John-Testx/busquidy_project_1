@@ -1,21 +1,14 @@
 require("dotenv").config(); // Carga variables de entorno
 
-console.log("DB_HOST:", process.env.DB_HOST); // Debería mostrar 'localhost'
-console.log("DB_USER:", process.env.DB_USER); // Debería mostrar 'root'
-console.log("DB_PASSWORD:", process.env.DB_PASSWORD); // Debería mostrar 'admin'
-console.log("DB_NAME:", process.env.DB_NAME); // Debería mostrar 'plataforma'
-
 const express = require("express"); // Framework Express
 const cors = require("cors"); // Permitir solicitudes de diferentes orígenes
+const http = require("http");
+const socketIo = require("socket.io");
 const bodyParser = require("body-parser"); // Procesar solicitudes HTTP
-const db = require("./db"); // Importar el pool de conexiones
-const fs = require("fs");
-const path = require("path");
 const routes = require("./routes");
-
+const tests = require('./tests'); 
 const app = express();
 const port = process.env.PORT || 3001;
-const uploadsDir = path.join(__dirname, process.env.UPLOADS_DIR || "uploads/cvs");
 
 // Middleware
 const corsOptions = {
@@ -23,10 +16,11 @@ const corsOptions = {
     // Allow requests with no origin (like mobile apps or curl requests)
     const allowedOrigins = [
       'http://localhost:5173',
-      'http://localhost:3000', 
+      'http://localhost:3000',
       'https://localhost:3000',
+      process.env.DB_TEST_HOST,
       process.env.FRONTEND_URL
-    ];
+    ].filter(Boolean);
     
     if (!origin || allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
@@ -48,26 +42,19 @@ const corsOptions = {
 
 // Use the cors middleware before your routes
 app.use(cors(corsOptions));
-
 app.use(express.static("public")); // Archivos estáticos
 app.use(bodyParser.urlencoded({extended: true})); // Formularios
 app.use(bodyParser.json()); // JSON
-// Usar las rutas en la aplicación
-app.use("/api", routes);
+app.use("/api", routes);// Usar las rutas en la aplicación
 
 // Verificar la conexión con la base de datos
-async function testDbConnection() {
-  try {
-    // Usamos pool.query() para verificar la conexión
-    const [rows] = await db.pool.query("SELECT 1 + 1 AS resultado");
-    console.log("Conexión exitosa a la base de datos");
-  } catch (error) {
-    console.error("Error al conectar a la base de datos:", error.message);
-  }
-}
-testDbConnection();
+tests.testDbConnection();
+
+// verificar el directorio para subir archivos de CV
+tests.cvDirectory();
 
 // Middleware de manejo de errores general
+// Para verificar errores y ver en que entorno estamos
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({
@@ -77,17 +64,36 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Verificar si el directorio existe, si no, crearlo
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, {recursive: true}); // `recursive: true` crea directorios intermedios si no existen
-  console.log(`Directorio creado: ${uploadsDir}`);
-} else {
-  console.log(`El directorio ya existe: ${uploadsDir}`);
-}
-
-// Iniciar el servidor
-app.listen(port, () => {
-  console.log(`Servidor Express iniciado en el puerto ${port}`);
+const httpServer = http.createServer(app);
+const io = socketIo(httpServer, {
+  cors: {
+    origin: [
+      'http://localhost:5173',
+      'http://localhost:3000',
+      'https://localhost:3000',
+      process.env.FRONTEND_URL
+    ],
+    credentials: true
+  }
 });
+
+let connectedUsers = 0;
+
+io.on("connection", (socket) => {
+  console.log("Nuevo cliente conectado:", socket.id);
+  connectedUsers++;
+  io.emit("usersCount", connectedUsers);
+
+  socket.on("disconnect", () => {
+    console.log("Cliente desconectado:", socket.id);
+    connectedUsers--;
+    io.emit("usersCount", connectedUsers);
+  });
+});
+
+httpServer.listen(port,"0.0.0.0",() => {
+  console.log(`Servidor Express y Socket.IO iniciado en el puerto ${port}`);
+});
+
 
 module.exports = app;

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import './Dashboard.css';
 
-function Dashboard() {
+function Dashboard({ connectedUsers }) {
     const [totalUsuarios, setTotalUsuarios] = useState(0);
     const [usuariosPremium, setUsuariosPremium] = useState(0);
     const [publicacionesActivas, setPublicacionesActivas] = useState(0);
@@ -51,7 +51,7 @@ function Dashboard() {
                 </div>
                 <div className="stat-card">
                     <h3>Usuarios Activos</h3>
-                    <p className="stat-value">-</p>
+                    <p className="stat-value">{connectedUsers}</p>
                 </div>
                 <div className="stat-card">
                     <h3>Tareas Pendientes</h3>
