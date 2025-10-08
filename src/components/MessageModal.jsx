@@ -1,5 +1,5 @@
 import React from "react";
-import "..styles/Modals/MessageModal.css";
+import "../styles/Modals/MessageModal.css";
 import { BiX } from "react-icons/bi"; // Asegúrate de tener react-icons instalado
 
 function MessageModal({ message, closeModal }) {
