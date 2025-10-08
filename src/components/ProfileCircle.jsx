@@ -1,5 +1,5 @@
 import React from "react";
-import './ProfileCircle.css';
+import '../../styles/Modals/ProfileCircle.css';
 
 const ProfileCircle = ({ userInitials = "NN" }) => {
     const circleBackgroundColor = '#34a853';
