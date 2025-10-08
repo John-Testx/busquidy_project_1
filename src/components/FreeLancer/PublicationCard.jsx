@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { FaLocationArrow, FaClock, FaMoneyBillAlt, FaStar } from 'react-icons/fa';
 import { BsBookmarkPlus } from 'react-icons/bs';
 import PublicationDetailModal from './PublicationDetailModal';
-import './PublicationCard.css';
+import '../../styles/Freelancer/PublicationCard.css';
 
 function PublicationCard({ publication, isApplied, onApply, id_usuario, userType }) {
   const [isModalOpen, setIsModalOpen] = useState(false);

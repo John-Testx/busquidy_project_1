@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './MyPostulationsTable.css';
+import '../../styles/Freelancer/MyPostulationsTable.css';
 
 const MyPostulationsTable = ({ id_usuario }) => {
     const [postulations, setPostulations] = useState([]);

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "./ViewProjects.css";
+import "../../styles/Empresa/ViewProjects.css";
 import axios from "axios";
 import ModalPublicarProyecto from "./ModalPublicarProyecto";
 import ModalCreateProject from "./ModalCreateProject";

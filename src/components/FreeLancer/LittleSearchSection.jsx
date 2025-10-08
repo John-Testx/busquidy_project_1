@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from 'react-router-dom';
-import "./LittleSearchSection.css";
+import "../../styles/Freelancer/LittleSearchSection.css";
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
 function LittleSearchSection() {

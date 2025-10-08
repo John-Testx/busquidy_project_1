@@ -2,7 +2,9 @@ import React, { useState, useEffect } from "react";
 import { Pencil } from "lucide-react";
 import axios from "axios";
 import TableCommon from "../../common/TableCommon";
-import "./UserTable.css";
+import "../../styles/Admin/UserTable.css";
+import { getUsuarios, deleteUsuario } from "../../api/userApi"; // <-- Import API functions
+
 
 const UserTable = () => {
     const [usuarios, setUsuarios] = useState([]);
@@ -10,8 +12,8 @@ const UserTable = () => {
     // Función para cargar la lista de usuarios desde la base de datos
     const cargarUsuarios = async () => {
         try {
-            const response = await axios.get('http://localhost:3001/api/users/get/usuarios');
-            setUsuarios(response.data);
+            const data = await getUsuarios();
+            setUsuarios(data);
         } catch (error) {
             console.error('Error al cargar la lista de usuarios:', error);
         }
@@ -20,13 +22,14 @@ const UserTable = () => {
     // Función para eliminar un usuario
     const eliminarUsuario = async (id_usuario) => {
         try {
-            await axios.delete(`http://localhost:3001/api/users/delete/${id_usuario}`);
+            await deleteUsuario(id_usuario);
             cargarUsuarios();
         } catch (error) {
             console.error('Error al eliminar el usuario:', error);
         }
     };
 
+    
     useEffect(() => {
         cargarUsuarios();
     }, []);

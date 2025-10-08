@@ -1,5 +1,5 @@
 import React from "react";
-import "./InfoSectionEmpresa.css";
+import "../../styles/Empresa/InfoSectionEmpresa.css";
 
 function InfoSectionEmpresa() {
     return(

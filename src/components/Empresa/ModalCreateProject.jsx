@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Select from "react-select";
-import './ModalCreateProject.css';
+import '../../styles/Empresa/ModalCreateProject.css';
 import { toast } from 'react-toastify';
 
 function ModalCreateProject({ closeModal, id_usuario, addProject }) {

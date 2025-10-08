@@ -4,7 +4,7 @@ import DatosPersonalesModal from "./DatosPersonalesModal";
 import ExperienciaLaboralModal from "./ExperienciaLaboralModal";
 import EducacionModal from "./EducacionModal";
 import HabilidadesModal from "./HabilidadesModal";
-import "./CreateCV.css";
+import "../../styles/Freelancer/CreateCV.css";
 
 function CreateCV({ cvData, onSave }) {
     const [localCvData, setLocalCvData] = useState(cvData || {

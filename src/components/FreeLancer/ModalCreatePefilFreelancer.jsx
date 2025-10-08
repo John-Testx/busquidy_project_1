@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Select from "react-select";
-import './ModalCreatePerfilFreelancer.css';
+import '../../styles/Freelancer/ModalCreatePerfilFreelancer.css';
 
 function ModalCreatePerfilFreelancer({ closeModal, id_usuario }) {
   const [freelancerData, setFreelancerData] = useState({

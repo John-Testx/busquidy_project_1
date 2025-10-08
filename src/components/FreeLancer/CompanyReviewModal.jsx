@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './CompanyReviewModal.css';
+import '../../styles/Freelancer/CompanyReviewModal.css';
 import MessageModal from '../MessageModal';
 
 const CompanyReviewModal = ({

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "./Navbar.css";
+import "../../styles/Home/Navbar.css";
 import Modal from "./Modal";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import 'bootstrap-icons/font/bootstrap-icons.css';

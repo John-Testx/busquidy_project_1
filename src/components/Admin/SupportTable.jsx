@@ -1,5 +1,5 @@
 import React from "react";
-import './SupportTable.css'; // CSS para la tabla
+import '../../styles/Admin/SupportTable.css'; // CSS para la tabla
 
 const supportRequests = [
     // Ejemplo de datos de solicitudes de soporte

@@ -1,5 +1,5 @@
 import React from "react";
-import "./InfoSectionFreelancer.css";
+import "../../styles/Freelancer/InfoSectionFreelancer.css";
 
 function InfoSectionFreelancer() {
     return(

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import FAQSection from './FAQSection ';
 import axios from 'axios';
 import MessageModal from "../MessageModal";
-import './InfoSectionHome.css';
+import '../../styles/Home/InfoSectionHome.css';
 import ModalPagoSuscripcion from '../ModalPagoSuscripcion'
 
 const InfoSectionHome = ({tipo_usuario, id_usuario}) => {

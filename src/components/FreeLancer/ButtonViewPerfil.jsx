@@ -1,5 +1,5 @@
 import React from "react";
-import './ButtonViewPerfil.css'
+import '../../styles/Freelancer/ButtonViewPerfil.css'
 import { Link } from "react-router-dom";
 
 function ButtonViewPerfil() {

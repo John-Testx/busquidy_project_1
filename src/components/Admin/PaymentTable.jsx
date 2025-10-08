@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import './PaymentTable.css';
+import '../../styles/Admin/PaymentTable.css';
 
 function PaymentTable() {
     const [pagoProyecto, setPagoProyecto] = useState([]);

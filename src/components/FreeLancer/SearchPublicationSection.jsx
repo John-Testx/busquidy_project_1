@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Select from "react-select";
-import "./SearchPublicationSection.css";
+import "../../styles/Freelancer/SearchPublicationSection.css";
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
 function SearchPublicationSection({ onFilterChange }) {

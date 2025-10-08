@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 import MessageModal from "../MessageModal";
 import TableCommon from "../../common/TableCommon";
 import { Pencil, XCircle } from "lucide-react";
-import './ProjectTable.css';
+import '../../styles/Admin/ProjectTable.css';
 //import { projectColumns } from "../../common/tableColumns";
 
 

@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from "react"
-import "./NavbarFreeLancer.css";
+import "../../styles/Freelancer/NavbarFreeLancer.css";
 import { Link, useLocation  } from "react-router-dom";
 import ProfileCircle from "../ProfileCircle";
 import 'bootstrap-icons/font/bootstrap-icons.css';

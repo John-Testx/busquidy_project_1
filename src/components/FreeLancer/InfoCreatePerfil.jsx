@@ -1,5 +1,5 @@
 import React from "react";
-import './InfoCreatePerfil.css';
+import '../../styles/Freelancer/InfoCreatePerfil.css';
 
 function InfoCreatePerfil() {
     return (

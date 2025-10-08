@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import './NotificationTable.css'; // CSS para la gestión de notificaciones
+import '../../styles/Admin/NotificationTable.css'; // CSS para la gestión de notificaciones
 
 function NotificationTable() {
     const [notification, setNotification] = useState("");

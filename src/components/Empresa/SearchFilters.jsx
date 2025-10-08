@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./SearchFilters.css";
+import "../../styles/Empresa/SearchFilters.css";
 
 function SearchFilters({ onFilterChange }) {
     const [location, setLocation] = useState("");

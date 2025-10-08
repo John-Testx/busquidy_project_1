@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import { FaLocationArrow, FaClock, FaMoneyBillAlt, FaStar,   FaTimes } from 'react-icons/fa';
-import './PublicationDetailModal.css';
+import '../../styles/Freelancer/PublicationDetailModal.css';
 import { BsBookmarkPlus } from 'react-icons/bs';
 import CompanyReviewModal from './CompanyReviewModal';
 

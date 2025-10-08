@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import './ModalCreatePerfilEmpresa.css';
+import '../../styles/Empresa/ModalCreatePerfilEmpresa.css';
 import axios from 'axios';
 
 function ModalCreatePerfilEmpresa({ closeModal, id_usuario }) {

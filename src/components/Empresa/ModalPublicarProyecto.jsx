@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import './ModalPublicarProyecto.css';
+import '../../styles/Empresa/ModalPublicarProyecto.css';
 
 const ModalPublicarProyecto = ({ id_usuario, id_proyecto, closeModal, projectTitle = 'Publicación de Proyecto' }) => {
     const [loading, setLoading] = useState(false);

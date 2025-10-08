@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './PerfilFreelancerEmpresaView.css'
+import '../../styles/Empresa/PerfilFreelancerEmpresaView.css'
 
 function PerfilFreelancerEmpresaView({ freelancer }) {
     const [activeSection, setActiveSection] = useState("informacionGeneral");

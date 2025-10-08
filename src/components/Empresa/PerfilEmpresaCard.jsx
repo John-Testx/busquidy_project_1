@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "./PerfilEmpresaCard.css";
+import "../../styles/Empresa/PerfilEmpresaCard.css";
 import axios from "axios";
 
 function PerfilEmpresaCard({ userType, id_usuario }) {

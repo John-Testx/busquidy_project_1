@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import './Dashboard.css';
+import '../../styles/Admin/Dashboard.css';
 
 function Dashboard({ connectedUsers }) {
     const [totalUsuarios, setTotalUsuarios] = useState(0);

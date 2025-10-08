@@ -1,5 +1,5 @@
 import React from "react";
-import './CardSection.css';
+import '../../styles/Home/CardSection.css';
 import { Link } from "react-router-dom";
 
 function CardSection({ userType }) {

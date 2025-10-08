@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "./PerfilFreelancerMiniCard.css";
+import "../../styles/Freelancer/PerfilFreelancerMiniCard.css";
 import axios from "axios";
 import ModalEdit from "./ModalEdit";
 

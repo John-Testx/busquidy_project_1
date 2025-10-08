@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import "./NavbarEmpresa.css";
+import "../../styles/Empresa/NavbarEmpresa.css";
 import { Link, useLocation } from "react-router-dom";
 import ProfileCircle from "../ProfileCircle";
 import 'bootstrap-icons/font/bootstrap-icons.css';

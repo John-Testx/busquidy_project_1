@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import './ModuleAdmin.css';
+import '../../styles/Admin/ModuleAdmin.css';
 
 function ModuleAdmin() {
     const modules = [

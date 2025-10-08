@@ -3,7 +3,7 @@ import axios from "axios";
 import SearchFilters from "./SearchFilters";
 import MessageModal from "../MessageModal";
 import { useNavigate } from "react-router-dom";
-import "./FreelancerList.css";
+import "../../styles/Empresa/FreelancerList.css";
 
 function FreelancerList({ userType, id_usuario }) {
     const [freelancers, setFreelancers] = useState([]);

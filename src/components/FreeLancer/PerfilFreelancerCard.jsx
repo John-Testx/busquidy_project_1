@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import "./PerfilFreelancerCard.css";
+import "../../styles/Freelancer/PerfilFreelancerCard.css";
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import ModalEdit from "./ModalEdit";
 import ModalAdd from "./ModalAdd";
