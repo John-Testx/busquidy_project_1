@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import '../../styles/Freelancer/CreateProfileCv.css';
+import '../../../styles/Freelancer/CreateProfileCv.css';
 
 function CreateProfileCv({ id_usuario }) {
     const [cvFile, setCvFile] = useState(null);

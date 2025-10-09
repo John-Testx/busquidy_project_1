@@ -3,7 +3,7 @@ import {jwtDecode} from 'jwt-decode';  // Make sure you import the default funct
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import Navbar from "../../components/Home/Navbar";
-import NavbarEmpresa from "../../components/Empresa/NavbarEmpresa";
+//import NavbarEmpresa from "../../components/Empresa/NavbarEmpresa";
 import Footer from "../../components/Home/Footer";
 import LoadingScreen from "../../components/LoadingScreen"; 
 import PerfilFreelancerEmpresaView from "../../components/Empresa/PerfilFreelancerEmpresaView";
@@ -100,12 +100,6 @@ function ViewFreelancer() {
     };
 
     const renderNavbar = () => {
-        if (!isAuthenticated) {
-            return <Navbar />;
-        }
-        if (userType === "empresa") {
-            return <NavbarEmpresa onLogout={handleLogout} />;
-        }
         return <Navbar />;
     };
 

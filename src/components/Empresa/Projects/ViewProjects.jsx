@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import "../../styles/Empresa/ViewProjects.css";
+import "../../../styles/Empresa/ViewProjects.css";
 import axios from "axios";
 import ModalPublicarProyecto from "./ModalPublicarProyecto";
 import ModalCreateProject from "./ModalCreateProject";
-import MessageModal from "../MessageModal";
-import LoadingScreen from "../LoadingScreen";
+import MessageModal from "../../MessageModal";
+import LoadingScreen from "../../LoadingScreen";
 import { toast } from 'react-toastify';
 
 // Modal de Confirmación

@@ -1,116 +1,12 @@
 import React, { useState, useEffect } from "react";
 import Select from "react-select";
-import '../../styles/Freelancer/ModalCreatePerfilFreelancer.css';
+import '../../../styles/Freelancer/ModalCreatePerfilFreelancer.css';
+import { initialFreelancerData, optionsCategorySkills } from "../../../common/consts";
+import { createFreelancerProfile } from "../../../api/userApi";
 
 function ModalCreatePerfilFreelancer({ closeModal, id_usuario }) {
-  const [freelancerData, setFreelancerData] = useState({
-    freelancer: {
-      correo_contacto: "",
-      telefono_contacto: "",
-      linkedin_link: "",
-      descripcion_freelancer: ""
-    },
-    antecedentes_personales: {
-      nombres: "",
-      apellidos: "",
-      fecha_nacimiento: "",
-      identificacion: "",
-      nacionalidad: "",
-      direccion: "",
-      region: "",
-      ciudad_freelancer: "",
-      comuna: "",
-      estado_civil: ""
-    },
-    inclusion_laboral: {
-      discapacidad: "",
-      registro_nacional: null,
-      pension_invalidez: null,
-      ajuste_entrevista: null,
-      tipo_discapacidad: null
-    },
-    emprendimiento: {
-      emprendedor: "",
-      interesado: null,
-      ano_inicio_emprendimiento: null,
-      mes_inicio_emprendimiento: null,
-      sector_emprendimiento: null
-    },
-    trabajo_practica: {
-      experiencia_laboral: "",
-      experiencia: null,
-      empresa: null,
-      cargo: null,
-      area_trabajo: null,
-      tipo_cargo: null,
-      ano_inicio_trabajo: null,
-      mes_inicio_trabajo: null,
-      descripcion_trabajo: null
-    },
-    nivel_educacional: {
-      nivel_academico: "",
-      estado_educacional: ""
-    },
-    educacion_superior: {
-      institucion_superior: "",
-      carrera: "",
-      carrera_afin: "",
-      estado_superior: "",
-      ano_inicio_superior: "",
-      ano_termino_superior: ""
-    },
-    educacion_basica_media: {
-      institucion_basica_media: "",
-      tipo: "",
-      pais: "",
-      ciudad_basica_media: "",
-      ano_inicio_basica_media: "",
-      ano_termino_basica_media: ""
-    },
-    idiomas: [],
-    habilidades: [],
-    curso: {
-      nombre_curso: "",
-      institucion_curso: "",
-      ano_inicio_curso: "",
-      mes_inicio_curso: ""
-    },
-    pretensiones: {
-      disponibilidad: "",
-      renta_esperada: ""
-    },
-  });
-
-  const optionsCategorySkills = [
-    { value: "Lenguajes de Programación", label: "Lenguajes de Programación" },
-    { value: "Bases de Datos", label: "Bases de Datos" },
-    { value: "Desarrollo Web", label: "Desarrollo Web" },
-    { value: "Desarrollo de Software", label: "Desarrollo de Software" },
-    { value: "Análisis de Datos", label: "Análisis de Datos" },
-    { value: "Redacción y Comunicación", label: "Redacción y Comunicación" },
-    { value: "Idiomas", label: "Idiomas" },
-    { value: "Herramientas de Oficina y Productividad", label: "Herramientas de Oficina y Productividad" },
-    { value: "Marketing y Publicidad", label: "Marketing y Publicidad" },
-    { value: "Ventas y Negociación", label: "Ventas y Negociación" },
-    { value: "Gestión de Proyectos", label: "Gestión de Proyectos" },
-    { value: "Diseño Gráfico", label: "Diseño Gráfico" },
-    { value: "Edición de Video y Fotografía", label: "Edición de Video y Fotografía" },
-    { value: "Investigación Académica", label: "Investigación Académica" },
-    { value: "Habilidades de Presentación", label: "Habilidades de Presentación" },
-    { value: "Resolución de Problemas", label: "Resolución de Problemas" },
-    { value: "Trabajo en Equipo", label: "Trabajo en Equipo" },
-    { value: "Liderazgo", label: "Liderazgo" },
-    { value: "Innovación y Creatividad", label: "Innovación y Creatividad" },
-    { value: "Atención al Cliente", label: "Atención al Cliente" },
-    { value: "Finanzas y Contabilidad", label: "Finanzas y Contabilidad" },
-    { value: "Planificación y Organización", label: "Planificación y Organización" },
-    { value: "Pensamiento Crítico", label: "Pensamiento Crítico" },
-    { value: "Ciencias e Ingeniería", label: "Ciencias e Ingeniería" },
-    { value: "Salud y Bienestar", label: "Salud y Bienestar" },
-    { value: "Educación y Enseñanza", label: "Educación y Enseñanza" },
-    { value: "Derecho y Normativas", label: "Derecho y Normativas" },
-    { value: "Competencias Digitales Básicas", label: "Competencias Digitales Básicas" },
-  ]
+  const [freelancerData, setFreelancerData] = useState(initialFreelancerData);
+  const categorySkills = optionsCategorySkills;
 
   const [currentStep, setCurrentStep] = useState(1);
   const [errorMessage, setErrorMessage] = useState("");
@@ -289,118 +185,29 @@ function ModalCreatePerfilFreelancer({ closeModal, id_usuario }) {
     console.log('id_usuario en ModalCreatePerfilFreelancer:', id_usuario);
   }, [id_usuario]);
 
-  const envioDatosPerfilFreelancer = async (e) => {
-    e.preventDefault();
+    const envioDatosPerfilFreelancer = async (e) => {
+      e.preventDefault();
+      setErrorMessage(null); // clear previous errors
 
-    try {
-        const token = localStorage.getItem('token');
-        const response = await fetch('http://localhost:3001/api/freelancer/create-perfil-freelancer', {
-            method: "POST",
-            headers: {
-                "Authorization": `Bearer ${token}`,
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ ...freelancerData, id_usuario })
-        });
+      const token = localStorage.getItem("token");
 
-        if (!response.ok) {
-            const errorData = await response.json();
-            setErrorMessage(errorData.error || "Error al crear el perfil: " + (errorData.details || ""));
-            console.log(errorData.error || "Error al crear el perfil: " + (errorData.details || ""));
-            return;
-        }
+      try {
+        const data = await createFreelancerProfile(freelancerData, id_usuario, token);
 
-        const data = await response.json();
         console.log("Perfil creado exitosamente", data);
         closeModal();
         resetFreelancerData();
         window.location.reload();
-    } catch (error) {
+      } catch (error) {
         console.error("Error al crear el perfil:", error);
-        setErrorMessage("Error de conexión o error inesperado en la creación del perfil.");
-    }
+        setErrorMessage(error.message || "Error de conexión o error inesperado en la creación del perfil.");
+      }
 
-    console.log("Datos del freelancer que se envían:", freelancerData);
-  };
+      console.log("Datos del freelancer que se envían:", freelancerData);
+    };
 
 const resetFreelancerData = () => {
-    setFreelancerData({
-        freelancer: {
-          correo_contacto: "",
-          telefono_contacto: "",
-          linkedin_link: "", 
-          descripcion_freelancer: "" 
-        },
-        antecedentes_personales: {
-          nombres: "",
-          apellidos: "",
-          fecha_nacimiento: "",
-          identificacion: "",
-          nacionalidad: "",
-          direccion: "",
-          region: "",
-          ciudad_freelancer: "",
-          comuna: "",
-          estado_civil: ""
-        },
-        inclusion_laboral: {
-          discapacidad: "No",
-          registro_nacional: null,
-          pension_invalidez: null,
-          ajuste_entrevista: null,
-          tipo_discapacidad: null
-        },
-        emprendimiento: {
-          emprendedor: "No",
-          interesado: null,
-          ano_inicio_emprendimiento: null,
-          mes_inicio_emprendimiento: null,
-          sector_emprendimiento: null
-        },
-        trabajo_practica: {
-          experiencia_laboral: "No",
-          experiencia: null,
-          empresa: null,
-          cargo: null,
-          area_trabajo: null,
-          tipo_cargo: null,
-          ano_inicio_trabajo: null,
-          mes_inicio_trabajo: null,
-          descripcion_trabajo: null
-        },
-        nivel_educacional: {
-            nivel_academico: "",
-            estado_educacional: ""
-        },
-        educacion_superior: {
-            institucion_superior: "",
-            carrera: "",
-            carrera_afin: "",
-            estado_superior: "",
-            ano_inicio_superior: "",
-            ano_termino_superior: ""
-        },
-        educacion_basica_media: {
-            institucion_basica_media: "",
-            tipo: "",
-            pais: "",
-            ciudad_basica_media: "",
-            ano_inicio_basica_media: "",
-            ano_termino_basica_media: ""
-        },
-        idiomas: [],
-        habilidades: [],
-        curso: {
-            nombre_curso: "",
-            institucion_curso: "",
-            ano_inicio_curso: "",
-            mes_inicio_curso: ""
-        },
-        pretensiones: {
-            disponibilidad: "",
-            renta_esperada: ""
-        },
-    });
+    setFreelancerData(initialFreelancerData);
     setErrorMessage("");
   };
 
@@ -1161,7 +968,7 @@ const resetFreelancerData = () => {
                   <label htmlFor="nueva-categoria">Categoría</label>
                   <div style={{ width: "700px", marginLeft: "31px", marginRight:"25px"}}>
                     <Select
-                      options={optionsCategorySkills} // Lista de opciones para la categoría
+                      options={categorySkills} // Lista de opciones para la categoría
                       className="select"
                       value={{ value: nuevaHabilidad.categoria, label: nuevaHabilidad.categoria }}
                       onChange={(option) => handleSelectChangeHabilidad(option, "categoria")}
@@ -1330,7 +1137,7 @@ const resetFreelancerData = () => {
                 </button>
               )}
 
-              {currentStep < 12 ? (
+              {currentStep < 3 ? (
                 <button className="siguiente" type="button" onClick={nextStep}>
                   Siguiente
                 </button>

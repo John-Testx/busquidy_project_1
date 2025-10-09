@@ -1,4 +1,4 @@
-.perfil-empresa-overlay {
+.perfil-modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -11,7 +11,7 @@
     z-index: 1000;
   }
   
-  .perfil-empresa-content {
+  .perfil-modal-content {
     background: #fff;
     padding: 20px;
     border-radius: 8px;

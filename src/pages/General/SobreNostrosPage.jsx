@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import {jwtDecode} from 'jwt-decode';
 import { useNavigate } from "react-router-dom";
 import Navbar from "../../components/Home/Navbar";
-import NavbarEmpresa from "../../components/Empresa/NavbarEmpresa";
-import NavbarFreeLancer from "../../components/FreeLancer/NavbarFreeLancer";
+//import NavbarEmpresa from "../../components/Empresa/NavbarEmpresa";
+//import NavbarFreeLancer from "../../components/FreeLancer/NavbarFreeLancer";
 import Footer from "../../components/Home/Footer";
 import LoadingScreen from "../../components/LoadingScreen"; 
 
@@ -63,16 +63,6 @@ function SobreNosotrosPage() {
 
     // Renderización condicional del navbar según el tipo de usuario
     const renderNavbar = () => {
-        if (!isAuthenticated) {
-            return <Navbar />;
-        }
-        if (userType === "empresa") {
-            return <NavbarEmpresa onLogout={handleLogout} />;
-        }
-        if (userType === "freelancer") {
-            return <NavbarFreeLancer onLogout={handleLogout} />;
-        }
-        // En caso de que no haya un tipo de usuario válido (prevención)
         return <Navbar />;
     };
 

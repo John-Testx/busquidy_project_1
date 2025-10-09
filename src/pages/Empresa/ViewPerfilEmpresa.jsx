@@ -3,10 +3,10 @@ import {jwtDecode} from 'jwt-decode';  // Make sure you import the default funct
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Navbar from "../../components/Home/Navbar";
-import NavbarEmpresa from "../../components/Empresa/NavbarEmpresa";
+//import NavbarEmpresa from "../../components/Empresa/NavbarEmpresa";
 import Footer from "../../components/Home/Footer";
 import PerfilEmpresaCard from "../../components/Empresa/PerfilEmpresaCard";
-import CreatePerfilEmpresa from "../../components/Empresa/CreatePerfilEmpresa";
+import CreatePerfilEmpresa from "../../components/Empresa/Perfil/CreatePerfilEmpresa";
 import LoadingScreen from "../../components/LoadingScreen"; 
 
 function ViewPerfilEmpresa() {
@@ -84,12 +84,6 @@ function ViewPerfilEmpresa() {
     };
 
     const renderNavbar = () => {
-        if (!isAuthenticated) {
-            return <Navbar />;
-        }
-        if (userType === "empresa") {
-            return <NavbarEmpresa onLogout={handleLogout} />;
-        }
         return <Navbar />;
     };
 

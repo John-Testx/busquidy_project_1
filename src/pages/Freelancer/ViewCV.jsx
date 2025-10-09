@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import NavbarFreeLancer from "../../components/FreeLancer/NavbarFreeLancer";
+//import NavbarFreeLancer from "../../components/FreeLancer/NavbarFreeLancer";
 import ResumenCV from "../../components/FreeLancer/ResumenCV";
-import CreateCV from "../../components/FreeLancer/CreateCv";
+import CreateCV from "../../components/FreeLancer/Perfil/CreateCv";
 import Modal from "react-modal";
 import "./ViewCV.css";
 import LoadingScreen from "../../components/LoadingScreen"; 
+import Navbar from "../../components/Home/Navbar";
 
 function ViewCV() {
     // Estado para la pantalla de carga
@@ -36,7 +37,8 @@ function ViewCV() {
             {/* Muestra la pantalla de carga si está activa */}
             {loading && <LoadingScreen />} 
 
-            <NavbarFreeLancer />
+            <Navbar/>
+
             <div className="view-cv-container">
                 <h1>Mi CV Profesional</h1>
 

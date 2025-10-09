@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import ModalCreatePefilFreelancer from "./ModalCreatePefilFreelancer";
-import MessageModal from "../MessageModal";
-import '../../styles/Freelancer/CreatePerfilFreelancer.css'
+import MessageModal from "../../MessageModal";
+import '../../../styles/Freelancer/CreatePerfilFreelancer.css'
 
 function CreatePerfilFreelancer({ userType, id_usuario}) {
     const [showModalCreatePerfilFreelancer, setShowModalCreatePerfilFreelancer] = useState(false);

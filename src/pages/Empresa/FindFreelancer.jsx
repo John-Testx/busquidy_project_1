@@ -3,8 +3,8 @@ import {jwtDecode} from 'jwt-decode';
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Navbar from "../../components/Home/Navbar";
-import NavbarEmpresa from "../../components/Empresa/NavbarEmpresa";
-import NavbarFreeLancer from "../../components/FreeLancer/NavbarFreeLancer";
+//import NavbarEmpresa from "../../components/Empresa/NavbarEmpresa";
+//import NavbarFreeLancer from "../../components/FreeLancer/NavbarFreeLancer";
 import SearchFilters from "../../components/Empresa/SearchFilters";
 import FreelancerList from "../../components/Empresa/FreelancerList";
 import Footer from "../../components/Home/Footer";
@@ -76,15 +76,6 @@ function FindFreelancer() {
     };
 
     const renderNavbar = () => {
-        if (!isAuthenticated) {
-            return <Navbar />;
-        }
-        if (userType === "empresa") {
-            return <NavbarEmpresa onLogout={handleLogout} />;
-        }
-        if (userType === "freelancer") {
-            return <NavbarFreeLancer onLogout={handleLogout} />;
-        }
         return <Navbar />;
     };
     

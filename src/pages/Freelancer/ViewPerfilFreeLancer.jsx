@@ -3,10 +3,10 @@ import {jwtDecode} from 'jwt-decode';
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Navbar from "../../components/Home/Navbar";
-import NavbarFreeLancer from "../../components/FreeLancer/NavbarFreeLancer";
+//import NavbarFreeLancer from "../../components/FreeLancer/NavbarFreeLancer";
 import InfoCreatePerfil from "../../components/FreeLancer/InfoCreatePerfil";
-import CreatePerfilFreelancer from "../../components/FreeLancer/CreatePerfilFreelancer";
-import CreateProfileCv from "../../components/FreeLancer/CreateProfileCv";
+import CreatePerfilFreelancer from "../../components/FreeLancer/Perfil/CreatePerfilFreelancer";
+import CreateProfileCv from "../../components/FreeLancer/Perfil/CreateProfileCv";
 import PerfilFreelancerMiniCard from "../../components/FreeLancer/PerfilFreelancerMiniCard";
 import ButtonViewPerfil from "../../components/FreeLancer/ButtonViewPerfil";
 import LoadingScreen from "../../components/LoadingScreen"; 
@@ -94,12 +94,6 @@ function ViewPerfilFreeLancer() {
     };
 
     const renderNavbar = () => {
-        if (!isAuthenticated) {
-            return <Navbar />;
-        }
-        if (userType === "freelancer") {
-            return <NavbarFreeLancer onLogout={handleLogout} />;
-        }
         return <Navbar />;
     };
     

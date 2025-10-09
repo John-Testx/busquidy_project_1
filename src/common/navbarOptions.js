@@ -1,8 +1,8 @@
 
 export const navbarOptions = [
     { label: "Inicio", link: "/", roles: ["freelancer", "empresa", null] },
-    { label: "Freelancer", link: "/freelancer", roles: ["freelancer"] },
-    { label: "Empresa", link: "/empresa", roles: ["empresa"] },
+//    { label: "Freelancer", link: "/freelancer", roles: ["freelancer"] },
+//    { label: "Empresa", link: "/empresa", roles: ["empresa"] },
     { label: "Busquidy", link: "/busquidypage", roles: ["freelancer", "empresa", null] },
     { label: "Sobre Nosotros", link: "/sobrenosotrospage", roles: ["freelancer", "empresa", null] },
     { label: "Comunidad", link: "/comunidadpage", roles: ["freelancer", "empresa", null] },

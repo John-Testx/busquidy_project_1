@@ -2,7 +2,7 @@ import React, {useState, useEffect} from "react";
 import {jwtDecode} from 'jwt-decode';
 import { useNavigate } from "react-router-dom";
 import Navbar from "../../components/Home/Navbar";
-import NavbarFreeLancer from "../../components/FreeLancer/NavbarFreeLancer";
+//import NavbarFreeLancer from "../../components/FreeLancer/NavbarFreeLancer";
 import MyPostulationsTable from "../../components/FreeLancer/MyPostulationsTable";
 import Footer from "../../components/Home/Footer";
 import LoadingScreen from "../../components/LoadingScreen"; 
@@ -68,12 +68,6 @@ function MyPostulations() {
     }, [id_usuario]); // Este useEffect se ejecuta cuando id_usuario cambia
 
     const renderNavbar = () => {
-        if (!isAuthenticated) {
-            return <Navbar />;
-        }
-        if (userType === "freelancer") {
-            return <NavbarFreeLancer onLogout={handleLogout} />;
-        }
         return <Navbar />;
     };
 

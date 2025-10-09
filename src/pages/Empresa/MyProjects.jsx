@@ -3,9 +3,9 @@ import { jwtDecode } from 'jwt-decode';
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import Navbar from "../../components/Home/Navbar";
-import NavbarEmpresa from "../../components/Empresa/NavbarEmpresa";
-import NavbarFreeLancer from "../../components/FreeLancer/NavbarFreeLancer";
-import ViewProjects from "../../components/Empresa/ViewProjects";
+//import NavbarEmpresa from "../../components/Empresa/NavbarEmpresa";
+//import NavbarFreeLancer from "../../components/FreeLancer/NavbarFreeLancer";
+import ViewProjects from "../../components/Empresa/Projects/ViewProjects";
 import Footer from "../../components/Home/Footer";
 import LoadingScreen from "../../components/LoadingScreen"; 
 import "./MyProjects.css";
@@ -206,9 +206,6 @@ function MyProjects() {
 
     // Renderizar navbar según tipo de usuario
     const renderNavbar = () => {
-        if (!isAuthenticated) return <Navbar />;
-        if (userType === "empresa") return <NavbarEmpresa onLogout={handleLogout} />;
-        if (userType === "freelancer") return <NavbarFreeLancer onLogout={handleLogout} />;
         return <Navbar />;
     };
 

@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import {jwtDecode} from 'jwt-decode';
 import { useNavigate } from "react-router-dom";
 import Navbar from "../../components/Home/Navbar";
-import NavbarEmpresa from "../../components/Empresa/NavbarEmpresa";
-import NavbarFreeLancer from "../../components/FreeLancer/NavbarFreeLancer";
+//import NavbarEmpresa from "../../components/Empresa/NavbarEmpresa";
+//import NavbarFreeLancer from "../../components/FreeLancer/NavbarFreeLancer";
 import Footer from "../../components/Home/Footer";
 import EmpresaActionsCard from "../../components/Empresa/EmpresaActionsCard";
 import LoadingScreen from "../../components/LoadingScreen"; 
@@ -40,9 +40,6 @@ function Empresa() {
 
     // Renderización condicional del navbar según el tipo de usuario (ahora desde el hook)
     const renderNavbar = () => {
-        if (!isAuthenticated) return <Navbar />;
-        if (userType === "empresa") return <NavbarEmpresa onLogout={handleLogout} />;
-        if (userType === "freelancer") return <NavbarFreeLancer onLogout={handleLogout} />;
         return <Navbar />;
     };
 

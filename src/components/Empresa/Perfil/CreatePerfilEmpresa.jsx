@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import ModalCreatePefilEmpresa from "./ModalCreatePerfilEmpresa.jsx";
-import MessageModal from "../MessageModal";
-import '../../styles/Empresa/CreatePerfilEmpresa.css'
+import MessageModal from "../../MessageModal.jsx";
+import '../../../styles/Empresa/CreatePerfilEmpresa.css'
 
 function CreatePerfilEmpresa({ userType, id_usuario }) {
     const [showModalCreatePerfilEmpresa, setShowModalCreatePerfilEmpresa] = useState(false);

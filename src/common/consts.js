@@ -28,3 +28,103 @@ export const optionsCategorySkills = [
         { value: "Derecho y Normativas", label: "Derecho y Normativas" },
         { value: "Competencias Digitales Básicas", label: "Competencias Digitales Básicas" },
     ]
+
+
+export const initialFreelancerData = {
+  freelancer: {
+    correo_contacto: "",
+    telefono_contacto: "",
+    linkedin_link: "",
+    descripcion_freelancer: ""
+  },
+  antecedentes_personales: {
+    nombres: "",
+    apellidos: "",
+    fecha_nacimiento: "",
+    identificacion: "",
+    nacionalidad: "",
+    direccion: "",
+    region: "",
+    ciudad_freelancer: "",
+    comuna: "",
+    estado_civil: ""
+  },
+  inclusion_laboral: {
+    discapacidad: "No",
+    registro_nacional: null,
+    pension_invalidez: null,
+    ajuste_entrevista: null,
+    tipo_discapacidad: null
+  },
+  emprendimiento: {
+    emprendedor: "No",
+    interesado: null,
+    ano_inicio_emprendimiento: null,
+    mes_inicio_emprendimiento: null,
+    sector_emprendimiento: null
+  },
+  trabajo_practica: {
+    experiencia_laboral: "No",
+    experiencia: null,
+    empresa: null,
+    cargo: null,
+    area_trabajo: null,
+    tipo_cargo: null,
+    ano_inicio_trabajo: null,
+    mes_inicio_trabajo: null,
+    descripcion_trabajo: null
+  },
+  nivel_educacional: {
+    nivel_academico: "",
+    estado_educacional: ""
+  },
+  educacion_superior: {
+    institucion_superior: "",
+    carrera: "",
+    carrera_afin: "",
+    estado_superior: "",
+    ano_inicio_superior: "",
+    ano_termino_superior: ""
+  },
+  educacion_basica_media: {
+    institucion_basica_media: "",
+    tipo: "",
+    pais: "",
+    ciudad_basica_media: "",
+    ano_inicio_basica_media: "",
+    ano_termino_basica_media: ""
+  },
+  idiomas: [],
+  habilidades: [],
+  curso: {
+    nombre_curso: "",
+    institucion_curso: "",
+    ano_inicio_curso: "",
+    mes_inicio_curso: ""
+  },
+  pretensiones: {
+    disponibilidad: "",
+    renta_esperada: ""
+  }
+};
+
+
+
+// Field definitions
+  const empresaFields = [
+    { label: "Nombre de la Empresa", name: "nombre_empresa" },
+    { label: "Identificación Fiscal", name: "identificacion_fiscal" },
+    { label: "Dirección", name: "direccion" },
+    { label: "Teléfono de contacto", name: "telefono_contacto" },
+    { label: "Correo de la empresa", name: "correo_empresa" },
+    { label: "Página web", name: "pagina_web" },
+    { label: "Sector industrial", name: "sector_industrial" },
+    { label: "Descripción de la empresa", name: "descripcion" },
+  ];
+
+  const representanteFields = [
+    { label: "Nombre Completo", name: "nombre_completo" },
+    { label: "Cargo", name: "cargo" },
+    { label: "Correo del Representante", name: "correo_representante", type: "email" },
+    { label: "Teléfono del Representante", name: "telefono_representante" },
+  ];
