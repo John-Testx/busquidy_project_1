@@ -1,39 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { optionsCategorySkills } from '../../common/consts';
 
 const ModalAdd = ({ isOpen, onClose, onConfirm, id_usuario, itemType, initialData }) => {
     const [formData, setFormData] = useState({});
 
-    const optionsCategorySkills = [
-        { value: "Lenguajes de Programación", label: "Lenguajes de Programación" },
-        { value: "Bases de Datos", label: "Bases de Datos" },
-        { value: "Desarrollo Web", label: "Desarrollo Web" },
-        { value: "Desarrollo de Software", label: "Desarrollo de Software" },
-        { value: "Análisis de Datos", label: "Análisis de Datos" },
-        { value: "Redacción y Comunicación", label: "Redacción y Comunicación" },
-        { value: "Idiomas", label: "Idiomas" },
-        { value: "Herramientas de Oficina y Productividad", label: "Herramientas de Oficina y Productividad" },
-        { value: "Marketing y Publicidad", label: "Marketing y Publicidad" },
-        { value: "Ventas y Negociación", label: "Ventas y Negociación" },
-        { value: "Gestión de Proyectos", label: "Gestión de Proyectos" },
-        { value: "Diseño Gráfico", label: "Diseño Gráfico" },
-        { value: "Edición de Video y Fotografía", label: "Edición de Video y Fotografía" },
-        { value: "Investigación Académica", label: "Investigación Académica" },
-        { value: "Habilidades de Presentación", label: "Habilidades de Presentación" },
-        { value: "Resolución de Problemas", label: "Resolución de Problemas" },
-        { value: "Trabajo en Equipo", label: "Trabajo en Equipo" },
-        { value: "Liderazgo", label: "Liderazgo" },
-        { value: "Innovación y Creatividad", label: "Innovación y Creatividad" },
-        { value: "Atención al Cliente", label: "Atención al Cliente" },
-        { value: "Finanzas y Contabilidad", label: "Finanzas y Contabilidad" },
-        { value: "Planificación y Organización", label: "Planificación y Organización" },
-        { value: "Pensamiento Crítico", label: "Pensamiento Crítico" },
-        { value: "Ciencias e Ingeniería", label: "Ciencias e Ingeniería" },
-        { value: "Salud y Bienestar", label: "Salud y Bienestar" },
-        { value: "Educación y Enseñanza", label: "Educación y Enseñanza" },
-        { value: "Derecho y Normativas", label: "Derecho y Normativas" },
-        { value: "Competencias Digitales Básicas", label: "Competencias Digitales Básicas" },
-    ]
+    const categorySkills = optionsCategorySkills;
 
     const optionsAnoInicio = [2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008];
     const optionsAnoTermino = [2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025];
@@ -666,7 +638,7 @@ const ModalAdd = ({ isOpen, onClose, onConfirm, id_usuario, itemType, initialDat
                                 onChange={handleChange}
                             >
                                 <option value="" disabled>Selecciona una categoría</option>
-                                    {optionsCategorySkills.map((option) => (
+                                    {categorySkills.map((option) => (
                                         <option key={option.value} value={option.value}>
                                             {option.label}
                                         </option>

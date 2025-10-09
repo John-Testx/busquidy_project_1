@@ -1,606 +1,285 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "../../styles/Home/Navbar.css";
 import Modal from "./Modal";
+import RegisterModal from "./Modals/RegisterModal";
+import SecondaryRegisterModal from "./Modals/SecondaryRegisterModal";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import LoginModal from "./Modals/LoginModal";
+import LoginSecondaryModal from "./Modals/LoginSecondaryModal";
+import useAuth from "../../hooks/useAuth";
+import { navbarOptions, profileLinks } from "../../common/navbarOptions";
+import ProfileCircle from "../ProfileCircle";
+import { getUserInitials } from "../../common/utils";
 
 function Navbar() {
-    // Estados para almacenar el correo, contraseña, tipo de usuario, mensaje de error, y estado de carga
-    const [correo, setCorreo] = useState('');
-    const [contraseña, setContraseña] = useState('');
-    const [tipoUsuario, setTipoUsuario] = useState('');
-    const [error, setError] = useState('');
-    const [success, setSuccess] = useState("");
-    const [errorTipoUsuario, setErrorTipoUsuario] = useState(false);
-    const [errorCorreo, setErrorCorreo] = useState(false);
-    const [errorContraseña, setErrorContraseña] = useState(false);
-    const [correoError, setCorreoError] = useState("");
-    const [contraseñaError, setContraseñaError] = useState("");
-    const [loading, setLoading] = useState(false);
-    const [toastMessage, setToastMessage] = useState('');
-    const [toastType, setToastType] = useState(''); // 'success' o 'error'
-    const [showToast, setShowToast] = useState(false);
-
-
-    // Hooks de React Router para navegar entre páginas y obtener la ubicación actual
-    const navigate = useNavigate();
     const location = useLocation();
+    const navigate = useNavigate();
 
-    // Estados para controlar el menú y los modales
+    const { 
+            isAuthenticated, 
+            tipo_usuario, 
+            handleLogin,
+            handleRegister, 
+            logout, 
+            errors, 
+            loading 
+        } = useAuth();
+
+    // Add registration formData in Navbar
+    const [registerData, setRegisterData] = useState({
+        correo: "",
+        contraseña: "",
+        tipoUsuario: "",
+    });
+
+    // Inside Navbar()
+    const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+    const profileMenuRef = useRef(null);
+
+    const toggleProfileMenu = () => setIsProfileMenuOpen(prev => !prev);
+
+    
+
+    const updateRegisterData = (key, value) => {
+        setRegisterData(prev => ({ ...prev, [key]: value }));
+    };
+
+    const handleRegisterSubmit = async () => {
+        await handleRegister(
+            registerData.correo,
+            registerData.contraseña,
+            registerData.tipoUsuario,
+            () => {
+                setShowSecondaryRegisterModal(false);
+                setShowRegisterModal(false);
+                console.log("Registro exitoso, redirigiendo...");
+                navigate("/"); // or show success toast
+            }
+        );
+    };
+
+
+    // Navbar state
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isHelpDropdownOpen, setIsHelpDropdownOpen] = useState(false);
+    const [isIconRotated, setIsIconRotated] = useState(false);
+
+    // Modal states
     const [showLoginModal, setShowLoginModal] = useState(false);
+    const [showLoginSecondaryModal, setShowLoginSecondaryModal] = useState(false);
     const [showRegisterModal, setShowRegisterModal] = useState(false);
-    const [showSecondaryModal, setShowSecondaryModal] = useState(false);
     const [showSecondaryRegisterModal, setShowSecondaryRegisterModal] = useState(false);
 
-    // Ayuda Dropdown
-    const [isHelpDropdownOpen, setIsHelpDropdownOpen] = useState(false);
-    const [isIconRotated, setIsIconRotated] = useState(false); // Estado para la rotación del ícono
+    // Form data for login
+    const [formData, setFormData] = useState({ correo: "", contraseña: "" });
+    const updateFormData = (key, value) => setFormData((prev) => ({ ...prev, [key]: value }));
 
-    const toggleHelpDropdown = () => {
-        setIsHelpDropdownOpen(!isHelpDropdownOpen);
-        setIsIconRotated(!isIconRotated); 
-        console.log("Icon Rotated: ", !isIconRotated); // Para verificar el estado
+    const handleLoginSubmit = async () => {
+        await handleLogin(formData.correo, formData.contraseña, (tipo_usuario) => {
+            setShowLoginSecondaryModal(false);
+            setShowLoginModal(false);
+            console.log(tipo_usuario);
+            navigate("/");
+        });
     };
 
-    // Función que determina si la ruta actual coincide exactamente con una de las dadas y devuelve la clase "active"
-    const isActive = (path) => location.pathname === path ? "active" : "";
+  const toggleHelpDropdown = () => {
+    setIsHelpDropdownOpen(!isHelpDropdownOpen);
+    setIsIconRotated(!isIconRotated);
+  };
 
+  const isActive = (path) => (location.pathname === path ? "active" : "");
 
-    // Determina el texto y enlace visible en función de la ruta actual
-    let link;
-    if (location.pathname === "/" || location.pathname === "/busquidypage" || location.pathname === "/sobrenosotrospage") {
+  const handleLogout = () => {
+    logout();
+    navigate("/");
+  };
 
-        link = <Link className={isActive("/")} exact="true" to="/" style={{ color: "black" }}>Inicio</Link>;
+  const navOptions = navbarOptions;
 
-    } else if (location.pathname === "/freelancer" || location.pathname === "/projectlist" || location.pathname === "/mypostulations" 
-        || location.pathname === "/viewperfilfreelancer" || location.pathname === "/viewmoredetailsfreelancer") {
+  const filteredProfileLinks =  profileLinks.filter(link => link.roles.includes(tipo_usuario));
+    console.log("Tipo usuario:", tipo_usuario);
+    console.log("Filtered profile links:", filteredProfileLinks);
 
-        link = <Link className={isActive("/freelancer")} to="/freelancer" style={{ color: "black" }}>Freelancer</Link>;
-
-    } else if (location.pathname === "/empresa" || location.pathname === "/findfreelancer" || location.pathname === "/myprojects" 
-        || location.pathname === "/viewperfilempresa") {
-
-        link = <Link className={isActive("/empresa")} to="/empresa" style={{ color: "black" }}>Empresa</Link>;
-    };
-
-    // Función para limpiar el estado del formulario y errores
-    const resetModalState = () => {
-        setCorreo('');
-        setContraseña('');
-        setTipoUsuario('');
-        setError('');
-        setSuccess('');
-        setCorreoError('');
-        setContraseñaError('');
-        setErrorTipoUsuario(false);
-        setLoading(false);
-    };
-    
-    // Función para manejar el registro de un usuario
-    const handleRegister = async () => {
-        let hasError = false;
-
-        if (!tipoUsuario) {
-            setErrorTipoUsuario(true);
-            hasError = true;
-        } else {
-            setErrorTipoUsuario(false);
-        }
-
-        if (!correo || !/\S+@\S+\.\S+/.test(correo)) {
-            setCorreoError("Por favor, ingresa un correo válido");
-            hasError = true;
-        } else {
-            setCorreoError('');
-        }
-
-        if (!contraseña || contraseña.length < 6) {
-            setContraseñaError("La contraseña debe tener al menos 6 caracteres");
-            hasError = true;
-        } else {
-            setContraseñaError('');
-        }
-
-        if (hasError) return;
-
-        setLoading(true);
-
-        try {
-            const response = await fetch('http://localhost:3001/api/users/register', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ correo, contraseña, tipo_usuario: tipoUsuario }),
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                setToastMessage("Usuario registrado exitosamente");
-                setToastType("success");
-                setShowToast(true);
-            
-                setTimeout(() => {
-                    handleCloseSecondaryRegisterModal(); // Cierra el modal y limpia los datos
-                    setShowToast(false); // Oculta el mensaje
-                }, 2000); // Duración del mensaje
-            } else {
-                setToastMessage(data.error || "Error al registrar usuario");
-                setToastType("error");
-                setShowToast(true);
-            
-                setTimeout(() => {
-                    setShowToast(false); // Oculta el mensaje automáticamente
-                }, 2000); // Duración del mensaje
-            }            
-        } catch (error) {
-            console.error("Error de red:", error);
-            setError("Error en la conexión con el servidor");
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    // Función para manejar el inicio de sesión de un usuario
-    const handleLogin = async () => {
-        let hasError = false;
-
-        if (!correo) {
-            setCorreoError("Por favor, ingresa tu correo");
-            hasError = true;
-        } else if (!/\S+@\S+\.\S+/.test(correo)) {
-            setCorreoError("Ingresa un correo válido");
-            hasError = true;
-        } else {
-            setCorreoError('');
-        }
-
-        if (!contraseña) {
-            setContraseñaError("Por favor, ingresa tu contraseña");
-            hasError = true;
-        } else if (contraseña.length < 6) {
-            setContraseñaError("La contraseña debe tener al menos 6 caracteres");
-            hasError = true;
-        } else {
-            setContraseñaError('');
-        }
-
-        if (hasError) return;
-
-        setLoading(true);
-        setError('');
-
-        try {
-            const response = await fetch('http://localhost:3001/api/users/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ correo, contraseña }),
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                const { token, tipo_usuario } = data;
-
-                localStorage.setItem('token', token);
-                localStorage.setItem('tipo_usuario', tipo_usuario);
-                localStorage.setItem('correo', correo);
-
-                handleCloseSecondaryModal(); // Cierra el modal y limpia los datos
-
-                if (tipo_usuario?.toLowerCase() === 'empresa') {
-                    navigate('/empresa');
-                } else if (tipo_usuario?.toLowerCase() === 'freelancer') {
-                    navigate('/freelancer');
-                } else {
-                    setError("Tipo de usuario desconocido");
-                }
-            } else {
-                setError(data.error || "Error al iniciar sesión");
-            }
-        } catch (error) {
-            console.error("Error de red: ", error);
-            setError("Error de red: Intenta de nuevo");
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    // Función para obtener datos protegidos desde la API
-    const fetchProtectedData = async () => {
-        const token = localStorage.getItem('token');
-        try {
-            const response = await fetch('http://localhost:3001/api/protected-route', {
-                method: 'GET',
-                headers: { 'Authorization': `Bearer ${token}` },
-            });
-    
-            console.log("Response headers:", response.headers);
-            
-            if (response.ok && response.headers.get('content-type')?.includes('application/json')) {
-                const data = await response.json();
-                console.log("Datos protegidos: ", data);
-            } else if (!response.ok) {
-                console.error("No autorizado. Error:", response.status);
-            } else {
-                console.error("La respuesta no es JSON válida.");
-            }
-        } catch (error) {
-            console.error("Error de red al acceder a la ruta protegida:", error);
-        }
-    };    
-
-    // useEffect que ejecuta fetchProtectedData cuando el componente se monta
     useEffect(() => {
-        // fetchProtectedData();
+        const handleClickOutside = (event) => {
+            if (profileMenuRef.current && !profileMenuRef.current.contains(event.target)) {
+                setIsProfileMenuOpen(false);
+            }
+        };
+        
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+        
     }, []);
 
-    // Alterna el estado de apertura del menú
-    const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+    // Get initials dynamically
+    const userInitials = getUserInitials();
 
-    // Manejadores para abrir y cerrar los diferentes modales de la aplicación
-    const handleOpenLoginModal = () => {
-        setShowRegisterModal(false);
-        setShowSecondaryRegisterModal(false);
-        setShowSecondaryModal(false);
-        setShowLoginModal(true);  // Abre el modal de inicio de sesión
-    };
-    const handleCloseLoginModal = () => setShowLoginModal(false);  // Cierra el modal de inicio de sesión
+  return (
+    <header className="navbar">
+      <div className="navbar-general-content">
 
-    const handleOpenSecondaryModal = () => {
-        setShowLoginModal(false);
-        setShowSecondaryRegisterModal(false);
-        setShowSecondaryModal(true);  // Abre el modal secundario
-    };
+        {/* Logo + Menu Toggle */}
+        <div className="navbar-logo">
+          <Link to="/">
+            <img src="/images/Busquidy.png" alt="logo" />
+          </Link>
+          <div className="navbar-toggle">
+            <span className="menu-icon" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+              &#9776;
+            </span>
+          </div>
+        </div>
 
-    // Función para cerrar el modal secundario de inicio de sesión
-    const handleCloseSecondaryModal = () => {
-        resetModalState();
-        setShowSecondaryModal(false);
-    };
+        {/* Navbar links */}
+        <nav className={`navbar-links ${isMenuOpen ? "active" : ""}`}>
 
-    const handleOpenRegisterModal = () => {
-        setShowLoginModal(false);
-        setShowSecondaryModal(false);
-        setShowSecondaryRegisterModal(false);
-        setShowRegisterModal(true);  // Abre el modal de registro
-    };
-    const handleCloseRegisterModal = () => setShowRegisterModal(false);  // Cierra el modal de registro
+          {navOptions
+            .filter(opt => opt.roles.includes(tipo_usuario) || opt.roles.includes(null))
+            .map((opt) => (
+              <Link
+                key={opt.link}
+                className={isActive(opt.link)}
+                to={opt.link}
+              >
+                {opt.label}
+              </Link>
+            ))}
 
-    const handleOpenSecondaryRegisterModal = () => {
-        setShowRegisterModal(false);
-        setShowSecondaryModal(false);
-        setShowSecondaryRegisterModal(true);  // Abre el modal de registro secundario
-    };
+          {/* Help Dropdown */}
+          <div className="help-dropdown">
+            <button className="help-dropdown-btn" onClick={toggleHelpDropdown}>
+              ¡Ayuda!{" "}
+              <i
+                className={`bi bi-chevron-down ${isIconRotated ? "rotated" : ""}`}
+              ></i>
+            </button>
 
-    // Función para cerrar el modal secundario de registro
-    const handleCloseSecondaryRegisterModal = () => {
-        resetModalState();
-        setShowSecondaryRegisterModal(false);
-    };
-    
-    return (
-        <header className="navbar">
-            <div className="navbar-general-content">
-                {/* Logo */}
-                <div className="navbar-logo">
-                    <Link to="/">
-                        <img src="/images/Busquidy.png" useMap="#image-map" alt="logo" />
-                    </Link>
-                    <div className="navbar-toggle">
-                        <span className="menu-icon" onClick={toggleMenu}>&#9776;</span>
-                    </div>
-                </div>
+            {isHelpDropdownOpen && (
+              <div className="help-dropdown-content">
+                <Link className={isActive("/soporte-cliente")} to="/soporte-cliente">
+                  Soporte al Cliente
+                </Link>
+                <Link className={isActive("/soporte-ia")} to="/soporte-ia">
+                  Soporte IA
+                </Link>
+                <Link className={isActive("/busquidy-guia")} to="/busquidy-guia">
+                  Busquidy Guía
+                </Link>
+              </div>
+            )}
+          </div>
 
-                {/* Links del Navbar */}
-                <nav className={`navbar-links ${isMenuOpen ? 'active' : ''}`}>
-                    {link}
-
-                    <Link className={isActive("/busquidypage")} to="/busquidypage" style={{ color: "#06535794" }}>Busquidy<i className="bi bi-plus"></i></Link>
-                    <Link className={isActive("/sobrenosotrospage")} to="/sobrenosotrospage">Sobre Nosotros</Link>
-                    <Link className={isActive("/comunidadpage")} to="#">Comunidad</Link>
-                    
-                    <div className="help-dropdown">
-                        <button className="help-dropdown-btn" onClick={toggleHelpDropdown}>
-                            ¡Ayuda! <i className={`bi bi-chevron-down ${isIconRotated ? 'rotated' : ''}`}></i>
-                        </button>
-
-                        {/* Desplegable de ayuda */}
-                        {isHelpDropdownOpen && (
-                            <div className="help-dropdown-content">
-                                <Link className={isActive("/soporte-cliente")} to="/soporte-cliente">Soporte al Cliente</Link>
-                                <Link className={isActive("/soporte-ia")} to="/soporte-ia">Soporte IA</Link>
-                                <Link className={isActive("/busquidy-guia")} to="/busquidy-guia">Busquidy Guía</Link>
-                            </div>
+          {/* Auth buttons or profile */}
+                    <div className="navbar-auth">
+                        {!isAuthenticated ? (
+                            <>
+                                <Link
+                                    className="login-btn"
+                                    onClick={() => setShowLoginModal(true)}
+                                >
+                                    Iniciar Sesión
+                                </Link>
+                                <Link
+                                    className="register-btn"
+                                    onClick={() => setShowRegisterModal(true)}
+                                >
+                                    Registrarse
+                                </Link>
+                            </>
+                        ) : (
+                            <>
+                                {console.log("Rendering profile dropdown", filteredProfileLinks)}
+                                <div className="navbar-profile" onClick={toggleProfileMenu}>
+                                <ProfileCircle userInitials={userInitials} />
+                                <div className={`profile-menu-dropdown ${isProfileMenuOpen ? "active" : ""}`} ref={profileMenuRef}>
+                                    <ul>
+                                    {filteredProfileLinks.map(link => (
+                                        <li key={link.link}>
+                                        <Link to={link.link}>
+                                            <i className={link.icon}></i> {link.label}
+                                        </Link>
+                                        </li>
+                                    ))}
+                                    <li onClick={handleLogout} style={{ cursor: "pointer" }}>
+                                        <i className="bi bi-box-arrow-right"></i> Cerrar sesión
+                                    </li>
+                                    </ul>
+                                </div>
+                                </div>
+                            </>
                         )}
                     </div>
                 </nav>
-
-                <div className={`navbar-auth ${isMenuOpen ? 'active' : ''}`}>
-                    {/* Botón para mostrar el modal login */}
-                    <button className="btn" onClick={handleOpenLoginModal}>Iniciar sesión</button>
-
-                    {/* Modal de inicio de sesión */}
-                    <Modal show={showLoginModal} onClose={handleCloseLoginModal} dismissOnClickOutside={true}>
-                        <div className="modal-split">
-                            <div className="modal-left">
-                                <h2>El camino a el éxito comienza contigo aquí</h2>
-                                <ul>
-                                    <li>Diversas categorías para buscar</li>
-                                    <li>Trabajo de calidad en tus proyectos</li>
-                                    <li>Acceso a joven talento profesional</li>
-                                </ul>
-                            </div>
-                            <div className="modal-right">
-                                <h2>Inicia sesión con tu cuenta</h2>
-                                <p>¿No tienes una cuenta? <a href="#" onClick={handleOpenRegisterModal}> Registrate aquí</a></p>
-                                <button 
-                                    style={{ width: "400px", marginLeft: "20px" }} 
-                                    onClick={handleOpenSecondaryModal}>
-                                    <img 
-                                        src="/images/email.svg" 
-                                        alt="Email" 
-                                        style={{ height: "20px", marginRight: "10px" }} 
-                                    />
-                                    Continuar con Correo Electrónico
-                                </button>
-                                <button 
-                                    style={{ width: "400px", marginLeft: "20px" }}
-                                    className="google">
-                                    <img 
-                                        src="/images/google.svg.svg" 
-                                        alt="Google" 
-                                        style={{ height: "20px", marginRight: "10px" }} 
-                                    />
-                                    Continuar con Google
-                                </button>
-                                <button 
-                                    style={{ width: "400px", marginLeft: "20px" }}
-                                    className="microsoft">
-                                    <img 
-                                        src="/images/microsoft.svg" 
-                                        alt="Microsoft" 
-                                        style={{ height: "20px", marginRight: "10px" }} 
-                                    />
-                                    Continuar con Microsoft
-                                </button>
-                                <button 
-                                    style={{ width: "400px", marginLeft: "20px" }}
-                                    className="apple">
-                                    <img 
-                                        src="/images/apple.svg" 
-                                        alt="Apple" 
-                                        style={{ height: "20px", marginRight: "10px" }} 
-                                    />
-                                    Continuar con Apple
-                                </button>
-                                <div className="divider-wrapper">
-                                    <div className="divider">
-                                        <span >O</span>
-                                    </div>
-                                </div>
-                                <div className="terms-container">
-                                    <p>Al unirte, aceptas los <a href="#">Términos de servicio</a> de la plataforma, así como recibir correos electrónicos ocasionales. Lee nuestra <a href="#">Política de privacidad</a> para saber cómo utilizamos tus datos personales.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </Modal>
-
-                    {/* Modal secundario de inicio de sesión */}
-                    <Modal show={showSecondaryModal} onClose={handleCloseSecondaryModal} dismissOnClickOutside={true}>
-                        <div className="modal-split">
-                            <div className="modal-left">
-                                <h2>Continuar con Correo Electrónico</h2>
-                                <ul>
-                                    <li>Inicio de sesión seguro</li>
-                                    <li>Acceso fácil y rápido</li>
-                                    <li>Protegeremos tus datos</li>
-                                </ul>
-                            </div>
-                            <div className="modal-right">
-                                <button
-                                    type="button"
-                                    style={{ width: "150px", border: "none" }}
-                                    className="back-button"
-                                    onClick={handleOpenLoginModal}
-                                >
-                                    ← volver
-                                </button>
-
-                                <h3>Ingresa tu correo y contraseña</h3>
-                                <div className="login-form">
-                                    <div className="input-container">
-                                        <input
-                                            type="email"
-                                            placeholder="Correo Electrónico"
-                                            value={correo}
-                                            onChange={(e) => setCorreo(e.target.value)}
-                                            style={{ marginBottom:"auto", borderColor: correoError ? "red" : "" }}
-                                        />
-                                        {correoError && <p style={{ color: "red", fontSize: "12px", marginLeft:"20px" }}>{correoError}</p>}
-                                    </div>
-                                    <div className="input-container">
-                                        <input
-                                            type="password"
-                                            placeholder="Contraseña"
-                                            value={contraseña}
-                                            onChange={(e) => setContraseña(e.target.value)}
-                                            style={{ marginBottom:"auto", borderColor: contraseñaError ? "red" : "" }}
-                                        />
-                                        {contraseñaError && <p style={{ color: "red", fontSize: "12px", marginLeft:"20px" }}>{contraseñaError}</p>}
-                                    </div>
-                                </div>
-
-                                <a href="#" style={{ marginBottom: "20px" }}>¿Olvidaste tu contraseña?</a>
-                                <button
-                                    className="primary"
-                                    onClick={handleLogin}
-                                    disabled={loading}
-                                >
-                                    {loading ? "Iniciando sesión..." : "Iniciar sesión"}
-                                </button>
-
-                                <p>¿No tienes una cuenta? <a href="#" onClick={handleOpenRegisterModal}>Regístrate</a></p>
-                            </div>
-                        </div>
-                    </Modal>
-
-                    {/* Botón para mostrar el modal register*/}
-                    <button className="btn primary" onClick={handleOpenRegisterModal}>Registrarse</button>
-
-                    {/* Modal de registro */}
-                    <Modal show={showRegisterModal} onClose={handleCloseRegisterModal} dismissOnClickOutside={true}>
-                        <div className="modal-split">
-                            <div className="modal-left">
-                                <h2>El camino a el éxito comienza contigo aquí</h2>
-                                <ul>
-                                    <li>Diversas categorías para buscar</li>
-                                    <li>Trabajo de calidad en tus proyectos</li>
-                                    <li>Acceso a joven talento profesional</li>
-                                </ul>
-                            </div>
-                            <div className="modal-right">
-                                <h2>Crea tu cuenta</h2>
-                                <p>¿Ya tienes una cuenta? <a href="#" onClick={handleOpenLoginModal}> Iniciar sesión</a></p>
-                                <button 
-                                    style={{ width: "400px", marginLeft: "20px" }} 
-                                    onClick={handleOpenSecondaryRegisterModal}>
-                                    <img 
-                                        src="/images/email.svg" 
-                                        alt="Email" 
-                                        style={{ height: "20px", marginRight: "10px" }} 
-                                    />
-                                    Continuar con Correo Electrónico
-                                </button>
-                                <button 
-                                
-                                    style={{ width: "400px", marginLeft: "20px" }}
-                                    className="google">
-                                    <img 
-                                        src="/images/google.svg.svg" 
-                                        alt="Google" 
-                                        style={{ height: "20px", marginRight: "10px" }} 
-                                    />
-                                    Continuar con Google
-                                </button>
-                                <button 
-                                    style={{ width: "400px", marginLeft: "20px" }}
-                                    className="microsoft">
-                                    <img 
-                                        src="/images/microsoft.svg" 
-                                        alt="Microsoft" 
-                                        style={{ height: "20px", marginRight: "10px" }} 
-                                    />
-                                    Continuar con Microsoft
-                                </button>
-                                <button 
-                                    style={{ width: "400px", marginLeft: "20px" }}
-                                    className="apple">
-                                    <img 
-                                        src="/images/apple.svg" 
-                                        alt="Apple" 
-                                        style={{ height: "20px", marginRight: "10px" }} 
-                                    />
-                                    Continuar con Apple
-                                </button>
-                                <div className="divider-wrapper">
-                                    <div className="divider">
-                                        <span >O</span>
-                                    </div>
-                                </div>
-                                <div className="terms-container">
-                                    <p>Al unirte, aceptas los <a href="#">Términos de servicio</a> de la plataforma, así como recibir correos electrónicos ocasionales. Lee nuestra <a href="#">Política de privacidad</a> para saber cómo utilizamos tus datos personales.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </Modal>
-
-                    {/* Modal secundario de registro */}
-                    <Modal show={showSecondaryRegisterModal} onClose={handleCloseSecondaryRegisterModal} dismissOnClickOutside={true}>
-                        <div className="modal-split">
-                            <div className="modal-left">
-                                <h2>Continuar con Correo Electrónico</h2>
-                                <ul>
-                                    <li>Registro fácil y rápido</li>
-                                    <li>Acceso seguro a nuestra plataforma</li>
-                                    <li>Tu privacidad es nuestra prioridad</li>
-                                </ul>
-                            </div>
-                            <div className="modal-right">
-                                <button style={{ width: "150px", border: "none" }} className="back-button" onClick={handleOpenRegisterModal}>← volver</button>
-                                <h3>Ingresa tu correo, contraseña y tipo de usuario</h3>
-
-                                {/* Campo Tipo de Usuario */}
-                                <div className="register-form">
-                                    <select 
-                                        id="tipoUsuario" 
-                                        name="tipoUsuario" 
-                                        value={tipoUsuario} 
-                                        onChange={(e) => setTipoUsuario(e.target.value)}
-                                        style={{ borderColor: errorTipoUsuario ? "red" : "" }}
-                                    >
-                                        <option value="">Tipo de Usuario</option>
-                                        <option value="empresa">Empresa</option>
-                                        <option value="freelancer">Freelancer</option>
-                                    </select>
-                                    {errorTipoUsuario && <p style={{ color: "red", fontSize: "12px", marginLeft:"20px" }}>Por favor selecciona un tipo de usuario.</p>}
-                                </div>
-
-                                {/* Campo Correo Electrónico */}
-                                <div className="register-form">
-                                    <input 
-                                        type="email" 
-                                        placeholder="Correo Electrónico" 
-                                        value={correo} 
-                                        onChange={(e) => setCorreo(e.target.value)} 
-                                        style={{ borderColor: correoError ? "red" : "" }}
-                                    />
-                                    {correoError && <p style={{ color: "red", fontSize: "12px", marginLeft:"20px" }}>Por favor ingresa un correo electrónico válido.</p>}
-                                </div>
-
-                                {/* Campo Contraseña */}
-                                <div className="register-form">
-                                    <input 
-                                        type="password" 
-                                        placeholder="Contraseña" 
-                                        value={contraseña} 
-                                        onChange={(e) => setContraseña(e.target.value)} 
-                                        style={{ borderColor: contraseñaError ? "red" : "" }}
-                                    />
-                                    {contraseñaError && <p style={{ color: "red", fontSize: "12px", marginLeft:"20px" }}>Por favor ingresa una contraseña válida.</p>}
-                                </div>
-
-                                {/* Botón de Registro */}
-                                <button 
-                                    className="primary" 
-                                    onClick={handleRegister}
-                                    disabled={loading}
-                                    style={{ marginLeft: "20px", padding: "10px" }}
-                                >
-                                    {loading ? "Registrando..." : "Registrarse"}
-                                </button>
-
-                                {/* Mensajes de error y éxito */}
-                                {error && <div style={{ color: 'red' }}>{error}</div>}
-                                {success && <div style={{ color: 'green' }}>{success}</div>}
-
-                                <p>¿Ya tienes una cuenta? <a href="#" onClick={handleOpenLoginModal}>Iniciar sesión</a></p>
-                            </div>
-                        </div>
-                    </Modal>
-                    {showToast && (
-                        <div className="toast-container">
-                            <div className={`toast ${toastType === 'success' ? 'success' : 'error'}`}>
-                            {toastMessage}
-                            </div>
-                        </div>
-                    )}
-
-                </div>
             </div>
-        </header>
-            
-    );
+
+            {/* ----------------------------- MODALS ---------------------------------- */}
+
+            {/* Primary Login Modal */}
+            {showLoginModal && (
+                <LoginModal
+                    onClose={() => setShowLoginModal(false)}
+                    onOpenSecondary={() => {
+                        setShowLoginModal(false);
+                        setShowLoginSecondaryModal(true);
+                    }}
+                    onOpenRegister={() => {
+                        setShowLoginModal(false);
+                        setShowRegisterModal(true);
+                    }}
+                />
+            )}
+
+            {/* Secondary Login Modal (email/password) */}
+            {showLoginSecondaryModal && (
+                <LoginSecondaryModal
+                    onClose={() => setShowLoginSecondaryModal(false)}
+                    onBack={() => {
+                        setShowLoginSecondaryModal(false);
+                        setShowLoginModal(true);
+                    }}
+                    formData={formData}
+                    setFormData={updateFormData}
+                    errors={errors}
+                    handleLogin={handleLoginSubmit}
+                    loading={loading}
+                    onOpenRegister={() => {
+                        setShowLoginSecondaryModal(false);
+                        setShowRegisterModal(true);
+                    }}
+                />
+            )}
+
+            {/* Register Modals */}
+            {showRegisterModal && (
+                <RegisterModal
+                    onClose={() => setShowRegisterModal(false)}
+                    onOpenSecondary={() => {
+                        setShowRegisterModal(false);
+                        setShowSecondaryRegisterModal(true);
+                    }}
+                />
+            )}
+
+            {showSecondaryRegisterModal && (
+                <SecondaryRegisterModal
+                    onClose={() => setShowSecondaryRegisterModal(false)}
+                    onBack={() => {
+                        setShowSecondaryRegisterModal(false);
+                        setShowRegisterModal(true);
+                    }}
+                    formData={registerData}
+                    setFormData={updateRegisterData}
+                    handleRegister={handleRegisterSubmit}
+                    errors={errors}
+                    loading={loading}
+                />
+            )}
+    </header>
+  );
 }
+
 
 export default Navbar;

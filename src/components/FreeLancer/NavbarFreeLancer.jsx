@@ -3,6 +3,7 @@ import "../../styles/Freelancer/NavbarFreeLancer.css";
 import { Link, useLocation  } from "react-router-dom";
 import ProfileCircle from "../ProfileCircle";
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import { getUserInitials } from "../../common/utils";
 
 
 function NavbarFreeLancer({ onLogout}) {
@@ -31,11 +32,7 @@ function NavbarFreeLancer({ onLogout}) {
     const isActive = (path) => location.pathname == path ? "active" : "";
 
     // Nueva función para obtener las iniciales del correo
-    const getUserInitials = () => {
-        const email = localStorage.getItem("correo") || "";
-        const namePart = email.split("@")[0];
-        return namePart.slice(0, 2).toUpperCase() || "NN";
-    };
+    const userInitials = getUserInitials();
 
     const handleLogout = () => {
         onLogout(); // Llama a la función de logout que se pasa desde el componente padre
@@ -92,7 +89,7 @@ function NavbarFreeLancer({ onLogout}) {
 
                 <div className="navbar-freelancer-auth">
                 <div className="profile-freelancer-icon" onClick={toggleProfileMenu}>
-                    <ProfileCircle userInitials={getUserInitials()} />
+                    <ProfileCircle userInitials={userInitials} />
                 </div>
 
                 <div className={`profile-freelancer-menu ${isProfileMenuOpen ? 'active' : ''}`} ref={profileMenuRef}>

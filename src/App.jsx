@@ -25,6 +25,7 @@ import LoadingScreen from "./components/LoadingScreen";
 import BusquidyPage from "./pages/General/BusquidyPage";
 import SobreNosotrosPage from "./pages/General/SobreNostrosPage";
 import "./App.css";
+import User from "./pages/User/user";
 import ViewMoreDetailsFreelancer from "./pages/Freelancer/ViewMoreDetailsFreelancer";
 import ViewFreelancer from "./pages/Empresa/ViewFreelancer";
 
@@ -100,6 +101,7 @@ function App() {
         <div className="main-content">
           <Routes>
             <Route path= "/" element={<Home />} />
+            <Route path= "/user" element={<User/>} />
             <Route path= "/loginadmin" element={<LoginAdmin />} />
             <Route path= "/adminhome" element={<AdminHome  connectedUsers={connectedUsers}/>} />
             <Route path= "/freelancer" element={<FreeLancer />} />
