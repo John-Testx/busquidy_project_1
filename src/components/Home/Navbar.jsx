@@ -99,8 +99,8 @@ function Navbar() {
   const navOptions = navbarOptions;
 
   const filteredProfileLinks =  profileLinks.filter(link => link.roles.includes(tipo_usuario));
-    console.log("Tipo usuario:", tipo_usuario);
-    console.log("Filtered profile links:", filteredProfileLinks);
+    //console.log("Tipo usuario:", tipo_usuario);
+    //console.log("Filtered profile links:", filteredProfileLinks);
 
     useEffect(() => {
         const handleClickOutside = (event) => {

@@ -5,8 +5,8 @@ import io from "socket.io-client";
 import Home from "./pages/General/Home";
 import AdminHome from "./pages/Admin/AdminHome";
 import LoginAdmin from "./pages/Admin/LoginAdmin";
-//import FreeLancer from "./pages/Freelancer/FreeLancer";
-//import Empresa from "./pages/Empresa/Empresa";
+import FreeLancer from "./pages/Freelancer/FreeLancer";
+import Empresa from "./pages/Empresa/Empresa";
 import ProjectList from "./pages/Freelancer/ProjectList";
 import ViewPerfilFreeLancer from "./pages/Freelancer/ViewPerfilFreeLancer";
 import ViewPerfilEmpresa from "./pages/Empresa/ViewPerfilEmpresa";
@@ -25,10 +25,10 @@ import LoadingScreen from "./components/LoadingScreen";
 import BusquidyPage from "./pages/General/BusquidyPage";
 import SobreNosotrosPage from "./pages/General/SobreNostrosPage";
 import "./App.css";
-
 import User from "./pages/User/user";
 import ViewMoreDetailsFreelancer from "./pages/Freelancer/ViewMoreDetailsFreelancer";
 import ViewFreelancer from "./pages/Empresa/ViewFreelancer";
+import PaymentReturn from "./pages/User/PaymentReturn";
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -101,12 +101,13 @@ function App() {
         {/* Contenido principal */}
         <div className="main-content">
           <Routes>
+            <Route path="/payment/return" element={<PaymentReturn />} />
             <Route path= "/" element={<Home />} />
             <Route path= "/user" element={<User/>} />
             <Route path= "/loginadmin" element={<LoginAdmin />} />
             <Route path= "/adminhome" element={<AdminHome  connectedUsers={connectedUsers}/>} />
-            {/* <Route path= "/freelancer" element={<FreeLancer />} /> */}
-            {/* <Route path= "/empresa" element={<Empresa />} /> */}
+            <Route path= "/freelancer" element={<FreeLancer />} />
+            <Route path= "/empresa" element={<Empresa />} />
             <Route path= "/projectlist" element={<ProjectList />} />
             <Route path= "/viewperfilfreelancer" element={<ViewPerfilFreeLancer />} />
             <Route path= "/viewperfilempresa" element={<ViewPerfilEmpresa />} />

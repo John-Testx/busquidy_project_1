@@ -9,42 +9,22 @@ import ViewProjects from "../../components/Empresa/Projects/ViewProjects";
 import Footer from "../../components/Home/Footer";
 import LoadingScreen from "../../components/LoadingScreen"; 
 import "./MyProjects.css";
+import useAuth from "../../hooks/useAuth";
 
 function MyProjects() {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [loading, setLoading] = useState(true);
     const [logoutStatus, setLogoutStatus] = useState("");
-    const [userType, setUserType] = useState(null);
-    const [id_usuario, setIdUsuario] = useState(null);
     const [paymentStatus, setPaymentStatus] = useState(null);
     const navigate = useNavigate();
     const location = useLocation();
 
-     // Verificar autenticación
-     useEffect(() => {
-        const checkAuth = () => {
-            const token = localStorage.getItem('token');    
-            setIsAuthenticated(!!token);
-
-            if (token) {
-                try {
-                    const decoded = jwtDecode(token);
-                    setUserType(decoded.tipo_usuario);
-                    setIdUsuario(decoded.id_usuario);
-                } catch (error) {
-                    console.error("Error decodificando el token:", error);
-                    localStorage.removeItem('token');
-                    setIsAuthenticated(false);
-                }
-            }
-
-            setLoading(false);
-        };
-
-        checkAuth();
-        window.addEventListener('storage', checkAuth);
-        return () => window.removeEventListener('storage', checkAuth);
-    }, []);
+    // ✅ Use your custom hook
+    const {
+        isAuthenticated,
+        tipo_usuario: userType,
+        id_usuario,
+        loading,
+        refresh,
+    } = useAuth();
 
     useEffect(() => {
     const handlePaymentResponse = async () => {
@@ -145,81 +125,107 @@ function MyProjects() {
     handlePaymentResponse();
 }, [location.search]);
     
-    // Cargar proyectos cuando cambie el id_usuario
-    useEffect(() => {
-        if (id_usuario) {
-        }
-    }, [id_usuario]);
+    // ✅ Conditional rendering
+    if (loading) return <LoadingScreen />;
 
-    // Renderizar navbar según tipo de usuario
-    const renderNavbar = () => {
-        return <Navbar />;
-    };
-
-    return (
-        <div style={{ marginTop: "80px" }}>
-            {loading && <LoadingScreen />}
-
-            {renderNavbar()}
-
-            <div className="background-color-myproject">
-                {userType && userType !== "empresa" ? (
-                    <div 
+    if (!isAuthenticated) {
+        return (
+            <div style={{ marginTop: "80px" }}>
+                <Navbar />
+                <div
+                    style={{
+                        padding: "3rem",
+                        margin: "5.4rem auto",
+                        maxWidth: "600px",
+                        textAlign: "center",
+                        backgroundColor: "#f8d7da",
+                        border: "1px solid #f5c6cb",
+                        borderRadius: "5px",
+                        color: "#721c24",
+                    }}
+                >
+                    <h2 style={{ marginBottom: "1rem" }}>Acceso Denegado</h2>
+                    <p>Debes iniciar sesión para acceder a tus proyectos.</p>
+                    <button
+                        onClick={() => navigate("/login")}
                         style={{
-                            padding: '3rem',
-                            margin: '5.4rem auto',
-                            maxWidth: '600px',
-                            marginTop:'100px',
-                            textAlign: 'center',
-                            backgroundColor: '#f8d7da',
-                            border: '1px solid #f5c6cb',
-                            borderRadius: '5px',
-                            color: '#721c24'
+                            backgroundColor: "#721c24",
+                            color: "white",
+                            padding: "0.5rem 1rem",
+                            border: "none",
+                            borderRadius: "4px",
+                            cursor: "pointer",
+                            marginTop: "1rem",
                         }}
                     >
-                        <h2 style={{ marginBottom: '1rem' }}>Acceso Restringido</h2>
-                        <p>Para utilizar esta función necesitas ser un usuario de tipo empresa.</p>
-                        <p>Si eres un freelancer o usuario regular, por favor regístrate como empresa para acceder a estas funcionalidades.</p>
-                    </div>
-                ) : (
-                    <>
-                        <ViewProjects 
-                            userType={userType} 
-                            id_usuario={id_usuario}
-                        />
-                    </>
-                )}
+                        Ir al Login
+                    </button>
+                </div>
+                <Footer />
+            </div>
+        );
+    }
 
-                {paymentStatus && !loading && (
+    if (userType !== "empresa") {
+        return (
+            <div style={{ marginTop: "80px" }}>
+                <Navbar />
+                <div
+                    style={{
+                        padding: "3rem",
+                        margin: "5.4rem auto",
+                        maxWidth: "600px",
+                        textAlign: "center",
+                        backgroundColor: "#f8d7da",
+                        border: "1px solid #f5c6cb",
+                        borderRadius: "5px",
+                        color: "#721c24",
+                    }}
+                >
+                    <h2 style={{ marginBottom: "1rem" }}>Acceso Restringido</h2>
+                    <p>Esta sección está disponible solo para usuarios de tipo empresa.</p>
+                </div>
+                <Footer />
+            </div>
+        );
+    }
+
+    // ✅ Authenticated empresa user view
+    return (
+        <div style={{ marginTop: "80px" }}>
+            <Navbar />
+            <div className="background-color-myproject">
+                <ViewProjects userType={userType} id_usuario={id_usuario} />
+                {paymentStatus && (
                     <div
-                        className={`payment-status ${paymentStatus.success ? "success" : "error"}`}
+                        className={`payment-status ${
+                            paymentStatus.success ? "success" : "error"
+                        }`}
                         style={{
-                            position: 'fixed',
-                            top: '100px',
-                            left: '50%',
-                            transform: 'translateX(-50%)',
-                            padding: '1rem',
-                            margin: '1rem 0',
-                            borderRadius: '5px',
-                            backgroundColor: paymentStatus.success ? "#d4edda" : "#f8d7da",
-                            color: paymentStatus.success ? "#155724" : "#721c24",
+                            position: "fixed",
+                            top: "100px",
+                            left: "50%",
+                            transform: "translateX(-50%)",
+                            padding: "1rem",
+                            margin: "1rem 0",
+                            borderRadius: "5px",
+                            backgroundColor: paymentStatus.success
+                                ? "#d4edda"
+                                : "#f8d7da",
+                            color: paymentStatus.success
+                                ? "#155724"
+                                : "#721c24",
                             zIndex: 1000,
-                            boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
-                            width: '80%',
-                            maxWidth: '500px',
-                            textAlign: 'center'
+                            boxShadow: "0 2px 4px rgba(0,0,0,0.2)",
+                            width: "80%",
+                            maxWidth: "500px",
+                            textAlign: "center",
                         }}
                     >
                         {paymentStatus.message}
                     </div>
                 )}
-
-                {logoutStatus && (
-                    <div className="logout-status-msg">
-                        {logoutStatus}
-                    </div>
-                )}
-
+                {logoutStatus && <div className="logout-status-msg">{logoutStatus}</div>}
                 <Footer />
             </div>
         </div>
