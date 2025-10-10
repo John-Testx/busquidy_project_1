@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import '../../styles/Home/FAQSection.css';
+// import '../../styles/Home/FAQSection.css';
 
 const FAQSection = () => {
     const [activeIndex, setActiveIndex] = useState(null);
@@ -20,24 +20,43 @@ const FAQSection = () => {
     ];
 
     return (
-        <div className="faq-container">
-            <h2 className="faq-title">Preguntas Frecuentes <i className="bi bi-question-circle"></i></h2> 
+        <div className="w-full max-w-[800px] mx-auto p-5">
+            <h2 className="text-3xl mb-5 text-left font-bold text-gray-800">
+                Preguntas Frecuentes <i className="bi bi-question-circle"></i>
+            </h2>
+            
             {faqs.map((faq, index) => (
                 <div
                     key={index}
-                    className={`faq-item ${activeIndex === index ? 'active' : ''}`}
+                    className="border-b border-gray-300 py-4"
                 >
-                    <div className="faq-question" onClick={() => toggleFAQ(index)}>
-                        {faq.question}
-                        <span>{activeIndex === index ? '−' : '+'}</span>
+                    <div 
+                        className="flex justify-between text-lg cursor-pointer select-none text-teal-900"
+                        onClick={() => toggleFAQ(index)}
+                    >
+                        <span>{faq.question}</span>
+                        <span className="text-2xl font-bold">
+                            {activeIndex === index ? '−' : '+'}
+                        </span>
                     </div>
-                    <div className="faq-answer">
+                    <div 
+                        className={`overflow-hidden text-base text-gray-600 transition-all duration-400 ${
+                            activeIndex === index 
+                                ? 'max-h-[500px] opacity-100 mt-3' 
+                                : 'max-h-0 opacity-0 mt-0'
+                        }`}
+                    >
                         {faq.answer}
                     </div>
                 </div>
             ))}
-
-            <p>¿Tienes una pregunta diferente? Puedes consultar <a href='#'>aquí</a></p>
+            
+            <p className="text-center mt-5">
+                ¿Tienes una pregunta diferente? Puedes consultar{' '}
+                <a href='#' className="text-green-500 hover:text-green-600 transition-colors">
+                    aquí
+                </a>
+            </p>
         </div>
     );
 };

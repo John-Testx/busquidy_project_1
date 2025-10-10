@@ -24,7 +24,6 @@ import ViewCV from "./pages/Freelancer/ViewCV";
 import LoadingScreen from "./components/LoadingScreen"; 
 import BusquidyPage from "./pages/General/BusquidyPage";
 import SobreNosotrosPage from "./pages/General/SobreNostrosPage";
-import "./App.css";
 
 import User from "./pages/User/user";
 import ViewMoreDetailsFreelancer from "./pages/Freelancer/ViewMoreDetailsFreelancer";
@@ -96,10 +95,9 @@ function App() {
 
   return (
     <Router>
-      <div id="root">
-
+      <div className="flex flex-col min-h-screen w-full">
         {/* Contenido principal */}
-        <div className="main-content">
+        <main className="flex-1">
           <Routes>
             <Route path= "/" element={<Home />} />
             <Route path= "/user" element={<User/>} />
@@ -126,7 +124,7 @@ function App() {
             <Route path= "/viewfreelancer/:id" element={<ViewFreelancer />} />
             <Route path= "/viewcv" element={<ViewCV />} />
           </Routes>
-        </div>
+        </main>
       </div>
     </Router>
   );

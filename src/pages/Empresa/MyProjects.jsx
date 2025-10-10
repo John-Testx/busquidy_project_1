@@ -8,7 +8,6 @@ import Navbar from "../../components/Home/Navbar";
 import ViewProjects from "../../components/Empresa/Projects/ViewProjects";
 import Footer from "../../components/Home/Footer";
 import LoadingScreen from "../../components/LoadingScreen"; 
-import "./MyProjects.css";
 
 function MyProjects() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -20,8 +19,7 @@ function MyProjects() {
     const navigate = useNavigate();
     const location = useLocation();
 
-     // Verificar autenticación
-     useEffect(() => {
+    useEffect(() => {
         const checkAuth = () => {
             const token = localStorage.getItem('token');    
             setIsAuthenticated(!!token);
@@ -33,7 +31,6 @@ function MyProjects() {
                     setIdUsuario(decoded.id_usuario);
                 } catch (error) {
                     console.error("Error decodificando el token:", error);
-                    localStorage.removeItem('token');
                     setIsAuthenticated(false);
                 }
             }
@@ -47,175 +44,133 @@ function MyProjects() {
     }, []);
 
     useEffect(() => {
-    const handlePaymentResponse = async () => {
-        const searchParams = new URLSearchParams(location.search);
-        const token_ws = searchParams.get("token_ws");
-        const TBK_TOKEN = searchParams.get("TBK_TOKEN");
+        const handlePaymentResponse = async () => {
+            const searchParams = new URLSearchParams(location.search);
+            const token_ws = searchParams.get("token_ws");
+            const TBK_TOKEN = searchParams.get("TBK_TOKEN");
 
-        if (!token_ws && !TBK_TOKEN) return; // No hay pago pendiente
+            if (!token_ws && !TBK_TOKEN) return;
 
-        setLoading(true);
+            setLoading(true);
 
-        try {
-            if (TBK_TOKEN) {
-                // Pago cancelado
-                setPaymentStatus({
-                    success: false,
-                    message: "El pago fue cancelado.",
-                    type: "CANCELLED",
-                });
-            } else {
-                // Confirmar pago en backend
-                const response = await axios.post(
-                    `${import.meta.env.VITE_API_URL}/payments/commit_transaction`,
-                    { token: token_ws }
-                );
-
-                const data = response.data;
-
-                if (data.status === "APPROVED") {
-                    // Pago exitoso
-                    const details =
-                        data.type === "SUBSCRIPTION"
-                            ? {
-                                  plan: data.plan,
-                                  subscriptionStart: data.subscriptionStart,
-                                  subscriptionEnd: data.subscriptionEnd,
-                              }
-                            : data.type === "PROJECT_PUBLICATION"
-                            ? { projectId: data.projectId }
-                            : {};
-
-                    setPaymentStatus({
-                        success: true,
-                        message: data.message || "Pago procesado exitosamente.",
-                        type: data.type,
-                        details: {
-                            amount: data.amount,
-                            buyOrder: data.buyOrder,
-                            ...details,
-                        },
-                    });
-                } else if (data.status === "REJECTED") {
-                    // Pago rechazado
+            try {
+                if (TBK_TOKEN) {
                     setPaymentStatus({
                         success: false,
-                        message: data.message || "Pago rechazado.",
-                        type: data.type,
-                        reason: data.reason,
-                        details: {
-                            amount: data.amount,
-                            buyOrder: data.buyOrder,
-                        },
+                        message: "El pago fue cancelado.",
+                        type: "CANCELLED",
                     });
                 } else {
-                    // Error inesperado
-                    setPaymentStatus({
-                        success: false,
-                        message: data.error || "Error inesperado al procesar el pago.",
-                        type: "ERROR",
-                        code: data.code,
-                        details: data.details,
-                    });
+                    const response = await axios.post(
+                        `${import.meta.env.VITE_API_URL}/payments/commit_transaction`,
+                        { token: token_ws }
+                    );
+
+                    const data = response.data;
+
+                    if (data.status === "APPROVED") {
+                        const details =
+                            data.type === "SUBSCRIPTION"
+                                ? {
+                                      plan: data.plan,
+                                      subscriptionStart: data.subscriptionStart,
+                                      subscriptionEnd: data.subscriptionEnd,
+                                  }
+                                : data.type === "PROJECT_PUBLICATION"
+                                ? { projectId: data.projectId }
+                                : {};
+
+                        setPaymentStatus({
+                            success: true,
+                            message: data.message || "Pago procesado exitosamente.",
+                            type: data.type,
+                            details: {
+                                amount: data.amount,
+                                buyOrder: data.buyOrder,
+                                ...details,
+                            },
+                        });
+                    } else if (data.status === "REJECTED") {
+                        setPaymentStatus({
+                            success: false,
+                            message: data.message || "Pago rechazado.",
+                            type: data.type,
+                            reason: data.reason,
+                            details: {
+                                amount: data.amount,
+                                buyOrder: data.buyOrder,
+                            },
+                        });
+                    } else {
+                        setPaymentStatus({
+                            success: false,
+                            message: data.error || "Error inesperado al procesar el pago.",
+                            type: "ERROR",
+                            code: data.code,
+                            details: data.details,
+                        });
+                    }
                 }
+            } catch (error) {
+                console.error("Error procesando el pago:", error);
+                setPaymentStatus({
+                    success: false,
+                    message:
+                        error.response?.data?.error ||
+                        "Error de red al procesar el pago. Intenta de nuevo.",
+                    type: "NETWORK_ERROR",
+                    code: error.response?.data?.code || "UNKNOWN_ERROR",
+                    details: error.response?.data || error.message,
+                });
+            } finally {
+                const newURL = `${window.location.origin}${window.location.pathname}`;
+                window.history.replaceState({}, document.title, newURL);
+                setLoading(false);
+                setTimeout(() => setPaymentStatus(null), 5000);
             }
-        } catch (error) {
-            console.error("Error procesando el pago:", error);
-            setPaymentStatus({
-                success: false,
-                message:
-                    error.response?.data?.error ||
-                    "Error de red al procesar el pago. Intenta de nuevo.",
-                type: "NETWORK_ERROR",
-                code: error.response?.data?.code || "UNKNOWN_ERROR",
-                details: error.response?.data || error.message,
-            });
-        } finally {
-            // Limpiar parámetros de URL
-            const newURL = `${window.location.origin}${window.location.pathname}`;
-            window.history.replaceState({}, document.title, newURL);
+        };
 
-            setLoading(false);
+        handlePaymentResponse();
+    }, [location.search]);
 
-            // Limpiar mensaje después de 5 segundos
-            setTimeout(() => setPaymentStatus(null), 5000);
-        }
-    };
-
-    handlePaymentResponse();
-}, [location.search]);
-    
-    // Cargar proyectos cuando cambie el id_usuario
-    useEffect(() => {
-        if (id_usuario) {
-        }
-    }, [id_usuario]);
-
-    // Renderizar navbar según tipo de usuario
     const renderNavbar = () => {
         return <Navbar />;
     };
 
     return (
-        <div style={{ marginTop: "80px" }}>
+        <div className="mt-20">
             {loading && <LoadingScreen />}
 
             {renderNavbar()}
 
-            <div className="background-color-myproject">
+            <div className="bg-gradient-to-br from-teal-50 to-cyan-100 min-h-screen pt-6">
                 {userType && userType !== "empresa" ? (
-                    <div 
-                        style={{
-                            padding: '3rem',
-                            margin: '5.4rem auto',
-                            maxWidth: '600px',
-                            marginTop:'100px',
-                            textAlign: 'center',
-                            backgroundColor: '#f8d7da',
-                            border: '1px solid #f5c6cb',
-                            borderRadius: '5px',
-                            color: '#721c24'
-                        }}
-                    >
-                        <h2 style={{ marginBottom: '1rem' }}>Acceso Restringido</h2>
-                        <p>Para utilizar esta función necesitas ser un usuario de tipo empresa.</p>
-                        <p>Si eres un freelancer o usuario regular, por favor regístrate como empresa para acceder a estas funcionalidades.</p>
+                    <div className="max-w-2xl mx-auto mt-24 p-8 text-center bg-red-50 border border-red-200 rounded-lg">
+                        <h2 className="text-2xl font-bold text-red-800 mb-4">Acceso Restringido</h2>
+                        <p className="text-red-700 mb-2">Para utilizar esta función necesitas ser un usuario de tipo empresa.</p>
+                        <p className="text-red-700">Si eres un freelancer o usuario regular, por favor regístrate como empresa para acceder a estas funcionalidades.</p>
                     </div>
                 ) : (
-                    <>
-                        <ViewProjects 
-                            userType={userType} 
-                            id_usuario={id_usuario}
-                        />
-                    </>
+                    <ViewProjects 
+                        userType={userType} 
+                        id_usuario={id_usuario}
+                    />
                 )}
 
                 {paymentStatus && !loading && (
                     <div
-                        className={`payment-status ${paymentStatus.success ? "success" : "error"}`}
-                        style={{
-                            position: 'fixed',
-                            top: '100px',
-                            left: '50%',
-                            transform: 'translateX(-50%)',
-                            padding: '1rem',
-                            margin: '1rem 0',
-                            borderRadius: '5px',
-                            backgroundColor: paymentStatus.success ? "#d4edda" : "#f8d7da",
-                            color: paymentStatus.success ? "#155724" : "#721c24",
-                            zIndex: 1000,
-                            boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
-                            width: '80%',
-                            maxWidth: '500px',
-                            textAlign: 'center'
-                        }}
+                        className={`fixed top-24 left-1/2 transform -translate-x-1/2 p-4 rounded-lg shadow-lg z-50 w-11/12 max-w-lg text-center transition-all duration-300 animate-[slideIn_0.5s_ease-out] ${
+                            paymentStatus.success 
+                                ? 'bg-green-50 text-green-800 border border-green-200' 
+                                : 'bg-red-50 text-red-800 border border-red-200'
+                        }`}
                     >
                         {paymentStatus.message}
                     </div>
                 )}
 
                 {logoutStatus && (
-                    <div className="logout-status-msg">
+                    <div className="fixed left-1/2 transform -translate-x-1/2 bg-gray-50 p-4 rounded-lg shadow-md z-50 animate-[slideIn_0.5s_ease-out]">
                         {logoutStatus}
                     </div>
                 )}

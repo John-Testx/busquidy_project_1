@@ -1,21 +1,17 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import '../../../styles/Empresa/ModalPublicarProyecto.css';
+// import '../../../styles/Empresa/ModalPublicarProyecto.css';
+
+// Al inicio del componente
+// console.log('Variables de entorno:', {
+//     REACT_APP_API_URL: process.env.REACT_APP_API_URL,
+//     REACT_APP_ENV: process.env.REACT_APP_ENV,
+//     NODE_ENV: process.env.NODE_ENV
+// });
 
 const ModalPublicarProyecto = ({ id_usuario, id_proyecto, closeModal, projectTitle = 'Publicación de Proyecto' }) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const [debug, setDebug] = useState(null);
-    
-    console.log('id_proyecto:', id_proyecto);
-    console.log('id_usuario:', id_usuario);
-
-    // Al inicio del componente
-    // console.log('Variables de entorno:', {
-    //     REACT_APP_API_URL: process.env.REACT_APP_API_URL,
-    //     REACT_APP_ENV: process.env.REACT_APP_ENV,
-    //     NODE_ENV: process.env.NODE_ENV
-    // });
 
     const handlePayment = async () => {
         try {
@@ -23,13 +19,13 @@ const ModalPublicarProyecto = ({ id_usuario, id_proyecto, closeModal, projectTit
             setError(null);
     
             const paymentData = {
-                amount: 1000,  // o el monto real
+                amount: 1000,
                 buyOrder: `BO-${id_proyecto}`,
                 sessionId: `Session-${id_usuario}`,
-                plan: "mensual",            // ejemplo: mensual o anual
-                tipoUsuario: "empresa",     // depende del tipo de usuario
-                metodoPago: "Webpay",       // o "Tarjeta", etc.
-                returnUrl: `${window.location.origin}/myprojects`  // Asegúrate de que esta URL sea correcta
+                plan: "mensual",
+                tipoUsuario: "empresa",
+                metodoPago: "Webpay",
+                returnUrl: `${window.location.origin}/myprojects`
             };
     
             const API_URL = import.meta.env.VITE_API_URL;
@@ -46,7 +42,6 @@ const ModalPublicarProyecto = ({ id_usuario, id_proyecto, closeModal, projectTit
                 throw new Error('No se recibió URL o token de Webpay');
             }
     
-            // Redirigir a Webpay con la URL de retorno correcta
             window.location.href = `${url}?token_ws=${token}`;
         } catch (error) {
             console.error('Error al iniciar la transacción:', error);
@@ -57,54 +52,41 @@ const ModalPublicarProyecto = ({ id_usuario, id_proyecto, closeModal, projectTit
     };
 
     return (
-        <div className="modal-overlay-pay">
-            <div className="modal-container-pay">
-                <div className="modal-header-pay">
-                    <h2 className="modal-title-pay">Publicar Proyecto</h2>
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+            <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden animate-[fadeIn_0.3s_ease-out]">
+                <div className="bg-gradient-to-r from-[#07767c] to-[#0a9199] px-6 py-5 flex justify-between items-center">
+                    <h2 className="text-2xl font-bold text-white">Publicar Proyecto</h2>
                     <button 
                         onClick={closeModal} 
-                        className="modal-close-btn-pay"
+                        className="text-white hover:bg-white/20 rounded-full w-8 h-8 flex items-center justify-center transition-colors"
                         aria-label="Cerrar modal"
                     >
                         ✕
                     </button>
                 </div>
 
-                <div className="modal-body-pay">
+                <div className="p-6 space-y-4">
                     <div>
-                        <p style={{fontSize: '1.125rem', fontWeight: 600, marginBottom: '0.5rem'}}>
-                            Costo de publicación: $1000
+                        <p className="text-xl font-semibold text-gray-800 mb-2">
+                            Costo de publicación: $1.000
                         </p>
-                        <p style={{color: '#6b7280', fontSize: '0.875rem'}}>
+                        <p className="text-gray-600 text-sm leading-relaxed">
                             Al publicar tu proyecto, será visible para todos los usuarios en la plataforma 
-                            y los Freelancers registrados podran postular.
+                            y los Freelancers registrados podrán postular.
                         </p>
                     </div>
 
                     {error && (
-                        <div className="error-message" style={{color: 'red', marginTop: '1rem'}}>
+                        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
                             {error}
-                        </div>
-                    )}
-
-                    {debug && (
-                        <div className="debug-info" style={{
-                            marginTop: '1rem',
-                            padding: '1rem',
-                            background: '#f3f4f6',
-                            borderRadius: '0.375rem'
-                        }}>
-                            <pre style={{fontSize: '0.75rem'}}>
-                                {JSON.stringify(debug, null, 2)}
-                            </pre>
                         </div>
                     )}
                 </div>
 
-                <div className="modal-footer-pay">
+                <div className="bg-gray-50 px-6 py-4 flex justify-end gap-3">
                     <button
                         onClick={closeModal}
-                        className="btn-secondary-pay"
+                        className="px-5 py-2.5 text-gray-700 bg-white hover:bg-gray-100 border border-gray-300 rounded-lg transition-colors font-medium"
                         disabled={loading}
                     >
                         Cancelar
@@ -113,19 +95,17 @@ const ModalPublicarProyecto = ({ id_usuario, id_proyecto, closeModal, projectTit
                     <button
                         onClick={handlePayment}
                         disabled={loading}
-                        className="btn-primary-pay"
+                        className="px-6 py-2.5 bg-[#07767c] hover:bg-[#055a5f] text-white rounded-lg transition-colors font-medium flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         {loading ? (
                             <>
                                 <svg 
-                                    className="loading-spinner" 
-                                    width="24" 
-                                    height="24" 
+                                    className="animate-spin h-5 w-5" 
                                     viewBox="0 0 24 24" 
                                     fill="none" 
                                     stroke="currentColor"
                                 >
-                                    <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
                                 </svg>
                                 Procesando...
                             </>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import "../../styles/Home/Navbar.css";
+// import "../../styles/Home/Navbar.css";
 import Modal from "./Modal";
 import RegisterModal from "./Modals/RegisterModal";
 import SecondaryRegisterModal from "./Modals/SecondaryRegisterModal";
@@ -11,6 +11,7 @@ import useAuth from "../../hooks/useAuth";
 import { navbarOptions, profileLinks } from "../../common/navbarOptions";
 import ProfileCircle from "../ProfileCircle";
 import { getUserInitials } from "../../common/utils";
+
 
 function Navbar() {
     const location = useLocation();
@@ -33,13 +34,10 @@ function Navbar() {
         tipoUsuario: "",
     });
 
-    // Inside Navbar()
     const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
     const profileMenuRef = useRef(null);
 
     const toggleProfileMenu = () => setIsProfileMenuOpen(prev => !prev);
-
-    
 
     const updateRegisterData = (key, value) => {
         setRegisterData(prev => ({ ...prev, [key]: value }));
@@ -54,11 +52,10 @@ function Navbar() {
                 setShowSecondaryRegisterModal(false);
                 setShowRegisterModal(false);
                 console.log("Registro exitoso, redirigiendo...");
-                navigate("/"); // or show success toast
+                navigate("/");
             }
         );
     };
-
 
     // Navbar state
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -84,23 +81,20 @@ function Navbar() {
         });
     };
 
-  const toggleHelpDropdown = () => {
-    setIsHelpDropdownOpen(!isHelpDropdownOpen);
-    setIsIconRotated(!isIconRotated);
-  };
+    const toggleHelpDropdown = () => {
+        setIsHelpDropdownOpen(!isHelpDropdownOpen);
+        setIsIconRotated(!isIconRotated);
+    };
 
-  const isActive = (path) => (location.pathname === path ? "active" : "");
+    const isActive = (path) => (location.pathname === path ? "text-teal-700 after:w-full" : "");
 
-  const handleLogout = () => {
-    logout();
-    navigate("/");
-  };
+    const handleLogout = () => {
+        logout();
+        navigate("/");
+    };
 
-  const navOptions = navbarOptions;
-
-  const filteredProfileLinks =  profileLinks.filter(link => link.roles.includes(tipo_usuario));
-    console.log("Tipo usuario:", tipo_usuario);
-    console.log("Filtered profile links:", filteredProfileLinks);
+    const navOptions = navbarOptions;
+    const filteredProfileLinks = profileLinks.filter(link => link.roles.includes(tipo_usuario));
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -114,102 +108,114 @@ function Navbar() {
         
     }, []);
 
-    // Get initials dynamically
     const userInitials = getUserInitials();
 
-  return (
-    <header className="navbar">
-      <div className="navbar-general-content">
+    return (
+        <header className="flex justify-between items-center px-5 py-2.5 bg-white max-w-full mx-auto h-[60px] fixed top-0 w-full z-[1000] shadow-md">
+            <div className="flex justify-start items-center px-5 py-2.5 bg-white max-w-[1500px] mx-auto h-[60px]">
 
-        {/* Logo + Menu Toggle */}
-        <div className="navbar-logo">
-          <Link to="/">
-            <img src="/images/Busquidy.png" alt="logo" />
-          </Link>
-          <div className="navbar-toggle">
-            <span className="menu-icon" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-              &#9776;
-            </span>
-          </div>
-        </div>
+                {/* Logo + Menu Toggle */}
+                <div className="flex items-center justify-center mr-20">
+                    <Link to="/" className="inline-block w-auto h-auto">
+                        <img src="/images/Busquidy.png" alt="logo" className="block w-[130px] h-auto cursor-pointer" />
+                    </Link>
+                    <div className="hidden max-[768px]:block">
+                        <span className="text-3xl cursor-pointer ml-auto" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+                            &#9776;
+                        </span>
+                    </div>
+                </div>
 
-        {/* Navbar links */}
-        <nav className={`navbar-links ${isMenuOpen ? "active" : ""}`}>
+                {/* Navbar links */}
+                <nav className={`flex items-center gap-5 mr-auto max-[768px]:${isMenuOpen ? 'flex' : 'hidden'} max-[768px]:flex-col max-[768px]:mt-5 max-[768px]:absolute max-[768px]:top-[60px] max-[768px]:left-0 max-[768px]:w-full max-[768px]:bg-white max-[768px]:z-[100] max-[768px]:shadow-md`}>
 
-          {navOptions
-            .filter(opt => opt.roles.includes(tipo_usuario) || opt.roles.includes(null))
-            .map((opt) => (
-              <Link
-                key={opt.link}
-                className={isActive(opt.link)}
-                to={opt.link}
-              >
-                {opt.label}
-              </Link>
-            ))}
+                    {navOptions
+                        .filter(opt => opt.roles.includes(tipo_usuario) || opt.roles.includes(null))
+                        .map((opt) => (
+                            <Link
+                                key={opt.link}
+                                className={`mx-4 no-underline text-black text-base font-medium relative pb-1.5 transition-colors duration-300 after:content-[''] after:absolute after:left-0 after:bottom-0 after:w-0 after:h-0.5 after:bg-teal-700 after:transition-[width] after:duration-[0.9s] after:ease-[cubic-bezier(0.25,1,0.5,1)] hover:after:w-full ${isActive(opt.link)}`}
+                                to={opt.link}
+                            >
+                                {opt.label}
+                            </Link>
+                        ))}
 
-          {/* Help Dropdown */}
-          <div className="help-dropdown">
-            <button className="help-dropdown-btn" onClick={toggleHelpDropdown}>
-              ¡Ayuda!{" "}
-              <i
-                className={`bi bi-chevron-down ${isIconRotated ? "rotated" : ""}`}
-              ></i>
-            </button>
+                    {/* Help Dropdown */}
+                    <div className="relative inline-block">
+                        <button 
+                            className="bg-transparent border-none mb-1 cursor-pointer text-[15px] transition-colors duration-200 p-2.5 hover:text-teal-700"
+                            onClick={toggleHelpDropdown}
+                        >
+                            ¡Ayuda!{" "}
+                            <i className={`bi bi-chevron-down ml-2 text-base transition-transform duration-200 ${isIconRotated ? "rotate-180" : ""}`}></i>
+                        </button>
 
-            {isHelpDropdownOpen && (
-              <div className="help-dropdown-content">
-                <Link className={isActive("/soporte-cliente")} to="/soporte-cliente">
-                  Soporte al Cliente
-                </Link>
-                <Link className={isActive("/soporte-ia")} to="/soporte-ia">
-                  Soporte IA
-                </Link>
-                <Link className={isActive("/busquidy-guia")} to="/busquidy-guia">
-                  Busquidy Guía
-                </Link>
-              </div>
-            )}
-          </div>
+                        {isHelpDropdownOpen && (
+                            <div className="block absolute bg-[#f9f9f9] min-w-[200px] shadow-[0_8px_16px_rgba(0,0,0,0.2)] z-[1] p-2.5 rounded-[5px] left-1/2 -translate-x-1/2">
+                                <Link 
+                                    className={`text-teal-900 no-underline block py-2.5 px-0 border-b border-[#ddd] last:border-b-0 ${isActive("/soporte-cliente")}`}
+                                    to="/soporte-cliente"
+                                >
+                                    Soporte al Cliente
+                                </Link>
+                                <Link 
+                                    className={`text-teal-900 no-underline block py-2.5 px-0 border-b border-[#ddd] last:border-b-0 ${isActive("/soporte-ia")}`}
+                                    to="/soporte-ia"
+                                >
+                                    Soporte IA
+                                </Link>
+                                <Link 
+                                    className={`text-teal-900 no-underline block py-2.5 px-0 ${isActive("/busquidy-guia")}`}
+                                    to="/busquidy-guia"
+                                >
+                                    Busquidy Guía
+                                </Link>
+                            </div>
+                        )}
+                    </div>
 
-          {/* Auth buttons or profile */}
-                    <div className="navbar-auth">
+                    {/* Auth buttons or profile */}
+                    <div className="flex items-center ml-[150px] max-[768px]:flex-col max-[768px]:ml-0">
                         {!isAuthenticated ? (
                             <>
                                 <Link
-                                    className="login-btn"
+                                    className="ml-10 py-3 px-5 border-2 border-teal-700/55 bg-white text-black rounded-lg text-[15px] font-bold cursor-pointer transition-all duration-300 hover:bg-teal-50 max-[768px]:ml-0 max-[768px]:my-2.5 max-[768px]:px-5 max-[768px]:py-2.5 max-[768px]:text-center"
                                     onClick={() => setShowLoginModal(true)}
                                 >
                                     Iniciar Sesión
                                 </Link>
                                 <Link
-                                    className="register-btn"
+                                    className="ml-10 py-3 px-5 border-2 bg-teal-700/55 text-white rounded-lg text-[15px] font-bold cursor-pointer transition-all duration-300 hover:bg-teal-800/70 hover:border-teal-800/70 max-[768px]:ml-0 max-[768px]:my-2.5 max-[768px]:px-5 max-[768px]:py-2.5 max-[768px]:text-center"
                                     onClick={() => setShowRegisterModal(true)}
                                 >
                                     Registrarse
                                 </Link>
                             </>
                         ) : (
-                            <>
-                                {console.log("Rendering profile dropdown", filteredProfileLinks)}
-                                <div className="navbar-profile" onClick={toggleProfileMenu}>
+                            <div className="relative" onClick={toggleProfileMenu}>
                                 <ProfileCircle userInitials={userInitials} />
-                                <div className={`profile-menu-dropdown ${isProfileMenuOpen ? "active" : ""}`} ref={profileMenuRef}>
-                                    <ul>
-                                    {filteredProfileLinks.map(link => (
-                                        <li key={link.link}>
-                                        <Link to={link.link}>
-                                            <i className={link.icon}></i> {link.label}
-                                        </Link>
+                                <div 
+                                    className={`${isProfileMenuOpen ? 'block' : 'hidden'} absolute top-[60px] right-5 bg-white border border-[#ddd] rounded-lg shadow-[0_4px_8px_rgba(0,0,0,0.1)] w-[200px] z-[1000]`}
+                                    ref={profileMenuRef}
+                                >
+                                    <ul className="list-none p-0 m-0">
+                                        {filteredProfileLinks.map(link => (
+                                            <li key={link.link} className="py-3 px-4 hover:bg-gray-100">
+                                                <Link to={link.link} className="no-underline text-gray-800 block">
+                                                    <i className={link.icon}></i> {link.label}
+                                                </Link>
+                                            </li>
+                                        ))}
+                                        <li 
+                                            onClick={handleLogout} 
+                                            className="py-3 px-4 cursor-pointer hover:bg-gray-100"
+                                        >
+                                            <i className="bi bi-box-arrow-right"></i> Cerrar sesión
                                         </li>
-                                    ))}
-                                    <li onClick={handleLogout} style={{ cursor: "pointer" }}>
-                                        <i className="bi bi-box-arrow-right"></i> Cerrar sesión
-                                    </li>
                                     </ul>
                                 </div>
-                                </div>
-                            </>
+                            </div>
                         )}
                     </div>
                 </nav>
@@ -217,7 +223,6 @@ function Navbar() {
 
             {/* ----------------------------- MODALS ---------------------------------- */}
 
-            {/* Primary Login Modal */}
             {showLoginModal && (
                 <LoginModal
                     onClose={() => setShowLoginModal(false)}
@@ -232,7 +237,6 @@ function Navbar() {
                 />
             )}
 
-            {/* Secondary Login Modal (email/password) */}
             {showLoginSecondaryModal && (
                 <LoginSecondaryModal
                     onClose={() => setShowLoginSecondaryModal(false)}
@@ -252,7 +256,6 @@ function Navbar() {
                 />
             )}
 
-            {/* Register Modals */}
             {showRegisterModal && (
                 <RegisterModal
                     onClose={() => setShowRegisterModal(false)}
@@ -277,9 +280,8 @@ function Navbar() {
                     loading={loading}
                 />
             )}
-    </header>
-  );
+        </header>
+    );
 }
-
 
 export default Navbar;
