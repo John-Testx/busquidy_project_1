@@ -79,11 +79,12 @@ class PaymentService {
 
       // Almacenar los datos originales para recuperarlos en commitTransaction
       this.lastTransactionData = {
-        plan: transactionData.plan,
+        planIdToUse: transactionData.planIdToUse, // numeric plan ID
         tipoUsuario: transactionData.tipoUsuario,
         metodoPago: transactionData.metodoPago,
+        durationName: transactionData.plan // 'mensual'/'anual' only for internal mapping
       };
-
+      
       // Combina la respuesta del SDK con los datos originales
       return {
         ...response,

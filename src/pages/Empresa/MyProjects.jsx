@@ -10,11 +10,7 @@ import Footer from "../../components/Home/Footer";
 import LoadingScreen from "../../components/LoadingScreen"; 
 
 function MyProjects() {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [loading, setLoading] = useState(true);
     const [logoutStatus, setLogoutStatus] = useState("");
-    const [userType, setUserType] = useState(null);
-    const [id_usuario, setIdUsuario] = useState(null);
     const [paymentStatus, setPaymentStatus] = useState(null);
     const navigate = useNavigate();
     const location = useLocation();
@@ -157,7 +153,7 @@ function MyProjects() {
                     />
                 )}
 
-                {paymentStatus && !loading && (
+                {paymentStatus && (
                     <div
                         className={`fixed top-24 left-1/2 transform -translate-x-1/2 p-4 rounded-lg shadow-lg z-50 w-11/12 max-w-lg text-center transition-all duration-300 animate-[slideIn_0.5s_ease-out] ${
                             paymentStatus.success 

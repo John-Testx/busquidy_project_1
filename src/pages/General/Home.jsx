@@ -44,7 +44,7 @@ function Home() {
                 {/* Renderiza el navbar correcto */}
                 {renderNavbar()}
 
-                {tipo_usuario === null ? (
+                {/* {tipo_usuario === null ? (
                     <>
                         {console.log("Rendering home for unauthenticated user")}
                         <CardSection userType={tipo_usuario} />
@@ -68,7 +68,13 @@ function Home() {
                         <CardSection userType={tipo_usuario} />
                         <InfoSectionHome tipo_usuario={tipo_usuario} id_usuario={id_usuario} />
                     </>
-                )}
+                )} */}
+
+                    <>
+                        {console.log("Rendering home for unknown user type")}
+                        <CardSection userType={tipo_usuario} />
+                        <InfoSectionHome tipo_usuario={tipo_usuario} id_usuario={id_usuario} />
+                    </>
                     <Footer />
 
                 {/* Mensaje de estado de cierre de sesión */}

@@ -9,8 +9,9 @@ const InfoSectionHome = ({tipo_usuario, id_usuario}) => {
     const [showModalPagarSuscripcion, setShowModalPagarSuscripcion] = useState(false);
     const [showMessageModal, setShowMessageModal] = useState(false);
     const [message, setMessage] = useState('');
-
+    
     const openModalPagarSuscripcion = async () => {
+        console.log('Tipo de usuario:', tipo_usuario);
         if (tipo_usuario === 'freelancer') {
             try {
                 const response = await axios.get(`http://localhost:3001/api/freelancer/get/${id_usuario}`);
@@ -26,7 +27,7 @@ const InfoSectionHome = ({tipo_usuario, id_usuario}) => {
             }
         } else if (tipo_usuario === 'empresa') {
             try {
-                const response = await axios.get(`http://localhost:3001/api/empresa/${id_usuario}`);
+                const response = await axios.get(`http://localhost:3001/api/empresa/get/${id_usuario}`);
                 console.log("Se verificó el perfil de la empresa");
                 if (response.data.isPerfilIncompleto) {
                     setMessage('Completa tu perfil para ser Busquidy +');
