@@ -57,6 +57,7 @@ router.get("/getProjects", async (req, res) => {
 // Crear proyecto
 router.post("/create-project", verifyToken, async (req, res) => {
   const {projectData, id_usuario} = req.body;
+  console.log("Datos recibidos para crear proyecto:", projectData, "ID usuario:", id_usuario);  
 
   if (!id_usuario) {
     console.error("Error: id_usuario es undefined o null");
@@ -73,6 +74,7 @@ router.post("/create-project", verifyToken, async (req, res) => {
     if (userCheckResults.length === 0) {
       return res.status(404).json({error: "Usuario no encontrado"});
     }
+
 
     const tipo_usuario = userCheckResults[0].tipo_usuario;
     if (tipo_usuario !== "empresa") {
@@ -91,6 +93,7 @@ router.post("/create-project", verifyToken, async (req, res) => {
 
     // Verificar duplicados
     const projectCheckResults = await checkDuplicateProject(id_empresa, projectData);
+    console.log("Resultado de duplicados:", projectCheckResults);
     if (projectCheckResults.length > 0) {
       await connection.rollback();
       return res.status(409).json({error: "Proyecto duplicado encontrado"});
@@ -128,7 +131,7 @@ router.post("/create-project", verifyToken, async (req, res) => {
 
     await connection.commit(); // Confirma la transacción
     console.log("Proyecto y publicación creados con éxito");
-    res.status(201).json({
+    res.status(200).json({
       message: "Proyecto y publicación creados con éxito",
       projectId: id_proyecto,
     });

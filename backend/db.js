@@ -87,27 +87,11 @@ async function getRepresentanteByUserId(id_empresa) {
   return rows;
 }
 
-// Función para verificar que no se dublique el proyecto
 async function checkDuplicateProject(id_empresa, projectData) {
   const [rows] = await pool.query(
-      `SELECT * FROM proyecto 
-     WHERE id_empresa = ? AND titulo = ? AND descripcion = ? AND categoria = ? 
-     AND habilidades_requeridas = ? AND presupuesto = ? AND duracion_estimada = ? 
-     AND fecha_limite = ? AND ubicacion = ? AND tipo_contratacion = ? 
-     AND metodologia_trabajo = ?`,
-      [
-        id_empresa,
-        projectData.titulo,
-        projectData.descripcion,
-        projectData.categoria,
-        projectData.habilidades_requeridas,
-        projectData.presupuesto,
-        projectData.duracion_estimada,
-        projectData.fecha_limite,
-        projectData.ubicacion,
-        projectData.tipo_contratacion,
-        projectData.metodologia_trabajo,
-      ],
+    `SELECT * FROM proyecto 
+     WHERE id_empresa = ? AND titulo = ?`,
+    [id_empresa, projectData.titulo]
   );
   return rows;
 }
