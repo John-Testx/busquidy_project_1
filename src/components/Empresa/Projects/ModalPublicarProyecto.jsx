@@ -6,16 +6,16 @@ const ModalPublicarProyecto = ({ id_usuario, id_proyecto, closeModal, projectTit
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [debug, setDebug] = useState(null);
-
+    
     console.log('id_proyecto:', id_proyecto);
     console.log('id_usuario:', id_usuario);
 
     // Al inicio del componente
-    console.log('Variables de entorno:', {
-        REACT_APP_API_URL: process.env.REACT_APP_API_URL,
-        REACT_APP_ENV: process.env.REACT_APP_ENV,
-        NODE_ENV: process.env.NODE_ENV
-    });
+    // console.log('Variables de entorno:', {
+    //     REACT_APP_API_URL: process.env.REACT_APP_API_URL,
+    //     REACT_APP_ENV: process.env.REACT_APP_ENV,
+    //     NODE_ENV: process.env.NODE_ENV
+    // });
 
     const handlePayment = async () => {
         try {
@@ -23,13 +23,19 @@ const ModalPublicarProyecto = ({ id_usuario, id_proyecto, closeModal, projectTit
             setError(null);
     
             const paymentData = {
-                amount: 10000,
+                amount: 1000,  // o el monto real
                 buyOrder: `BO-${id_proyecto}`,
                 sessionId: `Session-${id_usuario}`,
+                plan: "mensual",            // ejemplo: mensual o anual
+                tipoUsuario: "empresa",     // depende del tipo de usuario
+                metodoPago: "Webpay",       // o "Tarjeta", etc.
+                returnUrl: `${window.location.origin}/myprojects`  // Asegúrate de que esta URL sea correcta
             };
     
+            const API_URL = import.meta.env.VITE_API_URL;
+
             const response = await axios.post(
-                `${process.env.REACT_APP_API_URL}/payments/create_transaction_suscription`,
+                `${API_URL}/payments/create_transaction_suscription`,
                 paymentData,
                 { headers: { 'Content-Type': 'application/json' } }
             );
@@ -43,6 +49,7 @@ const ModalPublicarProyecto = ({ id_usuario, id_proyecto, closeModal, projectTit
             // Redirigir a Webpay con la URL de retorno correcta
             window.location.href = `${url}?token_ws=${token}`;
         } catch (error) {
+            console.error('Error al iniciar la transacción:', error);
             setError(`Error: ${error.response?.data?.error || error.message}`);
         } finally {
             setLoading(false);

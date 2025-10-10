@@ -46,163 +46,110 @@ function MyProjects() {
         return () => window.removeEventListener('storage', checkAuth);
     }, []);
 
-    // Manejar respuesta de pago
     useEffect(() => {
-         const handlePaymentResponse = async () => {
+    const handlePaymentResponse = async () => {
         const searchParams = new URLSearchParams(location.search);
         const token_ws = searchParams.get("token_ws");
         const TBK_TOKEN = searchParams.get("TBK_TOKEN");
 
-        if (!token_ws && !TBK_TOKEN) return;
+        if (!token_ws && !TBK_TOKEN) return; // No hay pago pendiente
+
+        setLoading(true);
 
         try {
-            setLoading(true);
-
             if (TBK_TOKEN) {
+                // Pago cancelado
                 setPaymentStatus({
                     success: false,
                     message: "El pago fue cancelado.",
-                    type: 'CANCELLED'
+                    type: "CANCELLED",
                 });
             } else {
-                try {
-                    const response = await axios.post(
-                        `${process.env.REACT_APP_API_URL}/payments/commit_transaction`,
-                        { token: token_ws }
-                    );
+                // Confirmar pago en backend
+                const response = await axios.post(
+                    `${import.meta.env.VITE_API_URL}/payments/commit_transaction`,
+                    { token: token_ws }
+                );
 
-                    // Manejar respuestas de diferentes tipos de transacciones
-                    switch (response.data.status) {
-                        case "APPROVED":
-                            setPaymentStatus({
-                                success: true,
-                                message: response.data.message || "El pago se procesó exitosamente.",
-                                type: response.data.type,
-                                details: {
-                                    amount: response.data.amount,
-                                    buyOrder: response.data.buyOrder,
-                                    ...(response.data.type === 'SUBSCRIPTION' && {
-                                        plan: response.data.plan,
-                                        subscriptionStart: response.data.subscriptionStart,
-                                        subscriptionEnd: response.data.subscriptionEnd
-                                    }),
-                                    ...(response.data.type === 'PROJECT_PUBLICATION' && {
-                                        projectId: response.data.projectId
-                                    })
-                                }
-                            });
-                            break;
+                const data = response.data;
 
-                        case "REJECTED":
-                            setPaymentStatus({
-                                success: false,
-                                message: response.data.message || "El pago fue rechazado.",
-                                type: response.data.type,
-                                reason: response.data.reason,
-                                details: {
-                                    amount: response.data.amount,
-                                    buyOrder: response.data.buyOrder
-                                }
-                            });
-                            break;
+                if (data.status === "APPROVED") {
+                    // Pago exitoso
+                    const details =
+                        data.type === "SUBSCRIPTION"
+                            ? {
+                                  plan: data.plan,
+                                  subscriptionStart: data.subscriptionStart,
+                                  subscriptionEnd: data.subscriptionEnd,
+                              }
+                            : data.type === "PROJECT_PUBLICATION"
+                            ? { projectId: data.projectId }
+                            : {};
 
-                        case "ERROR":
-                            setPaymentStatus({
-                                success: false,
-                                message: response.data.error || "Ocurrió un error inesperado.",
-                                type: 'ERROR',
-                                code: response.data.code,
-                                details: response.data.details
-                            });
-                            break;
-
-                        default:
-                            setPaymentStatus({
-                                success: false,
-                                message: "Respuesta inesperada del servidor.",
-                                type: 'UNKNOWN',
-                                details: response.data
-                            });
-                    }
-
-                } catch (error) {
-                    // Manejo específico para transacciones en progreso
-                    if (error.response && error.response.data.code === 'TRANSACTION_IN_PROGRESS') {
-                        setPaymentStatus({
-                            success: false,
-                            message: "La transacción ya está siendo procesada. Por favor, espera un momento o contacta a soporte.",
-                            type: 'IN_PROGRESS',
-                            code: error.response.data.code,
-                            retryAfter: 5 * 60 // 5 minutos
-                        });
-                    }else {
-                            // Manejo de otros tipos de errores
-                            console.error('Payment processing error:', error.response?.data || error);
-                            
-                            setPaymentStatus({
-                                success: false,
-                                message: error.response?.data?.error || 
-                                         "Pago rechazado, por favor intentelo de nuevo en unos minutos.",
-                                type: 'NETWORK_ERROR',
-                                code: error.response?.data?.code || 'UNKNOWN_ERROR',
-                                details: {
-                                    fullError: error.response?.data || error.message,
-                                    status: error.response?.status
-                                }
-                            });
-                        }
-                    }
+                    setPaymentStatus({
+                        success: true,
+                        message: data.message || "Pago procesado exitosamente.",
+                        type: data.type,
+                        details: {
+                            amount: data.amount,
+                            buyOrder: data.buyOrder,
+                            ...details,
+                        },
+                    });
+                } else if (data.status === "REJECTED") {
+                    // Pago rechazado
+                    setPaymentStatus({
+                        success: false,
+                        message: data.message || "Pago rechazado.",
+                        type: data.type,
+                        reason: data.reason,
+                        details: {
+                            amount: data.amount,
+                            buyOrder: data.buyOrder,
+                        },
+                    });
+                } else {
+                    // Error inesperado
+                    setPaymentStatus({
+                        success: false,
+                        message: data.error || "Error inesperado al procesar el pago.",
+                        type: "ERROR",
+                        code: data.code,
+                        details: data.details,
+                    });
                 }
-
-                // Limpiar parámetros de la URL
-                const newURL = `${window.location.origin}${window.location.pathname}`;
-                window.history.replaceState({}, document.title, newURL);
-
-            } catch (generalError) {
-                // Manejo de errores generales
-                console.error('General payment error:', generalError);
-                
-                setPaymentStatus({
-                    success: false,
-                    message: "Ocurrió un error inesperado. Por favor, intenta nuevamente o contacta a soporte.",
-                    type: 'GENERAL_ERROR',
-                    details: generalError
-                });
-            } finally {
-                setLoading(false);
-
-                // Limpiar el mensaje de estado después de 5 segundos
-                setTimeout(() => setPaymentStatus(null), 5000);
             }
-        };
+        } catch (error) {
+            console.error("Error procesando el pago:", error);
+            setPaymentStatus({
+                success: false,
+                message:
+                    error.response?.data?.error ||
+                    "Error de red al procesar el pago. Intenta de nuevo.",
+                type: "NETWORK_ERROR",
+                code: error.response?.data?.code || "UNKNOWN_ERROR",
+                details: error.response?.data || error.message,
+            });
+        } finally {
+            // Limpiar parámetros de URL
+            const newURL = `${window.location.origin}${window.location.pathname}`;
+            window.history.replaceState({}, document.title, newURL);
 
-        handlePaymentResponse();
-    }, [location.search]);
+            setLoading(false);
+
+            // Limpiar mensaje después de 5 segundos
+            setTimeout(() => setPaymentStatus(null), 5000);
+        }
+    };
+
+    handlePaymentResponse();
+}, [location.search]);
     
     // Cargar proyectos cuando cambie el id_usuario
     useEffect(() => {
         if (id_usuario) {
         }
     }, [id_usuario]);
-
-    // Manejar cierre de sesión
-    const handleLogout = () => {
-        setLoading(true);
-        setLogoutStatus("Cerrando sesión...");
-        
-        setTimeout(() => {
-            localStorage.removeItem("token");
-            localStorage.removeItem("correo");
-            setIsAuthenticated(false);
-            setUserType(null);
-            setLogoutStatus("Sesión cerrada");
-            
-            setTimeout(() => {
-                setLoading(false);
-                navigate("/");
-            }, 500);
-        }, 500);
-    };
 
     // Renderizar navbar según tipo de usuario
     const renderNavbar = () => {
