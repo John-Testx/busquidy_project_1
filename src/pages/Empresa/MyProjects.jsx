@@ -8,6 +8,8 @@ import Navbar from "../../components/Home/Navbar";
 import ViewProjects from "../../components/Empresa/Projects/ViewProjects";
 import Footer from "../../components/Home/Footer";
 import LoadingScreen from "../../components/LoadingScreen"; 
+// import "./MyProjects.css";
+import useAuth from "../../hooks/useAuth";
 
 function MyProjects() {
     const [logoutStatus, setLogoutStatus] = useState("");
@@ -15,29 +17,14 @@ function MyProjects() {
     const navigate = useNavigate();
     const location = useLocation();
 
-    useEffect(() => {
-        const checkAuth = () => {
-            const token = localStorage.getItem('token');    
-            setIsAuthenticated(!!token);
-
-            if (token) {
-                try {
-                    const decoded = jwtDecode(token);
-                    setUserType(decoded.tipo_usuario);
-                    setIdUsuario(decoded.id_usuario);
-                } catch (error) {
-                    console.error("Error decodificando el token:", error);
-                    setIsAuthenticated(false);
-                }
-            }
-
-            setLoading(false);
-        };
-
-        checkAuth();
-        window.addEventListener('storage', checkAuth);
-        return () => window.removeEventListener('storage', checkAuth);
-    }, []);
+    // ✅ Use your custom hook
+    const {
+        isAuthenticated,
+        tipo_usuario: userType,
+        id_usuario,
+        loading,
+        refresh,
+    } = useAuth();
 
     useEffect(() => {
         const handlePaymentResponse = async () => {
@@ -46,8 +33,6 @@ function MyProjects() {
             const TBK_TOKEN = searchParams.get("TBK_TOKEN");
 
             if (!token_ws && !TBK_TOKEN) return;
-
-            setLoading(true);
 
             try {
                 if (TBK_TOKEN) {
@@ -111,9 +96,7 @@ function MyProjects() {
                 console.error("Error procesando el pago:", error);
                 setPaymentStatus({
                     success: false,
-                    message:
-                        error.response?.data?.error ||
-                        "Error de red al procesar el pago. Intenta de nuevo.",
+                    message: error.response?.data?.error || "Error de red al procesar el pago. Intenta de nuevo.",
                     type: "NETWORK_ERROR",
                     code: error.response?.data?.code || "UNKNOWN_ERROR",
                     details: error.response?.data || error.message,
@@ -121,7 +104,6 @@ function MyProjects() {
             } finally {
                 const newURL = `${window.location.origin}${window.location.pathname}`;
                 window.history.replaceState({}, document.title, newURL);
-                setLoading(false);
                 setTimeout(() => setPaymentStatus(null), 5000);
             }
         };
@@ -129,44 +111,59 @@ function MyProjects() {
         handlePaymentResponse();
     }, [location.search]);
 
-    const renderNavbar = () => {
-        return <Navbar />;
-    };
+    if (loading) return <LoadingScreen />;
+
+    if (!isAuthenticated) {
+        return (
+            <div className="mt-20">
+                <Navbar />
+                <div className="max-w-lg mx-auto mt-24 p-8 text-center bg-red-50 border border-red-200 rounded-lg text-red-800">
+                    <h2 className="text-2xl font-bold mb-4">Acceso Denegado</h2>
+                    <p>Debes iniciar sesión para acceder a tus proyectos.</p>
+                    <button
+                        onClick={() => navigate("/login")}
+                        className="mt-4 px-4 py-2 bg-red-800 text-white rounded hover:bg-red-900 transition"
+                    >
+                        Ir al Login
+                    </button>
+                </div>
+                <Footer />
+            </div>
+        );
+    }
+
+    if (userType !== "empresa") {
+        return (
+            <div className="mt-20">
+                <Navbar />
+                <div className="max-w-2xl mx-auto mt-24 p-8 text-center bg-red-50 border border-red-200 rounded-lg text-red-800">
+                    <h2 className="text-2xl font-bold mb-4">Acceso Restringido</h2>
+                    <p>Esta sección está disponible solo para usuarios de tipo empresa.</p>
+                </div>
+                <Footer />
+            </div>
+        );
+    }
 
     return (
         <div className="mt-20">
-            {loading && <LoadingScreen />}
-
-            {renderNavbar()}
+            <Navbar />
 
             <div className="bg-gradient-to-br from-teal-50 to-cyan-100 min-h-screen pt-6">
-                {userType && userType !== "empresa" ? (
-                    <div className="max-w-2xl mx-auto mt-24 p-8 text-center bg-red-50 border border-red-200 rounded-lg">
-                        <h2 className="text-2xl font-bold text-red-800 mb-4">Acceso Restringido</h2>
-                        <p className="text-red-700 mb-2">Para utilizar esta función necesitas ser un usuario de tipo empresa.</p>
-                        <p className="text-red-700">Si eres un freelancer o usuario regular, por favor regístrate como empresa para acceder a estas funcionalidades.</p>
-                    </div>
-                ) : (
-                    <ViewProjects 
-                        userType={userType} 
-                        id_usuario={id_usuario}
-                    />
-                )}
+                <ViewProjects userType={userType} id_usuario={id_usuario} />
 
                 {paymentStatus && (
-                    <div
-                        className={`fixed top-24 left-1/2 transform -translate-x-1/2 p-4 rounded-lg shadow-lg z-50 w-11/12 max-w-lg text-center transition-all duration-300 animate-[slideIn_0.5s_ease-out] ${
-                            paymentStatus.success 
-                                ? 'bg-green-50 text-green-800 border border-green-200' 
-                                : 'bg-red-50 text-red-800 border border-red-200'
-                        }`}
-                    >
+                    <div className={`fixed top-24 left-1/2 transform -translate-x-1/2 p-4 rounded-lg shadow-lg z-50 w-11/12 max-w-lg text-center transition-all duration-300 ${
+                        paymentStatus.success
+                            ? 'bg-green-50 text-green-800 border border-green-200'
+                            : 'bg-red-50 text-red-800 border border-red-200'
+                    }`}>
                         {paymentStatus.message}
                     </div>
                 )}
 
                 {logoutStatus && (
-                    <div className="fixed left-1/2 transform -translate-x-1/2 bg-gray-50 p-4 rounded-lg shadow-md z-50 animate-[slideIn_0.5s_ease-out]">
+                    <div className="fixed left-1/2 transform -translate-x-1/2 bg-gray-50 p-4 rounded-lg shadow-md z-50">
                         {logoutStatus}
                     </div>
                 )}
