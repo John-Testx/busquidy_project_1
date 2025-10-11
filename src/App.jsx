@@ -32,6 +32,8 @@ import BusquidyGuia from "./pages/Soporte/BusquidyGuia";
 import SoporteHome from "./pages/Soporte/SoporteHome";
 import CrearTicket from "./pages/Soporte/CrearTicket";
 import VerTicket from "./pages/Soporte/VerTicket";
+import CrearTicketPublico from "./pages/Soporte/CrearTicketPublico";
+import VerTicketPublico from "./pages/Soporte/VerTicketPublico";
 import EditProjectPage from "./components/Empresa/Projects/ProjectForm/EditProjectPage";
 
 function App() {
@@ -115,8 +117,14 @@ function App() {
             {/* soporte */}
             <Route path= "/busquidyGuia" element={<BusquidyGuia />} />
             <Route path= "/soportehome" element={<SoporteHome />} />
-            <Route path= "/soporte/crearticket" element={<CrearTicket />} />
-            <Route path= "/soporte/ticket/:id_ticket" element={<VerTicket />} />
+
+              {/* Rutas autenticadas */}
+            <Route path="/soporte/crearticket" element={<CrearTicket />} />
+            <Route path="/soporte/ticket/:id_ticket" element={<VerTicket />} />
+            
+              {/* Rutas públicas (sin login) */}
+            <Route path="/soporte/crearticket-publico" element={<CrearTicketPublico />} />
+            <Route path="/soporte/ticket-publico/:id_ticket" element={<VerTicketPublico />} />
 
             {/* freelancer */}
             <Route path= "/freelancer" element={<FreeLancer />} />

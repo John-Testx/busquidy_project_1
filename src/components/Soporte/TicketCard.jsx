@@ -2,15 +2,22 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { 
   Clock, 
-  MessageSquare, 
   AlertTriangle, 
   CheckCircle, 
   Loader2,
   ChevronRight 
 } from "lucide-react";
 
-function TicketCard({ ticket }) {
+function TicketCard({ ticket, isPublic = false, guestEmail = null }) {
   const navigate = useNavigate();
+
+  const handleClick = () => {
+    if (isPublic && guestEmail) {
+      navigate(`/soporte/ticket-publico/${ticket.id_ticket}?email=${guestEmail}`);
+    } else {
+      navigate(`/soporte/ticket/${ticket.id_ticket}`);
+    }
+  };
 
   const getEstadoConfig = (estado) => {
     const configs = {
@@ -101,7 +108,7 @@ function TicketCard({ ticket }) {
 
   return (
     <div
-      onClick={() => navigate(`/soporte/ticket/${ticket.id_ticket}`)}
+      onClick={handleClick}
       className="group bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer border-2 border-gray-100 hover:border-blue-300 overflow-hidden"
     >
       {/* Header con estado y prioridad */}
