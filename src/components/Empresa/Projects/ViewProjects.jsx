@@ -8,6 +8,8 @@ import ModalPublicarProyecto from "./ModalPublicarProyecto";
 import ProjectCard from "./ProjectCard";
 import { getProjects, deleteProject, checkCompanyProfile } from "../../../api/projectsService";
 import { toast } from 'react-toastify';
+import { useNavigate } from "react-router-dom";
+
 
 // Modal de Confirmación
 const ConfirmModal = ({ isOpen, onClose, onConfirm, message }) => {
@@ -52,6 +54,8 @@ function ViewProjects({ userType, id_usuario }) {
     const [sortOption, setSortOption] = useState('Fecha');
     const [currentPage, setCurrentPage] = useState(1);
     const projectsPerPage = 4;
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         loadProjects();
@@ -100,7 +104,12 @@ function ViewProjects({ userType, id_usuario }) {
     const totalPages = Math.ceil(sortedProjects.length / projectsPerPage);
     const currentProjects = sortedProjects.slice((currentPage-1)*projectsPerPage, currentPage*projectsPerPage);
 
-    const handleEdit = id => { console.log('Edit', id); };
+    const handleEdit = id => 
+        { 
+            console.log('Edit', id); 
+            navigate(`/projects/edit/${id}`);
+        };
+
     const handleViewDetails = id => { console.log('View', id); };
     const openPublishModal = id => { setProjectToPublish(id); setShowModalPublicar(true); };
 

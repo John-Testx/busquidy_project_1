@@ -116,67 +116,40 @@ router.post("/create_transaction_suscription", async (req, res) => {
   }
 });
 
-
-
-
-
-// Crear transacción para proyectos
+// routes/payments.js
 router.post("/create_transaction_project", async (req, res) => {
+  let connection;
   try {
-    const {amount, buyOrder, sessionId} = req.body;
+    const { amount, buyOrder, sessionId, returnUrl: requestReturnUrl, projectId, companyId } = req.body;
+
     if (!amount || !buyOrder || !sessionId) {
-      return res.status(400).json({error: "Datos incompletos"});
+      return res.status(400).json({ error: "Datos incompletos" });
     }
 
-    const returnUrl = `${process.env.FRONTEND_URL}/myprojects`;
-    const response = await PaymentService.createTransaction({
+    const returnUrl = requestReturnUrl || `${process.env.FRONTEND_URL || "http://localhost:3000"}/myprojects`;
+
+    // No DB connection needed here for just creating the transaction
+    const response = await PaymentService.createProjectTransaction({
       amount,
       buyOrder,
       sessionId,
-      plan: "mensual",
       returnUrl,
+      projectId,
+      companyId,
     });
+
+    // Response contains url and token_ws
     res.json(response);
   } catch (error) {
-    res.status(500).json({error: error.message});
-  }
-});
-
-
-// Ruta para traer tabla pagos proyectos
-router.get("/pagos-proyectos", async (req, res) => {
-  try {
-    // Consulta para obtener pagos de proyectos y los datos del usuario relacionado
-    const [pagosProyectos] = await pool.query(`
-            SELECT 
-                pp.id_pago,
-                pp.id_proyecto,
-                pp.id_usuario,
-                pp.monto,
-                pp.fecha_pago,
-                pp.estado_pago,
-                pp.metodo_pago,
-                pp.referencia_pago,
-                u.correo,
-                u.tipo_usuario
-            FROM pago_proyecto pp
-            INNER JOIN usuario u 
-            ON pp.id_usuario = u.id_usuario
-        `);
-
-    if (pagosProyectos.length === 0) {
-      return res.status(404).json({error: "No se encontraron pagos de proyectos"});
+    console.error("Error en create_transaction_project:", error);
+    res.status(500).json({ error: "Error al crear la transacción: " + error.message });
+  } finally {
+    if (connection) {
+      try { await connection.release(); } catch (e) { console.warn("Failed to release connection:", e); }
     }
-
-    res.json(pagosProyectos);
-  } catch (error) {
-    console.error("Error al obtener pagos de proyectos:", error);
-    res.status(500).json({
-      error: "Error interno del servidor",
-      mensaje: error.message,
-    });
   }
 });
+
 
 // Ruta para traer tabla pagos suscripciones
 router.get("/pagos-suscripciones", async (req, res) => {
@@ -216,103 +189,130 @@ router.get("/pagos-suscripciones", async (req, res) => {
 });
 
 
-// routes/payments.js
 router.post("/commit_transaction", async (req, res) => {
-  const { token } = req.body;
-  if (!token) {
-    return res.status(400).json({
-      status: "ERROR",
-      error: "Token no proporcionado",
-      code: "INVALID_TOKEN",
-    });
-  }
-
-  let connection;
-  let responseSent = false;
-
-  try {
-    const response = await PaymentService.commitTransaction(token);
-    const status = response.status === "AUTHORIZED" ? "APPROVED" : "REJECTED";
-    const buyOrder = response.buy_order;
-    const sessionId = response.session_id;
-    const monto = Number(response.amount) || 0;
-    const planRaw = response.originalData?.planIdToUse || response.planId || null; // numeric planId
-    console.log("commitTransaction response:", response);
-    const metodoPago = response.originalData?.metodoPago || response.metodoPago || "Webpay";
-
-    connection = await pool.getConnection();
-    const idUsuario = String(sessionId).includes("-") ? sessionId.split("-")[1] : sessionId;
-
-    if (buyOrder.startsWith("BO-")) {
-      const idProyecto = buyOrder.split("-")[1];
-      const pagoId = await handleProjectPayment(connection, { idUsuario, idProyecto, monto, metodoPago, token, status });
-      responseSent = true;
-      return res.json({
-        status,
-        token,
-        buyOrder,
-        amount: monto,
-        type: "PROJECT_PUBLICATION",
-        projectId: idProyecto,
-        pagoId,
-      });
-    }
-
-    if (buyOrder.startsWith("SUB-")) {
-      if (!planRaw) throw { code: "INVALID_PLAN", message: "No se proporcionó plan válido" };
-      const subResult = await handleSubscriptionPayment(connection, { idUsuario, monto, metodoPago, token, status, planRaw });
-      responseSent = true;
-      return res.json({
-        status,
-        token,
-        buyOrder,
-        amount: monto,
-        type: "SUBSCRIPTION",
-        userId: idUsuario,
-        planId: planRaw,
-        ...subResult,
-      });
-    }
-
-    responseSent = true;
-    return res.status(400).json({
-      status: "ERROR",
-      error: "Tipo de transacción desconocido",
-      code: "UNKNOWN_TRANSACTION_TYPE",
-    });
-  } catch (error) {
-    console.error("Error al confirmar transacción:", error);
-
-    if (!responseSent && connection) {
-      try {
-        await connection.rollback();
-      } catch (rollbackErr) {
-        console.warn("Error during rollback:", rollbackErr);
-      }
-    }
-
-    if (!responseSent) {
-      const statusCode = error?.code === "ACTIVE_SUBSCRIPTION_EXISTS" ? 409 : 500;
-      const errorMsg =
-        error?.code === "ACTIVE_SUBSCRIPTION_EXISTS"
-          ? "Ya existe una suscripción activa"
-          : "Error al procesar el pago";
-      return res.status(statusCode).json({
+    const { token } = req.body;
+    if (!token) {
+      return res.status(400).json({
         status: "ERROR",
-        error: errorMsg,
-        code: error?.code || "UNEXPECTED_ERROR",
-        details: error?.message,
+        error: "Token no proporcionado",
+        code: "INVALID_TOKEN",
       });
     }
-  } finally {
-    if (connection) {
-      try {
-        await connection.release();
-      } catch (releaseErr) {
-        console.warn("Failed to release connection:", releaseErr);
+
+    let connection;
+    let responseSent = false;
+
+    try {
+      const response = await PaymentService.commitTransaction(token);
+      const status = response.status === "AUTHORIZED" ? "APPROVED" : "REJECTED";
+      const buyOrder = response.buy_order;
+      const sessionId = response.session_id;
+      const monto = Number(response.amount) || 0;
+      const metodoPago = response.originalData?.metodoPago || "Webpay";
+      const idUsuario = String(sessionId).includes("-") ? sessionId.split("-")[1] : sessionId;
+
+      connection = await pool.getConnection();
+
+      if (buyOrder.startsWith("BO-")) {
+        console.log("Processing project publication payment for buyOrder:", buyOrder);
+        const idProyecto = response.originalData?.projectId || parseInt(buyOrder.split("-")[1], 10);
+
+        if (!idProyecto || isNaN(idProyecto)) {
+          throw new Error("ID de proyecto inválido");
+        }
+
+        const pagoId = await handleProjectPayment(connection, {
+          idUsuario,
+          idProyecto,
+          monto,
+          metodoPago,
+          token,
+          status,
+        });
+
+        responseSent = true;
+        return res.json({
+          status,
+          token,
+          buyOrder,
+          amount: monto,
+          type: "PROJECT_PUBLICATION",
+          projectId: idProyecto,
+          pagoId,
+        });
+      }
+
+      if (buyOrder.startsWith("SUB-")) {
+        const planRaw = response.originalData?.planIdToUse || response.planId || null;
+        if (!planRaw) throw { code: "INVALID_PLAN", message: "No se proporcionó plan válido" };
+        const subResult = await handleSubscriptionPayment(connection, {
+          idUsuario,
+          monto,
+          metodoPago,
+          token,
+          status,
+          planRaw,
+        });
+        responseSent = true;
+        return res.json({
+          status,
+          token,
+          buyOrder,
+          amount: monto,
+          type: "SUBSCRIPTION",
+          userId: idUsuario,
+          planId: planRaw,
+          ...subResult,
+        });
+      }
+
+      responseSent = true;
+      return res.status(400).json({
+        status: "ERROR",
+        error: "Tipo de transacción desconocido",
+        code: "UNKNOWN_TRANSACTION_TYPE",
+      });
+    } catch (error) {
+      console.error("Error al confirmar transacción:", error);
+
+      if (error.message === "Transacción en proceso") {
+        return res.status(202).json({
+          status: "PENDING",
+          message: "El pago se está confirmando, por favor espera unos segundos...",
+          code: "TRANSACTION_IN_PROGRESS"
+        });
+      }
+
+      if (!responseSent && connection) {
+        try {
+          await connection.rollback();
+        } catch (rollbackErr) {
+          console.warn("Error during rollback:", rollbackErr);
+        }
+      }
+
+      if (!responseSent) {
+        const statusCode = error?.code === "ACTIVE_SUBSCRIPTION_EXISTS" ? 409 : 500;
+        const errorMsg =
+          error?.code === "ACTIVE_SUBSCRIPTION_EXISTS"
+            ? "Ya existe una suscripción activa"
+            : "Error al procesar el pago";
+        return res.status(statusCode).json({
+          status: "ERROR",
+          error: errorMsg,
+          code: error?.code || "UNEXPECTED_ERROR",
+          details: error?.message,
+        });
+      }
+    } finally {
+      if (connection) {
+        try {
+          await connection.release();
+        } catch (releaseErr) {
+          console.warn("Failed to release connection:", releaseErr);
+        }
       }
     }
-  }
 });
 
 

@@ -56,6 +56,44 @@ router.get("/get/:id_usuario", async (req, res) => {
   }
 });
 
+//Update Freelancer profile
+router.put("/update/:id", async (req, res) => {
+  const { id } = req.params;
+  const { perfilFreelancer, perfilUsuario } = req.body;
+
+  try {
+    if (perfilFreelancer) {
+      await db.query(
+        `UPDATE freelancer SET 
+          nombre_completo = ?, 
+          habilidades = ?, 
+          descripcion = ? 
+         WHERE id_usuario = ?`,
+        [
+          perfilFreelancer.nombre_completo,
+          perfilFreelancer.habilidades,
+          perfilFreelancer.descripcion,
+          id,
+        ]
+      );
+    }
+
+    if (perfilUsuario) {
+      await db.query(
+        `UPDATE usuario SET correo = ? WHERE id = ?`,
+        [perfilUsuario.correo, id]
+      );
+      // Password updates should be handled securely
+    }
+
+    res.json({ message: "Perfil de freelancer actualizado correctamente" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Error actualizando perfil" });
+  }
+});
+
+
 // Función para crear el perfil de freelancer en múltiples tablas
 router.post("/create-perfil-freelancer", verifyToken, async (req, res) => {
   const {

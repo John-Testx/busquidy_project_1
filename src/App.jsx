@@ -28,6 +28,7 @@ import User from "./pages/User/user";
 import ViewMoreDetailsFreelancer from "./pages/Freelancer/ViewMoreDetailsFreelancer";
 import ViewFreelancer from "./pages/Empresa/ViewFreelancer";
 import PaymentReturn from "./pages/User/PaymentReturn";
+import EditProjectPage from "./components/Empresa/Projects/ProjectForm/EditProjectPage";
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -100,6 +101,7 @@ function App() {
         <main className="flex-1">
           <Routes>
             <Route path="/payment/return" element={<PaymentReturn />} />
+            <Route path="/projects/edit/:id" element={<EditProjectPage />} />
             <Route path= "/" element={<Home />} />
             <Route path= "/user" element={<User/>} />
             <Route path= "/loginadmin" element={<LoginAdmin />} />

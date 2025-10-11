@@ -54,6 +54,100 @@ router.get("/getProjects", async (req, res) => {
   }
 });
 
+router.get("/getProject/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const [rows] = await pool.query(`
+      SELECT 
+          p.id_proyecto,
+          p.id_empresa,
+          p.titulo,
+          p.categoria,
+          p.descripcion,
+          p.habilidades_requeridas,
+          p.presupuesto,
+          p.duracion_estimada,
+          p.fecha_limite,
+          p.ubicacion,
+          p.tipo_contratacion,
+          p.metodologia_trabajo
+      FROM proyecto p
+      WHERE p.id_proyecto = ?
+      LIMIT 1
+    `, [id]);
+
+    if (rows.length === 0) {
+      return res.status(404).json({ error: "Proyecto no encontrado" });
+    }
+
+    res.json(rows[0]);
+  } catch (error) {
+    console.error("Error al obtener proyecto:", error);
+    res.status(500).json({ error: "Error interno del servidor", mensaje: error.message });
+  }
+});
+
+// Update an existing project
+router.put("/updateProject/:id", async (req, res) => {
+  const { id } = req.params;
+  const {
+    titulo,
+    categoria,
+    descripcion,
+    habilidades_requeridas,
+    presupuesto,
+    duracion_estimada,
+    fecha_limite,
+    ubicacion,
+    tipo_contratacion,
+    metodologia_trabajo,
+  } = req.body;
+
+  try {
+    const [result] = await pool.query(
+      `
+      UPDATE proyecto
+      SET
+        titulo = ?,
+        categoria = ?,
+        descripcion = ?,
+        habilidades_requeridas = ?,
+        presupuesto = ?,
+        duracion_estimada = ?,
+        fecha_limite = ?,
+        ubicacion = ?,
+        tipo_contratacion = ?,
+        metodologia_trabajo = ?
+      WHERE id_proyecto = ?
+      `,
+      [
+        titulo,
+        categoria,
+        descripcion,
+        habilidades_requeridas,
+        presupuesto,
+        duracion_estimada,
+        fecha_limite,
+        ubicacion,
+        tipo_contratacion,
+        metodologia_trabajo,
+        id,
+      ]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: "Proyecto no encontrado" });
+    }
+
+    res.json({ message: "Proyecto actualizado correctamente" });
+  } catch (error) {
+    console.error("Error al actualizar proyecto:", error);
+    res.status(500).json({ error: "Error interno del servidor", mensaje: error.message });
+  }
+});
+
+
 // Crear proyecto
 router.post("/create-project", verifyToken, async (req, res) => {
   const {projectData, id_usuario} = req.body;
