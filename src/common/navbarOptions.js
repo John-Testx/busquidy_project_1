@@ -41,7 +41,7 @@ export const profileLinks = [
     },
     {
         label: "Panel Admin",
-        link: "/admin",
+        link: "/adminhome",
         icon: "bi bi-speedometer2",
         roles: ["administrador"]
     },
