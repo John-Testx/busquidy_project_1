@@ -8,6 +8,7 @@ import Footer from "../../components/Home/Footer";
 import PerfilEmpresaCard from "../../components/Empresa/PerfilEmpresaCard";
 import CreatePerfilEmpresa from "../../components/Empresa/Perfil/CreatePerfilEmpresa";
 import LoadingScreen from "../../components/LoadingScreen"; 
+import PerfilCard from "../../components/Home/PerfilCard";
 
 function ViewPerfilEmpresa() {
     // Estado para determinar si el usuario está autenticado
@@ -67,22 +68,6 @@ function ViewPerfilEmpresa() {
         }
     };
 
-    const handleLogout = () => {
-        setLoading(true); // Muestra la pantalla de carga al cerrar sesión
-        setLogoutStatus("Cerrando sesión...");
-        setTimeout(() => {
-            localStorage.removeItem("token");
-            localStorage.removeItem("correo");
-            setIsAuthenticated(false);
-            setUserType(null);
-            setLogoutStatus("Sesión cerrada");
-            setTimeout(() => {
-                setLoading(false); // Oculta la pantalla de carga antes de redirigir
-                navigate("/");
-            }, 1000); // Reduce este timeout si es necesario
-        });
-    };
-
     const renderNavbar = () => {
         return <Navbar />;
     };
@@ -101,7 +86,8 @@ function ViewPerfilEmpresa() {
                     ) : isPerfilIncompleto ? (
                         <CreatePerfilEmpresa userType={userType} id_usuario={id_usuario} />
                     ) : (
-                        <PerfilEmpresaCard userType={userType} id_usuario={id_usuario} />
+                        //<PerfilEmpresaCard userType={userType} id_usuario={id_usuario} />
+                        <PerfilCard userType={userType} id_usuario={id_usuario} />
                     )}
                 </>
             )}

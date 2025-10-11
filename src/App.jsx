@@ -32,6 +32,7 @@ import BusquidyGuia from "./pages/Soporte/BusquidyGuia";
 import SoporteHome from "./pages/Soporte/SoporteHome";
 import CrearTicket from "./pages/Soporte/CrearTicket";
 import VerTicket from "./pages/Soporte/VerTicket";
+import EditProjectPage from "./components/Empresa/Projects/ProjectForm/EditProjectPage";
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -105,6 +106,7 @@ function App() {
           <Routes>
             <Route path="/payment/return" element={<PaymentReturn />} />
             {/* general */}
+            <Route path="/projects/edit/:id" element={<EditProjectPage />} />
             <Route path= "/" element={<Home />} />
             <Route path= "/user" element={<User/>} />
             <Route path= "/busquidypage" element={<BusquidyPage />} />

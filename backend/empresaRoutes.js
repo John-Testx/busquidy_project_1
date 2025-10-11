@@ -287,4 +287,92 @@ router.post("/reviews", async (req, res) => {
   }
 });
 
+// Update Empresa profile
+router.put("/update/:id", async (req, res) => {
+  const { id } = req.params; // id_usuario
+  const { perfilEmpresa, perfilRepresentante, perfilUsuario } = req.body;
+
+  try {
+    // Update empresa info
+    let empresaId;
+    if (perfilEmpresa) {
+      const [empresaRows] = await pool.query(
+        `SELECT id_empresa FROM empresa WHERE id_usuario = ?`,
+        [id]
+      );
+      if (!empresaRows.length) return res.status(404).json({ error: "Empresa no encontrada" });
+      empresaId = empresaRows[0].id_empresa;
+
+      await pool.query(
+        `UPDATE empresa SET 
+          nombre_empresa = ?, 
+          identificacion_fiscal = ?, 
+          direccion = ?, 
+          telefono_contacto = ?, 
+          correo_empresa = ?, 
+          pagina_web = ?, 
+          descripcion = ?, 
+          sector_industrial = ? 
+         WHERE id_usuario = ?`,
+        [
+          perfilEmpresa.nombre_empresa,
+          perfilEmpresa.identificacion_fiscal,
+          perfilEmpresa.direccion,
+          perfilEmpresa.telefono_contacto,
+          perfilEmpresa.correo_empresa,
+          perfilEmpresa.pagina_web,
+          perfilEmpresa.descripcion,
+          perfilEmpresa.sector_industrial,
+          id,
+        ]
+      );
+    }
+
+    // Update representante info
+    if (perfilRepresentante) {
+      if (!empresaId) {
+        const [empresaRows] = await pool.query(
+          `SELECT id_empresa FROM empresa WHERE id_usuario = ?`,
+          [id]
+        );
+        if (!empresaRows.length) return res.status(404).json({ error: "Empresa no encontrada" });
+        empresaId = empresaRows[0].id_empresa;
+      }
+
+      await pool.query(
+        `UPDATE representante_empresa SET 
+          nombre_completo = ?, 
+          cargo = ?, 
+          correo_representante = ?, 
+          telefono_representante = ? 
+         WHERE id_empresa = ?`,
+        [
+          perfilRepresentante.nombre_completo,
+          perfilRepresentante.cargo,
+          perfilRepresentante.correo_representante,
+          perfilRepresentante.telefono_representante,
+          empresaId,
+        ]
+      );
+    }
+
+    // Update user access info
+    if (perfilUsuario) {
+      await pool.query(
+        `UPDATE usuario SET correo = ? WHERE id_usuario = ?`,
+        [perfilUsuario.correo, id]
+      );
+      // Password updates should be handled separately with hashing
+    }
+
+    res.json({ message: "Perfil de empresa actualizado correctamente" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Error actualizando perfil" });
+  }
+});
+
+
+
+
 module.exports = router;

@@ -10,7 +10,7 @@ const PaymentReturn = () => {
 
   const API_URL = import.meta.env.VITE_API_URL;
   const token = searchParams.get("token_ws");
-  let next = searchParams.get("next") || "/";
+  let next = decodeURIComponent(searchParams.get("next") || "/");
 
   if (!next.startsWith("/")) {
     next = "/";
@@ -60,6 +60,13 @@ const PaymentReturn = () => {
       if (code === "TRANSACTION_IN_PROGRESS" && attempt < maxRetries) {
         const delay = 2000 * (attempt + 1);
         setStatus(`⚠️ Transacción en proceso. Reintentando en ${delay / 1000}s...`);
+        setTimeout(() => verifyPayment(attempt + 1), delay);
+        return;
+      }
+      
+      if (data.status === "PENDING" && attempt < maxRetries) {
+        const delay = 2000 * (attempt + 1);
+        setStatus(`⚠️ Confirmando pago... (reintentando en ${delay / 1000}s)`);
         setTimeout(() => verifyPayment(attempt + 1), delay);
         return;
       }
