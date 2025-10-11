@@ -7,7 +7,9 @@ const userRoutes = require("./userRoutes");
 const projectRoutes = require("./projectRoutes");
 const paymentRoutes = require("./paymentRoutes");
 const freelancerRoutes = require("./freelancerRoutes");
+const supportRoutes = require("./routes/supportRoutes");
 
+router.use("/support", supportRoutes);
 router.use("/empresa", empresaRoutes);
 router.use("/freelancer", freelancerRoutes);
 router.use("/users", userRoutes );

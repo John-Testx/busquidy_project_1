@@ -155,19 +155,13 @@ function Navbar() {
                             <div className="block absolute bg-[#f9f9f9] min-w-[200px] shadow-[0_8px_16px_rgba(0,0,0,0.2)] z-[1] p-2.5 rounded-[5px] left-1/2 -translate-x-1/2">
                                 <Link 
                                     className={`text-teal-900 no-underline block py-2.5 px-0 border-b border-[#ddd] last:border-b-0 ${isActive("/soporte-cliente")}`}
-                                    to="/soporte-cliente"
+                                    to="/soportehome"
                                 >
                                     Soporte al Cliente
                                 </Link>
                                 <Link 
-                                    className={`text-teal-900 no-underline block py-2.5 px-0 border-b border-[#ddd] last:border-b-0 ${isActive("/soporte-ia")}`}
-                                    to="/soporte-ia"
-                                >
-                                    Soporte IA
-                                </Link>
-                                <Link 
                                     className={`text-teal-900 no-underline block py-2.5 px-0 ${isActive("/busquidy-guia")}`}
-                                    to="/busquidy-guia"
+                                    to="/busquidyGuia"
                                 >
                                     Busquidy Guía
                                 </Link>

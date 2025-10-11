@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 // import '../../styles/Home/FAQSection.css';
 
 const FAQSection = () => {
@@ -53,9 +54,12 @@ const FAQSection = () => {
             
             <p className="text-center mt-5">
                 ¿Tienes una pregunta diferente? Puedes consultar{' '}
-                <a href='#' className="text-green-500 hover:text-green-600 transition-colors">
+                <Link 
+                    className={`text-green-500 no-underline inline py-2.5 px-0 border-b border-[#ddd] last:border-b-0`}
+                    to="/soporteCliente"
+                >
                     aquí
-                </a>
+                </Link>
             </p>
         </div>
     );

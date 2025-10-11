@@ -28,11 +28,49 @@ const verifyToken = (req, res, next) => {
   }
 };
 
+// Middleware OPCIONAL - Si hay token lo verifica, si no continúa
+const optionalAuth = (req, res, next) => {
+  try {
+    const authHeader = req.headers["authorization"];
+    
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      req.isAuthenticated = false;
+      req.user = null;
+      return next();
+    }
+    
+    const token = authHeader.split(" ")[1];
+    
+    if (!token) {
+      req.isAuthenticated = false;
+      req.user = null;
+      return next();
+    }
+    
+    try {
+      const decoded = jwt.verify(token, JWT_SECRET);
+      req.user = decoded;
+      req.isAuthenticated = true;
+    } catch (err) {
+      // Token inválido, pero permitir continuar
+      req.isAuthenticated = false;
+      req.user = null;
+    }
+    
+    next();
+  } catch (err) {
+    console.error("Error en optionalAuth:", err.message);
+    req.isAuthenticated = false;
+    req.user = null;
+    next();
+  }
+};
+
 // Middleware para validar usuario
 const validateUser = async (req, res, next) => {
   const {id_usuario} = req.params;
   try {
-    const [usuario] = await pool.query("SELECT * FROM usuarios WHERE id_usuario = ?", [id_usuario]);
+    const [usuario] = await pool.query("SELECT * FROM usuario WHERE id_usuario = ?", [id_usuario]);
     if (usuario.length === 0) {
       return res.status(404).json({error: "Usuario no encontrado"});
     }
@@ -68,4 +106,4 @@ const storage = multer.diskStorage({
 
 const upload = multer({storage});
 
-module.exports = {verifyToken, validatePaymentData, validateUser, upload};
+module.exports = {verifyToken, optionalAuth, validatePaymentData, validateUser, upload};

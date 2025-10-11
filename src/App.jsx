@@ -28,6 +28,10 @@ import User from "./pages/User/user";
 import ViewMoreDetailsFreelancer from "./pages/Freelancer/ViewMoreDetailsFreelancer";
 import ViewFreelancer from "./pages/Empresa/ViewFreelancer";
 import PaymentReturn from "./pages/User/PaymentReturn";
+import BusquidyGuia from "./pages/Soporte/BusquidyGuia";
+import SoporteHome from "./pages/Soporte/SoporteHome";
+import CrearTicket from "./pages/Soporte/CrearTicket";
+import VerTicket from "./pages/Soporte/VerTicket";
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -100,17 +104,36 @@ function App() {
         <main className="flex-1">
           <Routes>
             <Route path="/payment/return" element={<PaymentReturn />} />
+            {/* general */}
             <Route path= "/" element={<Home />} />
             <Route path= "/user" element={<User/>} />
-            <Route path= "/loginadmin" element={<LoginAdmin />} />
-            <Route path= "/adminhome" element={<AdminHome  connectedUsers={connectedUsers}/>} />
+            <Route path= "/busquidypage" element={<BusquidyPage />} />
+            <Route path= "/sobrenosotrospage" element={<SobreNosotrosPage />} />
+
+            {/* soporte */}
+            <Route path= "/busquidyGuia" element={<BusquidyGuia />} />
+            <Route path= "/soportehome" element={<SoporteHome />} />
+            <Route path= "/soporte/crearticket" element={<CrearTicket />} />
+            <Route path= "/soporte/ticket/:id_ticket" element={<VerTicket />} />
+
+            {/* freelancer */}
             <Route path= "/freelancer" element={<FreeLancer />} />
+            <Route path= "/mypostulations" element={<MyPostulations />} />
+            <Route path= "/viewcv" element={<ViewCV />} />
+
+            {/* empresa */}
             <Route path= "/empresa" element={<Empresa />} />
             <Route path= "/projectlist" element={<ProjectList />} />
-            <Route path= "/viewperfilfreelancer" element={<ViewPerfilFreeLancer />} />
             <Route path= "/viewperfilempresa" element={<ViewPerfilEmpresa />} />
             <Route path= "/findfreelancer" element={<FindFreelancer />} />
             <Route path= "/myprojects" element={<MyProjects />} />
+            <Route path= "/viewmoredetailsfreelancer" element={<ViewMoreDetailsFreelancer />} />
+            <Route path= "/viewfreelancer/:id" element={<ViewFreelancer />} />
+
+            {/* admin */}
+            <Route path= "/loginadmin" element={<LoginAdmin />} />
+            <Route path= "/adminhome" element={<AdminHome  connectedUsers={connectedUsers}/>} />
+            <Route path= "/viewperfilfreelancer" element={<ViewPerfilFreeLancer />} />
             <Route path= "/usermanagement" element={<UserManagement />} />
             <Route path= "/projectmanagement" element={<ProjectManagement />} />
             <Route path= "/reviewmanagement" element={<ReviewManagement />} />
@@ -118,12 +141,6 @@ function App() {
             <Route path= "/paymentmanagement" element={<PaymentManagement />} />
             <Route path= "/notificationmanagement" element={<NotificationManegement />} />
             <Route path= "/auditandsecurity" element={<AuditAndSecurity />} />
-            <Route path= "/mypostulations" element={<MyPostulations />} />
-            <Route path= "/busquidypage" element={<BusquidyPage />} />
-            <Route path= "/sobrenosotrospage" element={<SobreNosotrosPage />} />
-            <Route path= "/viewmoredetailsfreelancer" element={<ViewMoreDetailsFreelancer />} />
-            <Route path= "/viewfreelancer/:id" element={<ViewFreelancer />} />
-            <Route path= "/viewcv" element={<ViewCV />} />
           </Routes>
         </main>
       </div>

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import FAQSection from './FAQSection ';
 import axios from 'axios';
 import MessageModal from "../MessageModal";
 import '../../styles/Home/InfoSectionHome.css';
@@ -160,9 +159,6 @@ const InfoSectionHome = ({tipo_usuario, id_usuario}) => {
             {showMessageModal && (
                 <MessageModal message={message} closeModal={closeMessageModal} />
             )}
-
-            <FAQSection />
-
         </div>
         
         

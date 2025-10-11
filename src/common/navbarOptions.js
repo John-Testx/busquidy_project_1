@@ -10,9 +10,8 @@ export const navbarOptions = [
 ];
 
 export const helpDropdownOptions = [
-    { label: "Soporte al Cliente", link: "/soporte-cliente" },
-    { label: "Soporte IA", link: "/soporte-ia" },
-    { label: "Busquidy Guía", link: "/busquidy-guia" },
+    { label: "Soporte al Cliente", link: "/soportehome" },
+    { label: "Busquidy Guía", link: "/busquidyGuia" },
 ];
 
 export const profileLinks = [
