@@ -234,24 +234,51 @@ const obtenerTicketsUsuario = async (req, res) => {
     let params;
 
     if (tipo_usuario === "administrador") {
-      query = `SELECT 
-                t.*,
-                u.nombre as nombre_usuario,
-                u.email as email_usuario
-               FROM soporte_ticket t
-               LEFT JOIN usuario u ON t.id_usuario = u.id_usuario
-               ORDER BY 
-                 CASE 
-                   WHEN t.prioridad = 'alta' THEN 1
-                   WHEN t.prioridad = 'media' THEN 2
-                   WHEN t.prioridad = 'baja' THEN 3
-                 END,
-                 t.fecha_creacion DESC`;
+      //  Admin sees all tickets
+      query = `
+        SELECT 
+          t.*,
+          COALESCE(
+            a.nombre_completo,
+            CONCAT(ap.nombres, ' ', ap.apellidos),
+            e.nombre_empresa,
+            t.nombre_contacto,
+            'Anónimo'
+          ) AS nombre_usuario,
+          COALESCE(
+            u.correo,
+            f.correo_contacto,
+            e.correo_empresa,
+            t.email_contacto
+          ) AS email_usuario
+        FROM soporte_ticket t
+        LEFT JOIN usuario u ON t.id_usuario = u.id_usuario
+        LEFT JOIN administrador a ON u.id_usuario = a.id_usuario
+        LEFT JOIN freelancer f ON u.id_usuario = f.id_usuario
+        LEFT JOIN antecedentes_personales ap ON f.id_freelancer = ap.id_freelancer
+        LEFT JOIN empresa e ON u.id_usuario = e.id_usuario
+        ORDER BY 
+          CASE 
+            WHEN t.prioridad = 'alta' THEN 1
+            WHEN t.prioridad = 'media' THEN 2
+            WHEN t.prioridad = 'baja' THEN 3
+          END,
+          t.fecha_creacion DESC;
+      `;
       params = [];
     } else {
-      query = `SELECT * FROM soporte_ticket 
-               WHERE id_usuario = ? AND es_anonimo = FALSE
-               ORDER BY fecha_creacion DESC`;
+      // Regular user only sees their own tickets
+      query = `
+        SELECT 
+          t.*,
+          COALESCE(
+            t.nombre_contacto,
+            'Usuario'
+          ) AS nombre_usuario
+        FROM soporte_ticket t
+        WHERE t.id_usuario = ? AND t.es_anonimo = FALSE
+        ORDER BY t.fecha_creacion DESC;
+      `;
       params = [id_usuario];
     }
 
@@ -262,6 +289,7 @@ const obtenerTicketsUsuario = async (req, res) => {
     res.status(500).json({ error: "Error al obtener los tickets" });
   }
 };
+
 
 // Resto de funciones autenticadas (sin cambios)
 const obtenerTicket = async (req, res) => {
@@ -318,19 +346,27 @@ const obtenerMensajes = async (req, res) => {
     }
 
     const [mensajes] = await pool.query(
-      `SELECT 
+    `SELECT 
         m.*,
         CASE 
-          WHEN m.remitente = 'usuario' THEN u.nombre
-          WHEN m.remitente = 'administrador' THEN a.nombre
-        END as nombre_remitente
-       FROM soporte_mensaje m
-       LEFT JOIN usuario u ON m.id_usuario = u.id_usuario
-       LEFT JOIN administrador a ON m.id_admin = a.id_administrador
-       WHERE m.id_ticket = ? 
-       ORDER BY m.fecha_envio ASC`,
-      [id_ticket]
-    );
+          WHEN m.remitente = 'usuario' THEN 
+            COALESCE(
+              ap.nombres, 
+              e.nombre_empresa, 
+              u.correo
+            )
+          WHEN m.remitente = 'administrador' THEN a.nombre_completo
+        END AS nombre_remitente
+      FROM soporte_mensaje m
+      LEFT JOIN usuario u ON m.id_usuario = u.id_usuario
+      LEFT JOIN administrador a ON m.id_admin = a.id_administrador
+      LEFT JOIN freelancer f ON u.id_usuario = f.id_usuario
+      LEFT JOIN antecedentes_personales ap ON f.id_freelancer = ap.id_freelancer
+      LEFT JOIN empresa e ON u.id_usuario = e.id_usuario
+      WHERE m.id_ticket = ?
+      ORDER BY m.fecha_envio ASC`,
+    [id_ticket]
+  );
 
     res.json(mensajes);
   } catch (error) {
@@ -369,9 +405,25 @@ const enviarMensaje = async (req, res) => {
     }
 
     const remitente = tipo_usuario === "administrador" ? "administrador" : "usuario";
-    const id_admin = remitente === "administrador" ? id_usuario : null;
-    const id_user = remitente === "usuario" ? id_usuario : null;
 
+    let id_admin = null;
+    let id_user = null;
+
+    if (remitente === "administrador") {
+      // Obtener el id_administrador real desde la tabla administrador
+      const [adminRows] = await pool.query(
+        "SELECT id_administrador FROM administrador WHERE id_usuario = ?",
+        [id_usuario]
+      );
+
+      if (adminRows.length === 0) {
+        return res.status(404).json({ error: "Administrador no encontrado" });
+      }
+
+      id_admin = adminRows[0].id_administrador;
+    } else {
+      id_user = id_usuario;
+    }
     await pool.query(
       `INSERT INTO soporte_mensaje (id_ticket, id_usuario, id_admin, mensaje, remitente)
        VALUES (?, ?, ?, ?, ?)`,

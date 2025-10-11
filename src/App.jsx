@@ -33,6 +33,10 @@ import SoporteHome from "./pages/Soporte/SoporteHome";
 import CrearTicket from "./pages/Soporte/CrearTicket";
 import VerTicket from "./pages/Soporte/VerTicket";
 import EditProjectPage from "./components/Empresa/Projects/ProjectForm/EditProjectPage";
+import ProtectedAdminRoute from "./routes/ProtectedAdminRoute";
+import Unauthorized from "./pages/User/Unauthorized";
+import SupportTable from "./components/Admin/SupportTable";
+import SupportChat from "./components/Admin/SupportChat";
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -134,15 +138,24 @@ function App() {
 
             {/* admin */}
             <Route path= "/loginadmin" element={<LoginAdmin />} />
-            <Route path= "/adminhome" element={<AdminHome  connectedUsers={connectedUsers}/>} />
-            <Route path= "/viewperfilfreelancer" element={<ViewPerfilFreeLancer />} />
-            <Route path= "/usermanagement" element={<UserManagement />} />
-            <Route path= "/projectmanagement" element={<ProjectManagement />} />
-            <Route path= "/reviewmanagement" element={<ReviewManagement />} />
-            <Route path= "/supportmanagement" element={<SupportManagement />} />
-            <Route path= "/paymentmanagement" element={<PaymentManagement />} />
-            <Route path= "/notificationmanagement" element={<NotificationManegement />} />
-            <Route path= "/auditandsecurity" element={<AuditAndSecurity />} />
+            <Route element={<ProtectedAdminRoute />}>
+              <Route path= "/adminhome" element={<AdminHome  connectedUsers={connectedUsers}/>} />
+              <Route path= "/viewperfilfreelancer" element={<ViewPerfilFreeLancer />} />
+              <Route path= "/usermanagement" element={<UserManagement />} />
+              <Route path= "/projectmanagement" element={<ProjectManagement />} />
+              <Route path= "/reviewmanagement" element={<ReviewManagement />} />
+              <Route path= "/supportmanagement" element={<SupportManagement />} />
+              <Route path= "/paymentmanagement" element={<PaymentManagement />} />
+              <Route path= "/notificationmanagement" element={<NotificationManegement />} />
+              <Route path= "/auditandsecurity" element={<AuditAndSecurity />} />
+              <Route path="/admin/support" element={<SupportTable />} />
+              <Route path="/admin/support/:id_ticket" element={<SupportChat />} />
+
+            </Route>
+
+
+          <Route path= "/unauthorized" element={<Unauthorized />} />
+
           </Routes>
         </main>
       </div>
