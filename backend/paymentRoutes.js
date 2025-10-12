@@ -151,31 +151,104 @@ router.post("/create_transaction_project", async (req, res) => {
 });
 
 
+// GET /pagos-proyectos
+router.get("/pagos-proyectos", async (req, res) => {
+  try {
+    const [pagosProyectos] = await pool.query(`
+      SELECT
+        p.id_pago,
+        p.id_usuario,
+        p.monto,
+        p.fecha_pago,
+        p.estado_pago,
+        p.metodo_pago,
+        p.referencia_externa AS referencia_pago,
+        p.tipo_pago,
+
+        pdp.id_proyecto,
+        pr.titulo AS nombre_proyecto,
+        pr.descripcion AS descripcion_proyecto,
+        pr.categoria,
+        pr.presupuesto,
+        pr.duracion_estimada,
+        pr.ubicacion,
+        pr.tipo_contratacion,
+        pr.metodologia_trabajo,
+
+        pp.fecha_creacion,
+        pp.fecha_publicacion,
+        pp.estado_publicacion,
+
+        u.correo,
+        u.tipo_usuario AS tipo_usuario
+
+      FROM pago p
+      INNER JOIN pago_detalle_proyecto pdp ON p.id_pago = pdp.id_pago
+      INNER JOIN proyecto pr ON pdp.id_proyecto = pr.id_proyecto
+      LEFT JOIN publicacion_proyecto pp ON pr.id_proyecto = pp.id_proyecto
+      INNER JOIN usuario u ON p.id_usuario = u.id_usuario
+      WHERE p.tipo_pago = 'proyecto'
+      ORDER BY p.fecha_pago DESC
+    `);
+
+    if (pagosProyectos.length === 0) {
+      return res.status(404).json({ error: "No se encontraron pagos de proyectos" });
+    }
+
+    res.json(pagosProyectos);
+  } catch (error) {
+    console.error("Error al obtener pagos de proyectos:", error);
+    res.status(500).json({
+      error: "Error interno del servidor",
+      mensaje: error.message,
+    });
+  }
+});
+
+
+
+
 // Ruta para traer tabla pagos suscripciones
 router.get("/pagos-suscripciones", async (req, res) => {
   try {
-    // Consulta para obtener pagos de suscripciones y los datos del usuario relacionado
+    // Obtener pagos relacionados con suscripciones (no proyectos)
     const [pagosSuscripciones] = await pool.query(`
-            SELECT 
-                ps.id_pago,
-                ps.id_usuario,
-                ps.monto,
-                ps.fecha_pago,
-                ps.estado_pago,
-                ps.metodo_pago,
-                ps.referencia_pago,
-                ps.plan_suscripcion,
-                ps.fecha_inicio,
-                ps.fecha_fin,
-                u.correo,
-                u.tipo_usuario
-            FROM pago_suscripcion ps
-            INNER JOIN usuario u 
-            ON ps.id_usuario = u.id_usuario
-        `);
+      SELECT 
+        p.id_pago,
+        p.id_usuario,
+        p.monto,
+        p.fecha_pago,
+        p.estado_pago,
+        p.metodo_pago,
+        p.referencia_externa AS referencia_pago,
+        p.tipo_pago,
+        
+        s.id_suscripcion,
+        s.fecha_inicio,
+        s.fecha_fin,
+        s.estado AS estado_suscripcion,
+        
+        pl.id_plan,
+        pl.nombre AS nombre_plan,
+        pl.descripcion AS descripcion_plan,
+        pl.duracion_dias,
+        pl.precio AS precio_plan,
+        pl.tipo_usuario AS tipo_plan_usuario,
+        
+        u.correo,
+        u.tipo_usuario AS tipo_usuario
+        
+      FROM pago p
+      INNER JOIN pago_detalle_suscripcion pds ON p.id_pago = pds.id_pago
+      INNER JOIN suscripcion s ON pds.id_suscripcion = s.id_suscripcion
+      INNER JOIN plan pl ON s.id_plan = pl.id_plan
+      INNER JOIN usuario u ON p.id_usuario = u.id_usuario
+      WHERE p.tipo_pago = 'suscripcion'
+      ORDER BY p.fecha_pago DESC
+    `);
 
     if (pagosSuscripciones.length === 0) {
-      return res.status(404).json({error: "No se encontraron pagos de suscripciones"});
+      return res.status(404).json({ error: "No se encontraron pagos de suscripciones" });
     }
 
     res.json(pagosSuscripciones);
@@ -187,6 +260,7 @@ router.get("/pagos-suscripciones", async (req, res) => {
     });
   }
 });
+
 
 
 router.post("/commit_transaction", async (req, res) => {

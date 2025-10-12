@@ -36,9 +36,14 @@ import CrearTicketPublico from "./pages/Soporte/CrearTicketPublico";
 import VerTicketPublico from "./pages/Soporte/VerTicketPublico";
 import EditProjectPage from "./components/Empresa/Projects/ProjectForm/EditProjectPage";
 import ProtectedAdminRoute from "./routes/ProtectedAdminRoute";
+import UserTable from "./components/Admin/UserTable";
 import Unauthorized from "./pages/User/Unauthorized";
 import SupportTable from "./components/Admin/SupportTable";
 import SupportChat from "./components/Admin/SupportChat";
+import Dashboard from "./components/Admin/Dashboard";
+import AdminRoles from "./components/Admin/AdminRoles";
+import PermissionManagement from "./components/Admin/PermissionManagement";
+import UserEditPage from "./components/Admin/UserEditPage";
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -144,23 +149,42 @@ function App() {
             <Route path= "/myprojects" element={<MyProjects />} />
             <Route path= "/viewmoredetailsfreelancer" element={<ViewMoreDetailsFreelancer />} />
             <Route path= "/viewfreelancer/:id" element={<ViewFreelancer />} />
+            <Route path= "/viewperfilfreelancer" element={<ViewPerfilFreeLancer />} />
 
-            {/* admin */}
+
+            {/* ADMIN PANEL || Rutas protegidas */}
             <Route path= "/loginadmin" element={<LoginAdmin />} />
             <Route element={<ProtectedAdminRoute />}>
-              <Route path= "/adminhome" element={<AdminHome  connectedUsers={connectedUsers}/>} />
-              <Route path= "/usermanagement" element={<UserManagement />} />
-              <Route path= "/projectmanagement" element={<ProjectManagement />} />
-              <Route path= "/reviewmanagement" element={<ReviewManagement />} />
-              <Route path= "/supportmanagement" element={<SupportManagement />} />
-              <Route path= "/paymentmanagement" element={<PaymentManagement />} />
-              <Route path= "/notificationmanagement" element={<NotificationManegement />} />
-              <Route path= "/auditandsecurity" element={<AuditAndSecurity />} />
-              <Route path="/admin/support" element={<SupportTable />} />
-              <Route path="/admin/support/:id_ticket" element={<SupportChat />} />
+              <Route path="/adminhome" element={<AdminHome connectedUsers={connectedUsers} />}>
+                <Route index element={<Dashboard />} /> {/* ← default /adminhome */}
+                <Route path="dashboard" element={<Dashboard />} /> {/* ← /adminhome/dashboard */}
+                <Route path="usermanagement" element={<UserManagement />} />
+                <Route path="projectmanagement" element={<ProjectManagement />} />
+                <Route path="reviewmanagement" element={<ReviewManagement />} />
+                <Route path="supportmanagement" element={<SupportManagement />} />
+                
+                <Route path="usermanagement" element={<UserManagement />}>
+                  <Route index element={<UserTable />} /> {/* default tab */}
+                  
+                  {/* List all users */}
+                  <Route path="users" element={<UserTable />} />
+                  
+                  
+                  {/* Edit a user by ID */}
+                  <Route path="users/edit/:id" element={<UserEditPage />} />
 
+
+                  <Route path="roles" element={<AdminRoles />} />
+                  {/* <Route path="permissions" element={<PermissionManagement />} /> */}
+                </Route>
+                
+                <Route path="paymentmanagement" element={<PaymentManagement />} />
+                <Route path="notificationmanagement" element={<NotificationManegement />} />
+                <Route path="auditandsecurity" element={<AuditAndSecurity />} />
+                <Route path="admin/support" element={<SupportTable />} />
+                <Route path="admin/support/:id_ticket" element={<SupportChat />} />
+              </Route>
             </Route>
-
 
           <Route path= "/unauthorized" element={<Unauthorized />} />
 

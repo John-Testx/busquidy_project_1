@@ -23,6 +23,61 @@ const {pool,
 const sendError = (res, status, message) => res.status(status).json({message});
 const JWT_SECRET = process.env.JWT_SECRET;
 
+// Get all users
+router.get("/", async (req, res) => {
+  try {
+    const [users] = await pool.query(`
+      SELECT u.id_usuario, u.correo, u.tipo_usuario, u.is_active, u.rol_usuario,
+             r.nombre_rol AS rol_nombre
+      FROM usuario u
+      LEFT JOIN rol r ON u.rol_usuario = r.id_rol
+    `);
+    res.json(users);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Update user status
+router.patch("/:id/status", async (req, res) => {
+  const { id } = req.params;
+  const { is_active } = req.body;
+  try {
+    await pool.query("UPDATE usuario SET is_active=? WHERE id_usuario=?", [is_active, id]);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Get user details
+router.get("/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const [[user]] = await pool.query("SELECT * FROM usuario WHERE id_usuario=?", [id]);
+    if (!user) return res.status(404).json({ error: "Usuario no encontrado" });
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Update user details
+router.patch("/:id", async (req, res) => {
+  const { id } = req.params;
+  const { correo, rol_usuario, tipo_usuario } = req.body;
+  try {
+    await pool.query(
+      "UPDATE usuario SET correo=?, rol_usuario=?, tipo_usuario=? WHERE id_usuario=?",
+      [correo, rol_usuario, tipo_usuario, id]
+    );
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
 // Registro de usuarios
 router.post("/register", async (req, res) => {
   const {correo, contraseña, tipo_usuario} = req.body;
