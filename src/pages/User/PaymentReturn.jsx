@@ -38,6 +38,8 @@ const PaymentReturn = () => {
       const response = await axios.post(`${API_URL}/payments/commit_transaction`, { token });
       const data = response.data;
 
+      console.log("Response of current transaction",data);
+
       if (data.status === "APPROVED") {
         setStatus("✅ Pago exitoso");
         setLoading(false);
@@ -53,7 +55,11 @@ const PaymentReturn = () => {
 
       setStatus(`⚠️ Estado: ${data.status}`);
       setLoading(false);
+
     } catch (err) {
+
+      console.log("Error response", err.response?.data);
+      
       const code = err.response?.data?.code;
       const statusCode = err.response?.status;
 
@@ -64,7 +70,7 @@ const PaymentReturn = () => {
         return;
       }
       
-      if (data.status === "PENDING" && attempt < maxRetries) {
+      if (code === "PENDING" && attempt < maxRetries) {
         const delay = 2000 * (attempt + 1);
         setStatus(`⚠️ Confirmando pago... (reintentando en ${delay / 1000}s)`);
         setTimeout(() => verifyPayment(attempt + 1), delay);

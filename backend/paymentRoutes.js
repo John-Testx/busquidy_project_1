@@ -289,6 +289,7 @@ router.post("/commit_transaction", async (req, res) => {
 
       if (buyOrder.startsWith("BO-")) {
         console.log("Processing project publication payment for buyOrder:", buyOrder);
+        console.log("Is the Id real?:",response.originalData?.projectId )
         const idProyecto = response.originalData?.projectId || parseInt(buyOrder.split("-")[1], 10);
 
         if (!idProyecto || isNaN(idProyecto)) {

@@ -2,47 +2,40 @@ import React, { useEffect, useState, useRef } from "react";
 import {BrowserRouter as Router, Route, Routes} from "react-router-dom";
 import {jwtDecode} from 'jwt-decode';
 import io from "socket.io-client";
-import Home from "./pages/General/Home";
-import AdminHome from "./pages/Admin/AdminHome";
-import LoginAdmin from "./pages/Admin/LoginAdmin";
-import FreeLancer from "./pages/Freelancer/FreeLancer";
-import Empresa from "./pages/Empresa/Empresa";
-import ProjectList from "./pages/Freelancer/ProjectList";
-import ViewPerfilFreeLancer from "./pages/Freelancer/ViewPerfilFreeLancer";
-import ViewPerfilEmpresa from "./pages/Empresa/ViewPerfilEmpresa";
-import FindFreelancer from "./pages/Empresa/FindFreelancer";
-import MyProjects from "./pages/Empresa/MyProjects";
-import UserManagement from "./pages/Admin/UserManagement";
-import ProjectManagement from "./pages/Admin/ProjectManagement";
-import ReviewManagement from "./pages/Admin/ReviewManagement";
-import SupportManagement from "./pages/Admin/SupportManagement";
-import PaymentManagement from "./pages/Admin/PaymentManagement";
-import NotificationManegement from "./pages/Admin/NotificationManegement";
-import AuditAndSecurity from "./pages/Admin/AuditAndSecurity";
-import MyPostulations from "./pages/Freelancer/MyPostulations";
-import LoadingScreen from "./components/LoadingScreen"; 
-import BusquidyPage from "./pages/General/BusquidyPage";
-import AboutUsPage from "./pages/General/AboutUsPage";
-import User from "./pages/User/user";
-import ViewMoreDetailsFreelancer from "./pages/Freelancer/ViewMoreDetailsFreelancer";
-import ViewFreelancer from "./pages/Empresa/ViewFreelancer";
-import PaymentReturn from "./pages/User/PaymentReturn";
-import BusquidyGuia from "./pages/Soporte/BusquidyGuia";
-import SoporteHome from "./pages/Soporte/SoporteHome";
-import CrearTicket from "./pages/Soporte/CrearTicket";
-import VerTicket from "./pages/Soporte/VerTicket";
-import CrearTicketPublico from "./pages/Soporte/CrearTicketPublico";
-import VerTicketPublico from "./pages/Soporte/VerTicketPublico";
+
+import { 
+    AdminHome, LoginAdmin, UserManagement,
+    ProjectManagement, ReviewManagement, SupportManagement,
+    PaymentManagement, NotificationManagement, AuditAndSecurity
+  } from "@pages/Admin";
+
+import {
+  BusquidyGuia, SoporteHome, CrearTicket,
+  VerTicket, CrearTicketPublico, VerTicketPublico
+} from "@pages/Soporte"
+
+import { Dashboard, UserTable, SupportTable,
+  SupportChat, AdminRoles, PermissionManagement, UserEditPage
+ } from "@components/Admin";
+
+import LoadingScreen from "@components/LoadingScreen";
+
+import {
+  Empresa, FindFreelancer, ViewPerfilEmpresa,
+  ViewFreelancer,MyProjects
+} from "@pages/Empresa"
+
+import {
+  FreeLancer, ProjectList, ViewPerfilFreeLancer,
+  MyPostulations, ViewMoreDetailsFreelancer
+} from "@pages/Freelancer"
+
+import {BusquidyPage, AboutUsPage, Home} from "@pages/General"
+import {User, Unauthorized, PaymentReturn} from "@pages/User"
+
 import EditProjectPage from "./components/Empresa/Projects/ProjectForm/EditProjectPage";
 import ProtectedAdminRoute from "./routes/ProtectedAdminRoute";
-import UserTable from "./components/Admin/UserTable";
-import Unauthorized from "./pages/User/Unauthorized";
-import SupportTable from "./components/Admin/SupportTable";
-import SupportChat from "./components/Admin/SupportChat";
-import Dashboard from "./components/Admin/Dashboard";
-import AdminRoles from "./components/Admin/AdminRoles";
-import PermissionManagement from "./components/Admin/PermissionManagement";
-import UserEditPage from "./components/Admin/UserEditPage";
+
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -177,7 +170,7 @@ function App() {
                 </Route>
                 
                 <Route path="paymentmanagement" element={<PaymentManagement />} />
-                <Route path="notificationmanagement" element={<NotificationManegement />} />
+                <Route path="notificationmanagement" element={<NotificationManagement />} />
                 <Route path="auditandsecurity" element={<AuditAndSecurity />} />
                 <Route path="admin/support" element={<SupportTable />} />
                 <Route path="admin/support/:id_ticket" element={<SupportChat />} />
