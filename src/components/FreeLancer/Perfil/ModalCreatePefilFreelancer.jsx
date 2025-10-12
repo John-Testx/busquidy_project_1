@@ -1137,7 +1137,7 @@ const resetFreelancerData = () => {
                 </button>
               )}
 
-              {currentStep < 3 ? (
+              {currentStep < 12 ? (
                 <button className="siguiente" type="button" onClick={nextStep}>
                   Siguiente
                 </button>

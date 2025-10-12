@@ -1,5 +1,6 @@
 import axios from "axios";
 
+
 export const getUsuarios = async () => {
   const response = await axios.get('http://localhost:3001/api/users/get/usuarios');
   return response.data;
@@ -8,6 +9,20 @@ export const getUsuarios = async () => {
 export const deleteUsuario = async (id_usuario) => {
   await axios.delete(`http://localhost:3001/api/users/delete/${id_usuario}`);
 };
+
+export const updateUserStatus = (id, isActive) =>
+  axios.patch(`http://localhost:3001/api/users/${id}/status`, { is_active: isActive });
+
+export const getUserDetails = (id) => axios.get(`http://localhost:3001/api/users/${id}`).then(res => res.data);
+
+export const updateUserDetails = (id, data) =>
+  axios.patch(`http://localhost:3001/api/users/${id}`, data);
+
+export const getAdminRoles = (adminId) =>
+  axios.get(`http://localhost:3001/api/admin/roles/${adminId}`).then(res => res.data);
+
+export const updateAdminRoles = (adminId, roles) =>
+  axios.patch(`http://localhost:3001/api/admins/${adminId}/roles`, { roles });
 
 export async function createFreelancerProfile(freelancerData, id_usuario, token) {
   try {

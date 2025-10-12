@@ -38,6 +38,7 @@ function PaymentTable() {
     const cargarPagosSuscripciones = async () => {
         try {
             const response = await axios.get(`http://localhost:3001/api/payments/pagos-suscripciones`);
+            console.log(response.data);
             setPagoSuscripcion(response.data);
         } catch (error) {
             console.error('Error al cargar los pagos de suscripciones:', error);
@@ -272,7 +273,7 @@ function PaymentTable() {
                                 <td>{pago.id_usuario}</td>
                                 <td>{pago.correo}</td>
                                 <td>{pago.monto}</td>
-                                <td>{pago.plan_suscripcion}</td>
+                                <td>{pago.nombre_plan}</td>
                                 <td>{formatDateToLocale(pago.fecha_pago)}</td>
                                 <td>{pago.estado_pago}</td>
                                 <td>
