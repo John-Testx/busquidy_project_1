@@ -84,10 +84,10 @@ router.get("/roles/:adminId", async (req, res) => {
   const { adminId } = req.params;
   try {
     // Get all roles
-    const [allRoles] = await db.execute("SELECT * FROM rol");
+    const [allRoles] = await pool.execute("SELECT * FROM rol");
 
     // Get roles assigned to this admin
-    const [assignedRoles] = await db.execute(
+    const [assignedRoles] = await pool.execute(
       "SELECT id_rol FROM admin_rol WHERE id_administrador = ?",
       [adminId]
     );

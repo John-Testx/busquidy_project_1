@@ -174,7 +174,7 @@ function VerTicketPublico() {
             <h2 className="text-2xl font-bold text-gray-800 mb-2">Error</h2>
             <p className="text-gray-600 mb-4">{error || "Ticket no encontrado"}</p>
             <button
-              onClick={() => navigate("/soporte")}
+              onClick={() => navigate("/soportehome")}
               className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
             >
               Volver al inicio
@@ -194,7 +194,7 @@ function VerTicketPublico() {
           {/* Header */}
           <div className="mb-6">
             <button
-              onClick={() => navigate("/soporte")}
+              onClick={() => navigate("/soportehome")}
               className="flex items-center gap-2 text-gray-600 hover:text-gray-800 mb-4 transition-colors"
             >
               <ArrowLeft className="w-5 h-5" />

@@ -203,7 +203,7 @@ function Footer() {
             {/* Sección de copyright */}
             <div className="text-center py-5 border-t-2 border-gray-200">
                 <p className="m-0 text-sm text-gray-600">
-                    Copyright © 2024 Busquidy. Todos los derechos reservados.
+                    Copyright © 2025 Busquidy. Todos los derechos reservados.
                 </p>
             </div>
         </footer>

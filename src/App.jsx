@@ -23,7 +23,7 @@ import MyPostulations from "./pages/Freelancer/MyPostulations";
 import ViewCV from "./pages/Freelancer/ViewCV";
 import LoadingScreen from "./components/LoadingScreen"; 
 import BusquidyPage from "./pages/General/BusquidyPage";
-import SobreNosotrosPage from "./pages/General/SobreNostrosPage";
+import AboutUsPage from "./pages/General/AboutUsPage";
 import User from "./pages/User/user";
 import ViewMoreDetailsFreelancer from "./pages/Freelancer/ViewMoreDetailsFreelancer";
 import ViewFreelancer from "./pages/Empresa/ViewFreelancer";
@@ -121,7 +121,7 @@ function App() {
             <Route path= "/" element={<Home />} />
             <Route path= "/user" element={<User/>} />
             <Route path= "/busquidypage" element={<BusquidyPage />} />
-            <Route path= "/sobrenosotrospage" element={<SobreNosotrosPage />} />
+            <Route path= "/sobrenosotrospage" element={<AboutUsPage />} />
 
             {/* soporte */}
             <Route path= "/busquidyGuia" element={<BusquidyGuia />} />
