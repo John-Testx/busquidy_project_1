@@ -23,23 +23,40 @@ function PublicationCard({ publication, isApplied, onApply, id_usuario, userType
   return (
     <>
       <div
-        className={`publication-card ${isApplied ? 'applied' : ''}`}
+        className={`bg-white rounded-2xl shadow-lg transition-all duration-300 cursor-pointer overflow-hidden border border-transparent h-64 flex flex-col hover:transform hover:-translate-y-1 hover:shadow-xl hover:border-blue-500 ${
+          isApplied ? 'opacity-70 cursor-default' : ''
+        }`}
         onClick={openModal}
       >
-        <div className="publication-header">
-          <h3>{publication.titulo}</h3>
-          <button className="bookmark-button">
+        {/* Header */}
+        <div className="flex justify-between items-center px-4 py-3.5 bg-gray-50 border-b border-gray-200">
+          <h3 className="m-0 text-lg text-gray-800 font-semibold">
+            {publication.titulo}
+          </h3>
+          <button className="bg-transparent border-none text-blue-500 text-xl cursor-pointer transition-colors duration-200 hover:text-blue-700">
             <BsBookmarkPlus />
           </button>
         </div>
-        <div className="publication-info">
-          <p><FaLocationArrow /> {publication.ubicacion}</p>
-          <p><FaClock /> {publication.duracion_estimada}</p>
-          <p><FaMoneyBillAlt /> {publication.presupuesto}</p>
-          <p><FaStar /> {publication.rating} ⭐</p>
+
+        {/* Info Grid */}
+        <div className="grid grid-cols-2 gap-2.5 px-4 py-3.5 text-gray-600 flex-grow">
+          <p className="flex items-center gap-2 m-0 text-sm">
+            <FaLocationArrow /> {publication.ubicacion}
+          </p>
+          <p className="flex items-center gap-2 m-0 text-sm">
+            <FaClock /> {publication.duracion_estimada}
+          </p>
+          <p className="flex items-center gap-2 m-0 text-sm">
+            <FaMoneyBillAlt /> {publication.presupuesto}
+          </p>
+          <p className="flex items-center gap-2 m-0 text-sm">
+            <FaStar /> {publication.rating} ⭐
+          </p>
         </div>
-        <div className="publication-company">
-          <p>{publication.empresa}</p>
+
+        {/* Company Footer */}
+        <div className="bg-gray-100 px-4 py-2.5 text-right text-gray-700 text-sm">
+          <p className="m-0">{publication.empresa}</p>
         </div>
       </div>
 
@@ -48,8 +65,8 @@ function PublicationCard({ publication, isApplied, onApply, id_usuario, userType
             publication={publication}
             isApplied={isApplied}
             onClose={closeModal}
-            onApply={onApply} // Pasar directamente onApply
-            id_publicacion={publication.id_publicacion} // Pasar id_publicacion explícitamente
+            onApply={onApply}
+            id_publicacion={publication.id_publicacion}
             id_usuario={id_usuario}
             userType={userType}
         />
