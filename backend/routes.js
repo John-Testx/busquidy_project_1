@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const sendError = (res, status, message) => res.status(status).json({message});
 
-const empresaRoutes = require("./empresaRoutes");
+const empresaRoutes = require("./routes/empresaRoutes");
 const userRoutes = require("./userRoutes");
 const projectRoutes = require("./projectRoutes");
 const paymentRoutes = require("./paymentRoutes");

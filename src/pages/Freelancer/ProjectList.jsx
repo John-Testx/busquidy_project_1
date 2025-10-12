@@ -2,13 +2,11 @@ import React, { useEffect, useState } from "react";
 import {jwtDecode} from 'jwt-decode';
 import { useNavigate } from "react-router-dom";
 import Navbar from "../../components/Home/Navbar";
-//import NavbarEmpresa from "../../components/Empresa/NavbarEmpresa";
-//import NavbarFreeLancer from "../../components/FreeLancer/NavbarFreeLancer";
-import SearchPublicationSection from "../../components/FreeLancer/SearchPublicationSection";
-import PublicationList from "../../components/FreeLancer/PublicationList";
+import SearchPublicationSection from "../../components/FreeLancer/Publicaciones_section/SearchPublicationSection";
+import PublicationsContainer from "../../components/FreeLancer/Publicaciones_section/PublicationsContainer";
+import PublicationList from "../../components/FreeLancer/Publicaciones_section/PublicationList";
 import Footer from "../../components/Home/Footer";
 import LoadingScreen from "../../components/LoadingScreen"; 
-import PublicationsContainer from "../../components/FreeLancer/PublicationsContainer";
 
 function ProjectList() {
     // Estado para determinar si el usaurio está autenticado

@@ -1,8 +1,15 @@
+// import React, { useState, useEffect } from 'react';
+// import axios from 'axios';
+// import PublicationCard from './PublicationCard';
+// import PublicationCard from './PublicationCard';
+// import MessageModal from '../MessageModal';
+// import '../../styles/Freelancer/PublicationList.css';
+
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import PublicationCard from './PublicationCard';
-import MessageModal from '../MessageModal';
-import '../../styles/Freelancer/PublicationList.css';
+import MessageModal from '../../MessageModal';
+// import '../../styles/Freelancer/PublicationList.css';
 
 function PublicationList({ userType, id_usuario, filters }) {
     const [publications, setPublications] = useState([]);

@@ -1,8 +1,14 @@
+// import React, {useState} from 'react';
+// import { FaLocationArrow, FaClock, FaMoneyBillAlt, FaStar,   FaTimes } from 'react-icons/fa';
+// import '../../styles/Freelancer/PublicationDetailModal.css';
+// import { BsBookmarkPlus } from 'react-icons/bs';
+// import CompanyReviewModal from './CompanyReviewModal'
+
 import React, {useState} from 'react';
 import { FaLocationArrow, FaClock, FaMoneyBillAlt, FaStar,   FaTimes } from 'react-icons/fa';
-import '../../styles/Freelancer/PublicationDetailModal.css';
+// import '../../styles/Freelancer/PublicationDetailModal.css';
 import { BsBookmarkPlus } from 'react-icons/bs';
-import CompanyReviewModal from './CompanyReviewModal';
+import CompanyReviewModal from './CompanyReviewModal'
 
 function PublicationDetailModal({ publication, isApplied, onClose, onApply, id_publicacion, id_usuario, userType }) {
 

@@ -20,7 +20,6 @@ import PaymentManagement from "./pages/Admin/PaymentManagement";
 import NotificationManegement from "./pages/Admin/NotificationManegement";
 import AuditAndSecurity from "./pages/Admin/AuditAndSecurity";
 import MyPostulations from "./pages/Freelancer/MyPostulations";
-import ViewCV from "./pages/Freelancer/ViewCV";
 import LoadingScreen from "./components/LoadingScreen"; 
 import BusquidyPage from "./pages/General/BusquidyPage";
 import AboutUsPage from "./pages/General/AboutUsPage";
@@ -138,7 +137,6 @@ function App() {
             {/* freelancer */}
             <Route path= "/freelancer" element={<FreeLancer />} />
             <Route path= "/mypostulations" element={<MyPostulations />} />
-            {/* <Route path= "/viewcv" element={<ViewCV />} /> */}
             <Route path= "/viewperfilfreelancer" element={<ViewPerfilFreeLancer />} />
 
             {/* empresa */}

@@ -1,16 +1,16 @@
 const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const {verifyToken, validatePaymentData, validateUser, upload} = require("./middlewares/auth");
+const {verifyToken, validatePaymentData, validateUser, upload} = require("../middlewares/auth");
 const sendError = (res, status, message) => res.status(status).json({message});
 const router = express.Router();
 const {pool,
   getUserById,
   getEmpresaByUserId,
   getRepresentanteByUserId,
-} = require("./db");
-const { addReview } = require("./controllers/reviewController");
-const { updateEmpresaProfile, getEmpresaProfileStatus, getPerfilEmpresa } = require("./controllers/empresaController");
+} = require("../db");
+const { addReview } = require("../controllers/reviewController");
+const { updateEmpresaProfile, getEmpresaProfileStatus, getPerfilEmpresa } = require("../controllers/empresaController");
 
 // Ruta para ver si existe perfil empresa ||  GET /api/empresa/get/:id_usuario
 router.get("/get/:id_usuario", getEmpresaProfileStatus);

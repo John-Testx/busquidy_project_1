@@ -1,7 +1,11 @@
+// import React, { useState, useEffect } from 'react';
+// import axios from 'axios';
+// import '../../styles/Freelancer/CompanyReviewModal.css';
+// import MessageModal from '../MessageModal';
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import '../../styles/Freelancer/CompanyReviewModal.css';
-import MessageModal from '../MessageModal';
+// import '../../styles/Freelancer/CompanyReviewModal.css';
+import MessageModal from '../../MessageModal'; 
 
 const CompanyReviewModal = ({
   isOpen,
