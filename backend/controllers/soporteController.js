@@ -127,7 +127,7 @@ const obtenerMensajesPublico = async (req, res) => {
       `SELECT 
         m.*,
         CASE 
-          WHEN m.remitente = 'administrador' THEN a.nombre
+          WHEN m.remitente = 'administrador' THEN a.nombre_completo
           ELSE 'Tú'
         END as nombre_remitente
        FROM soporte_mensaje m
@@ -299,14 +299,29 @@ const obtenerTicket = async (req, res) => {
 
     const [tickets] = await pool.query(
       `SELECT 
-        t.*,
-        u.nombre as nombre_usuario,
-        u.email as email_usuario,
-        a.nombre as nombre_admin
-       FROM soporte_ticket t
-       LEFT JOIN usuario u ON t.id_usuario = u.id_usuario
-       LEFT JOIN administrador a ON t.id_admin_asignado = a.id_administrador
-       WHERE t.id_ticket = ?`,
+          t.*,
+          COALESCE(
+            a.nombre_completo,
+            CONCAT(ap.nombres, ' ', ap.apellidos),
+            e.nombre_empresa,
+            t.nombre_contacto,
+            'Anónimo'
+          ) AS nombre_usuario,
+          COALESCE(
+            u.correo,
+            f.correo_contacto,
+            e.correo_empresa,
+            t.email_contacto
+          ) AS email_usuario,
+          adm.nombre_completo AS nombre_admin
+      FROM soporte_ticket t
+      LEFT JOIN usuario u ON t.id_usuario = u.id_usuario
+      LEFT JOIN administrador a ON u.id_usuario = a.id_usuario
+      LEFT JOIN freelancer f ON u.id_usuario = f.id_usuario
+      LEFT JOIN antecedentes_personales ap ON f.id_freelancer = ap.id_freelancer
+      LEFT JOIN empresa e ON u.id_usuario = e.id_usuario
+      LEFT JOIN administrador adm ON t.id_admin_asignado = adm.id_administrador
+      WHERE t.id_ticket = ?`,
       [id_ticket]
     );
 

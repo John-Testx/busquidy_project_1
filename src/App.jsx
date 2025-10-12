@@ -133,7 +133,8 @@ function App() {
             {/* freelancer */}
             <Route path= "/freelancer" element={<FreeLancer />} />
             <Route path= "/mypostulations" element={<MyPostulations />} />
-            <Route path= "/viewcv" element={<ViewCV />} />
+            {/* <Route path= "/viewcv" element={<ViewCV />} /> */}
+            <Route path= "/viewperfilfreelancer" element={<ViewPerfilFreeLancer />} />
 
             {/* empresa */}
             <Route path= "/empresa" element={<Empresa />} />
@@ -148,7 +149,6 @@ function App() {
             <Route path= "/loginadmin" element={<LoginAdmin />} />
             <Route element={<ProtectedAdminRoute />}>
               <Route path= "/adminhome" element={<AdminHome  connectedUsers={connectedUsers}/>} />
-              <Route path= "/viewperfilfreelancer" element={<ViewPerfilFreeLancer />} />
               <Route path= "/usermanagement" element={<UserManagement />} />
               <Route path= "/projectmanagement" element={<ProjectManagement />} />
               <Route path= "/reviewmanagement" element={<ReviewManagement />} />

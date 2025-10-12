@@ -32,7 +32,7 @@ function VerTicketPublico() {
 
   useEffect(() => {
     if (!guestEmail) {
-      navigate("/soporte");
+      navigate("/soportehome");
       return;
     }
     cargarTicket();

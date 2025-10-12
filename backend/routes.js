@@ -6,7 +6,7 @@ const empresaRoutes = require("./empresaRoutes");
 const userRoutes = require("./userRoutes");
 const projectRoutes = require("./projectRoutes");
 const paymentRoutes = require("./paymentRoutes");
-const freelancerRoutes = require("./freelancerRoutes");
+const freelancerRoutes = require("./routes/freelancerRoutes");
 const supportRoutes = require("./routes/supportRoutes");
 const adminRoutes = require("./adminRoutes");
 

@@ -7,7 +7,7 @@ const pdfParse = require("pdf-parse");
 const mammoth = require("mammoth");
 const router = express.Router();
 const fs = require("fs");
-const {procesarCV} = require("./cvService");
+const {procesarCV} = require("./services/cvService");
 const {pool,
   insertarUsuario,
   getUserById,
