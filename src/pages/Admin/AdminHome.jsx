@@ -2,7 +2,7 @@ import React from "react";
 import { Outlet } from "react-router-dom";
 import SidebarAdmin from "../../components/Admin/SidebarAdmin";
 import useAuth from "../../hooks/useAuth";
-import { useAdminPermissions } from "../../api/useAdminPermissions";
+import { useAdminPermissions } from "../../hooks/useAdminPermissions";
 
 export default function AdminHome() {
   const { id_usuario } = useAuth();

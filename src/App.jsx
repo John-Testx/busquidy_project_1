@@ -4,7 +4,7 @@ import {jwtDecode} from 'jwt-decode';
 import io from "socket.io-client";
 
 import { 
-    AdminHome, LoginAdmin, UserManagement,
+    AdminHome, UserManagement,
     ProjectManagement, ReviewManagement, SupportManagement,
     PaymentManagement, NotificationManagement, AuditAndSecurity
   } from "@pages/Admin";
@@ -144,7 +144,6 @@ function App() {
 
 
             {/* ADMIN PANEL || Rutas protegidas */}
-            <Route path= "/loginadmin" element={<LoginAdmin />} />
             <Route element={<ProtectedAdminRoute />}>
               <Route path="/adminhome" element={<AdminHome connectedUsers={connectedUsers} />}>
                 <Route index element={<Dashboard />} /> {/* ← default /adminhome */}

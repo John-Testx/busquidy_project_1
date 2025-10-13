@@ -1,53 +1,40 @@
-import axios from "axios";
+import apiClient from "./apiClient";
 
+const BASE = "/users";
 
 export const getUsuarios = async () => {
-  const response = await axios.get('http://localhost:3001/api/users/get/usuarios');
+  const response = await apiClient.get(`${BASE}/get/usuarios`);
   return response.data;
 };
 
 export const deleteUsuario = async (id_usuario) => {
-  await axios.delete(`http://localhost:3001/api/users/delete/${id_usuario}`);
+  const response = await apiClient.delete(`${BASE}/delete/${id_usuario}`);
+  return response.data;
 };
 
 export const updateUserStatus = (id, isActive) =>
-  axios.patch(`http://localhost:3001/api/users/${id}/status`, { is_active: isActive });
+  apiClient.patch(`${BASE}/${id}/status`, { is_active: isActive });
 
-export const getUserDetails = (id) => axios.get(`http://localhost:3001/api/users/${id}`).then(res => res.data);
+export const getUserDetails = async (id) => {
+  const response = await apiClient.get(`${BASE}/${id}`);
+  return response.data;
+};
 
 export const updateUserDetails = (id, data) =>
-  axios.patch(`http://localhost:3001/api/users/${id}`, data);
+  apiClient.patch(`${BASE}/${id}`, data);
 
-export const getAdminRoles = (adminId) =>
-  axios.get(`http://localhost:3001/api/admin/roles/${adminId}`).then(res => res.data);
+export const getAdminRoles = async (adminId) => {
+  const response = await apiClient.get(`/admin/roles/${adminId}`);
+  return response.data;
+};
 
 export const updateAdminRoles = (adminId, roles) =>
-  axios.patch(`http://localhost:3001/api/admins/${adminId}/roles`, { roles });
+  apiClient.patch(`/admins/${adminId}/roles`, { roles });
 
-export async function createFreelancerProfile(freelancerData, id_usuario, token) {
-  try {
-    const response = await fetch(
-      "http://localhost:3001/api/freelancer/create-perfil-freelancer",
-      {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ ...freelancerData, id_usuario }),
-      }
-    );
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      // Return the error info so the component can handle it
-      throw new Error(data.error || "Error al crear el perfil: " + (data.details || ""));
-    }
-
-    return data; // Successful response
-  } catch (error) {
-    // Rethrow so UI handles both network and server errors
-    throw error;
-  }
-}
+export const createFreelancerProfile = async (freelancerData, id_usuario) => {
+  const response = await apiClient.post(
+    `/freelancer/create-perfil-freelancer`,
+    { ...freelancerData, id_usuario }
+  );
+  return response.data;
+};

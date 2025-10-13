@@ -11,8 +11,8 @@ import LoadingScreen from "../../components/LoadingScreen";
 import useAuth from "../../hooks/useAuth";
 import LittleSearchSection from "../../components/FreeLancer/LittleSearchSection";
 import InfoSectionFreelancer from "../../components/FreeLancer/InfoSectionFreelancer";
-import EmpresaActionsCard from "../../components/Empresa/EmpresaActionsCard";
-import InfoSectionEmpresa from "../../components/Empresa/InfoSectionEmpresa";
+import EmpresaActionsCard from "../../components/Empresa/PanelEmpresa/EmpresaActionsCard";
+import InfoSectionEmpresa from "../../components/Empresa/PanelEmpresa/InfoSectionEmpresa";
 
 function Home() {
 

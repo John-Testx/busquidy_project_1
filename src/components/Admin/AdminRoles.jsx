@@ -5,7 +5,7 @@ import {
   createAdminRole,
   updateAdminRole,
   deleteAdminRole
-} from "../../api/adminRoles";
+} from "../../api/adminApi";
 
 const AdminRoles = () => {
   const [roles, setRoles] = useState([]);

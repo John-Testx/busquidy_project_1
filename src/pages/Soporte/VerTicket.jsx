@@ -7,7 +7,7 @@ import {
   getTicketDetails, 
   getTicketMessages, 
   sendTicketMessage 
-} from "../../api/supportService";
+} from "../../api/supportApi";
 import { 
   ArrowLeft, 
   Clock, 

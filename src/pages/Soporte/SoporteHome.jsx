@@ -4,7 +4,7 @@ import Navbar from "../../components/Home/Navbar";
 import Footer from "../../components/Home/Footer";
 import TicketList from "../../components/Soporte/TicketList";
 import EmailVerification from "../../components/Soporte/EmailVerification";
-import { getUserTickets, getTicketsByEmail } from "../../api/supportService";
+import { getUserTickets, getTicketsByEmail } from "../../api/supportApi";
 import { Plus, Loader2, AlertCircle, Headset, Mail, LogIn } from "lucide-react";
 
 function SoporteHome() {

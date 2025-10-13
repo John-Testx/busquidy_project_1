@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../../components/Home/Navbar";
 import Footer from "../../components/Home/Footer";
-import { createPublicTicket } from "../../api/supportService";
+import { createPublicTicket } from "../../api/supportApi";
 import { ArrowLeft, CheckCircle, AlertCircle, User, Mail as MailIcon } from "lucide-react";
 
 const categorias = [

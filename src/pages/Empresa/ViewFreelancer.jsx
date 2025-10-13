@@ -1,29 +1,24 @@
 import React, {useState, useEffect} from "react";
-import {jwtDecode} from 'jwt-decode';  // Make sure you import the default function
+import {jwtDecode} from 'jwt-decode';
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import Navbar from "../../components/Home/Navbar";
-//import NavbarEmpresa from "../../components/Empresa/NavbarEmpresa";
 import Footer from "../../components/Home/Footer";
 import LoadingScreen from "../../components/LoadingScreen"; 
-import PerfilFreelancerEmpresaView from "../../components/Empresa/PerfilFreelancerEmpresaView";
+import PerfilFreelancerEmpresaView from "../../components/Empresa/FreelancerList/PerfilFreelancerEmpresaView";
 
 function ViewFreelancer() {
-    // Estado para determinar si el usuario está autenticado
     const [isAuthenticated, setIsAuthenticated] = useState(false);
-    // Estado para la pantalla de carga
     const [loading, setLoading] = useState(true);
-    // Estado para los mensajes de logout
     const [logoutStatus, setLogoutStatus] = useState("");
-    // Estado para el tipo de usuario
     const [userType, setUserType] = useState("");
-    // Estado para el id usuario
     const [id_usuario, setIdUsuario] = useState(null);
     const [isPerfilIncompleto, setIsPerfilIncompleto] = useState(null); 
     const navigate = useNavigate(); 
 
-    const { id } = useParams(); // Obtener el ID del freelancer desde la URL
+    const { id } = useParams();
     const [freelancer, setFreelancer] = useState(null);
+    const [freelancerError, setFreelancerError] = useState(false);
 
     useEffect(() => {
         const fetchFreelancerData = async () => {
@@ -31,14 +26,15 @@ function ViewFreelancer() {
                 const response = await axios.get(`http://localhost:3001/api/freelancer/freelancer-perfil/${id}`);
                 console.log("Datos recibidos del backend:", response.data);
                 setFreelancer(response.data);
+                setFreelancerError(false);
             } catch (error) {
                 console.error("Error al obtener los datos del freelancer:", error);
+                setFreelancerError(true);
             }
         };
         fetchFreelancerData();
     }, [id]);
     
-
     useEffect(() => {
         const checkAuth = () => {
             const token = localStorage.getItem('token');    
@@ -51,7 +47,6 @@ function ViewFreelancer() {
                     setUserType(decoded.tipo_usuario);
                     setIdUsuario(decoded.id_usuario);
 
-                    // Verifica el perfil una vez que id_usuario está disponible
                     if (decoded.id_usuario) {
                         fetchPerfilEmpresa(decoded.id_usuario);
                         console.log('ID de usuario correcto:', decoded.id_usuario);
@@ -84,7 +79,7 @@ function ViewFreelancer() {
     };
 
     const handleLogout = () => {
-        setLoading(true); // Muestra la pantalla de carga al cerrar sesión
+        setLoading(true);
         setLogoutStatus("Cerrando sesión...");
         setTimeout(() => {
             localStorage.removeItem("token");
@@ -93,37 +88,67 @@ function ViewFreelancer() {
             setUserType(null);
             setLogoutStatus("Sesión cerrada");
             setTimeout(() => {
-                setLoading(false); // Oculta la pantalla de carga antes de redirigir
+                setLoading(false);
                 navigate("/");
-            }, 1000); // Reduce este timeout si es necesario
+            }, 1000);
         });
     };
 
-    const renderNavbar = () => {
-        return <Navbar />;
-    };
-
     return (
-        <div style={{marginTop:"100px"}}>
-            {/* Muestra la pantalla de carga si está activa */}
-            {loading && <LoadingScreen />} 
+        <div className="flex flex-col min-h-screen bg-gray-50">
+            {/* Loading Screen */}
+            {loading && <LoadingScreen />}
 
-            {renderNavbar()}
+            {/* Navbar */}
+            <Navbar />
             
-            
-            
-            <div className="freelancer-profile-view">
-                {freelancer ? (
+            {/* Main Content */}
+            <main className="flex-1 pt-24 pb-16">
+                {freelancerError ? (
+                    <div className="max-w-5xl mx-auto px-4">
+                        <div className="bg-red-50 border border-red-200 rounded-xl p-8 text-center">
+                            <div className="flex justify-center mb-4">
+                                <i className="fas fa-exclamation-circle text-red-500 text-4xl"></i>
+                            </div>
+                            <h2 className="text-2xl font-bold text-red-800 mb-2">
+                                Error al cargar el perfil
+                            </h2>
+                            <p className="text-red-700 mb-6">
+                                No pudimos encontrar los datos del freelancer. Por favor, intenta nuevamente.
+                            </p>
+                            <button
+                                onClick={() => navigate("/")}
+                                className="inline-flex items-center gap-2 px-6 py-3 bg-teal-600 text-white font-semibold rounded-lg hover:bg-teal-700 transition-colors duration-200"
+                            >
+                                <i className="fas fa-home"></i>
+                                Volver al inicio
+                            </button>
+                        </div>
+                    </div>
+                ) : freelancer ? (
                     <PerfilFreelancerEmpresaView freelancer={freelancer} />
                 ) : (
-                    <p>Cargando perfil del freelancer...</p>
+                    <div className="max-w-5xl mx-auto px-4">
+                        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-16 text-center">
+                            <div className="flex justify-center mb-4">
+                                <div className="animate-spin">
+                                    <i className="fas fa-spinner text-4xl text-teal-600"></i>
+                                </div>
+                            </div>
+                            <p className="text-gray-600 text-lg">
+                                Cargando perfil del freelancer...
+                            </p>
+                        </div>
+                    </div>
                 )}
-            </div>
+            </main>
+
+            {/* Footer */}
             <Footer />
 
-            {/* Mensaje de estado de cierre de sesión */}
+            {/* Logout Status Message */}
             {logoutStatus && (
-                <div className="logout-status-msg">
+                <div className="fixed bottom-6 right-6 bg-teal-600 text-white px-6 py-3 rounded-lg shadow-lg font-semibold">
                     {logoutStatus}
                 </div>
             )}

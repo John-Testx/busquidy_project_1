@@ -1,7 +1,7 @@
-const API_URL = process.env.REACT_APP_API_URL || "http://localhost:3001/api";
+import apiClient from "./apiClient";
 
 export const commitTransaction = async (token_ws) => {
-  const response = await axios.post(`${API_URL}/payments/commit_transaction`, {
+  const response = await apiClient.post("/payments/commit_transaction", {
     token: token_ws,
   });
   return response.data;

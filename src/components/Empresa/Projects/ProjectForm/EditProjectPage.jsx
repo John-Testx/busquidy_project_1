@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import ProjectForm from "./ProjectForm";
-import { getProjectById, updateProject } from "../../../../api/projectsService";
+import { getProjectById, updateProject } from "../../../../api/projectsApi";
 import { toast } from "react-toastify";
 import LoadingScreen from "../../../LoadingScreen";
 import Navbar from "../../../Home/Navbar";

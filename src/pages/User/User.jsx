@@ -5,10 +5,10 @@ import Navbar from "../../components/Home/Navbar";
 import { navbarOptions } from "../../common/navbarOptions";
 import Footer from "../../components/Home/Footer";
 import LoadingScreen from "../../components/LoadingScreen";
-import InfoSectionEmpresa from "../../components/Empresa/InfoSectionEmpresa";
+import InfoSectionEmpresa from "../../components/Empresa/PanelEmpresa/InfoSectionEmpresa";
 import InfoSectionFreelancer from "../../components/FreeLancer/InfoSectionFreelancer";
 import LittleSearchSection from "../../components/FreeLancer/LittleSearchSection";
-import EmpresaActionsCard from "../../components/Empresa/EmpresaActionsCard";
+import EmpresaActionsCard from "../../components/Empresa/PanelEmpresa/EmpresaActionsCard";
 
 function User() {
   const { isAuthenticated, tipo_usuario: userType, loading, logout } = useAuth();
