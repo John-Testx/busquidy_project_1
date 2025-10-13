@@ -3,13 +3,13 @@
 // import PublicationCard from './PublicationCard';
 // import PublicationCard from './PublicationCard';
 // import MessageModal from '../MessageModal';
+// import '../../../styles/Freelancer/PublicationList.css';
 // import '../../styles/Freelancer/PublicationList.css';
-
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import PublicationCard from './PublicationCard';
 import MessageModal from '../../MessageModal';
-// import '../../styles/Freelancer/PublicationList.css';
+
 
 function PublicationList({ userType, id_usuario, filters }) {
     const [publications, setPublications] = useState([]);
@@ -197,18 +197,24 @@ function PublicationList({ userType, id_usuario, filters }) {
     };
 
     return (
-        <div className="publication-list-container">
-            <div className="publication-list">
-                {filteredPublications.map(publication => (
-                    <PublicationCard 
-                        key={publication.id_publicacion}
-                        publication={publication}
-                        isApplied={appliedPublications.includes(publication.id_publicacion)}
-                        onApply={postulacion}
-                        id_usuario={id_usuario}
-                        userType={userType}
-                    />
-                ))}
+        <div className="flex justify-center items-center bg-gray-100 p-5 rounded-xl">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 max-w-7xl w-full">
+                {filteredPublications.length > 0 ? (
+                    filteredPublications.map(publication => (
+                        <PublicationCard 
+                            key={publication.id_publicacion}
+                            publication={publication}
+                            isApplied={appliedPublications.includes(publication.id_publicacion)}
+                            onApply={postulacion}
+                            id_usuario={id_usuario}
+                            userType={userType}
+                        />
+                    ))
+                ) : (
+                    <div className="col-span-full text-center text-gray-500 py-10 text-lg">
+                        No se encontraron publicaciones
+                    </div>
+                )}
 
                 {showMessageModal && (
                     <MessageModal 

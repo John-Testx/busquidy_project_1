@@ -1,7 +1,7 @@
 import React from "react";
 import NotificationTable from "../../components/Admin/NotificationTable"; // Componente de la tabla de pagos
 
-function NotificationManegement() {
+function NotificationManagement() {
     return (
         <div className="notification-management">
             <NotificationTable />
@@ -9,4 +9,4 @@ function NotificationManegement() {
     );
 }
 
-export default NotificationManegement;
+export default NotificationManagement;
