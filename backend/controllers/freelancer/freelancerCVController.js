@@ -1,12 +1,11 @@
-const { pool, getFreelancerByUserId, guardarPerfilEnDB } = require("../../db");
-const { procesarCV } = require("../../services/cvService");
-const pdfParse = require("pdf-parse");
-const mammoth = require("mammoth");
 const fs = require("fs");
+const { getFreelancerByUserId } = require("../../db");
+const { procesarArchivoCV, procesarCV } = require("../../services/cvService");
+const profileQueries = require("../../queries/freelancer/profileQueries");
 
-// ============================================
-// SUBIR Y PROCESAR CV
-// ============================================
+/**
+ * Subir y procesar CV
+ */
 const uploadCV = async (req, res) => {
   const file = req.file;
   const id_usuario = req.body.id_usuario;
@@ -20,34 +19,14 @@ const uploadCV = async (req, res) => {
 
   try {
     const cv_url = `/uploads/cvs/${file.filename}`;
-    let extractedText = "";
 
-    // Procesar PDF
-    if (file.mimetype === "application/pdf") {
-      const dataBuffer = fs.readFileSync(file.path);
-      const pdfData = await pdfParse(dataBuffer);
-      extractedText = pdfData.text;
-    }
-    // Procesar archivos Word
-    else if (
-      file.mimetype === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
-      file.mimetype === "application/msword"
-    ) {
-      const dataBuffer = fs.readFileSync(file.path);
-      const docData = await mammoth.extractRawText({ buffer: dataBuffer });
-      extractedText = docData.value;
-    }
-    // Formato no soportado
-    else {
-      // Limpia el archivo subido
-      fs.unlinkSync(file.path);
-      return res.status(400).json({ error: "Formato de archivo no soportado." });
-    }
+    // Procesar el archivo (PDF o Word)
+    const extractedText = await procesarArchivoCV(file);
 
     // Obtener id_freelancer
     const freelancerResults = await getFreelancerByUserId(id_usuario);
     if (freelancerResults.length === 0) {
-      // Limpia el archivo subido
+      // Limpiar archivo subido
       fs.unlinkSync(file.path);
       return res.status(404).json({ error: "Freelancer no encontrado" });
     }
@@ -58,22 +37,49 @@ const uploadCV = async (req, res) => {
 
     // Procesar el texto extraído
     const perfilData = await procesarCV(extractedText);
-    perfilData.cv_url = cv_url;
-    perfilData.id_freelancer = id_freelancer;
 
     console.log("Datos procesados para guardar en la DB:", perfilData);
 
-    // Guardar en la base de datos
-    await guardarPerfilEnDB(perfilData);
+    // Actualizar información del freelancer
+    if (perfilData.freelancer) {
+      await profileQueries.updateFreelancerInfo(id_freelancer, {
+        correo_contacto: perfilData.freelancer.correo_contacto,
+        telefono_contacto: perfilData.freelancer.telefono_contacto,
+        linkedin_link: perfilData.freelancer.linkedin_link,
+        descripcion_freelancer: perfilData.freelancer.descripcion_freelancer
+      });
+    }
+
+    // Insertar antecedentes personales si existen
+    if (perfilData.antecedentes_personales) {
+      await profileQueries.insertAntecedentesPersonales(
+        id_freelancer, 
+        perfilData.antecedentes_personales
+      );
+    }
+
+    // Insertar pretensiones si existen
+    if (perfilData.pretensiones) {
+      await profileQueries.insertPretensiones(
+        id_freelancer, 
+        perfilData.pretensiones
+      );
+    }
+
+    // Actualizar CV URL
+    await profileQueries.updateCVUrl(id_freelancer, cv_url);
 
     console.log("Perfil creado exitosamente:", perfilData);
 
     // Enviar la respuesta final
-    return res.status(201).json({ message: "Perfil creado exitosamente.", cv_url });
+    return res.status(201).json({ 
+      message: "Perfil creado exitosamente.", 
+      cv_url 
+    });
   } catch (error) {
     console.error("Error al procesar el CV:", error);
-
-    // Limpia el archivo subido en caso de error
+    
+    // Limpiar el archivo subido en caso de error
     if (file && fs.existsSync(file.path)) {
       fs.unlinkSync(file.path);
     }
@@ -83,22 +89,19 @@ const uploadCV = async (req, res) => {
   }
 };
 
-// ============================================
-// OBTENER URL DEL CV
-// ============================================
+/**
+ * Obtener URL del CV
+ */
 const getCVUrl = async (req, res) => {
   const idFreelancer = req.params.id;
 
   try {
-    const [result] = await pool.query(
-      "SELECT cv_url FROM freelancer WHERE id_freelancer = ?",
-      [idFreelancer]
-    );
+    const cv_url = await profileQueries.getCVUrl(idFreelancer);
 
-    if (result.length > 0) {
-      res.status(200).json({ cv_url: result[0].cv_url });
+    if (cv_url) {
+      res.status(200).json({ cv_url });
     } else {
-      res.status(404).json({ error: "Freelancer no encontrado" });
+      res.status(404).json({ error: "Freelancer no encontrado o CV no disponible" });
     }
   } catch (error) {
     console.error("Error al obtener la URL del CV:", error);
@@ -108,5 +111,5 @@ const getCVUrl = async (req, res) => {
 
 module.exports = {
   uploadCV,
-  getCVUrl,
+  getCVUrl
 };

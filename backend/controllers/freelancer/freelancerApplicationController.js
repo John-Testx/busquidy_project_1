@@ -1,8 +1,9 @@
-const { pool } = require("../../db");
+const pool = require("../../db");
+const applicationQueries = require("../../queries/freelancer/applicationQueries");
 
-// ============================================
-// CREAR POSTULACIÓN A UN PROYECTO
-// ============================================
+/**
+ * Crear postulación a un proyecto
+ */
 const createApplication = async (req, res) => {
   const { id_publicacion } = req.params;
   const { id_usuario } = req.body;
@@ -20,42 +21,39 @@ const createApplication = async (req, res) => {
     await connection.beginTransaction();
 
     // Verificar si el freelancer ya aplicó a este proyecto
-    const [existingApplications] = await connection.query(
-      `SELECT * FROM postulacion 
-       JOIN freelancer ON postulacion.id_freelancer = freelancer.id_freelancer
-       WHERE postulacion.id_publicacion = ? AND freelancer.id_usuario = ?`,
-      [id_publicacion, id_usuario]
+    const alreadyApplied = await applicationQueries.checkExistingApplication(
+      id_publicacion, 
+      id_usuario, 
+      connection
     );
 
-    if (existingApplications.length > 0) {
+    if (alreadyApplied) {
       await connection.rollback();
       return res.status(400).json({ error: "Ya has aplicado a este proyecto" });
     }
 
-    // Obtener freelancer
-    const [perfilFreelancerResults] = await connection.query(
-      "SELECT id_freelancer FROM freelancer WHERE id_usuario = ?",
-      [id_usuario]
+    // Obtener id_freelancer
+    const id_freelancer = await applicationQueries.getFreelancerIdByUserId(
+      id_usuario, 
+      connection
     );
 
-    if (perfilFreelancerResults.length === 0) {
+    if (!id_freelancer) {
       await connection.rollback();
       return res.status(404).json({ error: "No se encontró el freelancer" });
     }
 
-    const id_freelancer = perfilFreelancerResults[0].id_freelancer;
-
-    // Insertar postulación
-    await connection.query(
-      `INSERT INTO postulacion (id_publicacion, id_freelancer, fecha_postulacion, estado_postulacion)
-       VALUES (?, ?, CURDATE(), 'postulado')`,
-      [id_publicacion, id_freelancer]
+    // Crear postulación
+    await applicationQueries.createApplication(
+      id_publicacion, 
+      id_freelancer, 
+      connection
     );
 
     await connection.commit();
     res.status(201).json({
       message: "Postulación exitosa",
-      id_publicacion: id_publicacion,
+      id_publicacion: id_publicacion
     });
   } catch (error) {
     console.error("Error al intentar postular:", error);
@@ -66,9 +64,9 @@ const createApplication = async (req, res) => {
   }
 };
 
-// ============================================
-// OBTENER POSTULACIONES DEL FREELANCER
-// ============================================
+/**
+ * Obtener postulaciones del freelancer
+ */
 const getApplications = async (req, res) => {
   const { id_usuario } = req.params;
 
@@ -77,37 +75,15 @@ const getApplications = async (req, res) => {
   }
 
   try {
-    // Obtener ID del freelancer asociado al usuario
-    const [perfilFreelancerResults] = await pool.query(
-      "SELECT id_freelancer FROM freelancer WHERE id_usuario = ?",
-      [id_usuario]
-    );
+    // Obtener id_freelancer
+    const id_freelancer = await applicationQueries.getFreelancerIdByUserId(id_usuario);
 
-    if (perfilFreelancerResults.length === 0) {
+    if (!id_freelancer) {
       return res.status(404).json({ error: "No se encontró el freelancer" });
     }
 
-    const id_freelancer = perfilFreelancerResults[0].id_freelancer;
-
-    // Obtener postulaciones del freelancer
-    const [postulaciones] = await pool.query(
-      `SELECT 
-        p.id_postulacion,
-        p.fecha_postulacion,
-        p.estado_postulacion,
-        pr.titulo AS titulo,
-        e.nombre_empresa,
-        e.correo_empresa,
-        e.telefono_contacto,
-        pp.fecha_publicacion,
-        pp.estado_publicacion
-       FROM postulacion AS p
-       INNER JOIN publicacion_proyecto AS pp ON p.id_publicacion = pp.id_publicacion
-       INNER JOIN proyecto AS pr ON pp.id_proyecto = pr.id_proyecto
-       INNER JOIN empresa AS e ON pr.id_empresa = e.id_empresa
-       WHERE p.id_freelancer = ?`,
-      [id_freelancer]
-    );
+    // Obtener postulaciones
+    const postulaciones = await applicationQueries.getFreelancerApplications(id_freelancer);
 
     res.json(postulaciones);
   } catch (error) {
@@ -116,9 +92,9 @@ const getApplications = async (req, res) => {
   }
 };
 
-// ============================================
-// ELIMINAR POSTULACIÓN
-// ============================================
+/**
+ * Eliminar postulación
+ */
 const deleteApplication = async (req, res) => {
   const { id_postulacion } = req.params;
 
@@ -131,30 +107,30 @@ const deleteApplication = async (req, res) => {
     connection = await pool.getConnection();
 
     // Verificar si la postulación existe
-    const [postulacionExists] = await connection.query(
-      "SELECT COUNT(*) as count FROM postulacion WHERE id_postulacion = ?",
-      [id_postulacion]
+    const exists = await applicationQueries.checkApplicationExists(
+      id_postulacion, 
+      connection
     );
 
-    if (postulacionExists[0].count === 0) {
+    if (!exists) {
       return res.status(404).json({
         success: false,
-        message: "Postulación no encontrada",
+        message: "Postulación no encontrada"
       });
     }
 
     // Eliminar postulación
-    await connection.query(`DELETE FROM postulacion WHERE id_postulacion = ?`, [id_postulacion]);
+    await applicationQueries.deleteApplication(id_postulacion, connection);
 
     res.status(200).json({
       success: true,
-      message: "Postulación eliminada correctamente",
+      message: "Postulación eliminada correctamente"
     });
   } catch (error) {
     console.error("Error al eliminar la postulación:", error);
     res.status(500).json({
       success: false,
-      message: "Error al eliminar la postulación",
+      message: "Error al eliminar la postulación"
     });
   } finally {
     if (connection) connection.release();
@@ -164,5 +140,5 @@ const deleteApplication = async (req, res) => {
 module.exports = {
   createApplication,
   getApplications,
-  deleteApplication,
+  deleteApplication
 };

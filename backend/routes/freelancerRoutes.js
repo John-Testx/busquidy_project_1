@@ -1,6 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const { verifyToken, upload } = require("../middlewares/auth");
+
+// Importar middlewares
+const { verifyToken } = require("../middlewares/auth");
+const { uploadCV } = require("../middlewares/upload");
 
 // Importar controllers
 const profileController = require("../controllers/freelancer/freelancerProfileController");
@@ -61,7 +64,7 @@ router.delete("/delete-postulacion/:id_postulacion", applicationController.delet
 // RUTAS DE CV
 // ============================================
 // Subir y procesar CV
-router.post("/upload-cv", upload.single("cv"), cvController.uploadCV);
+router.post("/upload-cv", uploadCV.single("cv"), cvController.uploadCV);
 
 // Obtener URL del CV
 router.get("/freelancer/:id/cv", cvController.getCVUrl);

@@ -1,5 +1,13 @@
-const {pool, getUserById, getFreelancerByUserId} = require("../db");
+// const {pool, getUserById, getFreelancerByUserId} = require("../db");
 const sendError = (res, status, message) => res.status(status).json({message});
+
+// REVIEW NO ES SOLO DE EMPRESA, MOVERLO MAS ADELANTE.
+
+/**
+ * Controlador de reseñas de empresa
+ * (Mantener el que ya tienes o crear uno nuevo si es necesario)
+ */
+
 
 async function addReview(req, res) {
   const { id_usuario, calificacion, comentario, id_identificador } = req.body;
@@ -108,4 +116,6 @@ async function addReview(req, res) {
   }
 }
 
-module.exports = { addReview };
+module.exports = {
+  addReview
+};

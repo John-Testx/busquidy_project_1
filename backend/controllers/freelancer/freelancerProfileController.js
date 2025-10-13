@@ -1,12 +1,10 @@
-const {
-  pool,
-  getUserById,
-  getFreelancerByUserId,
-} = require("../../db");
+const { getFreelancerByUserId } = require("../../queries/freelancer/profileQueries");
+const {getUserById} = require("../../queries/user/userQueries");
+const profileQueries = require("../../queries/freelancer/profileQueries");
 
-// ============================================
-// VERIFICAR SI EXISTE PERFIL
-// ============================================
+/**
+ * Verificar si existe perfil completo del freelancer
+ */
 const checkProfileExists = async (req, res) => {
   const { id_usuario } = req.params;
 
@@ -26,23 +24,18 @@ const checkProfileExists = async (req, res) => {
     const id_freelancer = freelancerResults[0].id_freelancer;
 
     // Verificar antecedentes personales
-    const [antecedentesResults] = await pool.query(
-      "SELECT * FROM antecedentes_personales WHERE id_freelancer = ?",
-      [id_freelancer]
-    );
+    const { exists } = await profileQueries.checkFreelancerProfileExists(id_freelancer);
 
-    const isPerfilIncompleto = antecedentesResults.length === 0;
-
-    res.json({ isPerfilIncompleto });
+    res.json({ isPerfilIncompleto: !exists });
   } catch (error) {
     console.error("Error al verificar el perfil del freelancer:", error);
     res.status(500).json({ error: "Error al verificar el perfil del freelancer" });
   }
 };
 
-// ============================================
-// OBTENER PERFIL COMPLETO (PROPIO)
-// ============================================
+/**
+ * Obtener perfil completo (propio)
+ */
 const getOwnProfile = async (req, res) => {
   const { id_usuario } = req.params;
 
@@ -62,16 +55,17 @@ const getOwnProfile = async (req, res) => {
     if (perfilFreelancerResults.length === 0) {
       return res.status(404).json({ error: "No se encontró el freelancer" });
     }
+    
     const id_freelancer = perfilFreelancerResults[0].id_freelancer;
 
-    // Obtener datos de todas las tablas relacionadas
-    const profileData = await getCompleteProfileData(id_freelancer);
+    // Obtener datos completos del perfil
+    const profileData = await profileQueries.getCompleteProfileData(id_freelancer);
 
     // Consolidar respuesta
     res.json({
       usuario: perfilUsuarioResults[0],
       freelancer: perfilFreelancerResults[0],
-      ...profileData,
+      ...profileData
     });
   } catch (error) {
     console.error("Error al obtener el perfil del freelancer:", error);
@@ -79,9 +73,9 @@ const getOwnProfile = async (req, res) => {
   }
 };
 
-// ============================================
-// CREAR PERFIL COMPLETO
-// ============================================
+/**
+ * Crear perfil completo del freelancer
+ */
 const createProfile = async (req, res) => {
   const {
     freelancer,
@@ -96,7 +90,7 @@ const createProfile = async (req, res) => {
     habilidades,
     curso,
     pretensiones,
-    id_usuario,
+    id_usuario
   } = req.body;
 
   console.log("Datos enviados al backend:", req.body);
@@ -124,171 +118,45 @@ const createProfile = async (req, res) => {
     const id_freelancer = freelancerResults[0].id_freelancer;
     console.log("ID de freelancer obtenido:", id_freelancer);
 
-    // Actualizar descripción en la tabla freelancer
-    await pool.query(
-      `UPDATE freelancer 
-       SET correo_contacto = ?, telefono_contacto = ?, linkedin_link = ?, descripcion = ? 
-       WHERE id_freelancer = ?`,
-      [
-        freelancer.correo_contacto,
-        freelancer.telefono_contacto,
-        freelancer.linkedin_link,
-        freelancer.descripcion_freelancer,
-        id_freelancer,
-      ]
-    );
+    // Actualizar información del freelancer
+    await profileQueries.updateFreelancerInfo(id_freelancer, freelancer);
 
     // Insertar antecedentes personales
-    await pool.query(
-      `INSERT INTO antecedentes_personales 
-       (id_freelancer, nombres, apellidos, fecha_nacimiento, identificacion, nacionalidad, 
-        direccion, region, ciudad, comuna, estado_civil)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [
-        id_freelancer,
-        antecedentes_personales.nombres,
-        antecedentes_personales.apellidos,
-        antecedentes_personales.fecha_nacimiento,
-        antecedentes_personales.identificacion,
-        antecedentes_personales.nacionalidad,
-        antecedentes_personales.direccion,
-        antecedentes_personales.region,
-        antecedentes_personales.ciudad_freelancer,
-        antecedentes_personales.comuna,
-        antecedentes_personales.estado_civil,
-      ]
-    );
+    await profileQueries.insertAntecedentesPersonales(id_freelancer, antecedentes_personales);
 
     // Insertar inclusión laboral
-    await pool.query(
-      `INSERT INTO inclusion_laboral 
-       (id_freelancer, discapacidad, registro_nacional, pension_invalidez, ajuste_entrevista, tipo_discapacidad)
-       VALUES (?, ?, ?, ?, ?, ?)`,
-      [
-        id_freelancer,
-        inclusion_laboral.discapacidad,
-        inclusion_laboral.registro_nacional,
-        inclusion_laboral.pension_invalidez,
-        inclusion_laboral.ajuste_entrevista,
-        inclusion_laboral.tipo_discapacidad,
-      ]
-    );
+    await profileQueries.insertInclusionLaboral(id_freelancer, inclusion_laboral);
 
     // Insertar emprendimiento
-    await pool.query(
-      `INSERT INTO emprendimiento 
-       (id_freelancer, emprendedor, interesado, ano_inicio, mes_inicio, sector_emprendimiento)
-       VALUES (?, ?, ?, ?, ?, ?)`,
-      [
-        id_freelancer,
-        emprendimiento.emprendedor,
-        emprendimiento.interesado,
-        emprendimiento.ano_inicio_emprendimiento,
-        emprendimiento.mes_inicio_emprendimiento,
-        emprendimiento.sector_emprendimiento,
-      ]
-    );
+    await profileQueries.insertEmprendimiento(id_freelancer, emprendimiento);
 
     // Insertar trabajo/práctica
-    await pool.query(
-      `INSERT INTO trabajo_practica 
-       (id_freelancer, experiencia_laboral, experiencia, empresa, cargo, area_trabajo, 
-        tipo_cargo, ano_inicio, mes_inicio, descripcion)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [
-        id_freelancer,
-        trabajo_practica.experiencia_laboral,
-        trabajo_practica.experiencia,
-        trabajo_practica.empresa,
-        trabajo_practica.cargo,
-        trabajo_practica.area_trabajo,
-        trabajo_practica.tipo_cargo,
-        trabajo_practica.ano_inicio_trabajo,
-        trabajo_practica.mes_inicio_trabajo,
-        trabajo_practica.descripcion_trabajo,
-      ]
-    );
+    await profileQueries.insertTrabajoPractica(id_freelancer, trabajo_practica);
 
     // Insertar nivel educacional
-    await pool.query(
-      `INSERT INTO nivel_educacional (id_freelancer, nivel_academico, estado)
-       VALUES (?, ?, ?)`,
-      [id_freelancer, nivel_educacional.nivel_academico, nivel_educacional.estado_educacional]
-    );
+    await profileQueries.insertNivelEducacional(id_freelancer, nivel_educacional);
 
     // Insertar educación superior
-    await pool.query(
-      `INSERT INTO educacion_superior 
-       (id_freelancer, institucion, carrera, carrera_afin, estado, ano_inicio, ano_termino)
-       VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      [
-        id_freelancer,
-        educacion_superior.institucion_superior,
-        educacion_superior.carrera,
-        educacion_superior.carrera_afin,
-        educacion_superior.estado_superior,
-        educacion_superior.ano_inicio_superior,
-        educacion_superior.ano_termino_superior,
-      ]
-    );
+    await profileQueries.insertEducacionSuperior(id_freelancer, educacion_superior);
 
     // Insertar educación básica/media
-    await pool.query(
-      `INSERT INTO educacion_basica_media 
-       (id_freelancer, institucion, tipo, pais, ciudad, ano_inicio, ano_termino)
-       VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      [
-        id_freelancer,
-        educacion_basica_media.institucion_basica_media,
-        educacion_basica_media.tipo,
-        educacion_basica_media.pais,
-        educacion_basica_media.ciudad_basica_media,
-        educacion_basica_media.ano_inicio_basica_media,
-        educacion_basica_media.ano_termino_basica_media,
-      ]
-    );
+    await profileQueries.insertEducacionBasicaMedia(id_freelancer, educacion_basica_media);
 
     // Insertar múltiples idiomas
     if (idiomas && idiomas.length > 0) {
-      const idiomaPromises = idiomas.map((idioma) =>
-        pool.query(
-          `INSERT INTO idiomas (id_freelancer, idioma, nivel) VALUES (?, ?, ?)`,
-          [id_freelancer, idioma.idioma, idioma.nivel_idioma]
-        )
-      );
-      await Promise.all(idiomaPromises);
+      await profileQueries.insertIdiomas(id_freelancer, idiomas);
     }
 
     // Insertar múltiples habilidades
     if (habilidades && habilidades.length > 0) {
-      const habilidadPromises = habilidades.map((habilidad) =>
-        pool.query(
-          `INSERT INTO habilidades (id_freelancer, categoria, habilidad, nivel) VALUES (?, ?, ?, ?)`,
-          [id_freelancer, habilidad.categoria, habilidad.habilidad, habilidad.nivel_habilidad]
-        )
-      );
-      await Promise.all(habilidadPromises);
+      await profileQueries.insertHabilidades(id_freelancer, habilidades);
     }
 
     // Insertar curso
-    await pool.query(
-      `INSERT INTO curso (id_freelancer, nombre_curso, institucion, ano_inicio, mes_inicio) 
-       VALUES (?, ?, ?, ?, ?)`,
-      [
-        id_freelancer,
-        curso.nombre_curso,
-        curso.institucion_curso,
-        curso.ano_inicio_curso,
-        curso.mes_inicio_curso,
-      ]
-    );
+    await profileQueries.insertCurso(id_freelancer, curso);
 
     // Insertar pretensiones
-    await pool.query(
-      `INSERT INTO pretensiones (id_freelancer, disponibilidad, renta_esperada) 
-       VALUES (?, ?, ?)`,
-      [id_freelancer, pretensiones.disponibilidad, pretensiones.renta_esperada]
-    );
+    await profileQueries.insertPretensiones(id_freelancer, pretensiones);
 
     console.log("Perfil freelancer creado exitosamente");
     res.status(201).json({ message: "Perfil de freelancer creado exitosamente" });
@@ -298,14 +166,16 @@ const createProfile = async (req, res) => {
   }
 };
 
-// ============================================
-// ACTUALIZAR PERFIL (Legacy - compatibilidad)
-// ============================================
+/**
+ * Actualizar perfil (Legacy - compatibilidad)
+ */
 const updateProfileLegacy = async (req, res) => {
   const { id } = req.params;
   const { perfilFreelancer, perfilUsuario } = req.body;
 
   try {
+    const pool = require("../../db");
+    
     if (perfilFreelancer) {
       await pool.query(
         `UPDATE freelancer SET 
@@ -317,13 +187,16 @@ const updateProfileLegacy = async (req, res) => {
           perfilFreelancer.nombre_completo,
           perfilFreelancer.habilidades,
           perfilFreelancer.descripcion,
-          id,
+          id
         ]
       );
     }
 
     if (perfilUsuario) {
-      await pool.query(`UPDATE usuario SET correo = ? WHERE id = ?`, [perfilUsuario.correo, id]);
+      await pool.query(
+        `UPDATE usuario SET correo = ? WHERE id = ?`,
+        [perfilUsuario.correo, id]
+      );
     }
 
     res.json({ message: "Perfil de freelancer actualizado correctamente" });
@@ -333,80 +206,9 @@ const updateProfileLegacy = async (req, res) => {
   }
 };
 
-// ============================================
-// FUNCIÓN AUXILIAR: Obtener datos completos
-// ============================================
-async function getCompleteProfileData(id_freelancer) {
-  const [antecedentes] = await pool.query(
-    "SELECT * FROM antecedentes_personales WHERE id_freelancer = ?",
-    [id_freelancer]
-  );
-
-  const [inclusionLaboral] = await pool.query(
-    "SELECT * FROM inclusion_laboral WHERE id_freelancer = ?",
-    [id_freelancer]
-  );
-
-  const [emprendimiento] = await pool.query(
-    "SELECT * FROM emprendimiento WHERE id_freelancer = ?",
-    [id_freelancer]
-  );
-
-  const [trabajoPractica] = await pool.query(
-    "SELECT * FROM trabajo_practica WHERE id_freelancer = ?",
-    [id_freelancer]
-  );
-
-  const [nivelEducacional] = await pool.query(
-    "SELECT * FROM nivel_educacional WHERE id_freelancer = ?",
-    [id_freelancer]
-  );
-
-  const [educacionSuperior] = await pool.query(
-    "SELECT * FROM educacion_superior WHERE id_freelancer = ?",
-    [id_freelancer]
-  );
-
-  const [educacionBasica] = await pool.query(
-    "SELECT * FROM educacion_basica_media WHERE id_freelancer = ?",
-    [id_freelancer]
-  );
-
-  const [idiomas] = await pool.query("SELECT * FROM idiomas WHERE id_freelancer = ?", [
-    id_freelancer,
-  ]);
-
-  const [habilidades] = await pool.query("SELECT * FROM habilidades WHERE id_freelancer = ?", [
-    id_freelancer,
-  ]);
-
-  const [cursos] = await pool.query("SELECT * FROM curso WHERE id_freelancer = ?", [
-    id_freelancer,
-  ]);
-
-  const [pretensiones] = await pool.query(
-    "SELECT * FROM pretensiones WHERE id_freelancer = ?",
-    [id_freelancer]
-  );
-
-  return {
-    antecedentesPersonales: antecedentes[0] || {},
-    inclusionLaboral: inclusionLaboral[0] || {},
-    emprendimiento: emprendimiento || [],
-    trabajoPractica: trabajoPractica || [],
-    nivelEducacional: nivelEducacional[0] || {},
-    educacionSuperior: educacionSuperior || {},
-    educacionBasicaMedia: educacionBasica || {},
-    idiomas: idiomas || [],
-    habilidades: habilidades || [],
-    curso: cursos || [],
-    pretensiones: pretensiones[0] || {},
-  };
-}
-
 module.exports = {
   checkProfileExists,
   getOwnProfile,
   createProfile,
-  updateProfileLegacy,
+  updateProfileLegacy
 };

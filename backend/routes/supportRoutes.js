@@ -1,12 +1,17 @@
 const express = require("express");
+const router = express.Router();
+const { verifyToken } = require("../middlewares/auth");
+
+// Importar controladores separados
 const {
-  // Rutas públicas
   crearTicketPublico,
   obtenerTicketsPorEmail,
   obtenerTicketPublico,
   obtenerMensajesPublico,
-  enviarMensajePublico,
-  // Rutas autenticadas
+  enviarMensajePublico
+} = require("../controllers/support/publicTicketController");
+
+const {
   crearTicket,
   obtenerTicketsUsuario,
   obtenerTicket,
@@ -14,10 +19,7 @@ const {
   enviarMensaje,
   actualizarEstadoTicket,
   asignarTicket
-} = require("../controllers/soporteController");
-const { verifyToken } = require("../middlewares/auth");
-
-const router = express.Router();
+} = require("../controllers/support/authenticatedTicketController");
 
 // ============= RUTAS PÚBLICAS (sin token requerido) =============
 router.post("/publico", crearTicketPublico);

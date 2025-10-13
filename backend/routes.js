@@ -3,12 +3,12 @@ const router = express.Router();
 const sendError = (res, status, message) => res.status(status).json({message});
 
 const empresaRoutes = require("./routes/empresaRoutes");
-const userRoutes = require("./userRoutes");
-const projectRoutes = require("./projectRoutes");
-const paymentRoutes = require("./paymentRoutes");
+const userRoutes = require("./routes/userRoutes");
+const projectRoutes = require("./routes/projectRoutes");
+const paymentRoutes = require("./routes/paymentRoutes");
 const freelancerRoutes = require("./routes/freelancerRoutes");
 const supportRoutes = require("./routes/supportRoutes");
-const adminRoutes = require("./adminRoutes");
+const adminRoutes = require("./routes/adminRoutes");
 
 router.use("/support", supportRoutes);
 router.use("/empresa", empresaRoutes);

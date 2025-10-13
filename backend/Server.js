@@ -1,62 +1,62 @@
-require("dotenv").config(); // Carga variables de entorno
-
-const express = require("express"); // Framework Express
-const cors = require("cors"); // Permitir solicitudes de diferentes orígenes
+require("dotenv").config();
+const express = require("express");
+const cors = require("cors");
 const http = require("http");
 const socketIo = require("socket.io");
-const bodyParser = require("body-parser"); // Procesar solicitudes HTTP
+const bodyParser = require("body-parser");
 const routes = require("./routes");
-const tests = require('./tests'); 
+const { testDbConnection, ensureUploadDirectories } = require("./dbTest");
+
 const app = express();
 const port = process.env.PORT || 3001;
 
-// Middleware
+// ==================== CONFIGURACIÓN DE CORS ====================
 const corsOptions = {
   origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
     const allowedOrigins = [
-      'http://localhost:5173',
-      'http://localhost:3000',
-      'https://localhost:3000',
+      "http://localhost:5173",
+      "http://localhost:3000",
+      "https://localhost:3000",
       process.env.DB_TEST_HOST,
-      process.env.FRONTEND_URL
+      process.env.FRONTEND_URL,
     ].filter(Boolean);
-    
+
     if (!origin || allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
-      callback(new Error('Not allowed by CORS'));
+      callback(new Error("Not allowed by CORS"));
     }
   },
-  methods: ['GET', 'POST', 'PUT', 'DELETE','PATCH', 'OPTIONS'],
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   allowedHeaders: [
-    'Origin', 
-    'X-Requested-With', 
-    'Content-Type', 
-    'Accept', 
-    'Authorization'
+    "Origin",
+    "X-Requested-With",
+    "Content-Type",
+    "Accept",
+    "Authorization",
   ],
   credentials: true,
-  optionsSuccessStatus: 200
+  optionsSuccessStatus: 200,
 };
 
-// Use the cors middleware before your routes
+// ==================== MIDDLEWARES ====================
 app.use(cors(corsOptions));
-app.use(express.static("public")); // Archivos estáticos
-app.use(bodyParser.urlencoded({extended: true})); // Formularios
-app.use(bodyParser.json()); // JSON
-app.use("/api", routes);// Usar las rutas en la aplicación
+app.use(express.static("public"));
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
-// Verificar la conexión con la base de datos
-tests.testDbConnection();
+// ==================== RUTAS ====================
+app.use("/api", routes);
 
-// verificar el directorio para subir archivos de CV
-tests.cvDirectory();
+// ==================== VERIFICACIONES INICIALES ====================
+(async () => {
+  await testDbConnection();
+  ensureUploadDirectories();
+})();
 
-// Middleware de manejo de errores general
-// Para verificar errores y ver en que entorno estamos
+// ==================== MANEJO DE ERRORES ====================
 app.use((err, req, res, next) => {
-  console.error(err.stack);
+  console.error("Error Stack:", err.stack);
   res.status(500).json({
     success: false,
     message: "Error interno del servidor",
@@ -64,36 +64,38 @@ app.use((err, req, res, next) => {
   });
 });
 
+// ==================== CONFIGURACIÓN DE SOCKET.IO ====================
 const httpServer = http.createServer(app);
 const io = socketIo(httpServer, {
   cors: {
     origin: [
-      'http://localhost:5173',
-      'http://localhost:3000',
-      'https://localhost:3000',
-      process.env.FRONTEND_URL
-    ],
-    credentials: true
-  }
+      "http://localhost:5173",
+      "http://localhost:3000",
+      "https://localhost:3000",
+      process.env.FRONTEND_URL,
+    ].filter(Boolean),
+    credentials: true,
+  },
 });
 
 let connectedUsers = 0;
 
 io.on("connection", (socket) => {
-  console.log("Nuevo cliente conectado:", socket.id);
+  console.log("✅ Nuevo cliente conectado:", socket.id);
   connectedUsers++;
   io.emit("usersCount", connectedUsers);
 
   socket.on("disconnect", () => {
-    console.log("Cliente desconectado:", socket.id);
+    console.log("❌ Cliente desconectado:", socket.id);
     connectedUsers--;
     io.emit("usersCount", connectedUsers);
   });
 });
 
-httpServer.listen(port,"0.0.0.0",() => {
-  console.log(`Servidor Express y Socket.IO iniciado en el puerto ${port}`);
+// ==================== INICIAR SERVIDOR ====================
+httpServer.listen(port, "0.0.0.0", () => {
+  console.log(`🚀 Servidor Express y Socket.IO iniciado en el puerto ${port}`);
+  console.log(`📍 Ambiente: ${process.env.NODE_ENV || "development"}`);
 });
-
 
 module.exports = app;
