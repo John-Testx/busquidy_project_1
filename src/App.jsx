@@ -4,9 +4,9 @@ import {jwtDecode} from 'jwt-decode';
 import io from "socket.io-client";
 
 import { 
-    AdminHome, UserManagement,
-    ProjectManagement, ReviewManagement, SupportManagement,
-    PaymentManagement, NotificationManagement, AuditAndSecurity
+  AdminHome, UserManagement,ProjectManagement, 
+  ReviewManagement, SupportManagement, PaymentManagement, 
+  NotificationManagement, AuditAndSecurity
   } from "@pages/Admin";
 
 import {
@@ -14,7 +14,8 @@ import {
   VerTicket, CrearTicketPublico, VerTicketPublico
 } from "@pages/Soporte"
 
-import { Dashboard, UserTable, SupportTable,
+import { 
+  Dashboard, UserTable, SupportTable,
   SupportChat, AdminRoles, PermissionManagement, UserEditPage
  } from "@components/Admin";
 
@@ -26,13 +27,14 @@ import {
 } from "@pages/Empresa"
 
 import {
-  FreeLancer, ProjectList, ViewPerfilFreeLancer,
+  FreeLancer, ViewPerfilFreeLancer,
   MyPostulations, ViewMoreDetailsFreelancer
 } from "@pages/Freelancer"
 
 import {BusquidyPage, AboutUsPage, Home} from "@pages/General"
 import {User, Unauthorized, PaymentReturn} from "@pages/User"
 
+import ProjectList from "./pages/Project/ProjectList";
 import EditProjectPage from "./components/Empresa/Projects/ProjectForm/EditProjectPage";
 import ProtectedAdminRoute from "./routes/ProtectedAdminRoute";
 

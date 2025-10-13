@@ -6,8 +6,8 @@ import { navbarOptions } from "../../common/navbarOptions";
 import Footer from "../../components/Home/Footer";
 import LoadingScreen from "../../components/LoadingScreen";
 import InfoSectionEmpresa from "../../components/Empresa/PanelEmpresa/InfoSectionEmpresa";
-import InfoSectionFreelancer from "../../components/FreeLancer/InfoSectionFreelancer";
-import LittleSearchSection from "../../components/FreeLancer/LittleSearchSection";
+import InfoSectionFreelancer from "../../components/FreeLancer/PanelFreelancer/InfoSectionFreelancer";
+import LittleSearchSection from "../../components/FreeLancer/PanelFreelancer/LittleSearchSection";
 import EmpresaActionsCard from "../../components/Empresa/PanelEmpresa/EmpresaActionsCard";
 
 function User() {

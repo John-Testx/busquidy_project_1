@@ -9,8 +9,8 @@ import InfoSectionHome from "../../components/Home/InfoSectionHome";
 import Footer from "../../components/Home/Footer";
 import LoadingScreen from "../../components/LoadingScreen";
 import useAuth from "../../hooks/useAuth";
-import LittleSearchSection from "../../components/FreeLancer/LittleSearchSection";
-import InfoSectionFreelancer from "../../components/FreeLancer/InfoSectionFreelancer";
+import LittleSearchSection from "../../components/FreeLancer/PanelFreelancer/LittleSearchSection";
+import InfoSectionFreelancer from "../../components/FreeLancer/PanelFreelancer/InfoSectionFreelancer";
 import EmpresaActionsCard from "../../components/Empresa/PanelEmpresa/EmpresaActionsCard";
 import InfoSectionEmpresa from "../../components/Empresa/PanelEmpresa/InfoSectionEmpresa";
 

@@ -1,7 +1,3 @@
-// import React, { useState } from 'react';
-// import SearchPublicationSection from './SearchPublicationSection';
-// import PublicationList from './PublicationList';
-
 import React, { useState } from 'react';
 import SearchPublicationSection from './SearchPublicationSection';
 import PublicationList from './PublicationList';
@@ -27,12 +23,12 @@ function PublicationsContainer({ userType, id_usuario }) {
   };
 
   return (
-    <div className="publications-container">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       <SearchPublicationSection onFilterChange={handleFilterChange} />
-      <PublicationList 
-        userType={userType} 
-        id_usuario={id_usuario} 
-        filters={filters} 
+      <PublicationList
+        userType={userType}
+        id_usuario={id_usuario}
+        filters={filters}
       />
     </div>
   );

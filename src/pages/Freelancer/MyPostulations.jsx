@@ -2,27 +2,23 @@ import React, {useState, useEffect} from "react";
 import {jwtDecode} from 'jwt-decode';
 import { useNavigate } from "react-router-dom";
 import Navbar from "../../components/Home/Navbar";
-//import NavbarFreeLancer from "../../components/FreeLancer/NavbarFreeLancer";
 import MyPostulationsTable from "../../components/FreeLancer/MyPostulationsTable";
 import Footer from "../../components/Home/Footer";
-import LoadingScreen from "../../components/LoadingScreen"; 
+import LoadingScreen from "../../components/LoadingScreen";
 
 function MyPostulations() {
-    // Estado para determinar si el usaurio está autenticado
     const [isAuthenticated, setIsAuthenticated] = useState(false);
-    // Estado para la pantalla de carga
     const [loading, setLoading] = useState(true);
-    // Estado para los mensajes de logout
     const [logoutStatus, setLogoutStatus] = useState("");
     const [userType, setUserType] = useState("");
     const [id_usuario, setIdUsuario] = useState(null);
-    const navigate = useNavigate(); 
+    const navigate = useNavigate();
 
     useEffect(() => {
         const checkAuth = () => {
             const token = localStorage.getItem('token');    
             setIsAuthenticated(!!token);
-
+            
             if (token) {
                 try {
                     const decoded = jwtDecode(token);
@@ -33,7 +29,7 @@ function MyPostulations() {
                     console.error("Error decodificando el token:", error);
                 }
             }
-
+            
             setTimeout(() => {
                 setLoading(false);
             }, 500);
@@ -41,23 +37,25 @@ function MyPostulations() {
      
         window.addEventListener('storage', checkAuth);
         checkAuth();
-    
+   
         return () => window.removeEventListener('storage', checkAuth);
     }, []);
 
     const handleLogout = () => {
-        setLoading(true); // Muestra la pantalla de carga al cerrar sesión
+        setLoading(true);
         setLogoutStatus("Cerrando sesión...");
+        
         setTimeout(() => {
             localStorage.removeItem("token");
             localStorage.removeItem("correo");
             setIsAuthenticated(false);
             setUserType(null);
             setLogoutStatus("Sesión cerrada");
+            
             setTimeout(() => {
-                setLoading(false); // Oculta la pantalla de carga antes de redirigir
+                setLoading(false);
                 navigate("/");
-            }, 1000); // Reduce este timeout si es necesario
+            }, 1000);
         });
     };
 
@@ -65,25 +63,21 @@ function MyPostulations() {
         if (id_usuario) {
             console.log("ID usuario actualizado:", id_usuario);
         }
-    }, [id_usuario]); // Este useEffect se ejecuta cuando id_usuario cambia
+    }, [id_usuario]);
 
     const renderNavbar = () => {
         return <Navbar />;
     };
 
-    return  (
-        <div style={{marginTop:"80px"}}>
-            {/* Muestra la pantalla de carga si está activa */}
-            {loading && <LoadingScreen />} 
-
+    return (
+        <div className="mt-20">
+            {loading && <LoadingScreen />}
             {renderNavbar()}
-
             <MyPostulationsTable id_usuario={id_usuario}/>
             <Footer />
-
-            {/* Mensaje de estado de cierre de sesión */}
+            
             {logoutStatus && (
-                <div className="logout-status-msg">
+                <div className="fixed bottom-4 right-4 bg-[#07767c] text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-[modalSlideIn_0.3s_ease-out]">
                     {logoutStatus}
                 </div>
             )}
