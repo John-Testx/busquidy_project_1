@@ -1,5 +1,4 @@
 export { default as AdminHome } from "./AdminHome";
-export { default as LoginAdmin } from "./LoginAdmin";
 export { default as UserManagement } from "./UserManagement";
 export { default as NotificationManagement} from "./NotificationManagement";
 export { default as ReviewManagement} from "./ReviewManagement";
