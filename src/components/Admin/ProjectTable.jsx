@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import { getAllProjects, updateProjectState, deleteProject } from "../../api/projectsApi";
 import { toast } from 'react-toastify';
 import MessageModal from "../MessageModal";
 import TableCommon from "../../common/TableCommon";
 import { Pencil, XCircle } from "lucide-react";
 import '../../styles/Admin/ProjectTable.css';
-//import { projectColumns } from "../../common/tableColumns";
-
 
 // Modal de Confirmación
 const ConfirmModal = ({ isOpen, onClose, onConfirm, message }) => {
@@ -39,7 +37,7 @@ function ProjectTable() {
     const cargarAdminProyectos = async () => {
         try {
             setError(null);
-            const response = await axios.get(`http://localhost:3001/api/projects/getProjects`);
+            const response = await getAllProjects();
             setProjects(response.data);
         } catch (error) {
             setError(error.message);
@@ -62,13 +60,7 @@ function ProjectTable() {
     const handleDespost = async () => {
         try {
             setLoading(true);
-            const response = await axios.put(
-                `http://localhost:3001/api/projects/update-proyecto-state/${projectToDespost}`,
-                { estado_publicacion: "cancelado" }
-            );
-            if (response.status !== 200) {
-                throw new Error("Error al despublicar el proyecto");
-            }
+            await updateProjectState(projectToDespost, "cancelado");
             setProjects((prevProjects) =>
                 prevProjects.map((project) =>
                     project.id_proyecto === projectToDespost
@@ -80,7 +72,7 @@ function ProjectTable() {
             setDeleteModalOpen(false);
             setProjectToDespost(null);
         } catch (error) {
-            toast.error(error.message);
+            toast.error(error.message || "Error al despublicar el proyecto");
         } finally {
             setLoading(false);
         }
@@ -97,12 +89,7 @@ function ProjectTable() {
     const handleDeleteProjects = async () => {
         try {
             setLoading(true);
-            const response = await fetch(`http://localhost:3001/api/projects/delete/${projectToDelete}`, {
-                method: 'DELETE'
-            });
-            if (!response.ok) {
-                throw new Error('Error al eliminar el proyecto');
-            }
+            await deleteProject(projectToDelete);
             setProjects(prevProjects =>
                 prevProjects.filter(project => project.id_proyecto !== projectToDelete)
             );
@@ -110,7 +97,7 @@ function ProjectTable() {
             setDeleteModalOpen(false);
             setProjectToDelete(null);
         } catch (error) {
-            toast.error(error.message);
+            toast.error(error.message || 'Error al eliminar el proyecto');
         } finally {
             setLoading(false);
         }

@@ -1,5 +1,5 @@
 const fs = require("fs");
-const { getFreelancerByUserId } = require("../../db");
+const { getFreelancerByUserId } = require("../../queries/freelancer/profileQueries");
 const { procesarArchivoCV, procesarCV } = require("../../services/cvService");
 const profileQueries = require("../../queries/freelancer/profileQueries");
 

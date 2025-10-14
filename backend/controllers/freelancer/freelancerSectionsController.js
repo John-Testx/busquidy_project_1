@@ -1,4 +1,4 @@
-const { getFreelancerByUserId } = require("../../db");
+const { getFreelancerByUserId } = require("../../queries/freelancer/profileQueries");
 const sectionQueries = require("../../queries/freelancer/sectionQueries");
 
 /**

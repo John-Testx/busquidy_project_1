@@ -1,4 +1,4 @@
-// const {pool, getUserById, getFreelancerByUserId} = require("../db");
+const { getFreelancerByUserId } = require("../../queries/freelancer/profileQueries");
 const sendError = (res, status, message) => res.status(status).json({message});
 
 // REVIEW NO ES SOLO DE EMPRESA, MOVERLO MAS ADELANTE.

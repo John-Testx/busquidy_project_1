@@ -9,7 +9,7 @@ class WebpayService {
             Environment.Integration;
     this.transactionLocks = new Map();
     this.transactionMetadata = new Map();
-    this.lockTimeout = 5000; // 5 seconds
+    this.lockTimeout = 15000; // 15 seconds
     this.lockCleanupInterval = 60000; // 1 minute
 
     // Start cleanup interval

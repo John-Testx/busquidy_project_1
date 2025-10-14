@@ -1,10 +1,13 @@
 import apiClient from "./apiClient";
 
 const BASE = "/freelancer";
+const EMPRESA_BASE = "/empresa";
 
 // PERFIL
-export const checkProfileExists = (id_usuario) =>
-  apiClient.get(`${BASE}/get/${id_usuario}`);
+export const checkProfileExists = async (id_usuario) => {
+  const response = await apiClient.get(`${BASE}/get/${id_usuario}`);
+  return response.data;
+};
 
 export const getFreelancerProfile = (id_usuario) =>
   apiClient.get(`${BASE}/perfil-freelancer/${id_usuario}`);
@@ -53,3 +56,75 @@ export const listFreelancers = () => apiClient.get(`${BASE}/list`);
 
 export const getFreelancerPublicProfile = (id_freelancer) =>
   apiClient.get(`${BASE}/freelancer-perfil/${id_freelancer}`);
+
+// ===== VERIFICACIÓN DE PERFIL PARA PREMIUM =====
+
+/**
+ * Verifica si el perfil de la empresa está completo
+ * @param {number} id_usuario - ID del usuario empresa
+ * @returns {Promise<{isPerfilIncompleto: boolean}>}
+ */
+export const checkEmpresaProfileStatus = async (id_usuario) => {
+  try {
+    const response = await apiClient.get(`${EMPRESA_BASE}/get/${id_usuario}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error al verificar el perfil de la empresa:", error);
+    throw error;
+  }
+};
+
+/**
+ * Verifica el estado del perfil según el tipo de usuario para acceder a Premium
+ * @param {string} tipo_usuario - Tipo de usuario (freelancer, empresa, administrador)
+ * @param {number} id_usuario - ID del usuario
+ * @returns {Promise<{isComplete: boolean, message?: string}>}
+ */
+export const verifyUserProfileForPremium = async (tipo_usuario, id_usuario) => {
+  if (!tipo_usuario || !id_usuario) {
+    return {
+      isComplete: false,
+      message: "Necesitas iniciar sesión para ser Busquidy +"
+    };
+  }
+
+  try {
+    if (tipo_usuario === "freelancer") {
+      const response = await checkProfileExists(id_usuario); // ← Usa la función existente
+      const data = response.data;
+      if (data.isPerfilIncompleto) {
+        return {
+          isComplete: false,
+          message: "Completa tu perfil para ser Busquidy +."
+        };
+      }
+      return { isComplete: true };
+    } 
+    
+    if (tipo_usuario === "empresa") {
+      const response = await checkEmpresaProfileStatus(id_usuario);
+      if (response.isPerfilIncompleto) {
+        return {
+          isComplete: false,
+          message: "Completa tu perfil para ser Busquidy +"
+        };
+      }
+      return { isComplete: true };
+    }
+    
+    if (tipo_usuario === "administrador") {
+      return {
+        isComplete: false,
+        message: "Los administradores no pueden acceder a Busquidy +"
+      };
+    }
+
+    return {
+      isComplete: false,
+      message: "Tipo de usuario no válido"
+    };
+  } catch (error) {
+    console.error("Error al verificar el perfil:", error);
+    throw error;
+  }
+};

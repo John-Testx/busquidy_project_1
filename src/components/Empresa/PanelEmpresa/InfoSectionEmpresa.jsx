@@ -1,60 +1,71 @@
 import React from "react";
+import { 
+  Search, 
+  CheckCircle2, 
+  CreditCard, 
+} from 'lucide-react';
 
 function InfoSectionEmpresa() {
     return (
         <div className="w-full space-y-12">
             
-            {/* Primera sección: ¿Cómo funciona? */}
-            <section className="w-full px-4 sm:px-6 lg:px-8 py-12 bg-gradient-to-b from-gray-50 to-white rounded-2xl">
-                <div className="max-w-6xl mx-auto">
-                    <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 text-center mb-12">
-                        ¿Cómo funciona nuestra plataforma?
-                    </h2>
+            {/* Primera sección - Cómo funciona */}
+            <section className="w-full py-16 px-4 sm:px-6 lg:px-8">
+                <div className="max-w-7xl mx-auto">
+                    <div className="text-center mb-12">
+                        <h2 className="text-4xl sm:text-5xl font-bold text-gray-800 mb-4">
+                            ¿Cómo funciona nuestra plataforma?
+                        </h2>
+                        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                            Conectamos talento con oportunidades en 3 simples pasos
+                        </p>
+                    </div>
                     
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
-                        
-                        {/* Card 1: Búsqueda simple */}
-                        <div className="group bg-white rounded-xl shadow-md hover:shadow-2xl transition-all duration-300 p-6 text-center border border-gray-100 hover:border-[#07767c]/30 hover:-translate-y-2">
-                            <div className="w-20 h-20 mx-auto mb-5 bg-gradient-to-br from-[#07767c]/10 to-[#07767c]/5 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                                <span className="text-5xl">🔍</span>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                        {/* Card 1 */}
+                        <div className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl p-8 text-center transition-all duration-300 hover:-translate-y-3 border-t-4 border-[#07767c] relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-[#07767c]/5 rounded-full -mr-16 -mt-16"></div>
+                            <div className="relative">
+                                <div className="bg-gradient-to-br from-[#07767c] to-[#055a5f] w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
+                                    <Search className="text-white" size={32} />
+                                </div>
+                                <h3 className="text-2xl font-bold text-gray-800 mb-4">Búsqueda simple</h3>
+                                <p className="text-gray-600 leading-relaxed">
+                                    Usa nuestra barra de búsqueda inteligente para encontrar los servicios que necesitas de forma rápida y precisa.
+                                </p>
                             </div>
-                            <h3 className="text-xl font-bold text-gray-900 mb-3">
-                                Búsqueda simple
-                            </h3>
-                            <p className="text-gray-600 text-sm leading-relaxed">
-                                Usa la barra de búsqueda para encontrar los servicios que necesitas.
-                            </p>
                         </div>
-                        
-                        {/* Card 2: Selección simple */}
-                        <div className="group bg-white rounded-xl shadow-md hover:shadow-2xl transition-all duration-300 p-6 text-center border border-gray-100 hover:border-[#07767c]/30 hover:-translate-y-2">
-                            <div className="w-20 h-20 mx-auto mb-5 bg-gradient-to-br from-[#07767c]/10 to-[#07767c]/5 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                                <span className="text-5xl">✔️</span>
+
+                        {/* Card 2 */}
+                        <div className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl p-8 text-center transition-all duration-300 hover:-translate-y-3 border-t-4 border-[#40E0D0] relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-[#40E0D0]/5 rounded-full -mr-16 -mt-16"></div>
+                            <div className="relative">
+                                <div className="bg-gradient-to-br from-[#40E0D0] to-[#20B0A0] w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
+                                    <CheckCircle2 className="text-white" size={32} />
+                                </div>
+                                <h3 className="text-2xl font-bold text-gray-800 mb-4">Selección simple</h3>
+                                <p className="text-gray-600 leading-relaxed">
+                                    Elige el mejor servicio basándote en calificaciones reales y comentarios verificados de otros usuarios.
+                                </p>
                             </div>
-                            <h3 className="text-xl font-bold text-gray-900 mb-3">
-                                Selección simple
-                            </h3>
-                            <p className="text-gray-600 text-sm leading-relaxed">
-                                Elige un servicio en base a las calificaciones y comentarios.
-                            </p>
                         </div>
-                        
-                        {/* Card 3: Pago fácil */}
-                        <div className="group bg-white rounded-xl shadow-md hover:shadow-2xl transition-all duration-300 p-6 text-center border border-gray-100 hover:border-[#07767c]/30 hover:-translate-y-2">
-                            <div className="w-20 h-20 mx-auto mb-5 bg-gradient-to-br from-[#07767c]/10 to-[#07767c]/5 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                                <span className="text-5xl">💳</span>
+
+                        {/* Card 3 */}
+                        <div className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl p-8 text-center transition-all duration-300 hover:-translate-y-3 border-t-4 border-[#07767c] relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-[#07767c]/5 rounded-full -mr-16 -mt-16"></div>
+                            <div className="relative">
+                                <div className="bg-gradient-to-br from-[#07767c] to-[#055a5f] w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
+                                    <CreditCard className="text-white" size={32} />
+                                </div>
+                                <h3 className="text-2xl font-bold text-gray-800 mb-4">Pago seguro</h3>
+                                <p className="text-gray-600 leading-relaxed">
+                                    Realiza pagos de manera 100% segura con nuestras múltiples opciones de pago protegidas.
+                                </p>
                             </div>
-                            <h3 className="text-xl font-bold text-gray-900 mb-3">
-                                Pago fácil
-                            </h3>
-                            <p className="text-gray-600 text-sm leading-relaxed">
-                                Paga de manera segura con nuestras opciones de pago.
-                            </p>
                         </div>
-                        
                     </div>
                 </div>
-            </section>
+            </section>           
 
             {/* Segunda sección: Freelancers competentes */}
             <section className="w-full px-4 sm:px-6 lg:px-8 py-12 bg-gradient-to-br from-[#07767c]/5 via-white to-[#07767c]/5 rounded-2xl">

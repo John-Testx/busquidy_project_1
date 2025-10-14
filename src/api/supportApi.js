@@ -1,5 +1,4 @@
 import apiClient from "./apiClient";
-
 const BASE = "/support";
 
 // ========= FUNCIONES PÚBLICAS =========
@@ -34,3 +33,6 @@ export const updateTicketStatus = (id_ticket, estado) =>
 
 export const assignTicket = (id_ticket, id_admin_asignado) =>
   apiClient.patch(`${BASE}/${id_ticket}/asignar`, { id_admin_asignado });
+
+// ========= FUNCIONES DE ADMINISTRACIÓN =========
+export const getAllTickets = () => apiClient.get(`${BASE}/admin/tickets`);

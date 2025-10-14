@@ -1,5 +1,4 @@
 import apiClient from "./apiClient";
-
 const BASE = "/projects";
 
 export const getProjects = async (userId) => {
@@ -26,3 +25,9 @@ export const checkCompanyProfile = async (userId) => {
   const response = await apiClient.get(`/empresa/get/${userId}`);
   return response.data.isPerfilIncompleto;
 };
+
+// ========= FUNCIONES DE ADMINISTRACIÓN =========
+export const getAllProjects = () => apiClient.get(`${BASE}/getProjects`);
+
+export const updateProjectState = (id_proyecto, estado_publicacion) =>
+  apiClient.put(`${BASE}/update-proyecto-state/${id_proyecto}`, { estado_publicacion });

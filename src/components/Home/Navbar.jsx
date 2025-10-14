@@ -1,31 +1,39 @@
 import React, { useState, useEffect, useRef } from "react";
-// import "../../styles/Home/Navbar.css";
 import Modal from "./Modal";
 import RegisterModal from "./Modals/RegisterModal";
 import SecondaryRegisterModal from "./Modals/SecondaryRegisterModal";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import 'bootstrap-icons/font/bootstrap-icons.css';
 import LoginModal from "./Modals/LoginModal";
 import LoginSecondaryModal from "./Modals/LoginSecondaryModal";
 import useAuth from "../../hooks/useAuth";
 import { navbarOptions, profileLinks } from "../../common/navbarOptions";
 import ProfileCircle from "../ProfileCircle";
 import { getUserInitials } from "../../common/utils";
-
+import { 
+    Menu, 
+    X, 
+    ChevronDown, 
+    HelpCircle, 
+    User, 
+    LogOut,
+    Settings,
+    Bell,
+    MessageSquare
+} from 'lucide-react';
 
 function Navbar() {
     const location = useLocation();
     const navigate = useNavigate();
 
     const { 
-            isAuthenticated, 
-            tipo_usuario, 
-            handleLogin,
-            handleRegister, 
-            logout, 
-            errors, 
-            loading 
-        } = useAuth();
+        isAuthenticated, 
+        tipo_usuario, 
+        handleLogin,
+        handleRegister, 
+        logout, 
+        errors, 
+        loading 
+    } = useAuth();
 
     // Add registration formData in Navbar
     const [registerData, setRegisterData] = useState({
@@ -35,7 +43,12 @@ function Navbar() {
     });
 
     const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isHelpDropdownOpen, setIsHelpDropdownOpen] = useState(false);
+    const [scrolled, setScrolled] = useState(false);
+    
     const profileMenuRef = useRef(null);
+    const helpMenuRef = useRef(null);
 
     const toggleProfileMenu = () => setIsProfileMenuOpen(prev => !prev);
 
@@ -56,11 +69,6 @@ function Navbar() {
             }
         );
     };
-
-    // Navbar state
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const [isHelpDropdownOpen, setIsHelpDropdownOpen] = useState(false);
-    const [isIconRotated, setIsIconRotated] = useState(false);
 
     // Modal states
     const [showLoginModal, setShowLoginModal] = useState(false);
@@ -83,137 +91,327 @@ function Navbar() {
 
     const toggleHelpDropdown = () => {
         setIsHelpDropdownOpen(!isHelpDropdownOpen);
-        setIsIconRotated(!isIconRotated);
     };
 
-    const isActive = (path) => (location.pathname === path ? "text-teal-700 after:w-full" : "");
+    const isActive = (path) => location.pathname === path;
 
     const handleLogout = () => {
         logout();
+        setIsProfileMenuOpen(false);
         navigate("/");
     };
 
     const navOptions = navbarOptions;
     const filteredProfileLinks = profileLinks.filter(link => link.roles.includes(tipo_usuario));
 
+    // Handle scroll effect
+    useEffect(() => {
+        const handleScroll = () => {
+            setScrolled(window.scrollY > 10);
+        };
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
+
+    // Handle click outside
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (profileMenuRef.current && !profileMenuRef.current.contains(event.target)) {
                 setIsProfileMenuOpen(false);
             }
+            if (helpMenuRef.current && !helpMenuRef.current.contains(event.target)) {
+                setIsHelpDropdownOpen(false);
+            }
         };
         
         document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
-        
     }, []);
 
     const userInitials = getUserInitials();
 
     return (
-        <header className="flex justify-between items-center px-5 py-2.5 bg-white max-w-full mx-auto h-[60px] fixed top-0 w-full z-[1000] shadow-md">
-            <div className="flex justify-start items-center px-5 py-2.5 bg-white max-w-[1500px] mx-auto h-[60px]">
-
-                {/* Logo + Menu Toggle */}
-                <div className="flex items-center justify-center mr-20">
-                    <Link to="/" className="inline-block w-auto h-auto">
-                        <img src="/images/Busquidy.png" alt="logo" className="block w-[130px] h-auto cursor-pointer" />
-                    </Link>
-                    <div className="hidden max-[768px]:block">
-                        <span className="text-3xl cursor-pointer ml-auto" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-                            &#9776;
-                        </span>
+        <header 
+            className={`fixed top-0 left-0 right-0 z-[1000] transition-all duration-300 ${
+                scrolled 
+                    ? 'bg-white/95 backdrop-blur-md shadow-lg' 
+                    : 'bg-white shadow-md'
+            }`}
+        >
+            <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="flex items-center justify-center h-20 lg:h-24 gap-8">
+                    
+                    {/* Logo */}
+                    <div className="flex items-center flex-shrink-0">
+                        <Link to="/" className="flex items-center group">
+                            <img 
+                                src="/images/Busquidy.png" 
+                                alt="Busquidy Logo" 
+                                className="h-24 sm:h-28 lg:h-32 w-auto transition-transform duration-300 group-hover:scale-105" 
+                            />
+                        </Link>
                     </div>
-                </div>
 
-                {/* Navbar links */}
-                <nav className={`flex items-center gap-5 mr-auto max-[768px]:${isMenuOpen ? 'flex' : 'hidden'} max-[768px]:flex-col max-[768px]:mt-5 max-[768px]:absolute max-[768px]:top-[60px] max-[768px]:left-0 max-[768px]:w-full max-[768px]:bg-white max-[768px]:z-[100] max-[768px]:shadow-md`}>
+                    {/* Desktop Navigation */}
+                    <nav className="hidden lg:flex items-center space-x-1">
+                        {navOptions
+                            .filter(opt => opt.roles.includes(tipo_usuario) || opt.roles.includes(null))
+                            .map((opt) => (
+                                <Link
+                                    key={opt.link}
+                                    to={opt.link}
+                                    className={`relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-300 group ${
+                                        isActive(opt.link)
+                                            ? 'text-[#07767c] bg-[#07767c]/10'
+                                            : 'text-gray-700 hover:text-[#07767c] hover:bg-gray-50'
+                                    }`}
+                                >
+                                    {opt.label}
+                                    <span className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 bg-[#07767c] transition-all duration-300 ${
+                                        isActive(opt.link) ? 'w-3/4' : 'w-0 group-hover:w-3/4'
+                                    }`}></span>
+                                </Link>
+                            ))}
 
-                    {navOptions
-                        .filter(opt => opt.roles.includes(tipo_usuario) || opt.roles.includes(null))
-                        .map((opt) => (
-                            <Link
-                                key={opt.link}
-                                className={`mx-4 no-underline text-black text-base font-medium relative pb-1.5 transition-colors duration-300 after:content-[''] after:absolute after:left-0 after:bottom-0 after:w-0 after:h-0.5 after:bg-teal-700 after:transition-[width] after:duration-[0.9s] after:ease-[cubic-bezier(0.25,1,0.5,1)] hover:after:w-full ${isActive(opt.link)}`}
-                                to={opt.link}
+                        {/* Help Dropdown */}
+                        <div className="relative" ref={helpMenuRef}>
+                            <button 
+                                onClick={toggleHelpDropdown}
+                                className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-all duration-300 ${
+                                    isHelpDropdownOpen 
+                                        ? 'text-[#07767c] bg-[#07767c]/10' 
+                                        : 'text-gray-700 hover:text-[#07767c] hover:bg-gray-50'
+                                }`}
                             >
-                                {opt.label}
-                            </Link>
-                        ))}
+                                <HelpCircle size={18} />
+                                <span>¡Ayuda!</span>
+                                <ChevronDown 
+                                    size={16} 
+                                    className={`transition-transform duration-300 ${
+                                        isHelpDropdownOpen ? 'rotate-180' : ''
+                                    }`} 
+                                />
+                            </button>
 
-                    {/* Help Dropdown */}
-                    <div className="relative inline-block">
-                        <button 
-                            className="bg-transparent border-none mb-1 cursor-pointer text-[15px] transition-colors duration-200 p-2.5 hover:text-teal-700"
-                            onClick={toggleHelpDropdown}
-                        >
-                            ¡Ayuda!{" "}
-                            <i className={`bi bi-chevron-down ml-2 text-base transition-transform duration-200 ${isIconRotated ? "rotate-180" : ""}`}></i>
-                        </button>
+                            {/* Help Dropdown Menu */}
+                            {isHelpDropdownOpen && (
+                                <div className="absolute top-full mt-2 right-0 w-56 bg-white rounded-xl shadow-xl border border-gray-100 py-2 animate-in fade-in slide-in-from-top-2 duration-200">
+                                    <Link 
+                                        to="/soportehome"
+                                        onClick={() => setIsHelpDropdownOpen(false)}
+                                        className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-[#07767c]/5 hover:text-[#07767c] transition-colors"
+                                    >
+                                        <MessageSquare size={18} />
+                                        <span>Soporte al Cliente</span>
+                                    </Link>
+                                    <div className="h-px bg-gray-100 my-1"></div>
+                                    <Link 
+                                        to="/busquidyGuia"
+                                        onClick={() => setIsHelpDropdownOpen(false)}
+                                        className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-[#07767c]/5 hover:text-[#07767c] transition-colors"
+                                    >
+                                        <HelpCircle size={18} />
+                                        <span>Busquidy Guía</span>
+                                    </Link>
+                                </div>
+                            )}
+                        </div>
+                    </nav>
 
-                        {isHelpDropdownOpen && (
-                            <div className="block absolute bg-[#f9f9f9] min-w-[200px] shadow-[0_8px_16px_rgba(0,0,0,0.2)] z-[1] p-2.5 rounded-[5px] left-1/2 -translate-x-1/2">
-                                <Link 
-                                    className={`text-teal-900 no-underline block py-2.5 px-0 border-b border-[#ddd] last:border-b-0 ${isActive("/soporte-cliente")}`}
-                                    to="/soportehome"
-                                >
-                                    Soporte al Cliente
-                                </Link>
-                                <Link 
-                                    className={`text-teal-900 no-underline block py-2.5 px-0 ${isActive("/busquidy-guia")}`}
-                                    to="/busquidyGuia"
-                                >
-                                    Busquidy Guía
-                                </Link>
-                            </div>
-                        )}
-                    </div>
-
-                    {/* Auth buttons or profile */}
-                    <div className="flex items-center ml-[150px] max-[768px]:flex-col max-[768px]:ml-0">
+                    {/* Right Section - Auth Buttons / Profile - Ahora con ml-auto para empujar a la derecha */}
+                    <div className="hidden lg:flex items-center gap-3 ml-auto">
                         {!isAuthenticated ? (
                             <>
-                                <Link
-                                    className="ml-10 py-3 px-5 border-2 border-teal-700/55 bg-white text-black rounded-lg text-[15px] font-bold cursor-pointer transition-all duration-300 hover:bg-teal-50 max-[768px]:ml-0 max-[768px]:my-2.5 max-[768px]:px-5 max-[768px]:py-2.5 max-[768px]:text-center"
+                                <button
                                     onClick={() => setShowLoginModal(true)}
+                                    className="px-5 py-2.5 text-sm font-semibold text-[#07767c] bg-white border-2 border-[#07767c]/30 rounded-lg hover:bg-[#07767c]/5 hover:border-[#07767c]/50 transition-all duration-300"
                                 >
                                     Iniciar Sesión
-                                </Link>
-                                <Link
-                                    className="ml-10 py-3 px-5 border-2 bg-teal-700/55 text-white rounded-lg text-[15px] font-bold cursor-pointer transition-all duration-300 hover:bg-teal-800/70 hover:border-teal-800/70 max-[768px]:ml-0 max-[768px]:my-2.5 max-[768px]:px-5 max-[768px]:py-2.5 max-[768px]:text-center"
+                                </button>
+                                <button
                                     onClick={() => setShowRegisterModal(true)}
+                                    className="px-5 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-[#07767c] to-[#055a5f] rounded-lg hover:from-[#055a5f] hover:to-[#043d42] shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5"
                                 >
                                     Registrarse
-                                </Link>
+                                </button>
                             </>
                         ) : (
-                            <div className="relative" onClick={toggleProfileMenu}>
-                                <ProfileCircle userInitials={userInitials} />
-                                <div 
-                                    className={`${isProfileMenuOpen ? 'block' : 'hidden'} absolute top-[60px] right-5 bg-white border border-[#ddd] rounded-lg shadow-[0_4px_8px_rgba(0,0,0,0.1)] w-[200px] z-[1000]`}
-                                    ref={profileMenuRef}
-                                >
-                                    <ul className="list-none p-0 m-0">
-                                        {filteredProfileLinks.map(link => (
-                                            <li key={link.link} className="py-3 px-4 hover:bg-gray-100">
-                                                <Link to={link.link} className="no-underline text-gray-800 block">
-                                                    <i className={link.icon}></i> {link.label}
-                                                </Link>
-                                            </li>
-                                        ))}
-                                        <li 
-                                            onClick={handleLogout} 
-                                            className="py-3 px-4 cursor-pointer hover:bg-gray-100"
-                                        >
-                                            <i className="bi bi-box-arrow-right"></i> Cerrar sesión
-                                        </li>
-                                    </ul>
+                            <div className="flex items-center gap-4">
+                                {/* Notifications Icon (optional) */}
+                                <button className="relative p-2 text-gray-600 hover:text-[#07767c] hover:bg-gray-50 rounded-lg transition-colors">
+                                    <Bell size={20} />
+                                    <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                                </button>
+
+                                {/* Profile Menu */}
+                                <div className="relative" ref={profileMenuRef}>
+                                    <button 
+                                        onClick={toggleProfileMenu}
+                                        className="flex items-center gap-2 group"
+                                    >
+                                        <ProfileCircle userInitials={userInitials} />
+                                        <ChevronDown 
+                                            size={16} 
+                                            className={`text-gray-600 transition-transform duration-300 ${
+                                                isProfileMenuOpen ? 'rotate-180' : ''
+                                            }`}
+                                        />
+                                    </button>
+
+                                    {/* Profile Dropdown */}
+                                    {isProfileMenuOpen && (
+                                        <div className="absolute top-full right-0 mt-2 w-64 bg-white rounded-xl shadow-xl border border-gray-100 py-2 animate-in fade-in slide-in-from-top-2 duration-200">
+                                            {/* User Info */}
+                                            <div className="px-4 py-3 border-b border-gray-100">
+                                                <p className="text-sm font-semibold text-gray-800 truncate">
+                                                    {userInitials}
+                                                </p>
+                                                <p className="text-xs text-gray-500 mt-0.5 capitalize">
+                                                    {tipo_usuario}
+                                                </p>
+                                            </div>
+
+                                            {/* Menu Links */}
+                                            <div className="py-2">
+                                                {filteredProfileLinks.map(link => (
+                                                    <Link 
+                                                        key={link.link}
+                                                        to={link.link} 
+                                                        onClick={() => setIsProfileMenuOpen(false)}
+                                                        className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-[#07767c]/5 hover:text-[#07767c] transition-colors"
+                                                    >
+                                                        <i className={`${link.icon} text-lg`}></i>
+                                                        <span>{link.label}</span>
+                                                    </Link>
+                                                ))}
+                                            </div>
+
+                                            {/* Logout */}
+                                            <div className="border-t border-gray-100 pt-2">
+                                                <button 
+                                                    onClick={handleLogout}
+                                                    className="w-full flex items-center gap-3 px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                                                >
+                                                    <LogOut size={18} />
+                                                    <span>Cerrar sesión</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         )}
                     </div>
-                </nav>
+
+                    {/* Mobile Menu Button */}
+                    <button 
+                        onClick={() => setIsMenuOpen(!isMenuOpen)}
+                        className="lg:hidden p-2 text-gray-700 hover:text-[#07767c] hover:bg-gray-50 rounded-lg transition-colors"
+                    >
+                        {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                    </button>
+                </div>
             </div>
+
+            {/* Mobile Menu */}
+            {isMenuOpen && (
+                <div className="lg:hidden bg-white border-t border-gray-100 animate-in slide-in-from-top duration-300">
+                    <div className="px-4 py-4 space-y-1">
+                        {/* Navigation Links */}
+                        {navOptions
+                            .filter(opt => opt.roles.includes(tipo_usuario) || opt.roles.includes(null))
+                            .map((opt) => (
+                                <Link
+                                    key={opt.link}
+                                    to={opt.link}
+                                    onClick={() => setIsMenuOpen(false)}
+                                    className={`block px-4 py-3 text-sm font-medium rounded-lg transition-all ${
+                                        isActive(opt.link)
+                                            ? 'text-[#07767c] bg-[#07767c]/10'
+                                            : 'text-gray-700 hover:bg-gray-50'
+                                    }`}
+                                >
+                                    {opt.label}
+                                </Link>
+                            ))}
+
+                        {/* Help Section */}
+                        <div className="pt-2 border-t border-gray-100">
+                            <p className="px-4 py-2 text-xs font-semibold text-gray-400 uppercase">Ayuda</p>
+                            <Link 
+                                to="/soportehome"
+                                onClick={() => setIsMenuOpen(false)}
+                                className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 rounded-lg"
+                            >
+                                <MessageSquare size={18} />
+                                <span>Soporte al Cliente</span>
+                            </Link>
+                            <Link 
+                                to="/busquidyGuia"
+                                onClick={() => setIsMenuOpen(false)}
+                                className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 rounded-lg"
+                            >
+                                <HelpCircle size={18} />
+                                <span>Busquidy Guía</span>
+                            </Link>
+                        </div>
+
+                        {/* Auth Buttons / Profile - Mobile */}
+                        <div className="pt-4 border-t border-gray-100 space-y-2">
+                            {!isAuthenticated ? (
+                                <>
+                                    <button
+                                        onClick={() => {
+                                            setShowLoginModal(true);
+                                            setIsMenuOpen(false);
+                                        }}
+                                        className="w-full px-4 py-3 text-sm font-semibold text-[#07767c] bg-white border-2 border-[#07767c]/30 rounded-lg hover:bg-[#07767c]/5 transition-all"
+                                    >
+                                        Iniciar Sesión
+                                    </button>
+                                    <button
+                                        onClick={() => {
+                                            setShowRegisterModal(true);
+                                            setIsMenuOpen(false);
+                                        }}
+                                        className="w-full px-4 py-3 text-sm font-semibold text-white bg-gradient-to-r from-[#07767c] to-[#055a5f] rounded-lg shadow-md"
+                                    >
+                                        Registrarse
+                                    </button>
+                                </>
+                            ) : (
+                                <>
+                                    <div className="px-4 py-3 bg-[#07767c]/5 rounded-lg">
+                                        <p className="text-sm font-semibold text-gray-800">{userInitials}</p>
+                                        <p className="text-xs text-gray-500 capitalize">{tipo_usuario}</p>
+                                    </div>
+                                    {filteredProfileLinks.map(link => (
+                                        <Link 
+                                            key={link.link}
+                                            to={link.link}
+                                            onClick={() => setIsMenuOpen(false)}
+                                            className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 rounded-lg"
+                                        >
+                                            <i className={`${link.icon} text-lg`}></i>
+                                            <span>{link.label}</span>
+                                        </Link>
+                                    ))}
+                                    <button 
+                                        onClick={() => {
+                                            handleLogout();
+                                            setIsMenuOpen(false);
+                                        }}
+                                        className="w-full flex items-center justify-center gap-2 px-4 py-3 text-sm font-semibold text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition-colors"
+                                    >
+                                        <LogOut size={18} />
+                                        <span>Cerrar sesión</span>
+                                    </button>
+                                </>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* ----------------------------- MODALS ---------------------------------- */}
 

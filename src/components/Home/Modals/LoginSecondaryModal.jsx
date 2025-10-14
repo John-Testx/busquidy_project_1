@@ -1,93 +1,158 @@
 import React from "react";
 import Modal from "../Modal";
+import { ArrowLeft, Mail, Lock, AlertCircle, Loader2 } from "lucide-react";
 
 const LoginSecondaryModal = ({ onClose, onBack, formData, setFormData, errors, handleLogin, loading, onOpenRegister }) => {
     return (
-        <Modal show={true} onClose={onClose} dismissOnClickOutside={true}>
-            <div className="flex justify-between w-full gap-5">
-                {/* Left Section */}
-                <div className="flex-1 bg-[#6e2243] text-white py-[60px] px-10 flex flex-col justify-center">
-                    <h2 className="text-[2.4rem] mb-8 font-bold">
-                        Bienvenido de nuevo
-                    </h2>
-                    <ul className="list-none p-0">
-                        <li className="mb-5 text-xl flex items-center before:content-['✔'] before:mr-2.5 before:text-[1.4rem] before:text-white">
-                            Inicio de sesión seguro
-                        </li>
-                        <li className="mb-5 text-xl flex items-center before:content-['✔'] before:mr-2.5 before:text-[1.4rem] before:text-white">
-                            Acceso fácil y rápido
-                        </li>
-                        <li className="mb-5 text-xl flex items-center before:content-['✔'] before:mr-2.5 before:text-[1.4rem] before:text-white">
-                            Protegeremos tus datos
-                        </li>
-                    </ul>
+        <Modal show={true} onClose={onClose} dismissOnClickOutside={true} size="lg">
+            <div className="flex flex-col md:flex-row min-h-[600px]">
+                {/* Left Section - Hero */}
+                <div className="flex-1 bg-gradient-to-br from-[#07767c] via-[#055a5f] to-[#043d42] text-white p-12 flex flex-col justify-center relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-32 -mt-32"></div>
+                    <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full -ml-24 -mb-24"></div>
+                    
+                    <div className="relative z-10">
+                        <h2 className="text-4xl font-bold mb-6 leading-tight">
+                            ¡Bienvenido de nuevo!
+                        </h2>
+                        <p className="text-white/90 mb-8 text-lg">
+                            Nos alegra verte otra vez por aquí
+                        </p>
+                        <ul className="space-y-4">
+                            {[
+                                "Inicio de sesión seguro",
+                                "Acceso rápido y fácil",
+                                "Protección de tus datos"
+                            ].map((item, index) => (
+                                <li key={index} className="flex items-center gap-3 text-lg">
+                                    <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
+                                        <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                        </svg>
+                                    </div>
+                                    <span>{item}</span>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
                 </div>
 
-                {/* Right Section */}
-                <div className="flex-1 flex flex-col justify-center py-10 px-8 text-center relative">
-                    <button 
-                        type="button" 
-                        className="mb-5 py-2 px-2.5 text-base border-none bg-transparent text-black cursor-pointer hover:underline w-[150px] text-left"
-                        onClick={onBack}
-                    >
-                        ← volver
-                    </button>
-
-                    <h3 className="text-3xl font-bold mb-8 text-gray-800">Iniciar sesión</h3>
-
-                    <div className="flex flex-col items-center gap-4">
-                        {/* Correo */}
-                        <div className="w-full max-w-[420px]">
-                            <input
-                                type="email"
-                                placeholder="Correo Electrónico"
-                                value={formData.correo}
-                                onChange={(e) => setFormData('correo', e.target.value)}
-                                className={`w-full p-3 text-base border ${errors.correo ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all`}
-                            />
-                            {errors.correo && (
-                                <p className="text-red-500 text-xs mt-2 text-left">
-                                    {errors.correo}
-                                </p>
-                            )}
-                        </div>
-
-                        {/* Contraseña */}
-                        <div className="w-full max-w-[420px]">
-                            <input
-                                type="password"
-                                placeholder="Contraseña"
-                                value={formData.contraseña}
-                                onChange={(e) => setFormData('contraseña', e.target.value)}
-                                className={`w-full p-3 text-base border ${errors.contraseña ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all`}
-                            />
-                            {errors.contraseña && (
-                                <p className="text-red-500 text-xs mt-2 text-left">
-                                    {errors.contraseña}
-                                </p>
-                            )}
-                        </div>
-
-                        <a href="#" className="text-sm text-blue-600 hover:text-blue-800 transition-colors self-end max-w-[420px] w-full text-right">
-                            ¿Olvidaste tu contraseña?
-                        </a>
-
-                        {/* Botón Iniciar sesión */}
+                {/* Right Section - Form */}
+                <div className="flex-1 p-12 flex flex-col justify-center bg-gray-50">
+                    <div className="max-w-md mx-auto w-full">
+                        {/* Back Button */}
                         <button 
-                            className="w-full max-w-[420px] mt-4 py-3 px-5 text-base rounded-lg bg-[#272727] text-white font-semibold transition-all duration-300 hover:bg-black cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg"
-                            onClick={handleLogin} 
-                            disabled={loading}
+                            type="button" 
+                            className="flex items-center gap-2 text-gray-600 hover:text-[#07767c] transition-colors mb-6 group"
+                            onClick={onBack}
                         >
-                            {loading ? "Iniciando sesión..." : "Iniciar sesión"}
+                            <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
+                            <span className="font-medium">Volver</span>
                         </button>
-                    </div>
 
-                    <p className="text-base text-gray-600 mt-6">
-                        ¿No tienes una cuenta?{' '}
-                        <a href="#" onClick={onOpenRegister} className="text-blue-600 hover:text-blue-800 transition-colors font-medium">
-                            Regístrate
-                        </a>
-                    </p>
+                        <h3 className="text-3xl font-bold text-gray-800 mb-2">
+                            Iniciar sesión
+                        </h3>
+                        <p className="text-gray-600 mb-8">
+                            Ingresa tus credenciales para continuar
+                        </p>
+
+                        <div className="space-y-5">
+                            {/* Email Input */}
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    Correo Electrónico
+                                </label>
+                                <div className="relative">
+                                    <Mail size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+                                    <input
+                                        type="email"
+                                        placeholder="tu@email.com"
+                                        value={formData.correo}
+                                        onChange={(e) => setFormData('correo', e.target.value)}
+                                        className={`w-full pl-12 pr-4 py-3.5 bg-white border-2 rounded-xl transition-all outline-none ${
+                                            errors.correo 
+                                                ? 'border-red-500 focus:border-red-600' 
+                                                : 'border-gray-200 focus:border-[#07767c]'
+                                        }`}
+                                    />
+                                    {errors.correo && (
+                                        <AlertCircle size={20} className="absolute right-4 top-1/2 -translate-y-1/2 text-red-500" />
+                                    )}
+                                </div>
+                                {errors.correo && (
+                                    <p className="text-red-500 text-sm mt-2 flex items-center gap-1">
+                                        <AlertCircle size={16} />
+                                        {errors.correo}
+                                    </p>
+                                )}
+                            </div>
+
+                            {/* Password Input */}
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    Contraseña
+                                </label>
+                                <div className="relative">
+                                    <Lock size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+                                    <input
+                                        type="password"
+                                        placeholder="••••••••"
+                                        value={formData.contraseña}
+                                        onChange={(e) => setFormData('contraseña', e.target.value)}
+                                        className={`w-full pl-12 pr-4 py-3.5 bg-white border-2 rounded-xl transition-all outline-none ${
+                                            errors.contraseña 
+                                                ? 'border-red-500 focus:border-red-600' 
+                                                : 'border-gray-200 focus:border-[#07767c]'
+                                        }`}
+                                    />
+                                    {errors.contraseña && (
+                                        <AlertCircle size={20} className="absolute right-4 top-1/2 -translate-y-1/2 text-red-500" />
+                                    )}
+                                </div>
+                                {errors.contraseña && (
+                                    <p className="text-red-500 text-sm mt-2 flex items-center gap-1">
+                                        <AlertCircle size={16} />
+                                        {errors.contraseña}
+                                    </p>
+                                )}
+                            </div>
+
+                            {/* Forgot Password */}
+                            <div className="text-right">
+                                <a href="#" className="text-sm text-[#07767c] hover:text-[#055a5f] font-medium transition-colors">
+                                    ¿Olvidaste tu contraseña?
+                                </a>
+                            </div>
+
+                            {/* Submit Button */}
+                            <button 
+                                className="w-full bg-gradient-to-r from-[#07767c] to-[#055a5f] hover:from-[#055a5f] hover:to-[#043d42] text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 group"
+                                onClick={handleLogin} 
+                                disabled={loading}
+                            >
+                                {loading ? (
+                                    <>
+                                        <Loader2 size={20} className="animate-spin" />
+                                        <span>Iniciando sesión...</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <span>Iniciar sesión</span>
+                                        <ArrowLeft size={20} className="rotate-180 group-hover:translate-x-1 transition-transform" />
+                                    </>
+                                )}
+                            </button>
+                        </div>
+
+                        {/* Register Link */}
+                        <p className="text-center text-gray-600 mt-6">
+                            ¿No tienes una cuenta?{' '}
+                            <button onClick={onOpenRegister} className="text-[#07767c] hover:text-[#055a5f] font-semibold transition-colors">
+                                Regístrate
+                            </button>
+                        </p>
+                    </div>
                 </div>
             </div>
         </Modal>
