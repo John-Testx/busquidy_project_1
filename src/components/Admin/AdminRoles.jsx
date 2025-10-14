@@ -17,7 +17,7 @@ const AdminRoles = () => {
     try {
       const data = await getAllAdminRoles();
       console.log("Roles from API:", data);
-      setRoles(Array.isArray(data) ? data : []);
+      setRoles(Array.isArray(data.data) ? data.data : []);
     } catch (error) {
       console.error("Error loading admin roles:", error);
     }
