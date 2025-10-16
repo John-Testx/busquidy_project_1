@@ -8,72 +8,56 @@ import CreateProfileCv from "../../components/FreeLancer/Perfil/CreateProfileCv"
 import LoadingScreen from "../../components/LoadingScreen";
 import ModalCreatePerfilFreelancer from "../../components/FreeLancer/Perfil/ModalCreatePerfilFreelancer";
 import { checkProfileExists, getFreelancerProfile } from "../../api/freelancerApi";
+import useAuth from "../../hooks/useAuth";
 
 function ViewPerfilFreeLancer() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [userType, setUserType] = useState(null);
-  const [id_usuario, setIdUsuario] = useState(null);
+  const navigate = useNavigate();
+
+  // ✅ Authentication data from your custom hook
+  const {
+    isAuthenticated,
+    tipo_usuario: userType,
+    id_usuario,
+    loading,
+    refresh, // can be used to re-check session if needed
+  } = useAuth();
+
+  // ✅ Component state
   const [isPerfilIncompleto, setIsPerfilIncompleto] = useState(null);
   const [perfilData, setPerfilData] = useState(null);
   const [error, setError] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [showCvUpload, setShowCvUpload] = useState(false);
-  const [creationMethod, setCreationMethod] = useState(null); // 'form' o 'cv'
-  const navigate = useNavigate();
+  const [creationMethod, setCreationMethod] = useState(null); // 'form' or 'cv'
 
+  // ✅ Fetch freelancer profile once authenticated and id_usuario is known
   useEffect(() => {
-    const checkAuth = async () => {
-      const token = localStorage.getItem("token");
-      setIsAuthenticated(!!token);
+    if (!loading && isAuthenticated && id_usuario) {
+      fetchPerfilFreelancer(id_usuario);
+    }
+  }, [loading, isAuthenticated, id_usuario]);
 
-      if (token) {
-        try {
-          const decoded = jwtDecode(token);
-          setUserType(decoded.tipo_usuario);
-          setIdUsuario(decoded.id_usuario);
-
-          if (decoded.id_usuario) {
-            await fetchPerfilFreelancer(decoded.id_usuario);
-          }
-        } catch (error) {
-          console.error("Error decodificando token:", error);
-          setError("Error al verificar sesión");
-          localStorage.removeItem("token");
-          setIsAuthenticated(false);
-        }
-      }
-
-      setLoading(false);
-    };
-
-    checkAuth();
-    window.addEventListener("storage", checkAuth);
-    return () => window.removeEventListener("storage", checkAuth);
-  }, []);
-
-  const fetchPerfilFreelancer = async (id_usuario) => {
+  const fetchPerfilFreelancer = async (id) => {
     try {
-      const response = await checkProfileExists(id_usuario);
+      const response = await checkProfileExists(id);
       setIsPerfilIncompleto(response.isPerfilIncompleto);
-      
-      // Si el perfil ya está completo, obtener los datos
+
       if (!response.isPerfilIncompleto) {
-        const perfilCompleto = await getFreelancerProfile(id_usuario);
+        const perfilCompleto = await getFreelancerProfile(id);
         setPerfilData(perfilCompleto);
       }
-    } catch (error) {
-      console.error("Error verificando perfil:", error);
+    } catch (err) {
+      console.error("Error verificando perfil:", err);
       setError("Error al verificar perfil");
     }
   };
 
   const handleSelectCreationMethod = (method) => {
     setCreationMethod(method);
-    if (method === 'form') {
+    if (method === "form") {
       setShowModal(true);
       setShowCvUpload(false);
-    } else if (method === 'cv') {
+    } else if (method === "cv") {
       setShowCvUpload(true);
       setShowModal(false);
     }
@@ -82,19 +66,7 @@ function ViewPerfilFreeLancer() {
   if (loading) return <LoadingScreen />;
 
   if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Debes iniciar sesión</h1>
-          <button
-            onClick={() => navigate("/login")}
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            Ir a iniciar sesión
-          </button>
-        </div>
-      </div>
-    );
+      return navigate("/notauthenticated");   
   }
 
   if (userType !== "freelancer") {
