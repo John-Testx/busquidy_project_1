@@ -4,19 +4,10 @@ import { Routes, Route } from 'react-router-dom';
 // Import your pages (using your existing barrel files is great!)
 import { Home, BusquidyPage, AboutUsPage } from '@pages/General';
 import { User, Unauthorized, PaymentReturn, NotAuthenticated } from '@pages/User';
-import {
-  Empresa,
-  FindFreelancer,
-  MyProjects,
-  ViewFreelancer,
-  ViewPerfilEmpresa,
-} from '@pages/Empresa';
-import {
-  FreeLancer,
-  MyPostulations,
-  ViewMoreDetailsFreelancer,
-  ViewPerfilFreeLancer,
-} from '@pages/Freelancer';
+
+import { Empresa, FindFreelancer, MyProjects, ViewFreelancer, ViewPerfilEmpresa, } from '@pages/Empresa';
+import { FreeLancer, MyPostulations, ViewMoreDetailsFreelancer, ViewPerfilFreeLancer, } from '@pages/Freelancer';
+
 import {
     SoporteHome,
     CrearTicket,
@@ -25,6 +16,7 @@ import {
     VerTicketPublico,
     BusquidyGuia
 } from "@pages/Soporte";
+
 import ProjectList from '../pages/Project/ProjectList';
 import EditProjectPage from '../components/Empresa/Projects/ProjectForm/EditProjectPage';
 
