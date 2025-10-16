@@ -1,15 +1,15 @@
 import React, { useEffect, useState, useRef } from "react";
-import {BrowserRouter as Router, Route, Routes} from "react-router-dom";
 import { BrowserRouter as Router } from "react-router-dom";
 import AppRoutes from "./routes/AppRoutes"; // Import the new AppRoutes component
 import LoadingScreen from "./components/LoadingScreen";
 import useAuth from "./hooks/useAuth"; // Assuming useAuth provides loading state
+import io from "socket.io-client";
 
 function App() {
   const [connectedUsers, setConnectedUsers] = useState(0);
   const socketRef = useRef(null);
   const { loading } = useAuth(); // Use the loading state from your auth hook
-
+  
   useEffect(() => {
     // Create socket only once
     if (!socketRef.current) {
@@ -23,10 +23,7 @@ function App() {
       });
     }
 
-    window.addEventListener("storage", checkAuth);
-
     return () => {
-      window.removeEventListener("storage", checkAuth);
       if (socketRef.current) {
         socketRef.current.disconnect();
         socketRef.current = null;
