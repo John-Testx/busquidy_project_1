@@ -45,7 +45,7 @@ function ViewPerfilFreeLancer() {
       if (!response.isPerfilIncompleto) {
         const perfilCompleto = await getFreelancerProfile(id);
         console.log(perfilCompleto);
-        setPerfilData(perfilCompleto);
+        setPerfilData(perfilCompleto.data);
       }
     } catch (err) {
       console.error("Error verificando perfil:", err);
@@ -65,11 +65,7 @@ function ViewPerfilFreeLancer() {
   };
 
   if (loading) return <LoadingScreen />;
-
-  if (!isAuthenticated) {
-      return navigate("/notauthenticated");   
-  }
-
+  
   if (userType !== "freelancer") {
     return (
       <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
@@ -219,36 +215,32 @@ function ViewPerfilFreeLancer() {
             <h1 className="text-4xl font-bold text-gray-900 mb-8">Mi Perfil Profesional</h1>
 
             {/* Tarjeta de Presentación */}
-            {perfilData && perfilData.data && ( // Verificar que perfilData y perfilData.data existan
+            {perfilData && (
               <>
                 <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-8 mb-6">
                   <div className="flex items-start gap-6">
                     <div className="flex-shrink-0">
-                      <div className="w-24 h-24 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white text-3xl font-bold">
-                        {/* CORREGIDO: Acceso con .data y camelCase */}
-                        {perfilData.data.antecedentesPersonales?.nombres?.charAt(0) || 'U'}
+                      <div className="w-24 h-24 bg-gradient-to-br from-[#07767c] to-[#055a5f] rounded-full flex items-center justify-center text-white text-3xl font-bold">
+                        {perfilData.antecedentesPersonales?.nombres?.charAt(0) || 'U'}
                       </div>
                     </div>
                     <div className="flex-1">
                       <h2 className="text-3xl font-bold text-gray-900 mb-2">
-                        {/* CORREGIDO: Acceso con .data y camelCase */}
-                        {perfilData.data.antecedentesPersonales?.nombres} {perfilData.data.antecedentesPersonales?.apellidos}
+                        {perfilData.antecedentesPersonales?.nombres} {perfilData.antecedentesPersonales?.apellidos}
                       </h2>
                       <p className="text-gray-600 mb-4">
-                        {/* CORREGIDO: Acceso con .data, camelCase y nombre correcto 'descripcion' */}
-                        {perfilData.data.freelancer?.descripcion}
+                        {perfilData.freelancer?.descripcion}
                       </p>
                       <div className="flex flex-wrap gap-4">
                         <div className="flex items-center gap-2 text-gray-700">
                           <User size={18} />
-                          {/* CORREGIDO: Acceso con .data, camelCase y nombre correcto 'ciudad' */}
-                          <span>{perfilData.data.antecedentesPersonales?.ciudad}, {perfilData.data.antecedentesPersonales?.comuna}</span>
+                          <span>{perfilData.antecedentesPersonales?.ciudad}, {perfilData.antecedentesPersonales?.comuna}</span>
                         </div>
                         {/* CORREGIDO: Acceso a un array */}
-                        {perfilData.data.educacionSuperior && perfilData.data.educacionSuperior.length > 0 && (
+                        {perfilData.educacionSuperior && perfilData.educacionSuperior.length > 0 && (
                           <div className="flex items-center gap-2 text-gray-700">
                             <Briefcase size={18} />
-                            <span>{perfilData.data.educacionSuperior[0].carrera}</span>
+                            <span>{perfilData.educacionSuperior[0].carrera}</span>
                           </div>
                         )}
                       </div>
@@ -258,51 +250,51 @@ function ViewPerfilFreeLancer() {
 
                 {/* Información Rápida */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                  {perfilData.data.idiomas && perfilData.data.idiomas.length > 0 && (
+                  {perfilData.idiomas && perfilData.idiomas.length > 0 && (
                     <div className="bg-white rounded-lg border border-gray-200 p-6">
                       <h3 className="font-semibold text-gray-900 mb-3">Idiomas</h3>
                       <div className="space-y-2">
-                        {perfilData.data.idiomas.slice(0, 2).map((idioma, idx) => (
+                        {perfilData.idiomas.slice(0, 2).map((idioma, idx) => (
                           <div key={idx} className="text-sm text-gray-700">
-                            {idioma.idioma} - {idioma.nivel_idioma}
+                            {idioma.idioma} - {idioma.nivel}
                           </div>
                         ))}
-                        {perfilData.data.idiomas.length > 2 && (
-                          <p className="text-xs text-gray-500">+{perfilData.data.idiomas.length - 2} más</p>
+                        {perfilData.idiomas.length > 2 && (
+                          <p className="text-xs text-gray-500">+{perfilData.idiomas.length - 2} más</p>
                         )}
                       </div>
                     </div>
                   )}
 
-                  {perfilData.data.habilidades && perfilData.data.habilidades.length > 0 && (
+                  {perfilData.habilidades && perfilData.habilidades.length > 0 && (
                     <div className="bg-white rounded-lg border border-gray-200 p-6">
                       <h3 className="font-semibold text-gray-900 mb-3">Habilidades</h3>
                       <div className="flex flex-wrap gap-2">
-                        {perfilData.data.habilidades.slice(0, 3).map((hab, idx) => (
+                        {perfilData.habilidades.slice(0, 3).map((hab, idx) => (
                           <span key={idx} className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs">
                             {hab.habilidad}
                           </span>
                         ))}
-                        {perfilData.data.habilidades.length > 3 && (
+                        {perfilData.habilidades.length > 3 && (
                           <span className="px-2 py-1 bg-gray-100 text-gray-600 rounded text-xs">
-                            +{perfilData.data.habilidades.length - 3}
+                            +{perfilData.habilidades.length - 3}
                           </span>
                         )}
                       </div>
                     </div>
                   )}
 
-                  {perfilData.data.pretensiones && (
+                  {perfilData.pretensiones && (
                     <div className="bg-white rounded-lg border border-gray-200 p-6">
                       <h3 className="font-semibold text-gray-900 mb-3">Pretensiones</h3>
                       <div className="space-y-2 text-sm text-gray-700">
                         <div>
                           <span className="font-medium">Disponibilidad:</span><br />
-                          {perfilData.data.pretensiones.disponibilidad}
+                          {perfilData.pretensiones.disponibilidad}
                         </div>
                         <div>
                           <span className="font-medium">Renta esperada:</span><br />
-                          ${perfilData.data.pretensiones.renta_esperada?.toLocaleString("es-CL")}
+                          ${perfilData.pretensiones.renta_esperada?.toLocaleString("es-CL")}
                         </div>
                       </div>
                     </div>
@@ -313,7 +305,7 @@ function ViewPerfilFreeLancer() {
                 <div className="flex flex-wrap gap-4">
                   <button
                     onClick={() => navigate("/viewmoredetailsfreelancer")}
-                    className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-lg font-semibold transition-all flex items-center gap-2 shadow-lg hover:shadow-xl"
+                    className="px-6 py-3 bg-gradient-to-r from-[#07767c] to-[#055a5f] hover:from-blue-700 hover:to-indigo-700 text-white rounded-lg font-semibold transition-all flex items-center gap-2 shadow-lg hover:shadow-xl"
                   >
                     <Eye size={20} />
                     Ver Perfil Completo
