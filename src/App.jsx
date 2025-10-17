@@ -7,7 +7,7 @@ import {
   AdminHome, UserManagement,ProjectManagement, 
   ReviewManagement, SupportManagement, PaymentManagement, 
   NotificationManagement, AuditAndSecurity
-  } from "@pages/Admin";
+} from "@pages/Admin";
 
 import {
   BusquidyGuia, SoporteHome, CrearTicket,
@@ -17,7 +17,7 @@ import {
 import { 
   Dashboard, UserTable, SupportTable,
   SupportChat, AdminRoles, PermissionManagement, UserEditPage
- } from "@components/Admin";
+} from "@components/Admin";
 
 import LoadingScreen from "@components/LoadingScreen";
 
@@ -37,6 +37,11 @@ import {User, Unauthorized, PaymentReturn} from "@pages/User"
 import ProjectList from "./pages/Project/ProjectList";
 import EditProjectPage from "./components/Empresa/Projects/ProjectForm/EditProjectPage";
 import ProtectedAdminRoute from "./routes/ProtectedAdminRoute";
+// ===============================================================
+// =====> 1. PEGA LA IMPORTACIÓN AQUÍ <=====
+import VideoCallPage from "./pages/Video/VideoCallPage";
+import MyCallsPage from "./pages/Video/MyCallsPage"; // <-- Importa la página
+// ===============================================================
 
 
 function App() {
@@ -77,7 +82,7 @@ function App() {
 
     // Create socket only once
     if (!socketRef.current) {
-      socketRef.current = io("http://192.168.1.81:3001", {
+      socketRef.current = io("http://localhost:3001", {
         transports: ["websocket"],
         withCredentials: true
       });
@@ -116,6 +121,12 @@ function App() {
             <Route path= "/user" element={<User/>} />
             <Route path= "/busquidypage" element={<BusquidyPage />} />
             <Route path= "/sobrenosotrospage" element={<AboutUsPage />} />
+            
+            {/* =============================================================== */}
+            {/* =====> 2. PEGA LA RUTA AQUÍ <===== */}
+            <Route path="/video/:roomId" element={<VideoCallPage />} />
+            <Route path="/my-calls" element={<MyCallsPage />} />
+            {/* =============================================================== */}
 
             {/* soporte */}
             <Route path= "/busquidyGuia" element={<BusquidyGuia />} />

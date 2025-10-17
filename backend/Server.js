@@ -19,6 +19,8 @@ const corsOptions = {
       "https://localhost:3000",
       process.env.DB_TEST_HOST,
       process.env.FRONTEND_URL,
+      // Añade tu IP local aquí para asegurar la conexión
+      "http://localhost:5173",
     ].filter(Boolean);
 
     if (!origin || allowedOrigins.indexOf(origin) !== -1) {
@@ -66,29 +68,65 @@ app.use((err, req, res, next) => {
 
 // ==================== CONFIGURACIÓN DE SOCKET.IO ====================
 const httpServer = http.createServer(app);
-const io = socketIo(httpServer, {
-  cors: {
-    origin: [
-      "http://localhost:5173",
-      "http://localhost:3000",
-      "https://localhost:3000",
-      process.env.FRONTEND_URL,
-    ].filter(Boolean),
-    credentials: true,
-  },
-});
 
+// =====> LÍNEAS AÑADIDAS AQUÍ <=====
+const io = new socketIo.Server(httpServer, {
+  cors: corsOptions,
+});
 let connectedUsers = 0;
+// ==================================
 
 io.on("connection", (socket) => {
   console.log("✅ Nuevo cliente conectado:", socket.id);
   connectedUsers++;
   io.emit("usersCount", connectedUsers);
 
+  // ==================== LÓGICA DE WEBRTC ====================
+  
+  // Listener para unirse a la sala
+  socket.on('join-video-room', (roomId, userId) => {
+    socket.join(roomId);
+    socket.roomId = roomId; // Guardamos la sala para usarla en otros eventos
+    socket.userId = userId; // Guardamos el ID de usuario
+
+    socket.to(roomId).emit('user-connected', userId);
+    console.log(`Usuario ${userId} se unió a la sala de video ${roomId}`);
+
+    socket.on('offer', (payload) => {
+        io.to(payload.target).emit('offer', { sdp: payload.sdp, source: userId });
+    });
+
+    socket.on('answer', (payload) => {
+        io.to(payload.target).emit('answer', { sdp: payload.sdp, source: userId });
+    });
+
+    socket.on('ice-candidate', (payload) => {
+        io.to(payload.target).emit('ice-candidate', { candidate: payload.candidate, source: userId });
+    });
+  });
+
+  // =====> Listener del CHAT (MOVIDO AFUERA) <=====
+  socket.on('send-chat-message', (message) => {
+    // Usamos la sala y el usuario que guardamos en el socket
+    if (socket.roomId) {
+      io.to(socket.roomId).emit('receive-chat-message', {
+          message: message,
+          sender: socket.userId 
+      });
+    }
+  });
+
+  // ==================== FIN LÓGICA DE WEBRTC ====================
+
   socket.on("disconnect", () => {
     console.log("❌ Cliente desconectado:", socket.id);
     connectedUsers--;
     io.emit("usersCount", connectedUsers);
+
+    if (socket.roomId) {
+      socket.to(socket.roomId).emit('user-disconnected', socket.id);
+      console.log(`Usuario ${socket.id} se desconectó de la sala de video ${socket.roomId}`);
+    }
   });
 });
 

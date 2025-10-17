@@ -41,16 +41,6 @@ const LoadingScreen = ({ message = "Cargando..." }) => {
         ></div>
       </div>
 
-      <style jsx>{`
-        @keyframes shimmer {
-          0% {
-            background-position: -100% 0;
-          }
-          100% {
-            background-position: 100% 0;
-          }
-        }
-      `}</style>
     </div>
   );
 };
