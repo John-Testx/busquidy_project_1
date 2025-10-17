@@ -7,6 +7,8 @@ import { User, Unauthorized, PaymentReturn, NotAuthenticated } from '@pages/User
 
 import { Empresa, FindFreelancer, MyProjects, ViewFreelancer, ViewPerfilEmpresa, } from '@pages/Empresa';
 import { FreeLancer, MyPostulations, ViewMoreDetailsFreelancer, ViewPerfilFreeLancer, } from '@pages/Freelancer';
+import VideoCallPage from "@pages/Video/VideoCallPage";
+import MyCallsPage from "@pages/Video/MyCallsPage";
 
 import {
     SoporteHome,
@@ -47,6 +49,8 @@ const AppRoutes = () => {
       <Route path="/soporte/crearticket-publico" element={<CrearTicketPublico />} />
       <Route path="/soporte/ticket-publico/:id_ticket" element={<VerTicketPublico />} />
 
+      <Route path="/video/:roomId" element={<VideoCallPage />} />
+      <Route path="/my-calls" element={<MyCallsPage />} />
 
       {/* Authenticated User Routes */}
       <Route element={<ProtectedRoute allowedRoles={['freelancer', 'empresa', 'administrador']} />}>

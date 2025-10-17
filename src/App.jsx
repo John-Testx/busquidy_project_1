@@ -13,7 +13,7 @@ function App() {
   useEffect(() => {
     // Create socket only once
     if (!socketRef.current) {
-      socketRef.current = io("http://192.168.1.81:3001", {
+      socketRef.current = io("http://localhost:3001", {
         transports: ["websocket"],
         withCredentials: true
       });
