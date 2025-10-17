@@ -1,3 +1,5 @@
+import {useNavigate} from "react-router-dom";
+
 export default function Unauthorized() {
   return (
     <div className="min-h-screen flex items-center justify-center text-center">
