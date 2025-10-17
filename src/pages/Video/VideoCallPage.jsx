@@ -172,11 +172,53 @@ const VideoCallPage = () => {
     };
     
     // --- Resto de funciones (sin cambios) ---
-    const toggleScreenShare = () => { /* ...tu código sin cambios... */ };
-    const toggleMic = () => { /* ...tu código sin cambios... */ };
-    const toggleCamera = () => { /* ...tu código sin cambios... */ };
-    const hangUp = () => navigate('/my-calls');
+       const toggleScreenShare = async () => {
+        if (isSharingScreen) {
+            const cameraTrack = myStream.current.getVideoTracks()[0];
+            Object.values(myPeerConnections.current).forEach(peerConnection => {
+                const sender = peerConnection.getSenders().find(s => s.track && s.track.kind === 'video');
+                if (sender) sender.replaceTrack(cameraTrack);
+            });
+            screenTrackRef.current.stop();
+            myVideoRef.current.srcObject = myStream.current;
+            setIsSharingScreen(false);
+        } else {
+            try {
+                const screenStream = await navigator.mediaDevices.getDisplayMedia({ cursor: true });
+                const screenTrack = screenStream.getVideoTracks()[0];
+                screenTrackRef.current = screenTrack;
 
+                Object.values(myPeerConnections.current).forEach(peerConnection => {
+                    const sender = peerConnection.getSenders().find(s => s.track && s.track.kind === 'video');
+                    if (sender) sender.replaceTrack(screenTrack);
+                });
+
+                myVideoRef.current.srcObject = screenStream;
+                setIsSharingScreen(true);
+
+                screenTrack.onended = () => {
+                    if(screenTrackRef.current && screenTrackRef.current.readyState === 'ended') {
+                        toggleScreenShare();
+                    }
+                };
+            } catch (error) {
+                console.error("Error al compartir pantalla:", error);
+            }
+        }
+    };
+    const toggleMic = () => {
+        myStream.current.getAudioTracks().forEach(track => track.enabled = !track.enabled);
+        setMicOn(!micOn);
+    };
+    const toggleCamera = () => {
+        if(isSharingScreen) return;
+        myStream.current.getVideoTracks().forEach(track => track.enabled = !track.enabled);
+        setCameraOn(!cameraOn);
+    };
+
+    const hangUp = () => {
+        navigate('/my-calls');
+    };
     // === LÓGICA PARA EL DISEÑO DINÁMICO ===
     const numPeers = Object.keys(peers).length;
 
