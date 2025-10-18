@@ -6,16 +6,14 @@ import Navbar from "../../components/Home/Navbar";
 import Footer from "../../components/Home/Footer";
 import LoadingScreen from "../../components/LoadingScreen"; 
 import PerfilFreelancerEmpresaView from "../../components/Empresa/FreelancerList/PerfilFreelancerEmpresaView";
+import useAuth from "../../hooks/useAuth";
 
 function ViewFreelancer() {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [loading, setLoading] = useState(true);
     const [logoutStatus, setLogoutStatus] = useState("");
     const [userType, setUserType] = useState("");
-    const [id_usuario, setIdUsuario] = useState(null);
     const [isPerfilIncompleto, setIsPerfilIncompleto] = useState(null); 
     const navigate = useNavigate(); 
-
+    const { id_usuario, isAuthenticated, loading } = useAuth;
     const { id } = useParams();
     const [freelancer, setFreelancer] = useState(null);
     const [freelancerError, setFreelancerError] = useState(false);
@@ -33,41 +31,9 @@ function ViewFreelancer() {
             }
         };
         fetchFreelancerData();
+        fetchPerfilEmpresa(id_usuario);
     }, [id]);
     
-    useEffect(() => {
-        const checkAuth = () => {
-            const token = localStorage.getItem('token');    
-            setIsAuthenticated(!!token);
-
-            if (token) {
-                try {
-                    const decoded = jwtDecode(token);
-                    console.log("Decoded token:", decoded);
-                    setUserType(decoded.tipo_usuario);
-                    setIdUsuario(decoded.id_usuario);
-
-                    if (decoded.id_usuario) {
-                        fetchPerfilEmpresa(decoded.id_usuario);
-                        console.log('ID de usuario correcto:', decoded.id_usuario);
-                    }
-                    
-                } catch (error) {
-                    console.error("Error decodificando el token:", error);
-                }
-            }
-
-            setTimeout(() => {
-                setLoading(false);
-            }, 500);
-        };
-     
-        window.addEventListener('storage', checkAuth);
-        checkAuth();
-    
-        return () => window.removeEventListener('storage', checkAuth);
-    }, []);
-
     const fetchPerfilEmpresa = async (id_usuario) => {
         try {
             const response = await axios.get(`http://localhost:3001/api/empresa/${id_usuario}`);
@@ -76,22 +42,6 @@ function ViewFreelancer() {
         } catch (error) {
             console.error("Error al verificar el perfil de la empresa:", error);
         }
-    };
-
-    const handleLogout = () => {
-        setLoading(true);
-        setLogoutStatus("Cerrando sesión...");
-        setTimeout(() => {
-            localStorage.removeItem("token");
-            localStorage.removeItem("correo");
-            setIsAuthenticated(false);
-            setUserType(null);
-            setLogoutStatus("Sesión cerrada");
-            setTimeout(() => {
-                setLoading(false);
-                navigate("/");
-            }, 1000);
-        });
     };
 
     return (
@@ -145,13 +95,6 @@ function ViewFreelancer() {
 
             {/* Footer */}
             <Footer />
-
-            {/* Logout Status Message */}
-            {logoutStatus && (
-                <div className="fixed bottom-6 right-6 bg-teal-600 text-white px-6 py-3 rounded-lg shadow-lg font-semibold">
-                    {logoutStatus}
-                </div>
-            )}
         </div>
     );
 }
