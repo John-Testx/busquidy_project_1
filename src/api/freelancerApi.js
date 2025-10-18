@@ -90,8 +90,7 @@ export const verifyUserProfileForPremium = async (tipo_usuario, id_usuario) => {
 
   try {
     if (tipo_usuario === "freelancer") {
-      const response = await checkProfileExists(id_usuario); // ← Usa la función existente
-      const data = response.data;
+      const data = await checkProfileExists(id_usuario); // ✅ Directamente los datos
       if (data.isPerfilIncompleto) {
         return {
           isComplete: false,
