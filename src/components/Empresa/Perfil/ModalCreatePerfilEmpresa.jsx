@@ -4,7 +4,9 @@ import { useForm, FormProvider } from "react-hook-form";
 import StepEmpresa from "./Steps/StepEmpresa";
 import StepRepresentante from "./Steps/StepRepresentante";
 
-function ModalCreatePerfilEmpresa({ closeModal, id_usuario }) {
+function ModalCreatePerfilEmpresa({ closeModal,
+   id_usuario, onProfileCreated }) {
+
   const [currentStep, setCurrentStep] = useState(0);
   const [completedSteps, setCompletedSteps] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -68,7 +70,7 @@ function ModalCreatePerfilEmpresa({ closeModal, id_usuario }) {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       closeModal();
-      window.location.reload();
+      onProfileCreated();
     } catch (error) {
       console.error("Error al crear el perfil de la empresa:", error);
       setIsSubmitting(false);

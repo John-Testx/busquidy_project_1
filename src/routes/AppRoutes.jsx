@@ -6,7 +6,7 @@ import { Home, BusquidyPage, AboutUsPage } from '@pages/General';
 import { User, Unauthorized, PaymentReturn, NotAuthenticated } from '@pages/User';
 
 // Import Empresa components
-import { Empresa, FindFreelancer, MyProjects, ViewFreelancer, ViewPerfilEmpresa, } from '@pages/Empresa';
+import { Empresa, FindFreelancer, MyProjects, ViewFreelancer } from '@pages/Empresa';
 
 // Import Freelancer components
 import { FreeLancer, MyPostulations, ViewMoreDetailsFreelancer, ViewPerfilFreeLancer, FreelancerProfileLayout} from '@pages/Freelancer';

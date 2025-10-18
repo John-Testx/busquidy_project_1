@@ -5,8 +5,9 @@ const BASE_URL = '/freelancer/availability';
 /**
  * Obtiene todos los bloques de disponibilidad del freelancer autenticado (vía token).
  */
-export const getAvailability = () => {
-  return apiClient.get(BASE_URL);
+export const getAvailability =  async () => {
+  const response = await apiClient.get(BASE_URL);
+  return response;
 };
 
 /**

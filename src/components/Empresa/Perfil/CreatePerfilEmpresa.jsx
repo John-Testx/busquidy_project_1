@@ -2,12 +2,13 @@ import React, { useState } from "react";
 import ModalCreatePerfilEmpresa from "./ModalCreatePerfilEmpresa.jsx";
 import MessageModal from "../../MessageModal.jsx";
 
-function CreatePerfilEmpresa({ userType, id_usuario }) {
+function CreatePerfilEmpresa({ userType, id_usuario, onProfileCreated }) {
     const [showModalCreatePerfilEmpresa, setShowModalCreatePerfilEmpresa] = useState(false);
     const [showMessageModal, setShowMessageModal] = useState(false);
     const [message, setMessage] = useState('');
 
     const openModalCreatePerfilEmpresa = () => {
+        console.log(userType);
         if (userType === 'empresa') {
             setShowModalCreatePerfilEmpresa(true);
             console.log('id:', id_usuario);
@@ -74,6 +75,7 @@ function CreatePerfilEmpresa({ userType, id_usuario }) {
                 <ModalCreatePerfilEmpresa 
                     closeModal={() => setShowModalCreatePerfilEmpresa(false)} 
                     id_usuario={id_usuario}
+                    onProfileCreated={onProfileCreated}
                 />
             )}
 

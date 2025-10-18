@@ -12,7 +12,18 @@ export const getEmpresaProfile = async (id_usuario) => {
   return response.data;
 };
 
+
 /**
+ * Verifica el estado del perfil de la empresa (si está completo o no).
+ * @param {number} id_usuario - El ID del usuario de la empresa.
+ * @returns {Promise<object>} Un objeto que contiene el estado del perfil, ej: { isPerfilIncompleto: true }.
+ */
+export const checkEmpresaProfileStatus = async (id_usuario) => {
+  const response = await apiClient.get(`${BASE_URL}/get/${id_usuario}`);
+  return response.data;
+};
+
+/** 
  * Actualiza el perfil completo de la empresa.
  * @param {number} id_usuario - El ID del usuario de la empresa.
  * @param {object} profileData - El objeto completo con los datos del perfil a actualizar.

@@ -40,7 +40,7 @@ const getPerfilEmpresa = async (req, res) => {
       return res.status(404).json({ error: "No se encontró el perfil representante" });
     }
 
-    console.log("perfil:", perfilUsuarioResults[0], perfilEmpresaResults[0], perfilRepresentanteResults[0]);
+    // console.log("perfil:", perfilUsuarioResults[0], perfilEmpresaResults[0], perfilRepresentanteResults[0]);
 
     // Enviar respuesta consolidada
     res.json({

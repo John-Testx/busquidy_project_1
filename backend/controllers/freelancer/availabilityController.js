@@ -5,9 +5,12 @@ const { findFreelancerByUserId } = require('../../queries/freelancer/profileQuer
 // Obtener la disponibilidad de un freelancer
 const getAvailability = async (req, res) => {
     // El id del freelancer se obtiene del token de autenticación
-    const {id_usuario } = req.params;
+    const {id_usuario } = req.user;
+    // console.log("req: ", req);
+    // console.log("req params: ", req.params);
+    console.log("iduser:",id_usuario);
 
-    const freelancerResults = await pool.query(findFreelancerByUserId, [id_usuario]);
+    const freelancerResults = await findFreelancerByUserId ([id_usuario]);
 
     if (freelancerResults.length === 0) {
         return res.status(404).json({ message: "Perfil de freelancer no encontrado." });
@@ -26,7 +29,11 @@ const getAvailability = async (req, res) => {
 
 // Añadir un nuevo bloque de disponibilidad
 const addAvailability = async (req, res) => {
-    const [freelancerResults] = await findFreelancerByUserId(req.user.id_usuario);
+
+    const {id_usuario } = req.params;
+    console.log(req);
+    
+    const [freelancerResults] = await findFreelancerByUserId(id_usuario);
 
     if (freelancerResults.length === 0) {
       return res.status(404).json({ error: "Freelancer no encontrado" });
