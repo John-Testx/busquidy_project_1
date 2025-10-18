@@ -6,7 +6,7 @@ import { Home, BusquidyPage, AboutUsPage } from '@pages/General';
 import { User, Unauthorized, PaymentReturn, NotAuthenticated } from '@pages/User';
 
 import { Empresa, FindFreelancer, MyProjects, ViewFreelancer, ViewPerfilEmpresa, } from '@pages/Empresa';
-import { FreeLancer, MyPostulations, ViewMoreDetailsFreelancer, ViewPerfilFreeLancer, } from '@pages/Freelancer';
+import { FreeLancer, MyPostulations, ViewMoreDetailsFreelancer, ViewPerfilFreeLancer, FreelancerProfileLayout} from '@pages/Freelancer';
 import VideoCallPage from "@pages/Video/VideoCallPage";
 import MyCallsPage from "@pages/Video/MyCallsPage";
 
@@ -30,6 +30,11 @@ import { Dashboard, UserTable, SupportTable, SupportChat, AdminRoles, UserEditPa
 // Import your protected route components
 import ProtectedRoute from './ProtectedRoute';
 import ProtectedAdminRoute from './ProtectedAdminRoute'; // You can keep this or merge logic into the new one
+import MyAvailability from '@/pages/Freelancer/MyAvailability';
+import EmpresaProfileLayout from '@/pages/Empresa/EmpresaProfileLayout';
+import EmpresaInfo from '@/components/Empresa/Perfil/EmpresaInfo';
+import RepresentanteInfo from '@/components/Empresa/Perfil/RepresentanteInfo';
+import EmpresaAccess from '@/components/Empresa/Perfil/EmpresaAccess';
 
 const AppRoutes = () => {
   return (
@@ -63,6 +68,15 @@ const AppRoutes = () => {
       <Route element={<ProtectedRoute allowedRoles={['freelancer']} />}>
         <Route path="/freelancer" element={<FreeLancer />} />
         <Route path="/mypostulations" element={<MyPostulations />} />
+        
+        <Route path="/freelancer-profile" element={<FreelancerProfileLayout/>}>
+          <Route index element={<ViewPerfilFreeLancer/>} />
+          <Route path="view-profile" element={<ViewPerfilFreeLancer />} />
+          <Route path="my-postulations" element={<MyPostulations />} />
+          <Route path="availability" element={<MyAvailability />} />
+        </Route>
+
+        {/* <Route path="/viewperfilfreelancer" element={<FreelancerProfile />} />  */}
         <Route path="/viewperfilfreelancer" element={<ViewPerfilFreeLancer />} />
         <Route path="/viewmoredetailsfreelancer" element={<ViewMoreDetailsFreelancer />} />
       </Route>
@@ -71,7 +85,17 @@ const AppRoutes = () => {
       <Route element={<ProtectedRoute allowedRoles={['empresa']} />}>
         <Route path="/empresa" element={<Empresa />} />
         <Route path="/myprojects" element={<MyProjects />} />
-        <Route path="/viewperfilempresa" element={<ViewPerfilEmpresa />} />
+
+        {/* <Route path="/viewperfilempresa" element={<ViewPerfilEmpresa />} /> */}
+
+        <Route path="/company-profile" element={<EmpresaProfileLayout />}>
+          {/* Redirect the base path to the first section */}
+          <Route index element={<EmpresaInfo />} />
+          <Route path="info" element={<EmpresaInfo />} />
+          <Route path="representante" element={<RepresentanteInfo />} />
+          <Route path="acceso" element={<EmpresaAccess />} />
+        </Route>
+
         <Route path="/findfreelancer" element={<FindFreelancer />} />
         <Route path="/viewfreelancer/:id" element={<ViewFreelancer />} />
         <Route path="/projects/edit/:id" element={<EditProjectPage />} />

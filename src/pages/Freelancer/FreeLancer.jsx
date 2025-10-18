@@ -40,32 +40,10 @@ function FreeLancer() {
         return () => window.removeEventListener('storage', checkAuth);
     }, []);
 
-    const handleLogout = () => {
-        setLoading(true);
-        setLogoutStatus("Cerrando sesión...");
-        
-        setTimeout(() => {
-            localStorage.removeItem("token");
-            localStorage.removeItem("correo");
-            setIsAuthenticated(false);
-            setUserType(null);
-            setLogoutStatus("Sesión cerrada");
-            
-            setTimeout(() => {
-                setLoading(false);
-                navigate("/");
-            }, 1000);
-        });
-    };
-
-    const renderNavbar = () => {
-        return <Navbar />;
-    };
-
     return (
         <div>
             {loading && <LoadingScreen />}
-            {renderNavbar()}
+            <Navbar />;
             <LittleSearchSection/>
             <InfoSectionFreelancer/>
             <Footer/>

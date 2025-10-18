@@ -156,7 +156,7 @@ let connectedUsers = 0;
 
 io.on("connection", (socket) => {
 
-  console.log("✅ Nuevo cliente conectado:", socket.id);
+  // console.log("✅ Nuevo cliente conectado:", socket.id);
 
   connectedUsers++;
 
@@ -240,7 +240,7 @@ io.on("connection", (socket) => {
 
   socket.on("disconnect", () => {
 
-    console.log("❌ Cliente desconectado:", socket.id);
+    // console.log("❌ Cliente desconectado:", socket.id);
 
     connectedUsers--;
 

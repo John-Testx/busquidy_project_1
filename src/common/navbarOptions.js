@@ -29,7 +29,7 @@ export const profileLinks = [
     },
     {
         label: "Mi perfil",
-        link: "/viewperfilempresa",
+        link: "/company-profile",
         icon: "bi bi-person",
         roles: ["empresa"]
     },

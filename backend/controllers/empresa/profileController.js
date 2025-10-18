@@ -147,6 +147,8 @@ const createEmpresaProfile = async (req, res) => {
 const updateEmpresaProfile = async (req, res) => {
   const { id } = req.params; // id_usuario
   const { perfilEmpresa, perfilRepresentante, perfilUsuario } = req.body;
+  
+  console.log('Request Headers:', req.headers);
 
   try {
     let empresaId;
@@ -179,6 +181,8 @@ const updateEmpresaProfile = async (req, res) => {
     if (perfilUsuario) {
       await userQueries.updateUserEmail(id, perfilUsuario.correo);
     }
+
+    console.log("Empresa actualizada: ")
 
     return res.json({ message: "Perfil de empresa actualizado correctamente" });
   } catch (err) {
