@@ -68,7 +68,7 @@ const VideoCallPage = () => {
     // === EFECTO PRINCIPAL CORREGIDO Y ROBUSTO ===
     useEffect(() => {
         // Usa tu IP correcta para asegurar la conexión
-        socketRef.current = io("http://192.168.1.21:3001");
+        socketRef.current = io("http://localhost:3001");
         const socket = socketRef.current; // Usar una variable local para la limpieza
 
         // --- MANEJADORES DE EVENTOS DE SOCKET (Definidos afuera) ---
