@@ -1,33 +1,33 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 
-// Import your pages (using your existing barrel files is great!)
+// Import General components
 import { Home, BusquidyPage, AboutUsPage } from '@pages/General';
 import { User, Unauthorized, PaymentReturn, NotAuthenticated } from '@pages/User';
 
+// Import Empresa components
 import { Empresa, FindFreelancer, MyProjects, ViewFreelancer, ViewPerfilEmpresa, } from '@pages/Empresa';
+
+// Import Freelancer components
 import { FreeLancer, MyPostulations, ViewMoreDetailsFreelancer, ViewPerfilFreeLancer, FreelancerProfileLayout} from '@pages/Freelancer';
+
 import VideoCallPage from "@pages/Video/VideoCallPage";
 import MyCallsPage from "@pages/Video/MyCallsPage";
 
-import {
-    SoporteHome,
-    CrearTicket,
-    VerTicket,
-    CrearTicketPublico,
-    VerTicketPublico,
-    BusquidyGuia
-} from "@pages/Soporte";
+// Import Soporte components
+import { SoporteHome, CrearTicket, VerTicket, CrearTicketPublico, VerTicketPublico, BusquidyGuia } from "@pages/Soporte";
 
 import ProjectList from '../pages/Project/ProjectList';
 import EditProjectPage from '../components/Empresa/Projects/ProjectForm/EditProjectPage';
+
+import ChatPage from '../pages/Chat/ChatPage';
 
 // Import Admin components
 import { AdminHome, UserManagement, ProjectManagement, ReviewManagement, SupportManagement, PaymentManagement, NotificationManagement, AuditAndSecurity } from '@pages/Admin';
 import { Dashboard, UserTable, SupportTable, SupportChat, AdminRoles, UserEditPage } from '@components/Admin';
 
 
-// Import your protected route components
+// Import  protected route components
 import ProtectedRoute from './ProtectedRoute';
 import ProtectedAdminRoute from './ProtectedAdminRoute'; // You can keep this or merge logic into the new one
 import MyAvailability from '@/pages/Freelancer/MyAvailability';
@@ -47,6 +47,11 @@ const AppRoutes = () => {
       <Route path="/payment/return" element={<PaymentReturn />} />
       <Route path="/notauthenticated" element={<NotAuthenticated />} />
       <Route path="/unauthorized" element={<Unauthorized />} />
+
+      {/* Chat Routes */}
+      <Route element={<ProtectedRoute allowedRoles={['freelancer', 'empresa']} />}>
+        <Route path="/chat" element={<ChatPage />} />
+      </Route>
 
       {/* Soporte Routes (Public and Private) */}
       <Route path="/busquidyGuia" element={<BusquidyGuia />} />

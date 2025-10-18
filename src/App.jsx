@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { BrowserRouter as Router } from "react-router-dom";
 import AppRoutes from "./routes/AppRoutes"; // Import the new AppRoutes component
 import LoadingScreen from "./components/LoadingScreen";
-import useAuth from "./hooks/useAuth"; // Assuming useAuth provides loading state
+import useAuth from "./hooks/useAuth";
 import io from "socket.io-client";
 
 function App() {
@@ -38,10 +38,8 @@ function App() {
 
 return (
     <Router>
-      <div className="flex flex-col min-h-screen w-full">
-        <main className="flex-1">
+      <div className="h-full w-full">
           <AppRoutes />
-        </main>
       </div>
     </Router>
   );
