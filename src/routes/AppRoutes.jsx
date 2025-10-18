@@ -17,10 +17,10 @@ import MyCallsPage from "@pages/Video/MyCallsPage";
 // Import Soporte components
 import { SoporteHome, CrearTicket, VerTicket, CrearTicketPublico, VerTicketPublico, BusquidyGuia } from "@pages/Soporte";
 
-import ProjectList from '../pages/Project/ProjectList';
-import EditProjectPage from '../components/Empresa/Projects/ProjectForm/EditProjectPage';
+import ProjectList from '@/pages/Project/ProjectList';
+import EditProjectPage from '@/components/Empresa/Projects/ProjectForm/EditProjectPage';
 
-import ChatPage from '../pages/Chat/ChatPage';
+import ChatPage from '@/pages/Chat/ChatPage';
 
 // Import Admin components
 import { AdminHome, UserManagement, ProjectManagement, ReviewManagement, SupportManagement, PaymentManagement, NotificationManagement, AuditAndSecurity } from '@pages/Admin';

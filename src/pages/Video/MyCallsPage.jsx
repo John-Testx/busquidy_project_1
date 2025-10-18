@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 // Asumo que tienes un apiClient para hacer llamadas a la API
-import apiClient from '../../api/apiClient'; 
+import apiClient from '@/api/apiClient'; 
 
 const MyCallsPage = () => {
     const [calls, setCalls] = useState([]);
