@@ -1,10 +1,10 @@
 import React, {useState, useEffect} from "react";
 import {jwtDecode} from 'jwt-decode';
 import { useNavigate } from "react-router-dom";
-import Navbar from "../../components/Home/Navbar";
-import MyPostulationsTable from "../../components/FreeLancer/MyPostulationsTable";
-import Footer from "../../components/Home/Footer";
-import LoadingScreen from "../../components/LoadingScreen";
+import Navbar from "@/components/Home/Navbar";
+import MyPostulationsTable from "@/components/FreeLancer/MyPostulationsTable";
+import Footer from "@/components/Home/Footer";
+import LoadingScreen from "@/components/LoadingScreen";
 
 function MyPostulations() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import AdminTable from "../../common/TableCommon";
+import AdminTable from "@/common/TableCommon";
 import {
   LineChart,
   Line,
@@ -19,9 +19,9 @@ import {
   TrendingUp,
   DollarSign
 } from "lucide-react";
-import { getUsuarios } from "../../api/userApi";
-import { getAllProjects } from "../../api/projectsApi";
-import { getAllPayments } from "../../api/paymentApi";
+import { getUsuarios } from "@/api/userApi";
+import { getAllProjects } from "@/api/projectsApi";
+import { getAllPayments } from "@/api/paymentApi";
 
 function Dashboard() {
   const [stats, setStats] = useState({

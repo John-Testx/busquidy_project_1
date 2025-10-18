@@ -2,12 +2,12 @@ import React, { useEffect, useState } from "react";
 import {jwtDecode} from 'jwt-decode';
 import { useNavigate } from "react-router-dom";
 import { Briefcase, Users, Shield, Zap, Target, Award, ChevronRight, CheckCircle, Code, TrendingUp, Building } from "lucide-react";
-import Navbar from "../../components/Home/Navbar";
-//import NavbarEmpresa from "../../components/Empresa/NavbarEmpresa";
-//import NavbarFreeLancer from "../../components/FreeLancer/NavbarFreeLancer";
-import Footer from "../../components/Home/Footer";
-import LoadingScreen from "../../components/LoadingScreen"; 
-import useAuth from "../../hooks/useAuth";
+import Navbar from "@/components/Home/Navbar";
+//import NavbarEmpresa from "@/components/Empresa/NavbarEmpresa";
+//import NavbarFreeLancer from "@/components/FreeLancer/NavbarFreeLancer";
+import Footer from "@/components/Home/Footer";
+import LoadingScreen from "@/components/LoadingScreen"; 
+import useAuth from "@/hooks/useAuth";
 
 function AboutUsPage() {
     const [logoutStatus, setLogoutStatus] = useState("");

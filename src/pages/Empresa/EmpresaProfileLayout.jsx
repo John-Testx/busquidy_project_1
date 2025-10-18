@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Outlet, useOutletContext } from 'react-router-dom';
-import axios from 'axios';
 import { toast } from 'react-toastify';
 import useAuth from '../../hooks/useAuth';
 import LoadingScreen from '../../components/LoadingScreen';

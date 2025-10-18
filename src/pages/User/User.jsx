@@ -1,14 +1,14 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import useAuth from "../../hooks/useAuth";
-import Navbar from "../../components/Home/Navbar";
-import { navbarOptions } from "../../common/navbarOptions";
-import Footer from "../../components/Home/Footer";
-import LoadingScreen from "../../components/LoadingScreen";
-import InfoSectionEmpresa from "../../components/Empresa/PanelEmpresa/InfoSectionEmpresa";
-import InfoSectionFreelancer from "../../components/FreeLancer/PanelFreelancer/InfoSectionFreelancer";
-import LittleSearchSection from "../../components/FreeLancer/PanelFreelancer/LittleSearchSection";
-import EmpresaActionsCard from "../../components/Empresa/PanelEmpresa/EmpresaActionsCard";
+import useAuth from "@/hooks/useAuth";
+import Navbar from "@/components/Home/Navbar";
+import { navbarOptions } from "@/common/navbarOptions";
+import Footer from "@/components/Home/Footer";
+import LoadingScreen from "@/components/LoadingScreen";
+import InfoSectionEmpresa from "@/components/Empresa/PanelEmpresa/InfoSectionEmpresa";
+import InfoSectionFreelancer from "@/components/FreeLancer/PanelFreelancer/InfoSectionFreelancer";
+import LittleSearchSection from "@/components/FreeLancer/PanelFreelancer/LittleSearchSection";
+import EmpresaActionsCard from "@/components/Empresa/PanelEmpresa/EmpresaActionsCard";
 
 function User() {
   const { isAuthenticated, tipo_usuario: userType, loading, logout } = useAuth();
@@ -29,7 +29,7 @@ function User() {
   // Example profile links for empresa/freelancer
   const profileLinks = userType === "empresa"
     ? [
-        { label: "Mi perfil", link: "/viewperfilempresa", icon: "bi bi-person" },
+        { label: "Mi perfil", link: "/company-profile", icon: "bi bi-person" },
         { label: "Mis publicaciones", link: "/myprojects", icon: "bi bi-file-earmark-text" },
         { label: "Mejorar Busquidy", link: "#", icon: "bi bi-arrow-up-right-circle" }
       ]

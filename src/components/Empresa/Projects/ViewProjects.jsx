@@ -4,7 +4,7 @@ import MessageModal from "../../MessageModal";
 import ModalCreateProject from "./ModalCreateProject";
 import ModalPublicarProyecto from "./ModalPublicarProyecto";
 import ProjectCard from "./ProjectCard";
-import { getProjects, deleteProject, checkCompanyProfile } from "../../../api/projectsApi";
+import { getProjects, deleteProject, checkCompanyProfile } from "@/api/projectsApi";
 import { toast } from 'react-toastify';
 import { useNavigate } from "react-router-dom";
 

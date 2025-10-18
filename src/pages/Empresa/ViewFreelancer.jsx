@@ -2,11 +2,11 @@ import React, {useState, useEffect} from "react";
 import {jwtDecode} from 'jwt-decode';
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-import Navbar from "../../components/Home/Navbar";
-import Footer from "../../components/Home/Footer";
-import LoadingScreen from "../../components/LoadingScreen"; 
-import PerfilFreelancerEmpresaView from "../../components/Empresa/FreelancerList/PerfilFreelancerEmpresaView";
-import useAuth from "../../hooks/useAuth";
+import Navbar from "@/components/Home/Navbar";
+import Footer from "@/components/Home/Footer";
+import LoadingScreen from "@/components/LoadingScreen"; 
+import PerfilFreelancerEmpresaView from "@/components/Empresa/FreelancerList/PerfilFreelancerEmpresaView";
+import useAuth from "@/hooks/useAuth";
 
 function ViewFreelancer() {
     const [logoutStatus, setLogoutStatus] = useState("");

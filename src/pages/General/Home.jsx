@@ -2,17 +2,17 @@ import React, { useEffect, useState } from "react";
 import {jwtDecode} from 'jwt-decode';
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
-import Navbar from "../../components/Home/Navbar";
-//import NavbarFreeLancer from "../../components/FreeLancer/NavbarFreeLancer";
-import CardSection from "../../components/Home/CardSection";
-import InfoSectionHome from "../../components/Home/InfoSectionHome";
-import Footer from "../../components/Home/Footer";
-import LoadingScreen from "../../components/LoadingScreen";
-import useAuth from "../../hooks/useAuth";
-import LittleSearchSection from "../../components/FreeLancer/PanelFreelancer/LittleSearchSection";
-import InfoSectionFreelancer from "../../components/FreeLancer/PanelFreelancer/InfoSectionFreelancer";
-import EmpresaActionsCard from "../../components/Empresa/PanelEmpresa/EmpresaActionsCard";
-import InfoSectionEmpresa from "../../components/Empresa/PanelEmpresa/InfoSectionEmpresa";
+import Navbar from "@/components/Home/Navbar";
+//import NavbarFreeLancer from "@/components/FreeLancer/NavbarFreeLancer";
+import CardSection from "@/components/Home/CardSection";
+import InfoSectionHome from "@/components/Home/InfoSectionHome";
+import Footer from "@/components/Home/Footer";
+import LoadingScreen from "@/components/LoadingScreen";
+import useAuth from "@/hooks/useAuth";
+import LittleSearchSection from "@/components/FreeLancer/PanelFreelancer/LittleSearchSection";
+import InfoSectionFreelancer from "@/components/FreeLancer/PanelFreelancer/InfoSectionFreelancer";
+import EmpresaActionsCard from "@/components/Empresa/PanelEmpresa/EmpresaActionsCard";
+import InfoSectionEmpresa from "@/components/Empresa/PanelEmpresa/InfoSectionEmpresa";
 
 function Home() {
 

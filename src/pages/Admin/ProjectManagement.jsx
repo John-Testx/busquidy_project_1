@@ -1,5 +1,5 @@
 import React from "react";
-import ProjectTable from "../../components/Admin/ProjectTable";
+import ProjectTable from "@/components/Admin/ProjectTable";
 
 function ProjectManagement() {
     return (

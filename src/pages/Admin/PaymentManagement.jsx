@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import PaymentTable from "../../components/Admin/Payment/PaymentTable";
-import PaymentAnalytics from "../../components/Admin/Payment/PaymentAnalytics";
+import PaymentTable from "@/components/Admin/Payment/PaymentTable";
+import PaymentAnalytics from "@/components/Admin/Payment/PaymentAnalytics";
 
 function PaymentManagement() {
     const [activeTab, setActiveTab] = useState('tabla');

@@ -2,11 +2,11 @@ import React, { useEffect, useState } from "react";
 import { jwtDecode } from 'jwt-decode';
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
-import Navbar from "../../components/Home/Navbar";
-import ViewProjects from "../../components/Empresa/Projects/ViewProjects";
-import Footer from "../../components/Home/Footer";
-import LoadingScreen from "../../components/LoadingScreen"; 
-import useAuth from "../../hooks/useAuth";
+import Navbar from "@/components/Home/Navbar";
+import ViewProjects from "@/components/Empresa/Projects/ViewProjects";
+import Footer from "@/components/Home/Footer";
+import LoadingScreen from "@/components/LoadingScreen"; 
+import useAuth from "@/hooks/useAuth";
 
 function MyProjects() {
     const [logoutStatus, setLogoutStatus] = useState("");

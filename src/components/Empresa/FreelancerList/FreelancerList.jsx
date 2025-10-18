@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import SearchFilters from "./SearchFilters";
-import MessageModal from "../../MessageModal";
+import MessageModal from "@/components/MessageModal";
 import { useNavigate } from "react-router-dom";
 
 function FreelancerList({ userType, id_usuario }) {

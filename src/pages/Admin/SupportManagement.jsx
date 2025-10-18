@@ -1,5 +1,5 @@
 import React from "react";
-import SupportTable from "../../components/Admin/Support/SupportTable"; // Componente de la tabla de soporte
+import SupportTable from "@/components/Admin/Support/SupportTable"; // Componente de la tabla de soporte
 
 function SupportManagement() {
     return (

@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import {jwtDecode} from 'jwt-decode';
 import { useNavigate } from "react-router-dom";
-import Navbar from "../../components/Home/Navbar";
-import Footer from "../../components/Home/Footer";
-import EmpresaActionsCard from "../../components/Empresa/PanelEmpresa/EmpresaActionsCard";
-import InfoSectionEmpresa from "../../components/Empresa/PanelEmpresa/InfoSectionEmpresa";
-import LoadingScreen from "../../components/LoadingScreen"; 
-import useAuth from "../../hooks/useAuth";
+import Navbar from "@/components/Home/Navbar";
+import Footer from "@/components/Home/Footer";
+import EmpresaActionsCard from "@/components/Empresa/PanelEmpresa/EmpresaActionsCard";
+import InfoSectionEmpresa from "@/components/Empresa/PanelEmpresa/InfoSectionEmpresa";
+import LoadingScreen from "@/components/LoadingScreen"; 
+import useAuth from "@/hooks/useAuth";
 
 function Empresa() {
     const [logoutStatus, setLogoutStatus] = useState("");
@@ -31,7 +31,7 @@ function Empresa() {
     };
     
     const profileLinks = [
-        { label: "Mi perfil", link: "/viewperfilempresa", icon: "bi bi-person" },
+        { label: "Mi perfil", link: "/company-profile", icon: "bi bi-person" },
         { label: "Mis publicaciones", link: "/myprojects", icon: "bi bi-file-earmark-text" },
         { label: "Mejorar Busquidy", link: "#", icon: "bi bi-arrow-up-right-circle" }
     ];

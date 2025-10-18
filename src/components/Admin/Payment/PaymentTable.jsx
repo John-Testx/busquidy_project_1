@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getPagosProyectos, getPagosSuscripciones } from "../../../api/paymentApi";
+import { getPagosProyectos, getPagosSuscripciones } from "@/api/paymentApi";
 
 function PaymentTable() {
     const [pagoProyecto, setPagoProyecto] = useState([]);

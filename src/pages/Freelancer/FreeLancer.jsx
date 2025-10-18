@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import {jwtDecode} from 'jwt-decode';
 import { useNavigate } from "react-router-dom";
-import Navbar from "../../components/Home/Navbar";
-import LittleSearchSection from "../../components/FreeLancer/PanelFreelancer/LittleSearchSection";
-import Footer from "../../components/Home/Footer";
-import LoadingScreen from "../../components/LoadingScreen";
-import InfoSectionFreelancer from "../../components/FreeLancer/PanelFreelancer/InfoSectionFreelancer";
+import Navbar from "@/components/Home/Navbar";
+import LittleSearchSection from "@/components/FreeLancer/PanelFreelancer/LittleSearchSection";
+import Footer from "@/components/Home/Footer";
+import LoadingScreen from "@/components/LoadingScreen";
+import InfoSectionFreelancer from "@/components/FreeLancer/PanelFreelancer/InfoSectionFreelancer";
 
 function FreeLancer() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);

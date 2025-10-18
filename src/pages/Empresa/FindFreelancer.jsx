@@ -1,86 +1,34 @@
 import React, { useEffect, useState } from "react";
 import { jwtDecode } from 'jwt-decode';
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import Navbar from "../../components/Home/Navbar";
-import SearchFilters from "../../components/Empresa/FreelancerList/SearchFilters";
-import FreelancerList from "../../components/Empresa/FreelancerList/FreelancerList";
-import Footer from "../../components/Home/Footer";
-import LoadingScreen from "../../components/LoadingScreen";
+import Navbar from "@/components/Home/Navbar";
+import SearchFilters from "@/components/Empresa/FreelancerList/SearchFilters";
+import FreelancerList from "@/components/Empresa/FreelancerList/FreelancerList";
+import Footer from "@/components/Home/Footer";
+import LoadingScreen from "@/components/LoadingScreen";
+import useAuth from "@/hooks/useAuth";
 
 function FindFreelancer() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [loading, setLoading] = useState(true);
     const [logoutStatus, setLogoutStatus] = useState("");
     const [showNotification, setShowNotification] = useState(false);
-    const [userType, setUserType] = useState("");
-    const [id_usuario, setIdUsuario] = useState(null);
     const [isPerfilIncompleto, setIsPerfilIncompleto] = useState(null);
+    const {id_usuario, tipo_usuario, loading} = useAuth();
     
     const navigate = useNavigate();
-    
-    useEffect(() => {
-        const checkAuth = () => {
-            const token = localStorage.getItem('token');    
-            setIsAuthenticated(!!token);
-            
-            if (token) {
-                try {
-                    const decoded = jwtDecode(token);
-                    console.log("Decoded token:", decoded);
-                    setUserType(decoded.tipo_usuario);
-                    setIdUsuario(decoded.id_usuario);
-                } catch (error) {
-                    console.error("Error decodificando el token:", error);
-                }
-            }
-            
-            setTimeout(() => {
-                setLoading(false);
-            }, 500);
-        };
-     
-        window.addEventListener('storage', checkAuth);
-        checkAuth();
-   
-        return () => window.removeEventListener('storage', checkAuth);
-    }, []);
-    
+
     useEffect(() => {
         if (id_usuario) {
             console.log("ID usuario actualizado:", id_usuario);
         }
     }, [id_usuario]);
     
-    const handleLogout = () => {
-        setLoading(true);
-        setLogoutStatus("Cerrando sesión...");
-        setShowNotification(true);
-        
-        setTimeout(() => {
-            localStorage.removeItem("token");
-            localStorage.removeItem("correo");
-            setIsAuthenticated(false);
-            setUserType(null);
-            setLogoutStatus("Sesión cerrada");
-            
-            setTimeout(() => {
-                setLoading(false);
-                navigate("/");
-                setShowNotification(false);
-            }, 1000);
-        });
-    };
-    
-    const renderNavbar = () => {
-        return <Navbar />;
-    };
    
     return (
         <div className="min-h-screen flex flex-col bg-gradient-to-b from-[#f0f7f9] to-white">
             {loading && <LoadingScreen />}
             
-            {renderNavbar()}
+            <Navbar/>
             
             {/* Main Content */}
             <main className="flex-1 mt-20 w-full">
@@ -102,7 +50,7 @@ function FindFreelancer() {
                 <div className="w-full bg-[#f0f7f9] py-8">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                         <div className="flex flex-col lg:flex-row justify-center gap-6 lg:gap-8">
-                            <FreelancerList userType={userType} id_usuario={id_usuario} />
+                            <FreelancerList userType={tipo_usuario} id_usuario={id_usuario} />
                         </div>
                     </div>
                 </div>

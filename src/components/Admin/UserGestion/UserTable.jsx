@@ -15,8 +15,8 @@ import {
   AlertCircle
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import TableCommon from "../../../common/TableCommon";
-import { getUsuarios, deleteUsuario, updateUserStatus } from "../../../api/userApi";
+import TableCommon from "@/common/TableCommon";
+import { getUsuarios, deleteUsuario, updateUserStatus } from "@/api/userApi";
 
 const UserTable = () => {
   const [usuarios, setUsuarios] = useState([]);

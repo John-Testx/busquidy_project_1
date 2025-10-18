@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../../components/Home/Navbar";
-import Footer from "../../components/Home/Footer";
-import TicketForm from "../../components/Soporte/TicketForm";
-import { createTicket } from "../../api/supportApi";
+import Navbar from "@/components/Home/Navbar";
+import Footer from "@/components/Home/Footer";
+import TicketForm from "@/components/Soporte/TicketForm";
+import { createTicket } from "@/api/supportApi";
 import { ArrowLeft, CheckCircle } from "lucide-react";
 
 function CrearTicket() {

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getUserDetails, updateUserDetails } from "../../../api/userApi";
+import { getUserDetails, updateUserDetails } from "@/api/userApi";
 import { 
   ArrowLeft, 
   Save, 

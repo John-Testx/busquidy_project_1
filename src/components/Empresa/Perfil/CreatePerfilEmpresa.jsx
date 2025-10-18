@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import ModalCreatePerfilEmpresa from "./ModalCreatePerfilEmpresa.jsx";
-import MessageModal from "../../MessageModal.jsx";
+import MessageModal from "@/components/MessageModal.jsx";
 
 function CreatePerfilEmpresa({ userType, id_usuario, onProfileCreated }) {
     const [showModalCreatePerfilEmpresa, setShowModalCreatePerfilEmpresa] = useState(false);

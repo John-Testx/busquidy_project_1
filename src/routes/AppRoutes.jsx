@@ -91,8 +91,6 @@ const AppRoutes = () => {
         <Route path="/empresa" element={<Empresa />} />
         <Route path="/myprojects" element={<MyProjects />} />
 
-        {/* <Route path="/viewperfilempresa" element={<ViewPerfilEmpresa />} /> */}
-
         <Route path="/company-profile" element={<EmpresaProfileLayout />}>
           {/* Redirect the base path to the first section */}
           <Route index element={<EmpresaInfo />} />

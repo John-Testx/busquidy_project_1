@@ -5,10 +5,10 @@ import SecondaryRegisterModal from "./Modals/SecondaryRegisterModal";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import LoginModal from "./Modals/LoginModal";
 import LoginSecondaryModal from "./Modals/LoginSecondaryModal";
-import useAuth from "../../hooks/useAuth";
-import { navbarOptions, profileLinks } from "../../common/navbarOptions";
+import useAuth from "@/hooks/useAuth";
+import { navbarOptions, profileLinks } from "@/common/navbarOptions";
 import ProfileCircle from "../ProfileCircle";
-import { getUserInitials } from "../../common/utils";
+import { getUserInitials } from "@/common/utils";
 import { 
     Menu, 
     X, 
