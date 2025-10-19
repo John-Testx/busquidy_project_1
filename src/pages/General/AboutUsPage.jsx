@@ -7,7 +7,7 @@ import Navbar from "@/components/Home/Navbar";
 //import NavbarFreeLancer from "@/components/FreeLancer/NavbarFreeLancer";
 import Footer from "@/components/Home/Footer";
 import LoadingScreen from "@/components/LoadingScreen"; 
-import useAuth from "@/hooks/useAuth";
+import { useAuth } from "@/hooks";
 
 function AboutUsPage() {
     const [logoutStatus, setLogoutStatus] = useState("");

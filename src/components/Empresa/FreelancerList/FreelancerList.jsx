@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import SearchFilters from "./SearchFilters";
 import MessageModal from "@/components/MessageModal";
-import useFreelancers from "@/hooks/useFreelancers";
+import {useFreelancers} from "@/hooks";
 
 function FreelancerList({ userType, id_usuario }) {
     const [showMessageModal, setShowMessageModal] = useState(false);

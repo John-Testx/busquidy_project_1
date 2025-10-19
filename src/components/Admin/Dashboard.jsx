@@ -2,7 +2,7 @@ import React from "react";
 import AdminTable from "@/common/TableCommon";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, } from "recharts";
 import { Users, Crown, FileText, Activity, TrendingUp, DollarSign, AlertCircle, RefreshCw } from "lucide-react";
-import { useDashboardData } from "@/hooks/useDashboardData";
+import { useDashboardData } from "@/hooks";
 
 function Dashboard() {
   const {

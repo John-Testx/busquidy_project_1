@@ -1,7 +1,7 @@
 import React from 'react';
 import PublicationCard from './PublicationCard';
 import MessageModal from '@/components/MessageModal';
-import usePublications from '@/hooks/usePublications';
+import { usePublications } from '@/hooks';
 
 function PublicationList({ userType, id_usuario, filters }) {
   const {

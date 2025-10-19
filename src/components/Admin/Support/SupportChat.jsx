@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import useSupportChat from "@/hooks/useSupportChat";
+import { useSupportChat } from "@/hooks";
 
 const SupportChat = () => {
   const { id_ticket } = useParams();

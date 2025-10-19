@@ -5,7 +5,7 @@ import MessageModal from "@/components/MessageModal";
 import ModalCreateProject from "./ModalCreateProject";
 import ModalPublicarProyecto from "./ModalPublicarProyecto";
 import ProjectCard from "./ProjectCard";
-import useCompanyProjects from "@/hooks/useCompanyProjects";
+import { useCompanyProjects } from "@/hooks";
 
 // Modal de Confirmación
 const ConfirmModal = ({ isOpen, onClose, onConfirm, message }) => {

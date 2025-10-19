@@ -8,7 +8,7 @@ import CreateProfileCv from "@/components/FreeLancer/Perfil/CreateProfileCv";
 import LoadingScreen from "@/components/LoadingScreen";
 import ModalCreatePerfilFreelancer from "@/components/FreeLancer/Perfil/ModalCreatePerfilFreelancer";
 import { checkProfileExists, getFreelancerProfile } from "@/api/freelancerApi";
-import useAuth from "@/hooks/useAuth";
+import { useAuth } from "@/hooks";
 
 function ViewPerfilFreeLancer() {
   const navigate = useNavigate();

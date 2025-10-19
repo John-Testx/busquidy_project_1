@@ -6,7 +6,7 @@ import Navbar from "@/components/Home/Navbar";
 //import NavbarEmpresa from "@/components/Empresa/NavbarEmpresa";
 import Footer from "@/components/Home/Footer";
 import LoadingScreen from "@/components/LoadingScreen";
-import useAuth from "@/hooks/useAuth";
+import { useAuth } from "@/hooks";
 import { howItWorksSteps, joinTheChange, whatIsBusquidy, whyChooseFeatures } from "@/common/mockBusquidyInfo";
 
 function BusquidyPage() {

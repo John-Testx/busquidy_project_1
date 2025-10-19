@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getAvailability, addAvailability, deleteAvailability } from '@/api/availabilityApi';
-import useAuth from '@/hooks/useAuth';
+import { useAuth } from '@/hooks';
 
 const diasSemana = ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"];
 

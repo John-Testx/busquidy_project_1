@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import apiClient from "../api/apiClient";
+import apiClient from "@/api/apiClient";
 
 export function useAdminTickets() {
   const [tickets, setTickets] = useState([]);

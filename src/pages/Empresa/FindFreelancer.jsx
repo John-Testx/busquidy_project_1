@@ -5,7 +5,7 @@ import Navbar from "@/components/Home/Navbar";
 import FreelancerList from "@/components/Empresa/FreelancerList/FreelancerList";
 import Footer from "@/components/Home/Footer";
 import LoadingScreen from "@/components/LoadingScreen";
-import useAuth from "@/hooks/useAuth";
+import { useAuth } from "@/hooks";
 
 function FindFreelancer() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);

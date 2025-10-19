@@ -396,18 +396,6 @@ function CrearTicketPublico() {
               </li>
             </ul>
           </div>
-
-          <div className="max-w-3xl mx-auto mt-6 bg-white border border-gray-200 rounded-xl p-6 text-center">
-            <p className="text-gray-600 mb-3">
-              ¿Ya tienes una cuenta?
-            </p>
-            <button
-              onClick={() => navigate("/login")}
-              className="inline-flex items-center gap-2 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors font-semibold"
-            >
-              Inicia sesión aquí
-            </button>
-          </div>
         </div>
       </div>
       <Footer />

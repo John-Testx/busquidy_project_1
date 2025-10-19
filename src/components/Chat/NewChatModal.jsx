@@ -1,5 +1,5 @@
 import React from 'react';
-import useNewChatModal from '@/hooks/useNewChatModal';
+import { useNewChatModal } from '@/hooks';
 import { X, Search, MessageCircle } from 'lucide-react';
 
 const NewChatModal = ({ isOpen, onClose, onConversationStarted }) => {

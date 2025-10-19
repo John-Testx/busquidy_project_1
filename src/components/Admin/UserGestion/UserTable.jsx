@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import TableCommon from "@/common/TableCommon";
-import useUserManagement from "@/hooks/useUserManagement";
+import { useUserManagement } from "@/hooks";
 
 const UserTable = () => {
   const navigate = useNavigate();

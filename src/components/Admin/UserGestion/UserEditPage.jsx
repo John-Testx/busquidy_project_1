@@ -1,6 +1,6 @@
 import React from "react";
 import { useParams } from "react-router-dom";
-import useUserEditor from "@/hooks/useUserEditor";
+import { useUserEditor } from "@/hooks";
 import { 
   ArrowLeft, 
   Save, 

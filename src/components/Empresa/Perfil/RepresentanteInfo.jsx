@@ -4,7 +4,7 @@ import apiClient from '@/api/apiClient';
 import axios from 'axios';
 // import { useProfileData } from '../../../pages/Empresa/EmpresaProfileLayout'; // Adjust path if needed
 import { Outlet, useOutletContext } from 'react-router-dom';
-import { useAuth } from '@/hooks/index';
+import { useAuth } from "@/hooks";
 
 function RepresentanteInfo() {
     const { perfilData, setPerfilData, handleUpdateProfile } = useOutletContext();

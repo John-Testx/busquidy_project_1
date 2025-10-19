@@ -4,8 +4,8 @@ import Navbar from "@/components/Home/Navbar";
 import ViewProjects from "@/components/Empresa/Projects/ViewProjects";
 import Footer from "@/components/Home/Footer";
 import LoadingScreen from "@/components/LoadingScreen";
-import useAuth from "@/hooks/useAuth";
-import usePaymentCallback from "@/hooks/usePaymentCallback";
+import { useAuth } from "@/hooks";
+import { usePaymentCallback } from "@/hooks";
 
 function MyProjects() {
     const [logoutStatus, setLogoutStatus] = useState("");

@@ -1,5 +1,5 @@
 import React from 'react';
-import useChat from '@/hooks/useChat';
+import {useChat} from '@/hooks';
 import ConversationList from '@/components/Chat/ConversationList';
 import ChatWindow from '@/components/Chat/ChatWindow';
 import Navbar from '@/components/Home/Navbar';

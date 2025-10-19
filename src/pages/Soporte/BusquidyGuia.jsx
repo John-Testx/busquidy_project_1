@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import Navbar from "@/components/Home/Navbar";
 import Footer from "@/components/Home/Footer";
 import LoadingScreen from "@/components/LoadingScreen";
-import useAuth from "@/hooks/useAuth";
+import { useAuth } from "@/hooks";
 import FAQSection from "@/components/Soporte/FAQSection ";
 
 function BusquidyGuia() {

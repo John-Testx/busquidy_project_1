@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getSubscriptionPlans, createSubscriptionTransaction } from '../api/paymentApi';
+import { getSubscriptionPlans, createSubscriptionTransaction } from '@/api/paymentApi';
 
 /**
  * Hook personalizado para manejar la lógica de suscripciones

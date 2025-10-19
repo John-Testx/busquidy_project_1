@@ -6,7 +6,7 @@ import CardSection from "@/components/Home/CardSection";
 import InfoSectionHome from "@/components/Home/InfoSectionHome";
 import Footer from "@/components/Home/Footer";
 import LoadingScreen from "@/components/LoadingScreen";
-import useAuth from "@/hooks/useAuth";
+import { useAuth } from "@/hooks";
 import LittleSearchSection from "@/components/FreeLancer/PanelFreelancer/LittleSearchSection";
 import InfoSectionFreelancer from "@/components/FreeLancer/PanelFreelancer/InfoSectionFreelancer";
 import EmpresaActionsCard from "@/components/Empresa/PanelEmpresa/EmpresaActionsCard";

@@ -1,7 +1,7 @@
 import React from "react";
 import { Navigate, Outlet } from "react-router-dom";
-import useAuth from "@/hooks/useAuth";
-import { useAdminPermissions } from "../hooks/useAdminPermissions";
+import { useAuth } from "@/hooks";
+import { useAdminPermissions } from "@/hooks";
 
 export default function ProtectedAdminRoute({ requiredPermission }) {
   const { isAuthenticated, tipo_usuario, loading } = useAuth();

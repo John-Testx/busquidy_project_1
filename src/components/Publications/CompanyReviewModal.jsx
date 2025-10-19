@@ -1,6 +1,6 @@
 import React from 'react';
 import MessageModal from '@/components/MessageModal';
-import { useCompanyReview } from '@/hooks/useCompanyReview';
+import { useCompanyReview } from '@/hooks';
 
 const CompanyReviewModal = ({
   isOpen,

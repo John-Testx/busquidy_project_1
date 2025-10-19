@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import usePaymentVerification from "@/hooks/usePaymentVerification";
+import {usePaymentVerification} from "@/hooks";
 
 const PaymentReturn = () => {
   const navigate = useNavigate();

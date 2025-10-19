@@ -1,5 +1,5 @@
 import React from 'react';
-import useSubscription from '../hooks/useSubscription';
+import { useSubscription } from '@/hooks';
 
 const ModalPagoSuscripcion = ({ id_usuario, tipo_usuario, closeModal }) => {
     const {

@@ -4,7 +4,7 @@ import Navbar from "@/components/Home/Navbar";
 import PublicationsContainer from "@/components/Publications/PublicationsContainer";
 import Footer from "@/components/Home/Footer";
 import LoadingScreen from "@/components/LoadingScreen";
-import useAuth from "@/hooks/useAuth";
+import { useAuth } from "@/hooks";
 
 function ProjectList() {
     const [logoutStatus, setLogoutStatus] = useState("");

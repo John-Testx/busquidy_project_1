@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { jwtDecode } from "jwt-decode";
 import { loginUser, registerUser } from "@/api/userApi";
 
-export default function useAuth() {
+function useAuth() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [tipo_usuario, setTipoUsuario] = useState(null);
     const [id_usuario, setIdUsuario] = useState(null);
@@ -160,3 +160,5 @@ export default function useAuth() {
         toast,
     };
 }
+
+export default useAuth;

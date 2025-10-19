@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import apiClient from "../api/apiClient";
+import apiClient from "@/api/apiClient";
 
 export const useAdminPermissions = (adminId) => {
   const [permissions, setPermissions] = useState([]);

@@ -3,7 +3,7 @@ import { toast } from 'react-toastify';
 import axios from 'axios';
 // import { useProfileData } from '../../../pages/Empresa/EmpresaProfileLayout'; // Adjust path if needed
 import { Outlet, useOutletContext } from 'react-router-dom';
-import { useAuth } from '@/hooks/index';
+import { useAuth } from "@/hooks";
 
 function EmpresaInfo() {
   // Use the context from the layout to get data and the setter

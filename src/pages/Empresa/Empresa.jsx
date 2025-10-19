@@ -6,7 +6,7 @@ import Footer from "@/components/Home/Footer";
 import EmpresaActionsCard from "@/components/Empresa/PanelEmpresa/EmpresaActionsCard";
 import InfoSectionEmpresa from "@/components/Empresa/PanelEmpresa/InfoSectionEmpresa";
 import LoadingScreen from "@/components/LoadingScreen"; 
-import useAuth from "@/hooks/useAuth";
+import { useAuth } from "@/hooks";
 
 function Empresa() {
     const [logoutStatus, setLogoutStatus] = useState("");

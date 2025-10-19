@@ -1,5 +1,5 @@
 import React from 'react';
-import useProjectPayment from '@/hooks/useProjectPayment';
+import { useProjectPayment } from '@/hooks';
 
 const ModalPublicarProyecto = ({ 
   id_usuario, 

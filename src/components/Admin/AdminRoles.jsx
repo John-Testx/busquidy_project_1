@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Shield, Edit2, Trash2, Plus, Lock, AlertCircle } from "lucide-react";
-import { useAdminRoles } from "@/hooks/useAdminRoles";
+import { useAdminRoles } from "@/hooks";
 
 const AdminRoles = () => {
   const [newRoleName, setNewRoleName] = useState("");

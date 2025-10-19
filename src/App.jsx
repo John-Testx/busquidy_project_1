@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { BrowserRouter as Router } from "react-router-dom";
 import AppRoutes from "@/routes/AppRoutes"; // Import the new AppRoutes component
 import LoadingScreen from "@/components/LoadingScreen";
-import useAuth from "@/hooks/useAuth";
+import { useAuth } from "@/hooks";
 import io from "socket.io-client";
 
 function App() {

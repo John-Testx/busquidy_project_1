@@ -1,7 +1,7 @@
 import React from 'react';
 import SearchPublicationSection from './SearchPublicationSection';
 import PublicationList from './PublicationList';
-import usePublicationFilters from '@/hooks/usePublicationFilters';
+import { usePublicationFilters } from '@/hooks';
 
 function PublicationsContainer({ userType, id_usuario }) {
   const {

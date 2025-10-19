@@ -1,5 +1,5 @@
 import React from 'react';
-import usePostulations from '@/hooks/usePostulations';
+import {usePostulations} from '@/hooks';
 
 const MyPostulationsTable = ({ id_usuario }) => {
     const {

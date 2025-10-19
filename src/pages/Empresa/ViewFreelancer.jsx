@@ -4,8 +4,8 @@ import Navbar from "@/components/Home/Navbar";
 import Footer from "@/components/Home/Footer";
 import LoadingScreen from "@/components/LoadingScreen"; 
 import PerfilFreelancerEmpresaView from "@/components/Empresa/FreelancerList/PerfilFreelancerEmpresaView";
-import useAuth from "@/hooks/useAuth";
-import useFreelancerProfile from "@/hooks/useFreelancerProfile";
+import { useAuth } from "@/hooks";
+import {useFreelancerProfile} from "@/hooks";
 import { getEmpresaProfile } from "@/api/freelancerApi";
 
 function ViewFreelancer() {

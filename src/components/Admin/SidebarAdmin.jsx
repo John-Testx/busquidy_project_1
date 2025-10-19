@@ -131,7 +131,7 @@ export default function SidebarAdmin() {
             <button
               onClick={() => {
                 localStorage.removeItem("token");
-                window.location.href = "/login";
+                window.location.href = "/";
               }}
               className="w-full flex items-center justify-center gap-2 bg-white hover:bg-red-50 text-red-600 font-medium py-3 rounded-xl transition-all border border-red-200 hover:border-red-300 shadow-sm hover:shadow"
             >
