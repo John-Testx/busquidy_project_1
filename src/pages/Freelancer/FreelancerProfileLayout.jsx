@@ -1,6 +1,6 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
-import SidebarFreelancer from '../../components/FreeLancer/SidebarFreelancer';
+import SidebarFreelancer from '@/components/FreeLancer/SidebarFreelancer';
 import { Footer, Navbar } from '@/components/Home/';
 
 // Este componente ahora actúa como la plantilla para todas las páginas del panel de freelancer

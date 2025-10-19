@@ -1,24 +1,15 @@
-import React, { useState } from "react";
+import React from "react";
 import Select from "react-select";
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
-function SearchPublicationSection({ onFilterChange }) {
-  const [showMoreFilters, setShowMoreFilters] = useState(false);
-  const [filters, setFilters] = useState({
-    searchText: '',
-    projectSize: 'todos',
-    sortBy: 'relevancia',
-    date: 'todos',
-    modality: 'todos',
-    disability: 'todos',
-    experience: 'todos',
-    career: 'todos',
-    region: 'todos',
-    commune: 'todos',
-    workday: 'todos',
-    workArea: 'todos'
-  });
-
+function SearchPublicationSection({ 
+  filters, 
+  showMoreFilters, 
+  onFilterChange, 
+  onUpdateFilter,
+  onClearFilters, 
+  onToggleMoreFilters 
+}) {
   const customStyles = {
     control: (provided, state) => ({
       ...provided,
@@ -73,44 +64,13 @@ function SearchPublicationSection({ onFilterChange }) {
     { value: "diseno", label: "Diseño" }
   ];
 
-  const toggleFilters = () => {
-    setShowMoreFilters(!showMoreFilters);
-  };
-
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    const updatedFilters = { ...filters, [name]: value };
-    setFilters(updatedFilters);
-    onFilterChange(updatedFilters);
+    onUpdateFilter(name, value);
   };
 
   const handleSelectChange = (name) => (selectedOption) => {
-    const updatedFilters = { ...filters, [name]: selectedOption.value };
-    setFilters(updatedFilters);
-    onFilterChange(updatedFilters);
-  };
-
-  const handleSearch = () => {
-    onFilterChange(filters);
-  };
-
-  const handleClearFilters = () => {
-    const defaultFilters = {
-      searchText: '',
-      projectSize: 'todos',
-      sortBy: 'relevancia',
-      date: 'todos',
-      modality: 'todos',
-      disability: 'todos',
-      experience: 'todos',
-      career: 'todos',
-      region: 'todos',
-      commune: 'todos',
-      workday: 'todos',
-      workArea: 'todos'
-    };
-    setFilters(defaultFilters);
-    onFilterChange(defaultFilters);
+    onUpdateFilter(name, selectedOption.value);
   };
 
   return (
@@ -151,7 +111,6 @@ function SearchPublicationSection({ onFilterChange }) {
         
         <button 
           className="flex items-center justify-center gap-2 px-8 py-3.5 bg-gradient-to-r from-[#07767c] to-[#05595d] text-white rounded-xl font-semibold transition-all duration-300 shadow-md hover:from-[#05595d] hover:to-[#043d42] hover:-translate-y-0.5 hover:shadow-xl"
-          onClick={handleSearch}
         >
           <i className="bi bi-search text-lg"></i>
           <span>Buscar</span>
@@ -171,7 +130,6 @@ function SearchPublicationSection({ onFilterChange }) {
           <option value="fecha">Fecha</option>
           <option value="salario">Salario</option>
         </select>
-
         <select 
           className="px-4 py-2.5 bg-gray-50 border-2 border-gray-300 rounded-lg text-sm text-gray-800 transition-all duration-300 cursor-pointer max-w-xs appearance-none bg-[url('data:image/svg+xml;charset=UTF-8,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%2710%27%20height=%2710%27%20viewBox=%270%200%2012%2012%27%20fill=%27none%27%20stroke=%27%2307767c%27%20stroke-width=%272%27%20stroke-linecap=%27round%27%20stroke-linejoin=%27round%27%3e%3cpolyline%20points=%272%204%206%208%2010%204%27/%3e%3c/svg%3e')] bg-no-repeat bg-[right_10px_center] bg-[length:12px] pr-8 hover:bg-white hover:border-[#07767c] focus:outline-none focus:ring-2 focus:ring-[#07767c]/20"
           name="date"
@@ -183,7 +141,6 @@ function SearchPublicationSection({ onFilterChange }) {
           <option value="semana">Esta semana</option>
           <option value="mes">Este mes</option>
         </select>
-
         <select 
           className="px-4 py-2.5 bg-gray-50 border-2 border-gray-300 rounded-lg text-sm text-gray-800 transition-all duration-300 cursor-pointer max-w-xs appearance-none bg-[url('data:image/svg+xml;charset=UTF-8,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%2710%27%20height=%2710%27%20viewBox=%270%200%2012%2012%27%20fill=%27none%27%20stroke=%27%2307767c%27%20stroke-width=%272%27%20stroke-linecap=%27round%27%20stroke-linejoin=%27round%27%3e%3cpolyline%20points=%272%204%206%208%2010%204%27/%3e%3c/svg%3e')] bg-no-repeat bg-[right_10px_center] bg-[length:12px] pr-8 hover:bg-white hover:border-[#07767c] focus:outline-none focus:ring-2 focus:ring-[#07767c]/20"
           name="modality"
@@ -194,7 +151,6 @@ function SearchPublicationSection({ onFilterChange }) {
           <option value="remoto">Remoto</option>
           <option value="presencial">Presencial</option>
         </select>
-
         <select 
           className="px-4 py-2.5 bg-gray-50 border-2 border-gray-300 rounded-lg text-sm text-gray-800 transition-all duration-300 cursor-pointer max-w-xs appearance-none bg-[url('data:image/svg+xml;charset=UTF-8,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%2710%27%20height=%2710%27%20viewBox=%270%200%2012%2012%27%20fill=%27none%27%20stroke=%27%2307767c%27%20stroke-width=%272%27%20stroke-linecap=%27round%27%20stroke-linejoin=%27round%27%3e%3cpolyline%20points=%272%204%206%208%2010%204%27/%3e%3c/svg%3e')] bg-no-repeat bg-[right_10px_center] bg-[length:12px] pr-8 hover:bg-white hover:border-[#07767c] focus:outline-none focus:ring-2 focus:ring-[#07767c]/20"
           name="disability"
@@ -205,7 +161,6 @@ function SearchPublicationSection({ onFilterChange }) {
           <option value="si">Sí</option>
           <option value="no">No</option>
         </select>
-
         <select 
           className="px-4 py-2.5 bg-gray-50 border-2 border-gray-300 rounded-lg text-sm text-gray-800 transition-all duration-300 cursor-pointer max-w-xs appearance-none bg-[url('data:image/svg+xml;charset=UTF-8,%3csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%2710%27%20height=%2710%27%20viewBox=%270%200%2012%2012%27%20fill=%27none%27%20stroke=%27%2307767c%27%20stroke-width=%272%27%20stroke-linecap=%27round%27%20stroke-linejoin=%27round%27%3e%3cpolyline%20points=%272%204%206%208%2010%204%27/%3e%3c/svg%3e')] bg-no-repeat bg-[right_10px_center] bg-[length:12px] pr-8 hover:bg-white hover:border-[#07767c] focus:outline-none focus:ring-2 focus:ring-[#07767c]/20"
           name="experience"
@@ -226,7 +181,7 @@ function SearchPublicationSection({ onFilterChange }) {
       <div className="flex justify-center mb-4">
         <button 
           className="flex items-center gap-2 bg-transparent text-[#07767c] font-semibold cursor-pointer transition-all duration-300 px-4 py-2.5 rounded-lg hover:bg-[#07767c]/5"
-          onClick={toggleFilters}
+          onClick={onToggleMoreFilters}
         >
           <i className={`bi ${showMoreFilters ? 'bi-chevron-up' : 'bi-chevron-down'} text-lg`}></i>
           <span>{showMoreFilters ? "Ocultar filtros" : "Mostrar más filtros"}</span>
@@ -240,7 +195,6 @@ function SearchPublicationSection({ onFilterChange }) {
         }`}
       >
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5">
-          {/* Carrera */}
           <div className="flex flex-col gap-2">
             <label className="text-sm font-medium text-gray-700">Carrera</label>
             <Select 
@@ -249,10 +203,9 @@ function SearchPublicationSection({ onFilterChange }) {
               isSearchable={true} 
               styles={customStyles} 
               onChange={handleSelectChange('career')}
+              value={carreraOptions.find(opt => opt.value === filters.career)}
             />
           </div>
-
-          {/* Región */}
           <div className="flex flex-col gap-2">
             <label className="text-sm font-medium text-gray-700">Región</label>
             <Select 
@@ -261,10 +214,9 @@ function SearchPublicationSection({ onFilterChange }) {
               isSearchable={true} 
               styles={customStyles}
               onChange={handleSelectChange('region')}
+              value={regionOptions.find(opt => opt.value === filters.region)}
             />
           </div>
-
-          {/* Comuna */}
           <div className="flex flex-col gap-2">
             <label className="text-sm font-medium text-gray-700">Comuna</label>
             <Select 
@@ -273,10 +225,9 @@ function SearchPublicationSection({ onFilterChange }) {
               isSearchable={true} 
               styles={customStyles}
               onChange={handleSelectChange('commune')}
+              value={comunaOptions.find(opt => opt.value === filters.commune)}
             />
           </div>
-
-          {/* Jornada */}
           <div className="flex flex-col gap-2">
             <label className="text-sm font-medium text-gray-700">Jornada</label>
             <Select 
@@ -285,10 +236,9 @@ function SearchPublicationSection({ onFilterChange }) {
               isSearchable={true} 
               styles={customStyles}
               onChange={handleSelectChange('workday')}
+              value={jornadaOptions.find(opt => opt.value === filters.workday)}
             />
           </div>
-
-          {/* Área de trabajo */}
           <div className="flex flex-col gap-2">
             <label className="text-sm font-medium text-gray-700">Área de trabajo</label>
             <Select 
@@ -297,21 +247,13 @@ function SearchPublicationSection({ onFilterChange }) {
               isSearchable={true} 
               styles={customStyles}
               onChange={handleSelectChange('workArea')}
+              value={areaTrabajoOptions.find(opt => opt.value === filters.workArea)}
             />
           </div>
-
-          {/* Filter Buttons */}
           <div className="col-span-full flex justify-center gap-4 mt-6">
             <button 
-              className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#07767c] to-[#05595d] text-white rounded-lg font-semibold transition-all duration-300 shadow-md hover:from-[#05595d] hover:to-[#043d42] hover:-translate-y-0.5 hover:shadow-lg"
-              onClick={handleSearch}
-            >
-              <i className="bi bi-check2-circle"></i>
-              <span>Aplicar filtros</span>
-            </button>
-            <button 
               className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#f0ad4e] to-[#e09835] text-white rounded-lg font-semibold transition-all duration-300 shadow-md hover:from-[#e09835] hover:to-[#c87f2a] hover:-translate-y-0.5 hover:shadow-lg"
-              onClick={handleClearFilters}
+              onClick={onClearFilters}
             >
               <i className="bi bi-x-circle"></i>
               <span>Limpiar filtros</span>

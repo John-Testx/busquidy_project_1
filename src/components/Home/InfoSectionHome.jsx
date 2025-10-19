@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 import MessageModal from "../MessageModal";
 import ModalPagoSuscripcion from '../ModalPagoSuscripcion';
-import { verifyUserProfileForPremium } from '../../api/freelancerApi';
+import { verifyUserProfileForPremium } from '@/api/freelancerApi';
 
 const InfoSectionHome = ({ tipo_usuario, id_usuario }) => {
     const [showModalPagarSuscripcion, setShowModalPagarSuscripcion] = useState(false);

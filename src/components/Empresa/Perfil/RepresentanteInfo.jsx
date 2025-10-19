@@ -1,6 +1,6 @@
 import React from 'react';
 import { toast } from 'react-toastify';
-import apiClient from '../../../api/apiClient';
+import apiClient from '@/api/apiClient';
 import axios from 'axios';
 // import { useProfileData } from '../../../pages/Empresa/EmpresaProfileLayout'; // Adjust path if needed
 import { Outlet, useOutletContext } from 'react-router-dom';

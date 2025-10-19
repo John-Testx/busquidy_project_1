@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Outlet, useOutletContext } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import useAuth from '../../hooks/useAuth';
-import LoadingScreen from '../../components/LoadingScreen';
-import ProfileSidebar from '../../components/Empresa/Perfil/ProfileSidebar';
+import useAuth from '@/hooks/useAuth';
+import LoadingScreen from '@/components/LoadingScreen';
+import ProfileSidebar from '@/components/Empresa/Perfil/ProfileSidebar';
 import Navbar from '@/components/Home/Navbar';
 import Footer from '@/components/Home/Footer';
 

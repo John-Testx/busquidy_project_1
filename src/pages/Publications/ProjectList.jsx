@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Home/Navbar";
-import PublicationsContainer from "@/components/Project/PublicationsContainer";
+import PublicationsContainer from "@/components/Publications/PublicationsContainer";
 import Footer from "@/components/Home/Footer";
 import LoadingScreen from "@/components/LoadingScreen";
 import useAuth from "@/hooks/useAuth";

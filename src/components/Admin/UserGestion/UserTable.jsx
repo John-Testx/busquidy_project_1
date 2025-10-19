@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { 
   Pencil, 
   UserCheck, 
@@ -16,73 +16,23 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import TableCommon from "@/common/TableCommon";
-import { getUsuarios, deleteUsuario, updateUserStatus } from "@/api/userApi";
+import useUserManagement from "@/hooks/useUserManagement";
 
 const UserTable = () => {
-  const [usuarios, setUsuarios] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [filterType, setFilterType] = useState("all");
-  const [filterStatus, setFilterStatus] = useState("all");
   const navigate = useNavigate();
-
-  // Load users
-  const cargarUsuarios = async () => {
-    try {
-      setLoading(true);
-      const data = await getUsuarios();
-      setUsuarios(data);
-    } catch (error) {
-      console.error("Error al cargar usuarios:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    cargarUsuarios();
-  }, []);
-
-  // Delete user
-  const eliminarUsuario = async (id_usuario) => {
-    if (!window.confirm("¿Estás seguro de eliminar este usuario?")) return;
-    try {
-      await deleteUsuario(id_usuario);
-      cargarUsuarios();
-    } catch (error) {
-      console.error("Error eliminando usuario:", error);
-      alert("Error al eliminar el usuario");
-    }
-  };
-
-  // Toggle user active/inactive
-  const toggleUserStatus = async (id_usuario, newStatus) => {
-    try {
-      await updateUserStatus(id_usuario, newStatus);
-      cargarUsuarios();
-    } catch (error) {
-      console.error("Error actualizando estado:", error);
-      alert("Error al actualizar el estado del usuario");
-    }
-  };
-
-  // Filter users
-  const filteredUsers = usuarios.filter((user) => {
-    const typeMatch = filterType === "all" || user.tipo_usuario === filterType;
-    const statusMatch = 
-      filterStatus === "all" || 
-      (filterStatus === "active" && user.is_active) || 
-      (filterStatus === "inactive" && !user.is_active);
-    return typeMatch && statusMatch;
-  });
-
-  // Stats
-  const stats = {
-    total: usuarios.length,
-    empresas: usuarios.filter((u) => u.tipo_usuario === "empresa").length,
-    freelancers: usuarios.filter((u) => u.tipo_usuario === "freelancer").length,
-    admins: usuarios.filter((u) => u.tipo_usuario === "administrador").length,
-    activos: usuarios.filter((u) => u.is_active).length,
-  };
+  const {
+    loading,
+    filterType,
+    setFilterType,
+    filterStatus,
+    setFilterStatus,
+    filteredUsers,
+    stats,
+    eliminarUsuario,
+    toggleUserStatus,
+    clearFilters,
+    hasActiveFilters
+  } = useUserManagement();
 
   // Table columns
   const columns = [
@@ -352,12 +302,9 @@ const UserTable = () => {
             <h2 className="text-xl font-bold text-white">
               Lista de Usuarios ({filteredUsers.length})
             </h2>
-            {(filterType !== "all" || filterStatus !== "all") && (
+            {hasActiveFilters && (
               <button
-                onClick={() => {
-                  setFilterType("all");
-                  setFilterStatus("all");
-                }}
+                onClick={clearFilters}
                 className="text-sm text-white/90 hover:text-white underline"
               >
                 Limpiar filtros

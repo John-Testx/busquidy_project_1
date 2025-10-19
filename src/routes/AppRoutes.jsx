@@ -17,7 +17,7 @@ import MyCallsPage from "@pages/Video/MyCallsPage";
 // Import Soporte components
 import { SoporteHome, CrearTicket, VerTicket, CrearTicketPublico, VerTicketPublico, BusquidyGuia } from "@pages/Soporte";
 
-import ProjectList from '@/pages/Project/ProjectList';
+import ProjectList from '@/pages/Publications/ProjectList';
 import EditProjectPage from '@/components/Empresa/Projects/ProjectForm/EditProjectPage';
 
 import ChatPage from '@/pages/Chat/ChatPage';
