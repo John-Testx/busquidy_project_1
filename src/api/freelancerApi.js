@@ -24,6 +24,16 @@ export const createFreelancerProfile = (freelancerData, id_usuario) =>
 export const updateProfileSection = (id_usuario, section, data) =>
   apiClient.put(`${BASE}/update-freelancer/${id_usuario}/${section}`, data);
 
+/**
+ * Obtiene el perfil de la empresa
+ * @param {number} id_usuario - ID del usuario empresa
+ * @returns {Promise<Object>} Datos del perfil de la empresa
+ */
+export const getEmpresaProfile = async (id_usuario) => {
+  const response = await apiClient.get(`${EMPRESA_BASE}/${id_usuario}`);
+  return response.data;
+};
+
 // =============================================
 // SECCIONES
 // =============================================
