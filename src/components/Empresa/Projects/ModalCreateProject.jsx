@@ -1,8 +1,7 @@
 import React, { useState } from "react";
-import Select from "react-select";
-import axios from "axios";
-import { useForm, FormProvider, Controller } from "react-hook-form";
+import { useForm, FormProvider } from "react-hook-form";
 import { toast } from "react-toastify";
+import { createProject } from "@/api/projectsApi";
 
 import StepProjectInfo from "./ProjectForm/StepProjectInfo";
 import StepProjectDetails from "./ProjectForm/StepProjectDetails";
@@ -11,6 +10,7 @@ import StepProjectAdditional from "./ProjectForm/StepProjectAdditional";
 function ModalCreateProject({ closeModal, id_usuario, addProject }) {
   const [currentStep, setCurrentStep] = useState(0);
   const [completedSteps, setCompletedSteps] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const methods = useForm({
     defaultValues: {
@@ -80,27 +80,26 @@ function ModalCreateProject({ closeModal, id_usuario, addProject }) {
 
   const onSubmit = async (data) => {
     try {
-      const token = localStorage.getItem("token");
-      const response = await axios.post(
-        "http://localhost:3001/api/projects/create-project",
-        { projectData: data, id_usuario },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      setIsSubmitting(true);
+      
+      const response = await createProject(data, id_usuario);
 
-      if (response.status === 200) {
-        const newProject = {
-          ...response.data,
-          ...data,
-          estado_publicacion: "sin publicar",
-          fecha_creacion: new Date().toISOString(),
-        };
-        addProject(newProject);
-        toast.success("Proyecto creado exitosamente");
-        closeModal();
-      }
+      const newProject = {
+        id_proyecto: response.projectId,
+        ...response,
+        ...data,
+        estado_publicacion: "sin publicar",
+        fecha_creacion: new Date().toISOString(),
+      };
+      
+      addProject(newProject);
+      toast.success("Proyecto creado exitosamente");
+      closeModal();
     } catch (error) {
       console.error("Error al crear el proyecto:", error);
-      toast.error(error.message || "Error al crear el proyecto");
+      toast.error(error.response?.data?.message || error.message || "Error al crear el proyecto");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -119,7 +118,8 @@ function ModalCreateProject({ closeModal, id_usuario, addProject }) {
           </div>
           <button 
             onClick={closeModal} 
-            className="text-white hover:bg-white/20 rounded-full w-10 h-10 flex items-center justify-center transition-all duration-200 hover:rotate-90"
+            disabled={isSubmitting}
+            className="text-white hover:bg-white/20 rounded-full w-10 h-10 flex items-center justify-center transition-all duration-200 hover:rotate-90 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
@@ -148,9 +148,9 @@ function ModalCreateProject({ closeModal, id_usuario, addProject }) {
               return (
                 <div
                   key={index}
-                  onClick={() => isClickable && jumpToStep(index)}
+                  onClick={() => !isSubmitting && isClickable && jumpToStep(index)}
                   className={`flex flex-col items-center flex-1 relative z-10 ${
-                    isClickable ? 'cursor-pointer' : 'cursor-default'
+                    isClickable && !isSubmitting ? 'cursor-pointer' : 'cursor-default'
                   }`}
                 >
                   {/* Step Circle */}
@@ -203,7 +203,8 @@ function ModalCreateProject({ closeModal, id_usuario, addProject }) {
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="px-6 py-2.5 text-gray-700 bg-white hover:bg-gray-100 border border-gray-300 rounded-lg transition-colors font-medium"
+                  disabled={isSubmitting}
+                  className="px-6 py-2.5 text-gray-700 bg-white hover:bg-gray-100 border border-gray-300 rounded-lg transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Cancelar
                 </button>
@@ -213,7 +214,8 @@ function ModalCreateProject({ closeModal, id_usuario, addProject }) {
                     <button
                       type="button"
                       onClick={onPrevStep}
-                      className="px-6 py-2.5 text-[#07767c] bg-white hover:bg-[#07767c]/5 border-2 border-[#07767c] rounded-lg transition-all font-medium flex items-center gap-2"
+                      disabled={isSubmitting}
+                      className="px-6 py-2.5 text-[#07767c] bg-white hover:bg-[#07767c]/5 border-2 border-[#07767c] rounded-lg transition-all font-medium flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
@@ -226,7 +228,8 @@ function ModalCreateProject({ closeModal, id_usuario, addProject }) {
                     <button
                       type="button"
                       onClick={onNextStep}
-                      className="px-6 py-2.5 bg-gradient-to-r from-[#07767c] to-[#0a9199] hover:from-[#055a5f] hover:to-[#077d84] text-white rounded-lg transition-all font-semibold flex items-center gap-2 shadow-md hover:shadow-lg"
+                      disabled={isSubmitting}
+                      className="px-6 py-2.5 bg-gradient-to-r from-[#07767c] to-[#0a9199] hover:from-[#055a5f] hover:to-[#077d84] text-white rounded-lg transition-all font-semibold flex items-center gap-2 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       Siguiente
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -236,12 +239,31 @@ function ModalCreateProject({ closeModal, id_usuario, addProject }) {
                   ) : (
                     <button
                       type="submit"
-                      className="px-8 py-2.5 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white rounded-lg transition-all font-bold shadow-md hover:shadow-xl flex items-center gap-2"
+                      disabled={isSubmitting}
+                      className="px-8 py-2.5 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white rounded-lg transition-all font-bold shadow-md hover:shadow-xl flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                      </svg>
-                      Crear Proyecto
+                      {isSubmitting ? (
+                        <>
+                          <svg 
+                            className="animate-spin h-5 w-5" 
+                            viewBox="0 0 24 24" 
+                            fill="none" 
+                            stroke="currentColor"
+                            strokeWidth="3"
+                          >
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                          </svg>
+                          <span>Creando...</span>
+                        </>
+                      ) : (
+                        <>
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                          </svg>
+                          Crear Proyecto
+                        </>
+                      )}
                     </button>
                   )}
                 </div>

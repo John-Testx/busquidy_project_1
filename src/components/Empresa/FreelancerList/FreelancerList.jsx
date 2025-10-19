@@ -1,15 +1,30 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import SearchFilters from "./SearchFilters";
 import MessageModal from "@/components/MessageModal";
-import { useNavigate } from "react-router-dom";
+import useFreelancers from "@/hooks/useFreelancers";
 
 function FreelancerList({ userType, id_usuario }) {
-    const [freelancers, setFreelancers] = useState([]);
-    const [filteredFreelancers, setFilteredFreelancers] = useState([]);
     const [showMessageModal, setShowMessageModal] = useState(false);
     const [message, setMessage] = useState('');
     const navigate = useNavigate();
+
+    // Custom hook para gestionar freelancers
+    const {
+        freelancers,
+        loading,
+        error,
+        profileWarning,
+        applyFilters
+    } = useFreelancers({ userType, id_usuario });
+
+    // Mostrar advertencia de perfil incompleto si existe
+    React.useEffect(() => {
+        if (profileWarning) {
+            setMessage(profileWarning);
+            setShowMessageModal(true);
+        }
+    }, [profileWarning]);
 
     const contactarFreelancer = (correo, telefono) => {
         if (userType === 'empresa') {
@@ -48,81 +63,54 @@ function FreelancerList({ userType, id_usuario }) {
         setShowMessageModal(false);
     };
 
-    const cargarFreelancers = async () => {
-        try {
-            const response = await axios.get('http://localhost:3001/api/freelancer/list');
-            const freelancerData = response.data.map(freelancer => ({
-                id: freelancer.id_freelancer,
-                nombre: freelancer.nombre,
-                apellido: freelancer.apellido,
-                nacionalidad: freelancer.nacionalidad,
-                ubicacion: `${freelancer.ciudad || 'Sin Especificar'}, ${freelancer.comuna || 'Sin Especificar'}`,                
-                correo: freelancer.correo_contacto,
-                telefono: freelancer.telefono_contacto,
-                calificacion: freelancer.calificacion_promedio,
-                descripcion: freelancer.descripcion,
-                habilidades: freelancer.habilidades || ''
-            }));
-            setFreelancers(freelancerData);
-            setFilteredFreelancers(freelancerData);
-        } catch (error) {
-            console.error('Error al cargar la lista de freelancers:', error);
-        }
-    };
-
-    const verificarPerfilFreelancer = async () => {
-        if (userType === 'freelancer') {
-            try {
-                const response = await axios.get(`http://localhost:3001/api/freelancer/get/${id_usuario}`);
-                if (response.data.isPerfilIncompleto) {
-                    setMessage('Completa tu perfil para aparecer en la lista de freelancers.');
-                    setShowMessageModal(true);
-                }
-            } catch (error) {
-                console.error("Error al verificar el perfil del freelancer:", error);
-            }
-        }
-    };
-
     const handleFilterChange = (filters) => {
-        let result = [...freelancers];
-
-        if (filters.search) {
-            result = result.filter(f => 
-                `${f.nombre} ${f.apellido}`.toLowerCase().includes(filters.search.toLowerCase())
-            );
-        }
-
-        if (filters.location) {
-            result = result.filter(f => 
-                f.ubicacion.toLowerCase().includes(filters.location.toLowerCase())
-            );
-        }
-
-        if (filters.rating) {
-            result = result.filter(f => 
-                Math.floor(f.calificacion) >= filters.rating
-            );
-        }
-
-        if (filters.skills) {
-            const skillsArray = filters.skills.toLowerCase().split(',').map(s => s.trim());
-            result = result.filter(f => 
-                skillsArray.some(skill => 
-                    f.habilidades.toLowerCase().includes(skill)
-                )
-            );
-        }
-
-        setFilteredFreelancers(result);
+        applyFilters(filters);
     };
 
-    useEffect(() => {
-        cargarFreelancers();
-        if (id_usuario && userType === 'freelancer') {
-            verificarPerfilFreelancer();
-        }
-    }, [id_usuario, userType]);
+    // Mostrar estado de carga
+    if (loading) {
+        return (
+            <div className="flex flex-col lg:flex-row gap-6 w-full">
+                <SearchFilters onFilterChange={handleFilterChange} />
+                <div className="flex-1 flex items-center justify-center py-16">
+                    <div className="flex flex-col items-center gap-4">
+                        <div className="w-12 h-12 border-4 border-[#07767c] border-t-transparent rounded-full animate-spin"></div>
+                        <p className="text-gray-600 font-medium">Cargando freelancers...</p>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    // Mostrar mensaje de error
+    if (error) {
+        return (
+            <div className="flex flex-col lg:flex-row gap-6 w-full">
+                <SearchFilters onFilterChange={handleFilterChange} />
+                <div className="flex-1 flex items-center justify-center py-16">
+                    <div className="bg-red-50 border border-red-200 rounded-lg p-6 max-w-md">
+                        <div className="flex items-center gap-3 mb-2">
+                            <svg 
+                                className="w-6 h-6 text-red-500" 
+                                fill="none" 
+                                stroke="currentColor" 
+                                viewBox="0 0 24 24"
+                            >
+                                <path 
+                                    strokeLinecap="round" 
+                                    strokeLinejoin="round" 
+                                    strokeWidth={2} 
+                                    d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" 
+                                />
+                            </svg>
+                            <h3 className="text-red-800 font-semibold">Error al cargar</h3>
+                        </div>
+                        <p className="text-red-700 text-sm">{error}</p>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="flex flex-col lg:flex-row gap-6 w-full">
@@ -132,8 +120,8 @@ function FreelancerList({ userType, id_usuario }) {
             {/* Freelancer Cards Container */}
             <div className="flex-1 max-h-[900px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                    {filteredFreelancers.length > 0 ? (
-                        filteredFreelancers.map((freelancer) => (
+                    {freelancers.length > 0 ? (
+                        freelancers.map((freelancer) => (
                             <div 
                                 key={freelancer.id} 
                                 className="group bg-white rounded-xl shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 hover:border-[#07767c]/30 hover:-translate-y-2"

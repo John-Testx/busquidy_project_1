@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from "react";
-import LoadingScreen from "../../LoadingScreen";
-import MessageModal from "../../MessageModal";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import LoadingScreen from "@/components/LoadingScreen";
+import MessageModal from "@/components/MessageModal";
 import ModalCreateProject from "./ModalCreateProject";
 import ModalPublicarProyecto from "./ModalPublicarProyecto";
 import ProjectCard from "./ProjectCard";
-import { getProjects, deleteProject, checkCompanyProfile } from "@/api/projectsApi";
-import { toast } from 'react-toastify';
-import { useNavigate } from "react-router-dom";
+import useCompanyProjects from "@/hooks/useCompanyProjects";
 
 // Modal de Confirmación
 const ConfirmModal = ({ isOpen, onClose, onConfirm, message }) => {
@@ -41,10 +40,6 @@ const ConfirmModal = ({ isOpen, onClose, onConfirm, message }) => {
 };
 
 function ViewProjects({ userType, id_usuario }) {
-    const [projects, setProjects] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-
     const [showModalProject, setShowModalProject] = useState(false);
     const [showModalPublicar, setShowModalPublicar] = useState(false);
     const [projectToPublish, setProjectToPublish] = useState(null);
@@ -59,60 +54,55 @@ function ViewProjects({ userType, id_usuario }) {
 
     const navigate = useNavigate();
 
-    useEffect(() => {
-        loadProjects();
-    }, [userType, id_usuario]);
+    // Custom hook para gestionar proyectos
+    const {
+        projects,
+        loading,
+        error,
+        addProject,
+        removeProject,
+        checkProfile,
+    } = useCompanyProjects({ userType, id_usuario });
 
-    const loadProjects = async () => {
-        if (userType !== 'empresa') return;
-        setLoading(true);
-        setError(null);
-        try {
-            const data = await getProjects(id_usuario);
-            setProjects(data);
-        } catch (err) {
-            console.error(err);
-            setError('Error al cargar proyectos');
-            toast.error('Algo salió mal al cargar los proyectos.');
-        } finally {
-            setLoading(false);
+    const handleDelete = async () => {
+        const success = await removeProject(projectToDelete);
+        if (success) {
+            setDeleteModalOpen(false);
+            setProjectToDelete(null);
         }
     };
 
-    const handleAddProject = (newProject) => {
-        setProjects(prev => [newProject, ...prev]);
-    };
-
-    const handleDelete = async () => {
-        try {
-            await deleteProject(projectToDelete);
-            setProjects(prev => prev.filter(p => p.id_proyecto !== projectToDelete));
-            toast.success('Proyecto eliminado correctamente');
-        } catch (err) {
-            toast.error('Error al eliminar proyecto');
-        } finally {
-            setDeleteModalOpen(false);
-            setProjectToDelete(null);
+    const handleCreateProject = async () => {
+        const isComplete = await checkProfile();
+        if (isComplete) {
+            setShowModalProject(true);
+        } else {
+            setMessage('Por favor, completa tu perfil de empresa antes de crear un proyecto.');
+            setShowMessageModal(true);
         }
     };
 
     const handleSortChange = e => setSortOption(e.target.value);
     const handlePageChange = newPage => setCurrentPage(newPage);
 
-    const sortedProjects = [...projects].sort((a,b) => {
+    const sortedProjects = [...projects].sort((a, b) => {
         if (sortOption === 'Estado') return a.estado_publicacion.localeCompare(b.estado_publicacion);
         return new Date(b.fecha_creacion) - new Date(a.fecha_creacion);
     });
+    
     const totalPages = Math.ceil(sortedProjects.length / projectsPerPage);
-    const currentProjects = sortedProjects.slice((currentPage-1)*projectsPerPage, currentPage*projectsPerPage);
+    const currentProjects = sortedProjects.slice(
+        (currentPage - 1) * projectsPerPage,
+        currentPage * projectsPerPage
+    );
 
-    const handleEdit = id => { 
-        console.log('Edit', id); 
-        navigate(`/projects/edit/${id}`);
+    const handleEdit = id => navigate(`/projects/edit/${id}`);
+    const handleViewDetails = id => console.log('View', id);
+    const openPublishModal = id => {
+        console.log("Abriendo modal para proyecto ID:", id);
+        setProjectToPublish(id);
+        setShowModalPublicar(true);
     };
-
-    const handleViewDetails = id => { console.log('View', id); };
-    const openPublishModal = id => { setProjectToPublish(id); setShowModalPublicar(true); };
 
     return (
         <div className="max-w-7xl mx-auto px-4">
@@ -136,14 +126,7 @@ function ViewProjects({ userType, id_usuario }) {
                             {/* Create Button */}
                             <button 
                                 className="flex items-center gap-2 bg-gradient-to-r from-[#07767c] to-[#0a9199] hover:from-[#055a5f] hover:to-[#077d84] text-white px-6 py-3 rounded-xl font-semibold transition-all duration-200 shadow-md hover:shadow-xl hover:scale-105"
-                                onClick={async () => {
-                                    const perfilIncompleto = await checkCompanyProfile(id_usuario);
-                                    if (!perfilIncompleto) setShowModalProject(true);
-                                    else {
-                                        setMessage('Por favor, completa tu perfil de empresa antes de crear un proyecto.');
-                                        setShowMessageModal(true);
-                                    }
-                                }}
+                                onClick={handleCreateProject}
                             >
                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
@@ -172,8 +155,8 @@ function ViewProjects({ userType, id_usuario }) {
                             {/* Pagination */}
                             <div className="flex items-center gap-3 bg-gray-50 px-4 py-2.5 rounded-lg ml-auto">
                                 <button 
-                                    onClick={() => handlePageChange(currentPage-1)} 
-                                    disabled={currentPage===1}
+                                    onClick={() => handlePageChange(currentPage - 1)} 
+                                    disabled={currentPage === 1}
                                     className="w-9 h-9 flex items-center justify-center rounded-lg bg-white hover:bg-[#07767c] hover:text-white disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-gray-700 transition-all duration-200 shadow-sm font-bold text-gray-700"
                                 >
                                     ←
@@ -182,8 +165,8 @@ function ViewProjects({ userType, id_usuario }) {
                                     Página {currentPage} de {totalPages || 1}
                                 </span>
                                 <button 
-                                    onClick={() => handlePageChange(currentPage+1)} 
-                                    disabled={currentPage===totalPages || totalPages===0}
+                                    onClick={() => handlePageChange(currentPage + 1)} 
+                                    disabled={currentPage === totalPages || totalPages === 0}
                                     className="w-9 h-9 flex items-center justify-center rounded-lg bg-white hover:bg-[#07767c] hover:text-white disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-gray-700 transition-all duration-200 shadow-sm font-bold text-gray-700"
                                 >
                                     →
@@ -219,7 +202,10 @@ function ViewProjects({ userType, id_usuario }) {
                                 project={project}
                                 onPublish={openPublishModal}
                                 onEdit={handleEdit}
-                                onDelete={id => { setProjectToDelete(id); setDeleteModalOpen(true); }}
+                                onDelete={id => {
+                                    setProjectToDelete(id);
+                                    setDeleteModalOpen(true);
+                                }}
                                 onView={handleViewDetails}
                             />
                         )) : (
@@ -239,10 +225,34 @@ function ViewProjects({ userType, id_usuario }) {
                         )}
                     </div>
 
-                    {showModalProject && <ModalCreateProject closeModal={() => setShowModalProject(false)} addProject={handleAddProject} id_usuario={id_usuario} />}
-                    {showModalPublicar && <ModalPublicarProyecto closeModal={() => setShowModalPublicar(false)} id_usuario={id_usuario} id_proyecto={projectToPublish} />}
-                    {showMessageModal && <MessageModal message={message} closeModal={() => setShowMessageModal(false)} />}
-                    {deleteModalOpen && <ConfirmModal isOpen={deleteModalOpen} onClose={() => setDeleteModalOpen(false)} onConfirm={handleDelete} message="¿Estás seguro que deseas eliminar este proyecto?" />}
+                    {showModalProject && (
+                        <ModalCreateProject 
+                            closeModal={() => setShowModalProject(false)} 
+                            addProject={addProject} 
+                            id_usuario={id_usuario} 
+                        />
+                    )}
+                    {showModalPublicar && (
+                        <ModalPublicarProyecto 
+                            closeModal={() => setShowModalPublicar(false)} 
+                            id_usuario={id_usuario} 
+                            id_proyecto={projectToPublish} 
+                        />
+                    )}
+                    {showMessageModal && (
+                        <MessageModal 
+                            message={message} 
+                            closeModal={() => setShowMessageModal(false)} 
+                        />
+                    )}
+                    {deleteModalOpen && (
+                        <ConfirmModal 
+                            isOpen={deleteModalOpen} 
+                            onClose={() => setDeleteModalOpen(false)} 
+                            onConfirm={handleDelete} 
+                            message="¿Estás seguro que deseas eliminar este proyecto?" 
+                        />
+                    )}
                 </>
             )}
         </div>

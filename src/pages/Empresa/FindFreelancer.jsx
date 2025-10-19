@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { jwtDecode } from 'jwt-decode';
 import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Home/Navbar";
-import SearchFilters from "@/components/Empresa/FreelancerList/SearchFilters";
 import FreelancerList from "@/components/Empresa/FreelancerList/FreelancerList";
 import Footer from "@/components/Home/Footer";
 import LoadingScreen from "@/components/LoadingScreen";

@@ -3,7 +3,10 @@ import apiClient from "./apiClient";
 const BASE = "/freelancer";
 const EMPRESA_BASE = "/empresa";
 
+// =============================================
 // PERFIL
+// =============================================
+
 export const checkProfileExists = async (id_usuario) => {
   const response = await apiClient.get(`${BASE}/get/${id_usuario}`);
   return response.data;
@@ -21,14 +24,20 @@ export const createFreelancerProfile = (freelancerData, id_usuario) =>
 export const updateProfileSection = (id_usuario, section, data) =>
   apiClient.put(`${BASE}/update-freelancer/${id_usuario}/${section}`, data);
 
+// =============================================
 // SECCIONES
+// =============================================
+
 export const addItemToSection = (id_usuario, itemType, data) =>
   apiClient.post(`${BASE}/add-freelancer/${id_usuario}/${itemType}`, data);
 
 export const deleteItem = (id_usuario, seccion, id) =>
   apiClient.delete(`${BASE}/delete-idioma-habilidad/${id_usuario}/${seccion}/${id}`);
 
+// =============================================
 // CV
+// =============================================
+
 export const uploadCV = (cvFile, id_usuario) => {
   const formData = new FormData();
   formData.append("cv", cvFile);
@@ -41,7 +50,10 @@ export const uploadCV = (cvFile, id_usuario) => {
 export const getCVUrl = (id_freelancer) =>
   apiClient.get(`${BASE}/freelancer/${id_freelancer}/cv`);
 
+// =============================================
 // POSTULACIONES
+// =============================================
+
 export const createApplication = (id_publicacion, id_usuario) =>
   apiClient.post(`${BASE}/postulacion/${id_publicacion}`, { id_usuario });
 
@@ -51,13 +63,72 @@ export const getApplications = (id_usuario) =>
 export const deleteApplication = (id_postulacion) =>
   apiClient.delete(`${BASE}/delete-postulacion/${id_postulacion}`);
 
-// BÚSQUEDA Y LISTADO
-export const listFreelancers = () => apiClient.get(`${BASE}/list`);
+// =============================================
+// BÚSQUEDA Y LISTADO - NUEVAS FUNCIONES
+// =============================================
+
+/**
+ * Obtiene la lista completa de freelancers
+ * @returns {Promise<Array>} Lista de freelancers con sus datos
+ */
+export const listFreelancers = async () => {
+  const response = await apiClient.get(`${BASE}/list`);
+  return response.data;
+};
+
+/**
+ * Transforma los datos del freelancer del backend al formato del frontend
+ * @param {Object} freelancer - Datos del freelancer desde el backend
+ * @returns {Object} Freelancer formateado
+ */
+export const formatFreelancerData = (freelancer) => ({
+  id: freelancer.id_freelancer,
+  nombre: freelancer.nombre,
+  apellido: freelancer.apellido,
+  nacionalidad: freelancer.nacionalidad,
+  ubicacion: `${freelancer.ciudad || 'Sin Especificar'}, ${freelancer.comuna || 'Sin Especificar'}`,
+  correo: freelancer.correo_contacto,
+  telefono: freelancer.telefono_contacto,
+  calificacion: freelancer.calificacion_promedio,
+  descripcion: freelancer.descripcion,
+  habilidades: freelancer.habilidades || ''
+});
+
+/**
+ * Obtiene y formatea la lista de freelancers
+ * @returns {Promise<Array>} Lista de freelancers formateados
+ */
+export const getFreelancersList = async () => {
+  try {
+    const data = await listFreelancers();
+    return data.map(formatFreelancerData);
+  } catch (error) {
+    console.error('Error al cargar la lista de freelancers:', error);
+    throw error;
+  }
+};
 
 export const getFreelancerPublicProfile = (id_freelancer) =>
   apiClient.get(`${BASE}/freelancer-perfil/${id_freelancer}`);
 
-// ===== VERIFICACIÓN DE PERFIL PARA PREMIUM =====
+// =============================================
+// VERIFICACIÓN DE PERFIL
+// =============================================
+
+/**
+ * Verifica si el perfil del freelancer está completo
+ * @param {number} id_usuario - ID del usuario freelancer
+ * @returns {Promise<{isPerfilIncompleto: boolean}>}
+ */
+export const checkFreelancerProfileStatus = async (id_usuario) => {
+  try {
+    const data = await checkProfileExists(id_usuario);
+    return data;
+  } catch (error) {
+    console.error("Error al verificar el perfil del freelancer:", error);
+    throw error;
+  }
+};
 
 /**
  * Verifica si el perfil de la empresa está completo
@@ -90,7 +161,7 @@ export const verifyUserProfileForPremium = async (tipo_usuario, id_usuario) => {
 
   try {
     if (tipo_usuario === "freelancer") {
-      const data = await checkProfileExists(id_usuario); // ✅ Directamente los datos
+      const data = await checkProfileExists(id_usuario);
       if (data.isPerfilIncompleto) {
         return {
           isComplete: false,

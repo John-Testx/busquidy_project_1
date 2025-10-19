@@ -1,54 +1,29 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-// import '../../../styles/Empresa/ModalPublicarProyecto.css';
+import React from 'react';
+import useProjectPayment from '@/hooks/useProjectPayment';
 
-// Al inicio del componente
-// console.log('Variables de entorno:', {
-//     REACT_APP_API_URL: process.env.REACT_APP_API_URL,
-//     REACT_APP_ENV: process.env.REACT_APP_ENV,
-//     NODE_ENV: process.env.NODE_ENV
-// });
+const ModalPublicarProyecto = ({ 
+  id_usuario, 
+  id_proyecto, 
+  closeModal, 
+  projectTitle = 'Publicación de Proyecto' 
+}) => {
+  const { loading, error, initiatePayment } = useProjectPayment();
 
-const ModalPublicarProyecto = ({ id_usuario, id_proyecto, closeModal, projectTitle = 'Publicación de Proyecto' }) => {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const API_URL_FRONT = import.meta.env.VITE_API_URL_FRONT || 'http://localhost:5173';
 
-    const API_URL_FRONT = import.meta.env.VITE_API_URL_FRONT || 'http://localhost:5173';
-    // `${API_URL_FRONT}/payment/return?next=${API_URL_FRONT}/myprojects`
+  console.log("ModalPublicarProyecto recibió id_proyecto:", id_proyecto); // <-- Añadir aquí
 
   const handlePayment = async () => {
-    try {
-      setLoading(true);
-      setError(null);
+    const paymentData = {
+      amount: 1000,
+      buyOrder: `BO-${id_proyecto}`,
+      sessionId: `Session-${id_usuario}`,
+      returnUrl: `${API_URL_FRONT}/payment/return?next=${encodeURIComponent('/myprojects')}`,
+      projectId: id_proyecto,
+      companyId: id_usuario,
+    };
 
-      const paymentData = {
-        amount: 1000,
-        buyOrder: `BO-${id_proyecto}`,
-        sessionId: `Session-${id_usuario}`,
-        returnUrl: `${API_URL_FRONT}/payment/return?next=${encodeURIComponent('/myprojects')}`,
-        projectId: id_proyecto,  
-        companyId: id_usuario,
-      };
-
-      const API_URL = import.meta.env.VITE_API_URL;
-
-      const response = await axios.post(
-        `${API_URL}/payments/create_transaction_project`,
-        paymentData,
-        { headers: { 'Content-Type': 'application/json' } }
-      );
-
-      const { url, token } = response.data;
-
-      if (!url || !token) throw new Error('No se recibió URL o token de Webpay');
-
-      window.location.href = `${url}?token_ws=${token}`;
-    } catch (error) {
-      console.error('Error al iniciar la transacción:', error);
-      setError(`Error: ${error.response?.data?.error || error.message}`);
-    } finally {
-      setLoading(false);
-    }
+    await initiatePayment(paymentData);
   };
 
   return (
@@ -97,7 +72,7 @@ const ModalPublicarProyecto = ({ id_usuario, id_proyecto, closeModal, projectTit
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
               <div>
-                <p className="text-sm font-semibold text-blue-900 mb-1">¿Qué incluye la publicación?</p>
+<p className="text-sm font-semibold text-blue-900 mb-1">¿Qué incluye la publicación?</p>
                 <p className="text-sm text-blue-800 leading-relaxed">
                   Al publicar tu proyecto, será visible para todos los usuarios en la plataforma 
                   y los Freelancers registrados podrán postular para trabajar contigo.
