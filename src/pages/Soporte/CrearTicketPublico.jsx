@@ -157,7 +157,7 @@ function CrearTicketPublico() {
           {/* Header */}
           <div className="mb-6">
             <button
-              onClick={() => navigate("/soporte")}
+              onClick={() => navigate("/soportehome")}
               className="flex items-center gap-2 text-gray-600 hover:text-gray-800 mb-4 transition-colors"
             >
               <ArrowLeft className="w-5 h-5" />

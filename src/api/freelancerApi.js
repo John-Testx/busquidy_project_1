@@ -64,15 +64,34 @@ export const getCVUrl = (id_freelancer) =>
 // POSTULACIONES
 // =============================================
 
+/**
+ * Crea una nueva postulación a una publicación
+ * @param {number} id_publicacion - ID de la publicación
+ * @param {number} id_usuario - ID del usuario freelancer
+ * @returns {Promise<Object>} Datos de la postulación creada
+ */
 export const createApplication = (id_publicacion, id_usuario) =>
   apiClient.post(`${BASE}/postulacion/${id_publicacion}`, { id_usuario });
 
-export const getApplications = (id_usuario) =>
-  apiClient.get(`${BASE}/postulaciones/${id_usuario}`);
+/**
+ * Obtiene todas las postulaciones de un freelancer
+ * @param {number} id_usuario - ID del usuario freelancer
+ * @returns {Promise<Array>} Lista de postulaciones del freelancer
+ */
+export const getApplications = async (id_usuario) => {
+  const response = await apiClient.get(`${BASE}/postulaciones/${id_usuario}`);
+  return response.data;
+};
 
-export const deleteApplication = (id_postulacion) =>
-  apiClient.delete(`${BASE}/delete-postulacion/${id_postulacion}`);
-
+/**
+ * Elimina una postulación
+ * @param {number} id_postulacion - ID de la postulación a eliminar
+ * @returns {Promise<Object>} Respuesta de la eliminación
+ */
+export const deleteApplication = async (id_postulacion) => {
+  const response = await apiClient.delete(`${BASE}/delete-postulacion/${id_postulacion}`);
+  return response.data;
+};
 // =============================================
 // BÚSQUEDA Y LISTADO - NUEVAS FUNCIONES
 // =============================================

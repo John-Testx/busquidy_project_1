@@ -1,5 +1,10 @@
 import apiClient from "./apiClient";
 
+/**
+ * Confirma una transacción de pago
+ * @param {string} token_ws - Token de Webpay
+ * @returns {Promise<Object>} Datos de la transacción confirmada
+ */
 export const commitTransaction = async (token_ws) => {
   const response = await apiClient.post("/payments/commit_transaction", {
     token: token_ws,

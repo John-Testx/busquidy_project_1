@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
-import { jwtDecode } from "jwt-decode"; 
+import { jwtDecode } from "jwt-decode";
+import { loginUser, registerUser } from "@/api/userApi";
 
 export default function useAuth() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -9,17 +10,27 @@ export default function useAuth() {
     const [errors, setErrors] = useState({});
     const [toast, setToast] = useState({ show: false, message: "", type: "" });
 
+    /**
+     * Valida los campos de entrada
+     */
     const validate = ({ correo, contraseña, tipoUsuario, isRegister }) => {
         const newErrors = {};
-        if (!correo || !/\S+@\S+\.\S+/.test(correo)) newErrors.correo = "Correo inválido";
-        if (!contraseña || contraseña.length < 6)
-        newErrors.contraseña = "La contraseña debe tener al menos 6 caracteres";
-        if (isRegister && !tipoUsuario) newErrors.tipoUsuario = "Selecciona un tipo de usuario";
+        if (!correo || !/\S+@\S+\.\S+/.test(correo)) {
+            newErrors.correo = "Correo inválido";
+        }
+        if (!contraseña || contraseña.length < 6) {
+            newErrors.contraseña = "La contraseña debe tener al menos 6 caracteres";
+        }
+        if (isRegister && !tipoUsuario) {
+            newErrors.tipoUsuario = "Selecciona un tipo de usuario";
+        }
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
 
-
+    /**
+     * Refresca el estado de autenticación desde localStorage
+     */
     const refresh = useCallback(() => {
         const token = localStorage.getItem("token");
         setIsAuthenticated(!!token);
@@ -32,6 +43,8 @@ export default function useAuth() {
             } catch (e) {
                 console.error("Error decoding token:", e);
                 localStorage.removeItem("token");
+                localStorage.removeItem("tipo_usuario");
+                localStorage.removeItem("correo");
                 setTipoUsuario(null);
                 setIdUsuario(null);
                 setIsAuthenticated(false);
@@ -44,74 +57,106 @@ export default function useAuth() {
         setLoading(false);
     }, []);
 
+    /**
+     * Efecto para cargar el estado inicial y escuchar cambios en storage
+     */
     useEffect(() => {
         refresh();
         window.addEventListener("storage", refresh);
         return () => window.removeEventListener("storage", refresh);
     }, [refresh]);
 
+    /**
+     * Maneja el inicio de sesión del usuario
+     * @param {string} correo - Correo del usuario
+     * @param {string} contraseña - Contraseña del usuario
+     * @param {Function} onSuccess - Callback a ejecutar en caso de éxito
+     */
     const handleLogin = async (correo, contraseña, onSuccess) => {
         if (!validate({ correo, contraseña })) return;
+        
         setLoading(true);
+        setErrors({});
+        
         try {
-        const res = await fetch("http://localhost:3001/api/users/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ correo, contraseña }),
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || "Error al iniciar sesión");
+            const data = await loginUser(correo, contraseña);
 
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("tipo_usuario", data.tipo_usuario);
-        localStorage.setItem("correo", correo);
-        setIsAuthenticated(true);
-        onSuccess?.(data.tipo_usuario);
+            // Guardar datos en localStorage
+            localStorage.setItem("token", data.token);
+            localStorage.setItem("tipo_usuario", data.tipo_usuario);
+            localStorage.setItem("correo", correo);
+            
+            // Actualizar estado
+            setIsAuthenticated(true);
+            
+            // Decodificar token para obtener datos del usuario
+            const decoded = jwtDecode(data.token);
+            setTipoUsuario(decoded.tipo_usuario || null);
+            setIdUsuario(decoded.id_usuario || null);
+            
+            // Ejecutar callback de éxito
+            onSuccess?.(data.tipo_usuario);
         } catch (err) {
-        setToast({ show: true, message: err.message, type: "error" });
+            const errorMessage = err.error || err.message || "Error al iniciar sesión";
+            setToast({ show: true, message: errorMessage, type: "error" });
+            console.error("Error en login:", err);
         } finally {
-        setLoading(false);
+            setLoading(false);
         }
     };
 
+    /**
+     * Maneja el registro de un nuevo usuario
+     * @param {string} correo - Correo del usuario
+     * @param {string} contraseña - Contraseña del usuario
+     * @param {string} tipoUsuario - Tipo de usuario
+     * @param {Function} onSuccess - Callback a ejecutar en caso de éxito
+     */
     const handleRegister = async (correo, contraseña, tipoUsuario, onSuccess) => {
         if (!validate({ correo, contraseña, tipoUsuario, isRegister: true })) return;
+        
         setLoading(true);
+        setErrors({});
+        
         try {
-        const res = await fetch("http://localhost:3001/api/users/register", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ correo, contraseña, tipo_usuario: tipoUsuario }),
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || "Error al registrar usuario");
-
-        setToast({ show: true, message: "Usuario registrado exitosamente", type: "success" });
-        onSuccess?.();
+            await registerUser(correo, contraseña, tipoUsuario);
+            
+            setToast({ 
+                show: true, 
+                message: "Usuario registrado exitosamente", 
+                type: "success" 
+            });
+            
+            onSuccess?.();
         } catch (err) {
-        setToast({ show: true, message: err.message, type: "error" });
+            const errorMessage = err.error || err.message || "Error al registrar usuario";
+            setToast({ show: true, message: errorMessage, type: "error" });
+            console.error("Error en registro:", err);
         } finally {
-        setLoading(false);
+            setLoading(false);
         }
     };
 
-
+    /**
+     * Cierra la sesión del usuario
+     */
     const logout = () => {
         localStorage.removeItem("token");
+        localStorage.removeItem("tipo_usuario");
         localStorage.removeItem("correo");
         refresh();
     };
 
     return {
-    isAuthenticated,
-    tipo_usuario,
-    id_usuario,
-    loading,
-    refresh,
-    logout,
-    handleRegister,  // <-- add this
-    handleLogin,     // optional if you want login too
-    errors,
-    toast
-};
+        isAuthenticated,
+        tipo_usuario,
+        id_usuario,
+        loading,
+        refresh,
+        logout,
+        handleRegister,
+        handleLogin,
+        errors,
+        toast,
+    };
 }

@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {jwtDecode} from 'jwt-decode';
 import { useNavigate, useLocation } from "react-router-dom";
-import axios from "axios";
 import Navbar from "@/components/Home/Navbar";
-//import NavbarFreeLancer from "@/components/FreeLancer/NavbarFreeLancer";
 import CardSection from "@/components/Home/CardSection";
 import InfoSectionHome from "@/components/Home/InfoSectionHome";
 import Footer from "@/components/Home/Footer";
@@ -29,11 +27,6 @@ function Home() {
         if (!authLoading) setLoading(false);
     }, [authLoading]);
     
-    // Renderización condicional del navbar según el tipo de usuario
-    const renderNavbar = () => {
-        return <Navbar />;
-    };
-    
     return (
         <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
             <div className="main-content" style={{ flex: 1, marginTop: "80px" }}>
@@ -41,8 +34,7 @@ function Home() {
                 {/* Muestra la pantalla de carga si está activa */}
                 {loading && <LoadingScreen />}
 
-                {/* Renderiza el navbar correcto */}
-                {renderNavbar()}
+                <Navbar />;
 
                 {/* {tipo_usuario === null ? (
                     <>

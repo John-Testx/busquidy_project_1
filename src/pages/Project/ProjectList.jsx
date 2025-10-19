@@ -1,79 +1,50 @@
-import React, { useEffect, useState } from "react";
-import {jwtDecode} from 'jwt-decode';
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Home/Navbar";
 import PublicationsContainer from "@/components/Project/PublicationsContainer";
 import Footer from "@/components/Home/Footer";
 import LoadingScreen from "@/components/LoadingScreen";
+import useAuth from "@/hooks/useAuth";
 
 function ProjectList() {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [loading, setLoading] = useState(true);
     const [logoutStatus, setLogoutStatus] = useState("");
-    const [userType, setUserType] = useState(null);
-    const [id_usuario, setIdUsuario] = useState(null);
     const navigate = useNavigate();
-
-    useEffect(() => {
-        const checkAuth = () => {
-            const token = localStorage.getItem('token');    
-            setIsAuthenticated(!!token);
-            
-            if (token) {
-                try {
-                    const decoded = jwtDecode(token);
-                    console.log("Decoded token:", decoded);
-                    setUserType(decoded.tipo_usuario);
-                    setIdUsuario(decoded.id_usuario);
-                } catch (error) {
-                    console.error("Error decodificando el token:", error);
-                }
-            }
-            
-            setTimeout(() => {
-                setLoading(false);
-            }, 500);
-        };
-     
-        window.addEventListener('storage', checkAuth);
-        checkAuth();
-   
-        return () => window.removeEventListener('storage', checkAuth);
-    }, []);
-
-    useEffect(() => {
-        if (id_usuario) {
-            console.log("ID usuario actualizado:", id_usuario);
-        }
-    }, [id_usuario]);
+    
+    // Usar el custom hook para toda la lógica de autenticación
+    const { 
+        isAuthenticated, 
+        tipo_usuario, 
+        id_usuario, 
+        loading, 
+        logout 
+    } = useAuth();
 
     const handleLogout = () => {
-        setLoading(true);
         setLogoutStatus("Cerrando sesión...");
         
+        // Usar la función logout del hook
+        logout();
+        
         setTimeout(() => {
-            localStorage.removeItem("token");
-            localStorage.removeItem("correo");
-            setIsAuthenticated(false);
-            setUserType(null);
             setLogoutStatus("Sesión cerrada");
             
             setTimeout(() => {
-                setLoading(false);
                 navigate("/");
             }, 1000);
-        });
+        }, 500);
     };
 
-    const renderNavbar = () => {
-        return <Navbar />;
-    };
-   
     return (
         <div className="mt-20">
             {loading && <LoadingScreen />}
-            {renderNavbar()}
-            <PublicationsContainer userType={userType} id_usuario={id_usuario} />
+            
+            <Navbar />
+            
+            <PublicationsContainer 
+                userType={tipo_usuario} 
+                id_usuario={id_usuario} 
+            />
+            
             <Footer />
             
             {logoutStatus && (

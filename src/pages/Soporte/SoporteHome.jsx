@@ -143,13 +143,6 @@ function SoporteHome() {
                       <Mail className="w-5 h-5" />
                       Cambiar Email
                     </button>
-                    <button
-                      onClick={() => navigate("")}
-                      className="flex items-center gap-2 bg-blue-600 text-white px-4 py-3 rounded-xl hover:bg-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl font-semibold"
-                    >
-                      <LogIn className="w-5 h-5" />
-                      Iniciar Sesión
-                    </button>
                   </>
                 )}
                 <button
