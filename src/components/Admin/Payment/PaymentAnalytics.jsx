@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 import { groupBy, sumBy } from 'lodash';
-import { getPagosProyectos, getPagosSuscripciones } from '../../../api/paymentApi';
+import { getProjectPayments, getSubscriptionPayments } from '@/api/paymentApi';
 
 const PaymentAnalytics = () => {
   const [proyectosPagos, setProyectosPagos] = useState([]);
@@ -15,8 +15,8 @@ const PaymentAnalytics = () => {
     const fetchPagos = async () => {
       try {
         const [proyectosResponse, suscripcionesResponse] = await Promise.all([
-          getPagosProyectos(),
-          getPagosSuscripciones()
+          getProjectPayments(),
+          getSubscriptionPayments()
         ]);
         setProyectosPagos(proyectosResponse.data);
         setSuscripcionesPagos(suscripcionesResponse.data);

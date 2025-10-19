@@ -12,14 +12,19 @@ export const commitTransaction = async (token_ws) => {
   return response.data;
 };
 
-export const getPagosProyectos = () =>
-  apiClient.get("/payments/pagos-proyectos");
+/**
+ * [ADMIN] Obtiene todos los pagos de proyectos.
+ */
+export const getProjectPayments = () => apiClient.get("/payments/pagos-proyectos");
 
-export const getPagosSuscripciones = () =>
-  apiClient.get("/payments/pagos-suscripciones");
+/**
+ * [ADMIN] Obtiene todos los pagos de suscripciones.
+ */
+export const getSubscriptionPayments = () => apiClient.get("/payments/pagos-suscripciones");
 
-export const getAllPayments = () =>
-  apiClient.get("/payments/getAll");
+// Mantenemos esta función por si la usas en otro lado, pero para el dashboard usaremos las nuevas.
+// Si no la usas en otro lado, puedes eliminarla.
+export const getAllPayments = () => apiClient.get("/admin/payments"); // O la ruta que sea para otros casos
 
 /**
  * Obtiene los planes de suscripción según el tipo de usuario

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getPagosProyectos, getPagosSuscripciones } from "@/api/paymentApi";
+import { getProjectPayments, getSubscriptionPayments } from "@/api/paymentApi";
 
 function PaymentTable() {
     const [pagoProyecto, setPagoProyecto] = useState([]);
@@ -23,7 +23,7 @@ function PaymentTable() {
 
     const cargarPagosProyectos = async () => {
         try {
-            const response = await getPagosProyectos();
+            const response = await getProjectPayments();
             setPagoProyecto(response.data);
         } catch (error) {
             console.error('Error al cargar los pagos de proyectos:', error);
@@ -32,7 +32,7 @@ function PaymentTable() {
 
     const cargarPagosSuscripciones = async () => {
         try {
-            const response = await getPagosSuscripciones();
+            const response = await getSubscriptionPayments();
             setPagoSuscripcion(response.data);
         } catch (error) {
             console.error('Error al cargar los pagos de suscripciones:', error);

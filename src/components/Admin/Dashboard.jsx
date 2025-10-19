@@ -1,112 +1,22 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import AdminTable from "@/common/TableCommon";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-} from "recharts";
-import { 
-  Users, 
-  Crown, 
-  FileText, 
-  Activity,
-  TrendingUp,
-  DollarSign
-} from "lucide-react";
-import { getUsuarios } from "@/api/userApi";
-import { getAllProjects } from "@/api/projectsApi";
-import { getAllPayments } from "@/api/paymentApi";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, } from "recharts";
+import { Users, Crown, FileText, Activity, TrendingUp, DollarSign, AlertCircle, RefreshCw } from "lucide-react";
+import { useDashboardData } from "@/hooks/useDashboardData";
 
 function Dashboard() {
-  const [stats, setStats] = useState({
-    totalUsuarios: 0,
-    usuariosPremium: 0,
-    publicacionesActivas: 0,
-    usuariosActivos: 0,
-  });
-  const [recentUsers, setRecentUsers] = useState([]);
-  const [recentPayments, setRecentPayments] = useState([]);
-  const [paymentChartData, setPaymentChartData] = useState([]);
-  const [userChartData, setUserChartData] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const {
+    stats,
+    recentUsers,
+    recentPayments,
+    paymentChartData,
+    userChartData,
+    loading,
+    error,
+    refreshDashboard
+  } = useDashboardData();
 
-  useEffect(() => {
-    const fetchDashboardData = async () => {
-      try {
-        setLoading(true);
-
-        // Fetch users
-        const usersData = await getUsuarios();
-        const usuariosSinAdmin = usersData.filter(
-          (u) => u.tipo_usuario !== "administrador"
-        );
-        
-        setStats((prev) => ({
-          ...prev,
-          totalUsuarios: usuariosSinAdmin.length,
-          usuariosPremium: usuariosSinAdmin.filter((u) => u.premium === "Sí").length,
-        }));
-
-        // Recent users
-        const sortedUsers = [...usuariosSinAdmin].sort(
-          (a, b) => new Date(b.fecha_registro) - new Date(a.fecha_registro)
-        );
-        setRecentUsers(sortedUsers.slice(0, 5));
-
-        // User chart data
-        const userGrouped = {};
-        usuariosSinAdmin.forEach((u) => {
-          const day = new Date(u.fecha_registro).toLocaleDateString("es-CL");
-          userGrouped[day] = (userGrouped[day] || 0) + 1;
-        });
-        setUserChartData(
-          Object.entries(userGrouped).map(([day, count]) => ({ day, count }))
-        );
-
-        // Fetch projects
-        const projectsResponse = await getAllProjects();
-        const projectsData = projectsResponse.data;
-        const activosCount = projectsData.filter(
-          (p) => p.estado_publicacion === "activo"
-        ).length;
-        setStats((prev) => ({ ...prev, publicacionesActivas: activosCount }));
-
-        // Fetch payments
-        const paymentsResponse = await getAllPayments();
-        const paymentsData = paymentsResponse.data;
-        
-        const sortedPayments = [...paymentsData].sort(
-          (a, b) => new Date(b.fecha_pago) - new Date(a.fecha_pago)
-        );
-        setRecentPayments(sortedPayments.slice(0, 5));
-
-        // Payment chart data
-        const paymentGrouped = {};
-        paymentsData.forEach((p) => {
-          const day = new Date(p.fecha_pago).toLocaleDateString("es-CL");
-          paymentGrouped[day] = (paymentGrouped[day] || 0) + Number(p.monto);
-        });
-        setPaymentChartData(
-          Object.entries(paymentGrouped).map(([day, total]) => ({ day, total }))
-        );
-
-      } catch (error) {
-        console.error("Error fetching dashboard data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchDashboardData();
-  }, []);
-
-  // Columns
+  // Columns definitions
   const userColumns = [
     { key: "id_usuario", label: "ID", sortable: true },
     { key: "correo", label: "Correo", sortable: true },
@@ -114,17 +24,19 @@ function Dashboard() {
     {
       key: "premium",
       label: "Premium",
-      render: (val) => (
-        <span
-          className={`px-2.5 py-1 rounded-full text-xs font-semibold ${
-            val === "Sí"
-              ? "bg-amber-100 text-amber-800"
-              : "bg-gray-100 text-gray-800"
-          }`}
-        >
-          {val}
-        </span>
-      ),
+      render: (val) => {
+        const safeVal = typeof val === "string" ? val : "No";
+        const colorClass =
+          safeVal === "Sí"
+            ? "bg-amber-100 text-amber-800"
+            : "bg-gray-100 text-gray-800";
+
+        return (
+          <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${colorClass}`}>
+            {safeVal}
+          </span>
+        );
+      },
     },
   ];
 
@@ -141,19 +53,22 @@ function Dashboard() {
     {
       key: "estado_pago",
       label: "Estado",
-      render: (val) => (
-        <span
-          className={`px-2.5 py-1 rounded-full text-xs font-semibold ${
-            val === "completado"
-              ? "bg-green-100 text-green-800"
-              : val === "pendiente"
-              ? "bg-yellow-100 text-yellow-800"
-              : "bg-red-100 text-red-800"
-          }`}
-        >
-          {val}
-        </span>
-      ),
+      render: (val) => {
+        const safeVal = typeof val === "string" ? val : "desconocido";
+
+        const colorClass =
+          safeVal === "completado"
+            ? "bg-green-100 text-green-800"
+            : safeVal === "pendiente"
+            ? "bg-yellow-100 text-yellow-800"
+            : "bg-red-100 text-red-800";
+
+        return (
+          <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${colorClass}`}>
+            {safeVal}
+          </span>
+        );
+      },
     },
     {
       key: "fecha_pago",
@@ -173,7 +88,10 @@ function Dashboard() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#07767c] border-t-transparent"></div>
+        <div className="flex flex-col items-center gap-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#07767c] border-t-transparent"></div>
+          <p className="text-gray-600 font-medium">Cargando dashboard...</p>
+        </div>
       </div>
     );
   }
@@ -181,10 +99,31 @@ function Dashboard() {
   return (
     <div className="p-6 space-y-6 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-800 mb-2">Dashboard</h1>
-        <p className="text-gray-600">Resumen general de la plataforma</p>
+      <div className="mb-8 flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-800 mb-2">Dashboard</h1>
+          <p className="text-gray-600">Resumen general de la plataforma</p>
+        </div>
+        <button
+          onClick={refreshDashboard}
+          disabled={loading}
+          className="flex items-center gap-2 px-4 py-2 bg-[#07767c] text-white rounded-lg hover:bg-[#055a5f] transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+        >
+          <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+          <span>Actualizar</span>
+        </button>
       </div>
+
+      {/* Error message */}
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-center gap-3 mb-6">
+          <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
+          <div>
+            <p className="text-red-800 font-medium">Error al cargar los datos</p>
+            <p className="text-red-600 text-sm">{error}</p>
+          </div>
+        </div>
+      )}
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
