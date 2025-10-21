@@ -40,8 +40,6 @@ const getPerfilEmpresa = async (req, res) => {
       return res.status(404).json({ error: "No se encontró el perfil representante" });
     }
 
-    // console.log("perfil:", perfilUsuarioResults[0], perfilEmpresaResults[0], perfilRepresentanteResults[0]);
-
     // Enviar respuesta consolidada
     res.json({
       perfilUsuario: perfilUsuarioResults[0],
@@ -71,15 +69,35 @@ const getEmpresaProfileStatus = async (req, res) => {
     }
 
     // Obtener datos de empresa
-    const empresaResults = await empresaQueries.findEmpresaProfileByUserId(id_usuario);
+    const empresaResults = await empresaQueries.findEmpresaByUserId(id_usuario);
     if (empresaResults.length === 0) {
-      return res.status(404).json({ error: "Datos no encontrados" });
+      return res.status(404).json({ error: "Datos no encontrados", isPerfilIncompleto: true });
     }
 
     const perfilEmpresa = empresaResults[0];
-    const isPerfilIncompleto = Object.values(perfilEmpresa).some((value) => !value);
+    
+    // ✅ FIX: Verificar solo campos obligatorios, no todos
+    const camposObligatorios = [
+      'nombre_empresa',
+      'identificacion_fiscal', 
+      'direccion',
+      'telefono_contacto',
+      'correo_empresa',
+      'descripcion',
+      'sector_industrial'
+    ];
 
-    return res.json({ isPerfilIncompleto });
+    const isPerfilIncompleto = camposObligatorios.some(
+      campo => !perfilEmpresa[campo] || perfilEmpresa[campo].trim() === ''
+    );
+
+    // ✅ FIX: Verificar también que exista representante
+    const representanteResults = await representanteQueries.findRepresentanteByEmpresaId(perfilEmpresa.id_empresa);
+    const tieneRepresentante = representanteResults.length > 0;
+
+    return res.json({ 
+      isPerfilIncompleto: isPerfilIncompleto || !tieneRepresentante 
+    });
   } catch (error) {
     console.error("Error al verificar el perfil de la empresa:", error);
     return res.status(500).json({ error: "Error al verificar el perfil de la empresa" });
@@ -90,6 +108,7 @@ const getEmpresaProfileStatus = async (req, res) => {
 const createEmpresaProfile = async (req, res) => {
   const { empresaData, representanteData, id_usuario } = req.body;
 
+  console.log("=== INICIO CREACIÓN DE PERFIL EMPRESA ===");
   console.log("empresaData:", empresaData);
   console.log("representanteData:", representanteData);
   console.log("ID Usuario:", id_usuario);
@@ -112,7 +131,7 @@ const createEmpresaProfile = async (req, res) => {
       return res.status(404).json({ error: "Usuario no encontrado" });
     }
 
-    console.log("Usuario encontrado");
+    console.log("✅ Usuario encontrado:", userCheckResults[0]);
 
     // Obtener id_empresa
     const empresaResults = await empresaQueries.findEmpresaByUserId(id_usuario);
@@ -122,22 +141,48 @@ const createEmpresaProfile = async (req, res) => {
     }
 
     const id_empresa = empresaResults[0].id_empresa;
-    console.log("ID de Empresa obtenido:", id_empresa);
+    console.log("✅ ID de Empresa obtenido:", id_empresa);
 
     // Actualizar empresa
-    await empresaQueries.updateEmpresaByEmpresaId(empresaData, id_empresa, connection);
+    const empresaUpdated = await empresaQueries.updateEmpresaByEmpresaId(empresaData, id_empresa, connection);
+    console.log("✅ Empresa actualizada:", empresaUpdated);
 
-    // Insertar representante
-    await representanteQueries.insertRepresentante(id_empresa, representanteData, connection);
+    // Verificar si ya existe un representante
+    const existingRepresentante = await representanteQueries.findRepresentanteByEmpresaId(id_empresa);
+    
+    if (existingRepresentante.length > 0) {
+      // Actualizar representante existente
+      await representanteQueries.updateRepresentante(representanteData, id_empresa, connection);
+      console.log("✅ Representante actualizado");
+    } else {
+      // Insertar nuevo representante
+      await representanteQueries.insertRepresentante(id_empresa, representanteData, connection);
+      console.log("✅ Representante insertado");
+    }
 
     await connection.commit();
 
-    console.log("Perfil empresa creado exitosamente");
-    res.status(201).json({ message: "Perfil de empresa creado exitosamente" });
+    console.log("=== ✅ PERFIL EMPRESA CREADO EXITOSAMENTE ===");
+    
+    // ✅ FIX: Retornar datos completos del perfil creado
+    const perfilCompleto = await empresaQueries.findEmpresaByUserId(id_usuario);
+    const representante = await representanteQueries.findRepresentanteByEmpresaId(id_empresa);
+    
+    res.status(201).json({ 
+      message: "Perfil de empresa creado exitosamente",
+      success: true,
+      perfil: {
+        perfilEmpresa: perfilCompleto[0],
+        perfilRepresentante: representante[0]
+      }
+    });
   } catch (err) {
-    console.error("Error al crear el perfil de la empresa:", err);
+    console.error("❌ Error al crear el perfil de la empresa:", err);
     if (connection) await connection.rollback();
-    res.status(500).json({ error: "Error al crear el perfil de empresa" });
+    res.status(500).json({ 
+      error: "Error al crear el perfil de empresa",
+      details: err.message 
+    });
   } finally {
     if (connection) connection.release();
   }
@@ -182,12 +227,18 @@ const updateEmpresaProfile = async (req, res) => {
       await userQueries.updateUserEmail(id, perfilUsuario.correo);
     }
 
-    console.log("Empresa actualizada: ")
+    console.log("✅ Empresa actualizada exitosamente");
 
-    return res.json({ message: "Perfil de empresa actualizado correctamente" });
+    return res.json({ 
+      message: "Perfil de empresa actualizado correctamente",
+      success: true 
+    });
   } catch (err) {
-    console.error("Error actualizando perfil de empresa:", err);
-    return res.status(500).json({ error: "Error actualizando perfil" });
+    console.error("❌ Error actualizando perfil de empresa:", err);
+    return res.status(500).json({ 
+      error: "Error actualizando perfil",
+      details: err.message 
+    });
   }
 };
 
