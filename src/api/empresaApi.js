@@ -12,7 +12,6 @@ export const getEmpresaProfile = async (id_usuario) => {
   return response.data;
 };
 
-
 /**
  * Verifica el estado del perfil de la empresa (si está completo o no).
  * @param {number} id_usuario - El ID del usuario de la empresa.
@@ -23,7 +22,7 @@ export const checkEmpresaProfileStatus = async (id_usuario) => {
   return response.data;
 };
 
-/** 
+/**
  * Actualiza el perfil completo de la empresa.
  * @param {number} id_usuario - El ID del usuario de la empresa.
  * @param {object} profileData - El objeto completo con los datos del perfil a actualizar.
@@ -34,4 +33,18 @@ export const updateEmpresaProfile = async (id_usuario, profileData) => {
   return response.data;
 };
 
-// You can add other empresa-related API functions here in the future
+/**
+ * Crea el perfil de una empresa
+ * @param {Object} empresaData - Datos de la empresa
+ * @param {Object} representanteData - Datos del representante legal
+ * @param {number} id_usuario - ID del usuario
+ * @returns {Promise<Object>} Respuesta de la creación del perfil
+ */
+export const createEmpresaProfile = async (empresaData, representanteData, id_usuario) => {
+  const response = await apiClient.post(`${BASE_URL}/create-perfil-empresa`, {
+    empresaData,
+    representanteData,
+    id_usuario
+  });
+  return response.data;
+};

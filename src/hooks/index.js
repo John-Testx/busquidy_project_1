@@ -13,12 +13,13 @@ export { default as useNewChatModal } from './chat/useNewChatModal';
 
 // Empresa
 export { default as useCompanyProjects } from './empresa/useCompanyProjects';
+export { default as useEmpresaProfile } from './empresa/useEmpresaProfile';
 export { useCompanyReview } from './empresa/useCompanyReview';
 
 // Freelancer
-export { default as useFreelancerProfile } from './freelancer/useFreelancerProfile';
 export { default as useFreelancers } from './freelancer/useFreelancers';
 export { default as usePostulations } from './freelancer/usePostulations';
+export { default as useFreelancerProfile } from './freelancer/useFreelancerProfile';
 
 // Payment
 export { default as usePaymentAnalytics } from './payment/usePaymentAnalytics';

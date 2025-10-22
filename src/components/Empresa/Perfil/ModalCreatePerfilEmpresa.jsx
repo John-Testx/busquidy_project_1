@@ -1,16 +1,24 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { useForm, FormProvider } from "react-hook-form";
-import { toast } from "react-toastify";
 import { CheckCircle } from "lucide-react";
 import StepEmpresa from "./Steps/StepEmpresa";
 import StepRepresentante from "./Steps/StepRepresentante";
+import { useEmpresaProfile } from "@/hooks";
 
 function ModalCreatePerfilEmpresa({ closeModal, id_usuario, onProfileCreated }) {
   const [currentStep, setCurrentStep] = useState(0);
   const [completedSteps, setCompletedSteps] = useState([]);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showSuccess, setShowSuccess] = useState(false);
+
+  // Usar el custom hook para gestionar la creación del perfil
+  const { isSubmitting, showSuccess, createProfile } = useEmpresaProfile({
+    id_usuario,
+    onSuccess: async () => {
+      if (onProfileCreated && typeof onProfileCreated === 'function') {
+        await onProfileCreated();
+      }
+      closeModal();
+    }
+  });
 
   const methods = useForm({
     defaultValues: {
@@ -62,57 +70,7 @@ function ModalCreatePerfilEmpresa({ closeModal, id_usuario, onProfileCreated }) 
   };
 
   const onSubmit = async (data) => {
-    console.log("=== ENVIANDO DATOS DEL FORMULARIO ===");
-    console.log("Datos empresa:", data.empresa);
-    console.log("Datos representante:", data.representante);
-    console.log("ID Usuario:", id_usuario);
-
-    try {
-      setIsSubmitting(true);
-      const token = localStorage.getItem("token");
-      
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/empresa/create-perfil-empresa`,
-        { 
-          empresaData: data.empresa, 
-          representanteData: data.representante, 
-          id_usuario 
-        },
-        { 
-          headers: { 
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          } 
-        }
-      );
-
-      console.log("✅ Respuesta del servidor:", response.data);
-
-      // ✅ Mostrar pantalla de éxito
-      setShowSuccess(true);
-      
-      // ✅ Esperar 2 segundos, luego recargar el perfil
-      setTimeout(async () => {
-        if (onProfileCreated && typeof onProfileCreated === 'function') {
-          console.log("Llamando a onProfileCreated...");
-          await onProfileCreated();
-        }
-        closeModal();
-      }, 2000);
-
-    } catch (error) {
-      console.error("❌ Error al crear el perfil de la empresa:", error);
-      
-      // Mostrar error específico del servidor
-      const errorMessage = error.response?.data?.error || 
-                          error.response?.data?.message || 
-                          "Error al crear el perfil de empresa";
-      
-      toast.error(errorMessage);
-      
-      // No cerrar el modal en caso de error
-      setIsSubmitting(false);
-    }
+    await createProfile(data);
   };
 
   const progressPercentage = ((currentStep + 1) / steps.length) * 100;
@@ -192,14 +150,12 @@ function ModalCreatePerfilEmpresa({ closeModal, id_usuario, onProfileCreated }) 
                     index + 1
                   )}
                 </button>
-
                 {/* Step Title */}
                 <span className={`hidden sm:inline font-semibold text-sm ${
                   index === currentStep ? 'text-teal-600' : 'text-gray-600'
                 }`}>
                   {step.title}
                 </span>
-
                 {/* Connector Line */}
                 {index < steps.length - 1 && (
                   <div className={`hidden sm:block flex-1 h-1 rounded ${
@@ -209,7 +165,6 @@ function ModalCreatePerfilEmpresa({ closeModal, id_usuario, onProfileCreated }) 
               </div>
             ))}
           </div>
-
           {/* Progress Bar */}
           <div className="w-full bg-gray-300 rounded-full h-2 overflow-hidden">
             <div
