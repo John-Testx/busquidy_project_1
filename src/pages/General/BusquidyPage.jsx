@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from "react";
 import {jwtDecode} from 'jwt-decode';
 import { useNavigate } from "react-router-dom";
-import Navbar from "@/components/Home/Navbar";
-//import NavbarFreeLancer from "@/components/FreeLancer/NavbarFreeLancer";
-//import NavbarEmpresa from "@/components/Empresa/NavbarEmpresa";
-import Footer from "@/components/Home/Footer";
 import LoadingScreen from "@/components/LoadingScreen";
 import { useAuth } from "@/hooks";
 import { howItWorksSteps, joinTheChange, whatIsBusquidy, whyChooseFeatures } from "@/common/mockBusquidyInfo";
+import { Footer, Navbar } from '@/components/Home/';
 
 function BusquidyPage() {
     // Estado para los mensajes de logout

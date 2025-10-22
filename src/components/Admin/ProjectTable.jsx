@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 import MessageModal from "../MessageModal";
 import TableCommon from "@/common/TableCommon";
 import { Pencil, XCircle } from "lucide-react";
-import '../../styles/Admin/ProjectTable.css';
+import './ProjectTable.css';
 
 // Modal de Confirmación
 const ConfirmModal = ({ isOpen, onClose, onConfirm, message }) => {

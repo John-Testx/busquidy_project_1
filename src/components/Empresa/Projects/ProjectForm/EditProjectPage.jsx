@@ -4,8 +4,7 @@ import ProjectForm from "./ProjectForm";
 import { getProjectById, updateProject } from "@/api/projectsApi";
 import { toast } from "react-toastify";
 import LoadingScreen from "../../../LoadingScreen";
-import Navbar from "@/components/Home/Navbar";
-import Footer from "@/components/Home/Footer";
+import { Footer, Navbar } from '@/components/Home/';
 
 function EditProjectPage() {
   const { id } = useParams();

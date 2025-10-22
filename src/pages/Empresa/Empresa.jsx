@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
 import {jwtDecode} from 'jwt-decode';
 import { useNavigate } from "react-router-dom";
-import Navbar from "@/components/Home/Navbar";
-import Footer from "@/components/Home/Footer";
 import EmpresaActionsCard from "@/components/Empresa/PanelEmpresa/EmpresaActionsCard";
 import InfoSectionEmpresa from "@/components/Empresa/PanelEmpresa/InfoSectionEmpresa";
 import LoadingScreen from "@/components/LoadingScreen"; 
 import { useAuth } from "@/hooks";
+import { Footer, Navbar } from '@/components/Home/';
 
 function Empresa() {
     const [logoutStatus, setLogoutStatus] = useState("");

@@ -2,10 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";     
 import { AlertCircle, Loader } from "lucide-react";
-import Navbar from "@/components/Home/Navbar";
-import Footer from "@/components/Home/Footer";
 import LoadingScreen from "@/components/LoadingScreen";
 import { getFreelancerProfile } from "@/api/freelancerApi";
+import { Footer, Navbar } from '@/components/Home/';
 
 function ViewMoreDetailsFreelancer() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);

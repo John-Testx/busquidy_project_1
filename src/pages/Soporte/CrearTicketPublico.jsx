@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Navbar from "@/components/Home/Navbar";
-import Footer from "@/components/Home/Footer";
 import { createPublicTicket } from "@/api/supportApi";
 import { ArrowLeft, CheckCircle, AlertCircle, User, Mail as MailIcon } from "lucide-react";
+import { Footer, Navbar } from '@/components/Home/';
 
 const categorias = [
   { value: "Cuenta", icon: "👤", descripcion: "Problemas con acceso o recuperación de cuenta" },

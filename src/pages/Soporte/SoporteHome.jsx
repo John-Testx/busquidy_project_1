@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Navbar from "@/components/Home/Navbar";
-import Footer from "@/components/Home/Footer";
 import TicketList from "@/components/Soporte/TicketList";
 import EmailVerification from "@/components/Soporte/EmailVerification";
 import { getUserTickets, getTicketsByEmail } from "@/api/supportApi";
 import { Plus, Loader2, AlertCircle, Headset, Mail, LogIn } from "lucide-react";
+import { Footer, Navbar } from '@/components/Home/';
 
 function SoporteHome() {
   const navigate = useNavigate();

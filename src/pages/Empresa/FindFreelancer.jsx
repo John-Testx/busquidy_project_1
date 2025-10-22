@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { jwtDecode } from 'jwt-decode';
 import { useNavigate } from "react-router-dom";
-import Navbar from "@/components/Home/Navbar";
 import FreelancerList from "@/components/Empresa/FreelancerList/FreelancerList";
-import Footer from "@/components/Home/Footer";
 import LoadingScreen from "@/components/LoadingScreen";
 import { useAuth } from "@/hooks";
+import { Footer, Navbar } from '@/components/Home/';
 
 function FindFreelancer() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);

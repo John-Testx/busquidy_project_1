@@ -2,13 +2,12 @@ import { jwtDecode } from "jwt-decode";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AlertCircle, Loader, FileText, User, Briefcase, Eye, Upload, Edit } from "lucide-react";
-import Navbar from "@/components/Home/Navbar";
-import Footer from "@/components/Home/Footer";
 import CreateProfileCv from "@/components/FreeLancer/Perfil/CreateProfileCv";
 import LoadingScreen from "@/components/LoadingScreen";
 import ModalCreatePerfilFreelancer from "@/components/FreeLancer/Perfil/ModalCreatePerfilFreelancer";
 import { checkProfileExists, getFreelancerProfile } from "@/api/freelancerApi";
 import { useAuth } from "@/hooks";
+import { Footer, Navbar } from '@/components/Home/';
 
 function ViewPerfilFreeLancer() {
   const navigate = useNavigate();

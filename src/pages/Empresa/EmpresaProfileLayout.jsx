@@ -4,11 +4,10 @@ import { toast } from 'react-toastify';
 import { useAuth } from '@/hooks';
 import LoadingScreen from '@/components/LoadingScreen';
 import ProfileSidebar from '@/components/Empresa/Perfil/ProfileSidebar';
-import Navbar from '@/components/Home/Navbar';
-import Footer from '@/components/Home/Footer';
+import { Footer, Navbar } from '@/components/Home/';
 
 // 1. Import the new API functions
-import { getEmpresaProfile, updateEmpresaProfile, checkEmpresaProfileStatus } from '@api/companyApi'; // Adjust path if needed
+import { getEmpresaProfile, updateEmpresaProfile, checkEmpresaProfileStatus } from '@api/empresaApi';
 import CreatePerfilEmpresa from '@/components/Empresa/Perfil/CreatePerfilEmpresa';
 
 function EmpresaProfileLayout() {

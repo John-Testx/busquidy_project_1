@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
 import {jwtDecode} from 'jwt-decode';
 import { useNavigate, useLocation } from "react-router-dom";
-import Navbar from "@/components/Home/Navbar";
 import CardSection from "@/components/Home/CardSection";
 import InfoSectionHome from "@/components/Home/InfoSectionHome";
-import Footer from "@/components/Home/Footer";
 import LoadingScreen from "@/components/LoadingScreen";
 import { useAuth } from "@/hooks";
+import { Footer, Navbar } from '@/components/Home/';
 import LittleSearchSection from "@/components/FreeLancer/PanelFreelancer/LittleSearchSection";
 import InfoSectionFreelancer from "@/components/FreeLancer/PanelFreelancer/InfoSectionFreelancer";
 import EmpresaActionsCard from "@/components/Empresa/PanelEmpresa/EmpresaActionsCard";

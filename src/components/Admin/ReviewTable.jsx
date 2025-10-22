@@ -1,5 +1,5 @@
 import React from "react";
-import '../../styles/Admin/ReviewTable.css';
+import './ReviewTable.css';
 
 const reviews = [
     // Ejemplo de datos de reseñas

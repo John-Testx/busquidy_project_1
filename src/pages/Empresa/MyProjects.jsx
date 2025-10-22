@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import Navbar from "@/components/Home/Navbar";
-import ViewProjects from "@/components/Empresa/Projects/ViewProjects";
-import Footer from "@/components/Home/Footer";
 import LoadingScreen from "@/components/LoadingScreen";
+import ViewProjects from "@/components/Empresa/Projects/ViewProjects";
 import { useAuth } from "@/hooks";
 import { usePaymentCallback } from "@/hooks";
+import { Footer, Navbar } from '@/components/Home/';
 
 function MyProjects() {
     const [logoutStatus, setLogoutStatus] = useState("");

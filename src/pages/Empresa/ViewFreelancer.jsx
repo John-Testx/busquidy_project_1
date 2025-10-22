@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import Navbar from "@/components/Home/Navbar";
-import Footer from "@/components/Home/Footer";
 import LoadingScreen from "@/components/LoadingScreen"; 
 import PerfilFreelancerEmpresaView from "@/components/Empresa/FreelancerList/PerfilFreelancerEmpresaView";
 import { useAuth } from "@/hooks";
 import {useFreelancerProfile} from "@/hooks";
 import { getEmpresaProfile } from "@/api/freelancerApi";
+import { Footer, Navbar } from '@/components/Home/';
 
 function ViewFreelancer() {
     const [isPerfilIncompleto, setIsPerfilIncompleto] = useState(null); 

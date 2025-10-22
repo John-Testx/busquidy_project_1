@@ -1,9 +1,8 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks";
-import Navbar from "@/components/Home/Navbar";
 import { navbarOptions } from "@/common/navbarOptions";
-import Footer from "@/components/Home/Footer";
+import { Footer, Navbar } from '@/components/Home/';
 import LoadingScreen from "@/components/LoadingScreen";
 import InfoSectionEmpresa from "@/components/Empresa/PanelEmpresa/InfoSectionEmpresa";
 import InfoSectionFreelancer from "@/components/FreeLancer/PanelFreelancer/InfoSectionFreelancer";
