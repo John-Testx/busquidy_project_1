@@ -23,7 +23,7 @@ import EditProjectPage from '@/components/Empresa/Projects/ProjectForm/EditProje
 import ChatPage from '@/pages/Chat/ChatPage';
 
 // Import Admin components
-import { AdminHome, UserManagement, ProjectManagement, ReviewManagement, SupportManagement, PaymentManagement, NotificationManagement, AuditAndSecurity } from '@pages/Admin';
+import { AdminHome, UserManagement, ProjectManagement, ReviewManagement, SupportManagement, PaymentManagement, NotificationManagement, AuditAndSecurity, DisputeManagement } from '@pages/Admin';
 import { Dashboard, UserTable, SupportTable, SupportChat, AdminRoles, UserEditPage } from '@components/Admin';
 
 
@@ -123,6 +123,7 @@ const AppRoutes = () => {
             <Route path="auditandsecurity" element={<AuditAndSecurity />} />
             <Route path="admin/support" element={<SupportTable />} />
             <Route path="admin/support/:id_ticket" element={<SupportChat />} />
+            <Route path="/adminhome/disputes" element={<DisputeManagement />} />
         </Route>
       </Route>
 

@@ -11,6 +11,7 @@ import {
   Shield,
   LogOut,
   ChevronRight,
+  AlertTriangle, // <- IMPORTAR ESTE ÍCONO
 } from "lucide-react";
 
 export default function SidebarAdmin() {
@@ -34,6 +35,13 @@ export default function SidebarAdmin() {
       title: "Soporte", 
       icon: <MessageSquare size={20} />, 
       path: "/adminhome/supportmanagement" 
+    },
+    // ✅ NUEVO MÓDULO AGREGADO
+    { 
+      id: "disputes", 
+      title: "Disputas y Reembolsos", 
+      icon: <AlertTriangle size={20} />, 
+      path: "/adminhome/disputes" 
     },
     { 
       id: "paymentmanagement", 
