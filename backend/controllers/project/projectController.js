@@ -248,11 +248,143 @@ const getProjectsByUser = async (req, res) => {
   }
 };
 
+/**
+ * Libera el pago en garantía y marca el proyecto como completado
+ */
+const releaseProjectPayment = async (req, res) => {
+  const { id_proyecto } = req.params;
+  const id_usuario = req.user.id_usuario; // Del middleware verifyToken
+
+  console.log('🔍 Liberando pago - Usuario:', id_usuario, 'Proyecto:', id_proyecto);
+
+  let connection;
+
+  try {
+    connection = await pool.getConnection();
+    await connection.beginTransaction();
+
+    // 1. Verificar que el proyecto existe y obtener el id_empresa
+    const [projectRows] = await connection.query(
+      `SELECT p.*, p.id_empresa 
+       FROM proyecto p
+       WHERE p.id_proyecto = ?`,
+      [id_proyecto]
+    );
+
+    if (projectRows.length === 0) {
+      await connection.rollback();
+      console.log('❌ Proyecto no encontrado');
+      return res.status(404).json({ error: "Proyecto no encontrado" });
+    }
+
+    const proyecto = projectRows[0];
+    console.log('📋 Proyecto encontrado:', proyecto);
+
+    // 2. Verificar que el usuario es dueño de la empresa del proyecto
+    const [empresaRows] = await connection.query(
+      `SELECT id_empresa, id_usuario 
+       FROM empresa 
+       WHERE id_empresa = ?`,
+      [proyecto.id_empresa]
+    );
+
+    if (empresaRows.length === 0) {
+      await connection.rollback();
+      console.log('❌ Empresa no encontrada');
+      return res.status(404).json({ error: "Empresa no encontrada" });
+    }
+
+    console.log('🏢 Empresa encontrada:', empresaRows[0]);
+    console.log('👤 Usuario actual:', id_usuario, 'Usuario dueño:', empresaRows[0].id_usuario);
+
+    if (empresaRows[0].id_usuario !== id_usuario) {
+      await connection.rollback();
+      console.log('❌ Usuario no tiene permiso');
+      return res.status(403).json({ error: "No tienes permiso para completar este proyecto" });
+    }
+
+    // 3. Verificar que existe un pago en garantía RETENIDO
+    const [garantiaRows] = await connection.query(
+      `SELECT * FROM PagosEnGarantia WHERE id_proyecto = ? AND estado = 'RETENIDO'`,
+      [id_proyecto]
+    );
+
+    if (garantiaRows.length === 0) {
+      await connection.rollback();
+      console.log('❌ No hay pago en garantía RETENIDO');
+      return res.status(400).json({ 
+        error: "No hay pago en garantía para este proyecto o ya fue procesado" 
+      });
+    }
+
+    const garantia = garantiaRows[0];
+    console.log('💰 Pago en garantía encontrado:', garantia);
+    
+    // 4. Calcular comisión (10%) y monto neto
+    const comision = garantia.monto_retenido * 0.10;
+    const monto_neto = garantia.monto_retenido - comision;
+
+    console.log(`💰 Liberando pago - Monto: ${garantia.monto_retenido}, Comisión: ${comision}, Neto: ${monto_neto}`);
+
+    // 5. Actualizar estado en PagosEnGarantia
+    await connection.query(
+      `UPDATE PagosEnGarantia 
+       SET estado = 'LIBERADO', 
+           fecha_actualizacion = NOW()
+       WHERE id = ?`,
+      [garantia.id]
+    );
+
+    console.log('✅ Estado de pago actualizado a LIBERADO');
+
+    // 6. Actualizar estado del proyecto a 'finalizado'
+    await connection.query(
+      `UPDATE publicacion_proyecto 
+       SET estado_publicacion = 'finalizado'
+       WHERE id_proyecto = ?`,
+      [id_proyecto]
+    );
+
+    console.log('✅ Estado del proyecto actualizado a finalizado');
+
+    // 7. (Opcional) Habilitar reseñas
+    // Si tienes una columna para esto en tu base de datos, descomenta:
+    // await connection.query(
+    //   `UPDATE proyecto SET resena_habilitada = 1 WHERE id_proyecto = ?`,
+    //   [id_proyecto]
+    // );
+
+    await connection.commit();
+    console.log('✅ Transacción completada exitosamente');
+
+    res.status(200).json({
+      success: true,
+      message: "Pago liberado exitosamente al freelancer",
+      data: {
+        monto_total: garantia.monto_retenido,
+        comision: comision,
+        monto_freelancer: monto_neto
+      }
+    });
+
+  } catch (error) {
+    console.error("❌ Error al liberar pago:", error);
+    if (connection) await connection.rollback();
+    res.status(500).json({ 
+      error: "Error al liberar el pago",
+      mensaje: error.message 
+    });
+  } finally {
+    if (connection) connection.release();
+  }
+};
+
 module.exports = {
   getAllProjects,
   getProjectById,
   updateProject,
   createProject,
   deleteProject,
-  getProjectsByUser
+  getProjectsByUser,
+  releaseProjectPayment  
 };

@@ -1,5 +1,5 @@
 import React from "react";
-import AuditAndSecurityTable from "../../components/Admin/AuditAndSecurityTable"; 
+import AuditAndSecurityTable from "@/components/Admin/AuditAndSecurityTable"; 
 
 function auditandsecurity() {
     return (

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import '../../styles/Admin/AuditAndSecurityTable.css'; // CSS para auditoría y seguridad
+import "./AuditAndSecurityTable.css";
 
 function AuditAndSecurityTable() {
     const [activities, setActivities] = useState([

@@ -1,102 +1,56 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React, { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import {usePaymentVerification} from "@/hooks";
 
 const PaymentReturn = () => {
-  const [status, setStatus] = useState("Verificando transacción...");
-  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
-  const API_URL = import.meta.env.VITE_API_URL;
+  // Obtener parámetros de la URL
   const token = searchParams.get("token_ws");
   let next = decodeURIComponent(searchParams.get("next") || "/");
 
+  // Validar y sanitizar la URL de redirección
   if (!next.startsWith("/")) {
     next = "/";
     console.log("Changing next param:", next);
   }
 
-  const maxRetries = 5;
+  // Usar el custom hook para verificar el pago
+  const { status, loading, shouldRedirect } = usePaymentVerification(token, next);
 
-  const navigateToNext = () => {
-    try {
-      navigate(next);
-    } catch {
-      navigate("/");
-    }
-  };
-
-  const verifyPayment = async (attempt = 0) => {
-    if (!token) {
-      setStatus("❌ Token de pago no encontrado");
-      setLoading(false);
-      return;
-    }
-
-    try {
-      const response = await axios.post(`${API_URL}/payments/commit_transaction`, { token });
-      const data = response.data;
-
-      console.log("Response of current transaction",data);
-
-      if (data.status === "APPROVED") {
-        setStatus("✅ Pago exitoso");
-        setLoading(false);
-        setTimeout(navigateToNext, 2000);
-        return;
-      }
-
-      if (data.status === "REJECTED") {
-        setStatus(`❌ Pago rechazado: ${data.message || "Sin detalles"}`);
-        setLoading(false);
-        return;
-      }
-
-      setStatus(`⚠️ Estado: ${data.status}`);
-      setLoading(false);
-
-    } catch (err) {
-
-      console.log("Error response", err.response?.data);
-      
-      const code = err.response?.data?.code;
-      const statusCode = err.response?.status;
-
-      if (code === "TRANSACTION_IN_PROGRESS" && attempt < maxRetries) {
-        const delay = 2000 * (attempt + 1);
-        setStatus(`⚠️ Transacción en proceso. Reintentando en ${delay / 1000}s...`);
-        setTimeout(() => verifyPayment(attempt + 1), delay);
-        return;
-      }
-      
-      if (code === "PENDING" && attempt < maxRetries) {
-        const delay = 2000 * (attempt + 1);
-        setStatus(`⚠️ Confirmando pago... (reintentando en ${delay / 1000}s)`);
-        setTimeout(() => verifyPayment(attempt + 1), delay);
-        return;
-      }
-
-      if (statusCode === 409 || code === "ACTIVE_SUBSCRIPTION_EXISTS") {
-        setStatus("❌ Ya tienes una suscripción activa. Cancela tu suscripción actual para continuar.");
-        setLoading(false);
-        setTimeout(navigateToNext, 2000);
-        return;
-      }
-
-      setStatus(`❌ Error verificando el pago: ${err.response?.data?.error || err.message}`);
-      setLoading(false);
-    }
-  };
-
+  /**
+   * Redirige al usuario cuando se completa la verificación
+   */
   useEffect(() => {
-    verifyPayment(0);
-  }, []);
+    if (shouldRedirect) {
+      const timer = setTimeout(() => {
+        try {
+          navigate(next);
+        } catch {
+          navigate("/");
+        }
+      }, 2000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [shouldRedirect, next, navigate]);
+
+  /**
+   * Determina el color del mensaje según el estado
+   */
+  const getStatusColor = () => {
+    if (status.includes("✅")) return "text-green-600";
+    if (status.includes("❌")) return "text-red-600";
+    return "text-yellow-600";
+  };
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-4">
       <div className="bg-white shadow-lg rounded-lg p-8 max-w-md w-full text-center">
-        <h2 className="text-2xl font-bold mb-4 text-gray-800">Estado del Pago</h2>
+        <h2 className="text-2xl font-bold mb-4 text-gray-800">
+          Estado del Pago
+        </h2>
         
         {loading && (
           <div className="flex items-center justify-center mb-4">
@@ -124,15 +78,7 @@ const PaymentReturn = () => {
           </div>
         )}
 
-        <p
-          className={`text-lg font-medium ${
-            status.includes("✅")
-              ? "text-green-600"
-              : status.includes("❌")
-              ? "text-red-600"
-              : "text-yellow-600"
-          }`}
-        >
+        <p className={`text-lg font-medium ${getStatusColor()}`}>
           {status}
         </p>
       </div>

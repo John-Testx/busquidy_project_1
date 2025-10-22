@@ -12,14 +12,17 @@ const checkProfileExists = async (req, res) => {
     // Verificar usuario
     const userCheckResults = await getUserById(id_usuario);
     if (userCheckResults.length === 0) {
+      // console.log(`Usuario no encontrado para id: ${id_usuario}`);
       return res.status(404).json({ error: "Usuario no encontrado" });
     }
+    // console.log("Usuario encontrado, buscando freelancer..."); 
 
-    // Obtener id_freelancer
     const freelancerResults = await getFreelancerByUserId(id_usuario);
     if (freelancerResults.length === 0) {
+      // console.log(`Freelancer no encontrado para id_usuario: ${id_usuario}`);
       return res.status(404).json({ error: "Freelancer no encontrado" });
     }
+    console.log("Freelancer encontrado, verificando perfil completo...");
 
     const id_freelancer = freelancerResults[0].id_freelancer;
 

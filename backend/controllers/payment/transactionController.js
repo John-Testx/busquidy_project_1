@@ -3,6 +3,10 @@ const webpayService = require("../../services/payment/webpayService");
 const { processProjectPayment } = require("../../services/payment/projectPaymentService");
 const { processSubscriptionPayment } = require("../../services/payment/subscriptionPaymentService");
 const { getPlanById } = require("../../queries/payment/planQueries");
+const { 
+  getWebpayTransactionByToken, 
+  updateWebpayTransactionStatus,
+} = require("../../queries/payment/transactionQueries");
 
 /**
  * Crear transacción de suscripción
@@ -47,11 +51,11 @@ const createSubscriptionTransaction = async (req, res) => {
       amount,
       buyOrder,
       sessionId,
-      plan: planNombre,       // name used internally for duration
+      plan: planNombre,
       tipoUsuario,
       metodoPago,
       returnUrl,
-      planIdToUse: plan,      // numeric plan id stored for DB
+      planIdToUse: plan,
     });
 
     console.log("[WebpayService] Transaction response:", response);
@@ -75,10 +79,23 @@ const createSubscriptionTransaction = async (req, res) => {
  */
 const createProjectTransaction = async (req, res) => {
   try {
+    // Extrae los datos directamente del cuerpo de la solicitud.
     const { amount, buyOrder, sessionId, returnUrl: requestReturnUrl, projectId, companyId } = req.body;
+
+    console.log('=== CREAR TRANSACCIÓN DE PROYECTO ===');
+    console.log('Request body:', { amount, buyOrder, sessionId, projectId, companyId });
 
     if (!amount || !buyOrder || !sessionId) {
       return res.status(400).json({ error: "Datos incompletos" });
+    }
+
+    // ⚠️ VALIDACIÓN CRÍTICA
+    if (!projectId) {
+      console.error('❌ projectId es undefined o null');
+      return res.status(400).json({ 
+        error: "projectId es requerido",
+        code: "MISSING_PROJECT_ID" 
+      });
     }
 
     const returnUrl = requestReturnUrl || `${process.env.FRONTEND_URL || "http://localhost:3000"}/myprojects`;
@@ -92,6 +109,7 @@ const createProjectTransaction = async (req, res) => {
       companyId,
     });
 
+    console.log('✅ Transacción creada exitosamente');
     res.json(response);
   } catch (error) {
     console.error("Error en create_transaction_project:", error);
@@ -104,6 +122,7 @@ const createProjectTransaction = async (req, res) => {
  */
 const commitTransaction = async (req, res) => {
   const { token } = req.body;
+  
   if (!token) {
     return res.status(400).json({
       status: "ERROR",
@@ -116,24 +135,83 @@ const commitTransaction = async (req, res) => {
   let responseSent = false;
 
   try {
+    console.log('=== CONFIRMAR TRANSACCIÓN ===');
+    console.log('Token:', token);
+
+    // 1. ✅ Obtener transacción de la BD
+    const savedTransaction = await getWebpayTransactionByToken(token);
+    
+    if (!savedTransaction) {
+      console.error('❌ Transacción no encontrada en BD');
+      return res.status(404).json({
+        status: "ERROR",
+        error: "Transacción no encontrada",
+        code: "TRANSACTION_NOT_FOUND",
+      });
+    }
+
+    console.log('Transacción encontrada:', savedTransaction);
+
+    // 2. ✅ Verificar si ya fue procesada
+    if (['APPROVED', 'REJECTED'].includes(savedTransaction.status)) {
+      console.log('⚠️ Transacción ya procesada:', savedTransaction.status);
+      
+      if (savedTransaction.status === 'APPROVED') {
+        return res.json({
+          status: 'APPROVED',
+          message: 'Transacción ya procesada anteriormente',
+          type: savedTransaction.payment_type,
+          projectId: savedTransaction.project_id,
+          amount: savedTransaction.amount,
+          buyOrder: savedTransaction.buy_order,
+        });
+      } else {
+        return res.json({
+          status: 'REJECTED',
+          message: 'Pago rechazado',
+          type: savedTransaction.payment_type,
+        });
+      }
+    }
+
+    // 3. ✅ Verificar si está en proceso
+    if (savedTransaction.status === 'PROCESSING') {
+      console.log('⏳ Transacción en proceso...');
+      return res.status(409).json({
+        status: "PENDING",
+        message: "El pago se está confirmando, por favor espera unos segundos...",
+        code: "TRANSACTION_IN_PROGRESS"
+      });
+    }
+
+    // 4. ✅ Marcar como PROCESSING
+    await updateWebpayTransactionStatus(token, 'PROCESSING');
+
+    // 5. ✅ Confirmar con Webpay
     const response = await webpayService.commitTransaction(token);
     const status = response.status === "AUTHORIZED" ? "APPROVED" : "REJECTED";
     const buyOrder = response.buy_order;
     const sessionId = response.session_id;
     const monto = Number(response.amount) || 0;
-    const metodoPago = response.originalData?.metodoPago || "Webpay";
+    const metodoPago = savedTransaction.metodo_pago || "Webpay";
     const idUsuario = String(sessionId).includes("-") ? sessionId.split("-")[1] : sessionId;
 
     connection = await pool.getConnection();
 
     // Procesamiento de pago de proyecto
-    if (buyOrder.startsWith("BO-")) {
-      console.log("Processing project publication payment for buyOrder:", buyOrder);
-      const idProyecto = response.originalData?.projectId || parseInt(buyOrder.split("-")[1], 10);
+    if (savedTransaction.payment_type === 'PROJECT_PUBLICATION') {
+      console.log("Processing project publication payment");
+      
+      // ✅ Obtener projectId de la BD (no del buyOrder)
+      const idProyecto = savedTransaction.project_id;
 
       if (!idProyecto || isNaN(idProyecto)) {
+        console.error('❌ ID de proyecto inválido:', idProyecto);
+        await updateWebpayTransactionStatus(token, 'ERROR');
         throw new Error("ID de proyecto inválido");
       }
+
+      console.log('✅ Procesando pago para proyecto ID:', idProyecto);
 
       const pagoId = await processProjectPayment(connection, {
         idUsuario,
@@ -144,8 +222,12 @@ const commitTransaction = async (req, res) => {
         status,
       });
 
+      // ✅ Actualizar estado en BD
+      await updateWebpayTransactionStatus(token, status, response.response_code);
       await connection.commit();
       responseSent = true;
+
+      console.log('✅ Pago de proyecto procesado exitosamente');
 
       return res.json({
         status,
@@ -155,14 +237,16 @@ const commitTransaction = async (req, res) => {
         type: "PROJECT_PUBLICATION",
         projectId: idProyecto,
         pagoId,
+        message: status === 'APPROVED' ? 'Proyecto publicado exitosamente' : 'Pago rechazado',
       });
     }
 
     // Procesamiento de pago de suscripción
-    if (buyOrder.startsWith("SUB-")) {
-      const planRaw = response.originalData?.planIdToUse || response.planId || null;
+    if (savedTransaction.payment_type === 'SUBSCRIPTION') {
+      const planRaw = savedTransaction.plan_id;
       
       if (!planRaw) {
+        await updateWebpayTransactionStatus(token, 'ERROR');
         throw { code: "INVALID_PLAN", message: "No se proporcionó plan válido" };
       }
 
@@ -175,6 +259,7 @@ const commitTransaction = async (req, res) => {
         planRaw,
       });
 
+      await updateWebpayTransactionStatus(token, status, response.response_code);
       await connection.commit();
       responseSent = true;
 
@@ -190,17 +275,20 @@ const commitTransaction = async (req, res) => {
       });
     }
 
+    // Tipo desconocido
+    await updateWebpayTransactionStatus(token, 'ERROR');
     responseSent = true;
     return res.status(400).json({
       status: "ERROR",
       error: "Tipo de transacción desconocido",
       code: "UNKNOWN_TRANSACTION_TYPE",
     });
+
   } catch (error) {
     console.error("Error al confirmar transacción:", error);
 
     if (error.message === "Transacción en proceso") {
-      return res.status(202).json({
+      return res.status(409).json({
         status: "PENDING",
         message: "El pago se está confirmando, por favor espera unos segundos...",
         code: "TRANSACTION_IN_PROGRESS"
@@ -212,6 +300,15 @@ const commitTransaction = async (req, res) => {
         await connection.rollback();
       } catch (rollbackErr) {
         console.warn("Error during rollback:", rollbackErr);
+      }
+    }
+
+    // Actualizar estado a ERROR en BD
+    if (token) {
+      try {
+        await updateWebpayTransactionStatus(token, 'ERROR');
+      } catch (updateErr) {
+        console.warn("Error updating transaction status:", updateErr);
       }
     }
 

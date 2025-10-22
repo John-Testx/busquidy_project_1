@@ -1,81 +1,35 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React from 'react';
+import {usePostulations} from '@/hooks';
 
 const MyPostulationsTable = ({ id_usuario }) => {
-    const [postulations, setPostulations] = useState([]);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [sortOption, setSortOption] = useState("Estado");
-    const itemsPerPage = 4;
+    const {
+        postulations,
+        loading,
+        currentPage,
+        sortOption,
+        calculateTimeAgo,
+        removePostulation,
+        handlePageChange,
+        handleSortChange,
+        getCurrentPagePostulations,
+        getTotalPages
+    } = usePostulations(id_usuario);
 
-    useEffect(() => {
-        const fetchPostulations = async () => {
-            if (!id_usuario || isNaN(id_usuario)) {
-                console.error("ID de usuario inválido:", id_usuario);
-                return;
-            }
-    
-            try {
-                const response = await axios.get(`http://localhost:3001/api/freelancer/postulaciones/${id_usuario}`);
-    
-                if (response.data) {
-                    setPostulations(response.data);
-                }
-            } catch (error) {
-                console.error("Error al cargar las postulaciones:", error.response || error.message);
-            }
-        };
-        fetchPostulations();
-    }, [id_usuario]);
-
-    // Calcular tiempo transcurrido
-    const calculateTimeAgo = (postDate) => {
-        const postDateObj = new Date(postDate);
-        const now = new Date();
-        const differenceInMs = now - postDateObj;
-        const daysAgo = Math.floor(differenceInMs / (1000 * 60 * 60 * 24));
-        if (daysAgo < 1) return "Hoy";
-        if (daysAgo === 1) return "Hace 1 día";
-        if (daysAgo < 7) return `Hace ${daysAgo} días`;
-        if (daysAgo < 30) return `Hace ${Math.floor(daysAgo / 7)} semanas`;
-        return `Hace ${Math.floor(daysAgo / 30)} meses`;
-    };
-
-    // Manejo de la paginación
-    const handlePageChange = (page) => {
-        if (page >= 1 && page <= Math.ceil(postulations.length / itemsPerPage)) {
-            setCurrentPage(page);
-        }
-    };
-
-    // Manejo del ordenamiento
-    const handleSortChange = (e) => {
-        setSortOption(e.target.value);
-    };
-
-    // Eliminar una postulación
+    /**
+     * Maneja la eliminación de una postulación
+     */
     const handleDeletePostulation = async (id_postulacion) => {
-        try {
-            const response = await fetch(`http://localhost:3001/api/freelancer/delete-postulacion/${id_postulacion}`, {
-                method: 'DELETE'
-            });
-
-            if (!response.ok) {
-                const errorDetails = await response.json();
-                console.error("Detalles del error:", errorDetails);
-                throw new Error('Error al eliminar postulacion');
-            }            
-
-            setPostulations(postulations.filter(p => p.id_postulacion !== id_postulacion));
-
-        } catch (error) {
-            console.error("Error al eliminar la postulación:", error);
+        if (window.confirm('¿Estás seguro de que deseas eliminar esta postulación?')) {
+            try {
+                await removePostulation(id_postulacion);
+            } catch (error) {
+                alert('Error al eliminar la postulación. Por favor, intenta nuevamente.');
+            }
         }
     };
 
-    const currentPostulations = postulations.slice(
-        (currentPage - 1) * itemsPerPage,
-        currentPage * itemsPerPage
-    );
+    const currentPostulations = getCurrentPagePostulations();
+    const totalPages = getTotalPages();
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12 px-4 sm:px-6 lg:px-8">
@@ -101,7 +55,7 @@ const MyPostulationsTable = ({ id_usuario }) => {
                                 <select 
                                     id="sort" 
                                     value={sortOption} 
-                                    onChange={handleSortChange}
+                                    onChange={(e) => handleSortChange(e.target.value)}
                                     className="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#07767c] focus:border-transparent bg-white transition-all duration-200"
                                 >
                                     <option value="Estado">Estado</option>
@@ -120,11 +74,11 @@ const MyPostulationsTable = ({ id_usuario }) => {
                                     &lt;
                                 </button>
                                 <span className="text-sm font-medium text-gray-700 px-3">
-                                    {currentPage} de {Math.ceil(postulations.length / itemsPerPage) || 1}
+                                    {currentPage} de {totalPages}
                                 </span>
                                 <button 
                                     onClick={() => handlePageChange(currentPage + 1)} 
-                                    disabled={currentPage === Math.ceil(postulations.length / itemsPerPage)}
+                                    disabled={currentPage === totalPages}
                                     className="w-8 h-8 flex items-center justify-center rounded-md bg-white border border-gray-300 text-gray-700 hover:bg-[#07767c] hover:text-white hover:border-[#07767c] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-gray-700 disabled:hover:border-gray-300 transition-all duration-200"
                                 >
                                     &gt;
@@ -136,7 +90,12 @@ const MyPostulationsTable = ({ id_usuario }) => {
 
                 {/* Tabla de Postulaciones */}
                 <div className="bg-white rounded-b-xl shadow-md">
-                    {postulations.length === 0 ? (
+                    {loading ? (
+                        <div className="flex flex-col items-center justify-center py-20 px-4">
+                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#07767c] mb-4"></div>
+                            <p className="text-gray-500 text-lg font-medium">Cargando postulaciones...</p>
+                        </div>
+                    ) : postulations.length === 0 ? (
                         <div className="flex flex-col items-center justify-center py-20 px-4">
                             <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4">
                                 <svg className="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">

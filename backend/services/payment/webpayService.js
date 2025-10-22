@@ -1,4 +1,5 @@
 const {WebpayPlus, Options, IntegrationApiKeys, Environment} = require("transbank-sdk");
+const { saveWebpayTransaction } = require("../../queries/payment/transactionQueries");
 
 class WebpayService {
   constructor() {
@@ -8,7 +9,6 @@ class WebpayService {
             Environment.Production :
             Environment.Integration;
     this.transactionLocks = new Map();
-    this.transactionMetadata = new Map();
     this.lockTimeout = 15000; // 15 seconds
     this.lockCleanupInterval = 60000; // 1 minute
 
@@ -62,20 +62,26 @@ class WebpayService {
         throw new Error("Respuesta inválida de Webpay");
       }
 
-      // Store metadata linked to this token
-      const metadata = {
-        planIdToUse: transactionData.planIdToUse,
+      // ✅ Guardar en base de datos
+      await saveWebpayTransaction({
+        token: response.token,
+        buyOrder,
+        sessionId,
+        amount,
+        planId: transactionData.planIdToUse,
         tipoUsuario,
         metodoPago,
-        durationName: plan,
-        paymentType: "subscription"
-      };
+        paymentType: 'SUBSCRIPTION',
+      });
 
-      this.transactionMetadata.set(response.token, metadata);
+      console.log('✅ Transacción de suscripción guardada:', {
+        token: response.token,
+        planId: transactionData.planIdToUse,
+        buyOrder
+      });
 
       return {
         ...response,
-        originalData: metadata
       };
     } catch (error) {
       console.error("[WebpayService] Error creating transaction:", error);
@@ -88,6 +94,11 @@ class WebpayService {
       this.validateTransactionData(projectTransactionData);
       const { amount, buyOrder, sessionId, returnUrl, projectId, companyId } = projectTransactionData;
 
+      // ⚠️ VALIDACIÓN CRÍTICA
+      if (!projectId) {
+        throw new Error("projectId es requerido para transacciones de proyecto");
+      }
+
       const webpay = new WebpayPlus.Transaction(
         new Options(this.commerceCode, this.apiKey, this.environment)
       );
@@ -97,18 +108,27 @@ class WebpayService {
         throw new Error("Respuesta inválida de Webpay");
       }
 
-      // Store per-transaction metadata
-      this.transactionMetadata.set(response.token, {
+      // ✅ Guardar en base de datos
+      await saveWebpayTransaction({
+        token: response.token,
+        buyOrder,
+        sessionId,
+        amount,
         projectId,
         companyId,
-        paymentType: "PROJECT_PUBLICATION",
-        amount,
-        metodoPago: "Webpay"
+        metodoPago: 'Webpay',
+        paymentType: 'PROJECT_PUBLICATION',
       });
-      
+
+      console.log('✅ Transacción de proyecto guardada:', {
+        token: response.token,
+        projectId,
+        companyId,
+        buyOrder
+      });
+
       return {
         ...response,
-        originalData: this.transactionMetadata.get(response.token),
       };
     } catch (error) {
       console.error("[WebpayService] Error creating project transaction:", error);
@@ -137,14 +157,7 @@ class WebpayService {
         throw new Error("Respuesta inválida de Webpay");
       }
 
-      // Retrieve metadata by token
-      const originalData = this.transactionMetadata.get(token) || {};
-      this.transactionMetadata.delete(token); // cleanup
-
-      return {
-        ...response,
-        originalData
-      };
+      return response;
     } catch (error) {
       console.error("[WebpayService] Error committing transaction:", error);
       throw error;

@@ -13,12 +13,19 @@ apiClient.interceptors.request.use((config) => {
   return config;
 });
 
-// Manejo global de errores (opcional pero útil)
+// Manejo global de errores
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     console.error("Error en la API:", error.response?.data || error.message);
-    throw error.response?.data || error;
+    
+    // Asegurar que siempre se rechace con un objeto que tenga las propiedades esperadas
+    const errorData = error.response?.data || { 
+      error: error.message,
+      message: error.message 
+    };
+    
+    return Promise.reject(errorData);
   }
 );
 

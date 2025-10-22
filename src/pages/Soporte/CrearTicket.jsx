@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../../components/Home/Navbar";
-import Footer from "../../components/Home/Footer";
-import TicketForm from "../../components/Soporte/TicketForm";
-import { createTicket } from "../../api/supportApi";
+import TicketForm from "@/components/Soporte/TicketForm";
+import { createTicket } from "@/api/supportApi";
 import { ArrowLeft, CheckCircle } from "lucide-react";
+import { Footer, Navbar } from '@/components/Home/';
 
 function CrearTicket() {
   const navigate = useNavigate();
@@ -15,7 +14,7 @@ function CrearTicket() {
   const token = localStorage.getItem("token");
 
   if (!token) {
-    navigate("/login");
+    navigate("/");
     return null;
   }
 
@@ -90,7 +89,7 @@ function CrearTicket() {
           {/* Header */}
           <div className="mb-6">
             <button
-              onClick={() => navigate("/soporte")}
+              onClick={() => navigate("/soportehome")}
               className="flex items-center gap-2 text-gray-600 hover:text-gray-800 mb-4 transition-colors"
             >
               <ArrowLeft className="w-5 h-5" />

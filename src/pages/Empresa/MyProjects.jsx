@@ -1,16 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { jwtDecode } from 'jwt-decode';
 import { useNavigate, useLocation } from "react-router-dom";
-import axios from "axios";
-import Navbar from "../../components/Home/Navbar";
-import ViewProjects from "../../components/Empresa/Projects/ViewProjects";
-import Footer from "../../components/Home/Footer";
-import LoadingScreen from "../../components/LoadingScreen"; 
-import useAuth from "../../hooks/useAuth";
+import LoadingScreen from "@/components/LoadingScreen";
+import ViewProjects from "@/components/Empresa/Projects/ViewProjects";
+import { useAuth } from "@/hooks";
+import { usePaymentCallback } from "@/hooks";
+import { Footer, Navbar } from '@/components/Home/';
 
 function MyProjects() {
     const [logoutStatus, setLogoutStatus] = useState("");
-    const [paymentStatus, setPaymentStatus] = useState(null);
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -22,90 +19,41 @@ function MyProjects() {
         refresh,
     } = useAuth();
 
+    const { paymentStatus, processPaymentCallback, clearPaymentStatus } = usePaymentCallback();
+
     useEffect(() => {
-        const handlePaymentResponse = async () => {
-            const searchParams = new URLSearchParams(location.search);
-            const token_ws = searchParams.get("token_ws");
-            const TBK_TOKEN = searchParams.get("TBK_TOKEN");
+    const searchParams = new URLSearchParams(location.search);
+    
+    if (searchParams.has('token_ws') || searchParams.has('TBK_TOKEN')) {
+        // ✅ Procesar solo una vez
+        processPaymentCallback(searchParams);
+        
+        // Limpiar URL inmediatamente para evitar reprocesamiento
+        const newURL = `${window.location.origin}${window.location.pathname}`;
+        window.history.replaceState({}, document.title, newURL);
+    }
+    }, [location.search, processPaymentCallback]); // ✅ Agregar dependencias
 
-            if (!token_ws && !TBK_TOKEN) return;
+    // Auto-cerrar notificación y recargar si es exitoso
+    useEffect(() => {
+        if (paymentStatus?.success && paymentStatus?.type === "PROJECT_PUBLICATION") {
+            const timer = setTimeout(() => {
+                console.log('✅ Pago exitoso, recargando página...');
+                sessionStorage.removeItem('processing_token');
+                sessionStorage.removeItem('processed_token');
+                window.location.reload();
+            }, 3000); // 3 segundos para que el usuario vea el mensaje
 
-            try {
-                if (TBK_TOKEN) {
-                    setPaymentStatus({
-                        success: false,
-                        message: "El pago fue cancelado.",
-                        type: "CANCELLED",
-                    });
-                } else {
-                    const response = await axios.post(
-                        `${import.meta.env.VITE_API_URL}/payments/commit_transaction`,
-                        { token: token_ws }
-                    );
+            return () => clearTimeout(timer);
+        } else if (paymentStatus && !paymentStatus.success) {
+            // Para errores, solo cerrar la notificación
+            const timer = setTimeout(() => {
+                clearPaymentStatus();
+            }, 5000);
 
-                    const data = response.data;
-
-                    if (data.status === "APPROVED") {
-                        const details =
-                            data.type === "SUBSCRIPTION"
-                                ? {
-                                      plan: data.plan,
-                                      subscriptionStart: data.subscriptionStart,
-                                      subscriptionEnd: data.subscriptionEnd,
-                                  }
-                                : data.type === "PROJECT_PUBLICATION"
-                                ? { projectId: data.projectId }
-                                : {};
-
-                        setPaymentStatus({
-                            success: true,
-                            message: data.message || "Pago procesado exitosamente.",
-                            type: data.type,
-                            details: {
-                                amount: data.amount,
-                                buyOrder: data.buyOrder,
-                                ...details,
-                            },
-                        });
-                    } else if (data.status === "REJECTED") {
-                        setPaymentStatus({
-                            success: false,
-                            message: data.message || "Pago rechazado.",
-                            type: data.type,
-                            reason: data.reason,
-                            details: {
-                                amount: data.amount,
-                                buyOrder: data.buyOrder,
-                            },
-                        });
-                    } else {
-                        setPaymentStatus({
-                            success: false,
-                            message: data.error || "Error inesperado al procesar el pago.",
-                            type: "ERROR",
-                            code: data.code,
-                            details: data.details,
-                        });
-                    }
-                }
-            } catch (error) {
-                console.error("Error procesando el pago:", error);
-                setPaymentStatus({
-                    success: false,
-                    message: error.response?.data?.error || "Error de red al procesar el pago. Intenta de nuevo.",
-                    type: "NETWORK_ERROR",
-                    code: error.response?.data?.code || "UNKNOWN_ERROR",
-                    details: error.response?.data || error.message,
-                });
-            } finally {
-                const newURL = `${window.location.origin}${window.location.pathname}`;
-                window.history.replaceState({}, document.title, newURL);
-                setTimeout(() => setPaymentStatus(null), 5000);
-            }
-        };
-
-        handlePaymentResponse();
-    }, [location.search]);
+            return () => clearTimeout(timer);
+        }
+    }, [paymentStatus, clearPaymentStatus]);
 
     if (loading) return <LoadingScreen />;
 
@@ -177,6 +125,8 @@ function MyProjects() {
                         className={`fixed top-24 left-1/2 transform -translate-x-1/2 p-5 rounded-xl shadow-2xl z-50 w-11/12 max-w-lg text-center transition-all duration-300 animate-[slideIn_0.5s_ease-out] backdrop-blur-sm ${
                             paymentStatus.success
                                 ? 'bg-emerald-50/95 text-emerald-800 border-2 border-emerald-300'
+                                : paymentStatus.type === 'PROCESSING'
+                                ? 'bg-blue-50/95 text-blue-800 border-2 border-blue-300'
                                 : 'bg-red-50/95 text-red-800 border-2 border-red-300'
                         }`}
                     >
@@ -184,6 +134,10 @@ function MyProjects() {
                             {paymentStatus.success ? (
                                 <svg className="w-6 h-6 text-emerald-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            ) : paymentStatus.type === 'PROCESSING' ? (
+                                <svg className="w-6 h-6 text-blue-600 flex-shrink-0 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                                 </svg>
                             ) : (
                                 <svg className="w-6 h-6 text-red-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">

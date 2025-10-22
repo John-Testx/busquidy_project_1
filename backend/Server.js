@@ -12,6 +12,8 @@ const bodyParser = require("body-parser");
 
 const routes = require("./routes");
 
+const { createMessage } = require("./queries/chat/chatQueries"); 
+
 const { testDbConnection, ensureUploadDirectories } = require("./dbTest");
 
 
@@ -156,7 +158,7 @@ let connectedUsers = 0;
 
 io.on("connection", (socket) => {
 
-  console.log("✅ Nuevo cliente conectado:", socket.id);
+  // console.log("✅ Nuevo cliente conectado:", socket.id);
 
   connectedUsers++;
 
@@ -232,7 +234,36 @@ io.on("connection", (socket) => {
 
   });
 
+  // ==================== LÓGICA DE CHAT INTEGRADO ====================
 
+// Escuchar por nuevos mensajes
+  socket.on('join_chat_room', (conversationId) => {
+    socket.join(conversationId);
+    console.log(`Usuario ${socket.id} se unió a la sala de chat ${conversationId}`);
+  });
+
+  socket.on('send_message', async (data) => {
+    try {
+      const { id_conversation, id_sender, message_text } = data;
+      
+      // 1. Guardar el mensaje en la base de datos
+      const newMessage = await createMessage(id_conversation, id_sender, message_text);
+
+      // 2. Emitir el mensaje a todos en la sala (incluido el remitente)
+      if (newMessage) {
+        io.to(id_conversation).emit('receive_message', newMessage);
+        console.log(`Mensaje emitido a la sala ${id_conversation}`);
+      }
+    } catch (error) {
+      console.error("Error al procesar el mensaje:", error);
+    }
+  });
+  
+  // Notificar a un usuario sobre una nueva conversación
+  socket.on('start_new_conversation', (data) => {
+    // Esto es más complejo y requeriría mapear userIds a socketIds.
+    // Por ahora, lo dejaremos para una futura mejora y nos basaremos en el polling para la lista de conversaciones.
+  });
 
   // ==================== FIN LÓGICA DE WEBRTC ====================
 
@@ -240,7 +271,7 @@ io.on("connection", (socket) => {
 
   socket.on("disconnect", () => {
 
-    console.log("❌ Cliente desconectado:", socket.id);
+    // console.log("❌ Cliente desconectado:", socket.id);
 
     connectedUsers--;
 

@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-// import "../../styles/Home/Footer.css";
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
 function Footer() {

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
-import useAuth from '../hooks/useAuth';
-import LoadingScreen from '../components/LoadingScreen';
+import { useAuth } from '@/hooks';
+import LoadingScreen from '@/components/LoadingScreen';
 
 /**
  * A protected route component that checks for authentication and user roles.

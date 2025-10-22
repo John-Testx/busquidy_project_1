@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Upload, FileText, CheckCircle, AlertCircle, X } from "lucide-react";
-import { uploadCV } from "../../../api/freelancerApi";
+import { uploadCV } from "@/api/freelancerApi";
 
 function CreateProfileCv({ id_usuario }) {
   const [cvFile, setCvFile] = useState(null);

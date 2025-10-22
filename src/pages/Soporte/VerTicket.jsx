@@ -1,22 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import Navbar from "../../components/Home/Navbar";
-import Footer from "../../components/Home/Footer";
-import TicketChat from "../../components/Soporte/TicketChat";
-import { 
-  getTicketDetails, 
-  getTicketMessages, 
-  sendTicketMessage 
-} from "../../api/supportApi";
-import { 
-  ArrowLeft, 
-  Clock, 
-  User, 
-  Tag, 
-  AlertTriangle,
-  CheckCircle,
-  Loader2 
-} from "lucide-react";
+import TicketChat from "@/components/Soporte/TicketChat";
+import { getTicketDetails, getTicketMessages, sendTicketMessage } from "@/api/supportApi";
+import { ArrowLeft, Clock, User, Tag, AlertTriangle, CheckCircle, Loader2 } from "lucide-react";
+import { Footer, Navbar } from '@/components/Home/';
 
 function VerTicket() {
   const { id_ticket } = useParams();

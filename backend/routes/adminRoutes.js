@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const { verifyToken } = require("../middlewares/auth"); // <- Asegúrate de importar auth
 
 // Importar controladores
 const {
@@ -18,6 +19,11 @@ const {
   updateAdminRoles
 } = require("../controllers/admin/adminRoleController");
 
+const {
+  getDisputedProjects,
+  refundProjectPayment
+} = require("../controllers/admin/disputeController"); // <- NUEVO
+
 // ============= RUTAS DE PERMISOS =============
 router.get("/permissions/:userId", getAdminPermissions);
 
@@ -30,5 +36,9 @@ router.delete("/role/:id", deleteRole);
 // ============= RUTAS DE ASIGNACIÓN DE ROLES A ADMINS =============
 router.get("/roles/:adminId", getAdminRoles);
 router.patch("/:id/roles", updateAdminRoles);
+
+// ============= RUTAS DE DISPUTAS Y REEMBOLSOS (NUEVO) =============
+router.get("/disputes/projects", verifyToken, getDisputedProjects);
+router.post("/disputes/refund/:id_proyecto", verifyToken, refundProjectPayment);
 
 module.exports = router;

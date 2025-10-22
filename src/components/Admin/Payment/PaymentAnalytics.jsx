@@ -1,112 +1,27 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
-import { groupBy, sumBy } from 'lodash';
-import { getPagosProyectos, getPagosSuscripciones } from '../../../api/paymentApi';
+import { usePaymentAnalytics} from '@/hooks';
 
 const PaymentAnalytics = () => {
-  const [proyectosPagos, setProyectosPagos] = useState([]);
-  const [suscripcionesPagos, setSuscripcionesPagos] = useState([]);
-  const [tipoVisualizacion, setTipoVisualizacion] = useState('barras');
-  const [tipoGrafico, setTipoGrafico] = useState('general');
-  const [filtroProyectos, setFiltroProyectos] = useState('todos');
-  const [filtroSuscripciones, setFiltroSuscripciones] = useState('todos');
-
-  useEffect(() => {
-    const fetchPagos = async () => {
-      try {
-        const [proyectosResponse, suscripcionesResponse] = await Promise.all([
-          getPagosProyectos(),
-          getPagosSuscripciones()
-        ]);
-        setProyectosPagos(proyectosResponse.data);
-        setSuscripcionesPagos(suscripcionesResponse.data);
-      } catch (error) {
-        console.error('Error al cargar los pagos:', error);
-      }
-    };
-
-    fetchPagos();
-  }, []);
-
-  const filteredProyectosPagos = proyectosPagos.filter(pago => {
-    if (filtroProyectos === 'completados') 
-      return pago.estado_pago === 'completado';
-    if (filtroProyectos === 'pendientes') 
-      return pago.estado_pago === 'pendiente';
-    return true;
-  });
-
-  const filteredSuscripcionesPagos = suscripcionesPagos.filter(pago => {
-    if (filtroSuscripciones === 'activas') 
-      return pago.estado_suscripcion === 'activa';
-    if (filtroSuscripciones === 'vencidas') 
-      return pago.estado_suscripcion === 'expirada';
-    return true;
-  });
-
-  const groupedProyectosPagos = groupBy(filteredProyectosPagos, pago => {
-    const fecha = new Date(pago.fecha_pago);
-    return `${fecha.getFullYear()}-${String(fecha.getMonth() + 1).padStart(2, '0')}`;
-  });
-
-  const groupedSuscripcionesPagos = groupBy(filteredSuscripcionesPagos, pago => {
-    const fecha = new Date(pago.fecha_pago);
-    return `${fecha.getFullYear()}-${String(fecha.getMonth() + 1).padStart(2, '0')}`;
-  });
-
-  const uniqueMonths = [...new Set([
-    ...Object.keys(groupedProyectosPagos),
-    ...Object.keys(groupedSuscripcionesPagos)
-  ])].sort();
-
-  const proyectosBarData = uniqueMonths.map(mes => ({
-    mes,
-    Proyectos: sumBy(groupedProyectosPagos[mes] || [], 'monto')
-  }));
-
-  const suscripcionesBarData = uniqueMonths.map(mes => ({
-    mes,
-    Suscripciones: sumBy(groupedSuscripcionesPagos[mes] || [], 'monto')
-  }));
-
-  const generalPieData = [
-    {
-      name: 'Proyectos',
-      value: sumBy(filteredProyectosPagos, 'monto'),
-      color: '#07767c'
-    },
-    {
-      name: 'Suscripciones',
-      value: sumBy(filteredSuscripcionesPagos, 'monto'),
-      color: '#10b981'
-    }
-  ];
-
-  const proyectosPieData = [
-    {
-      name: 'Proyectos Pagados',
-      value: sumBy(filteredProyectosPagos.filter(p => p.estado_pago === 'completado'), 'monto'),
-      color: '#07767c'
-    },
-    {
-      name: 'Proyectos Pendientes',
-      value: sumBy(filteredProyectosPagos.filter(p => p.estado_pago === 'pendiente'), 'monto'),
-      color: '#f59e0b'
-    }
-  ];
-
-  const suscripcionesPieData = [
-    {
-      name: 'Suscripciones Activas',
-      value: sumBy(filteredSuscripcionesPagos.filter(s => s.estado_suscripcion === 'activa'), 'monto'),
-      color: '#10b981'
-    },
-    {
-      name: 'Suscripciones Vencidas',
-      value: sumBy(filteredSuscripcionesPagos.filter(s => s.estado_suscripcion === 'expirada'), 'monto'),
-      color: '#ef4444'
-    }
-  ];
+  const {
+    tipoVisualizacion,
+    setTipoVisualizacion,
+    tipoGrafico,
+    setTipoGrafico,
+    filtroProyectos,
+    setFiltroProyectos,
+    filtroSuscripciones,
+    setFiltroSuscripciones,
+    loading,
+    error,
+    proyectosBarData,
+    suscripcionesBarData,
+    generalBarData,
+    generalPieData,
+    proyectosPieData,
+    suscripcionesPieData,
+    totales
+  } = usePaymentAnalytics();
 
   const renderBarChart = (data, dataKeys, names) => (
     <ResponsiveContainer width="100%" height={400}>
@@ -265,11 +180,7 @@ const PaymentAnalytics = () => {
             {tipoGrafico === 'proyectos' && renderBarChart(proyectosBarData, 'Proyectos', 'Pagos de Proyectos')}
             {tipoGrafico === 'suscripciones' && renderBarChart(suscripcionesBarData, 'Suscripciones', 'Pagos de Suscripciones')}
             {tipoGrafico === 'general' && renderBarChart(
-              uniqueMonths.map(mes => ({
-                mes,
-                Proyectos: sumBy(groupedProyectosPagos[mes] || [], 'monto'),
-                Suscripciones: sumBy(groupedSuscripcionesPagos[mes] || [], 'monto')
-              })), 
+              generalBarData, 
               ['Proyectos', 'Suscripciones'], 
               ['Pagos de Proyectos', 'Pagos de Suscripciones']
             )}
@@ -316,6 +227,22 @@ const PaymentAnalytics = () => {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="p-6 flex justify-center items-center min-h-screen">
+        <div className="text-xl text-gray-600">Cargando datos...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="p-6 flex justify-center items-center min-h-screen">
+        <div className="text-xl text-red-600">Error al cargar los datos. Por favor, intenta nuevamente.</div>
+      </div>
+    );
+  }
+
   return (
     <div className="p-6">
       <h2 className="text-2xl font-bold text-gray-800 mb-6">Análisis de Pagos</h2>
@@ -356,19 +283,19 @@ const PaymentAnalytics = () => {
         <div className="bg-gradient-to-br from-[#07767c] to-[#055a5f] rounded-xl shadow-lg p-6 text-white">
           <h3 className="text-lg font-semibold mb-2 opacity-90">Total Proyectos</h3>
           <p className="text-3xl font-bold">
-            {sumBy(filteredProyectosPagos, 'monto').toLocaleString('es-CL', { style: 'currency', currency: 'CLP' })}
+            {totales.proyectos.toLocaleString('es-CL', { style: 'currency', currency: 'CLP' })}
           </p>
         </div>
         <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-xl shadow-lg p-6 text-white">
           <h3 className="text-lg font-semibold mb-2 opacity-90">Total Suscripciones</h3>
           <p className="text-3xl font-bold">
-            {sumBy(filteredSuscripcionesPagos, 'monto').toLocaleString('es-CL', { style: 'currency', currency: 'CLP' })}
+            {totales.suscripciones.toLocaleString('es-CL', { style: 'currency', currency: 'CLP' })}
           </p>
         </div>
         <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl shadow-lg p-6 text-white">
           <h3 className="text-lg font-semibold mb-2 opacity-90">Total General</h3>
           <p className="text-3xl font-bold">
-            {(sumBy(filteredProyectosPagos, 'monto') + sumBy(filteredSuscripcionesPagos, 'monto')).toLocaleString('es-CL', { style: 'currency', currency: 'CLP' })}
+            {totales.general.toLocaleString('es-CL', { style: 'currency', currency: 'CLP' })}
           </p>
         </div>
       </div>

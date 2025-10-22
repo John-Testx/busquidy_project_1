@@ -11,6 +11,7 @@ import {
   Shield,
   LogOut,
   ChevronRight,
+  AlertTriangle, // <- IMPORTAR ESTE ÍCONO
 } from "lucide-react";
 
 export default function SidebarAdmin() {
@@ -34,6 +35,13 @@ export default function SidebarAdmin() {
       title: "Soporte", 
       icon: <MessageSquare size={20} />, 
       path: "/adminhome/supportmanagement" 
+    },
+    // ✅ NUEVO MÓDULO AGREGADO
+    { 
+      id: "disputes", 
+      title: "Disputas y Reembolsos", 
+      icon: <AlertTriangle size={20} />, 
+      path: "/adminhome/disputes" 
     },
     { 
       id: "paymentmanagement", 
@@ -131,7 +139,7 @@ export default function SidebarAdmin() {
             <button
               onClick={() => {
                 localStorage.removeItem("token");
-                window.location.href = "/login";
+                window.location.href = "/";
               }}
               className="w-full flex items-center justify-center gap-2 bg-white hover:bg-red-50 text-red-600 font-medium py-3 rounded-xl transition-all border border-red-200 hover:border-red-300 shadow-sm hover:shadow"
             >

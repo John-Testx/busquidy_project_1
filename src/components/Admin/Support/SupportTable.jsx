@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { useAdminTickets } from "../../../hooks/useAdminTickets";
-import { updateTicketStatus } from "../../../api/supportApi";
+import { useAdminTickets } from "@/hooks";
+import { updateTicketStatus } from "@/api/supportApi";
 import { Loader2, CheckCircle, XCircle, MessageSquare } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 

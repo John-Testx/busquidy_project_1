@@ -1,35 +1,40 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 
-// Import your pages (using your existing barrel files is great!)
+// Import General components
 import { Home, BusquidyPage, AboutUsPage } from '@pages/General';
 import { User, Unauthorized, PaymentReturn, NotAuthenticated } from '@pages/User';
 
-import { Empresa, FindFreelancer, MyProjects, ViewFreelancer, ViewPerfilEmpresa, } from '@pages/Empresa';
-import { FreeLancer, MyPostulations, ViewMoreDetailsFreelancer, ViewPerfilFreeLancer, } from '@pages/Freelancer';
+// Import Empresa components
+import { Empresa, FindFreelancer, MyProjects, ViewFreelancer } from '@pages/Empresa';
+
+// Import Freelancer components
+import { FreeLancer, MyPostulations, ViewMoreDetailsFreelancer, ViewPerfilFreeLancer, FreelancerProfileLayout} from '@pages/Freelancer';
+
 import VideoCallPage from "@pages/Video/VideoCallPage";
 import MyCallsPage from "@pages/Video/MyCallsPage";
 
-import {
-    SoporteHome,
-    CrearTicket,
-    VerTicket,
-    CrearTicketPublico,
-    VerTicketPublico,
-    BusquidyGuia
-} from "@pages/Soporte";
+// Import Soporte components
+import { SoporteHome, CrearTicket, VerTicket, CrearTicketPublico, VerTicketPublico, BusquidyGuia } from "@pages/Soporte";
 
-import ProjectList from '../pages/Project/ProjectList';
-import EditProjectPage from '../components/Empresa/Projects/ProjectForm/EditProjectPage';
+import ProjectList from '@/pages/Publications/ProjectList';
+import EditProjectPage from '@/components/Empresa/Projects/ProjectForm/EditProjectPage';
+
+import ChatPage from '@/pages/Chat/ChatPage';
 
 // Import Admin components
-import { AdminHome, UserManagement, ProjectManagement, ReviewManagement, SupportManagement, PaymentManagement, NotificationManagement, AuditAndSecurity } from '@pages/Admin';
+import { AdminHome, UserManagement, ProjectManagement, ReviewManagement, SupportManagement, PaymentManagement, NotificationManagement, AuditAndSecurity, DisputeManagement } from '@pages/Admin';
 import { Dashboard, UserTable, SupportTable, SupportChat, AdminRoles, UserEditPage } from '@components/Admin';
 
 
-// Import your protected route components
+// Import  protected route components
 import ProtectedRoute from './ProtectedRoute';
 import ProtectedAdminRoute from './ProtectedAdminRoute'; // You can keep this or merge logic into the new one
+import MyAvailability from '@/pages/Freelancer/MyAvailability';
+import EmpresaProfileLayout from '@/pages/Empresa/EmpresaProfileLayout';
+import EmpresaInfo from '@/components/Empresa/Perfil/EmpresaInfo';
+import RepresentanteInfo from '@/components/Empresa/Perfil/RepresentanteInfo';
+import EmpresaAccess from '@/components/Empresa/Perfil/EmpresaAccess';
 
 const AppRoutes = () => {
   return (
@@ -42,6 +47,11 @@ const AppRoutes = () => {
       <Route path="/payment/return" element={<PaymentReturn />} />
       <Route path="/notauthenticated" element={<NotAuthenticated />} />
       <Route path="/unauthorized" element={<Unauthorized />} />
+
+      {/* Chat Routes */}
+      <Route element={<ProtectedRoute allowedRoles={['freelancer', 'empresa']} />}>
+        <Route path="/chat" element={<ChatPage />} />
+      </Route>
 
       {/* Soporte Routes (Public and Private) */}
       <Route path="/busquidyGuia" element={<BusquidyGuia />} />
@@ -63,6 +73,15 @@ const AppRoutes = () => {
       <Route element={<ProtectedRoute allowedRoles={['freelancer']} />}>
         <Route path="/freelancer" element={<FreeLancer />} />
         <Route path="/mypostulations" element={<MyPostulations />} />
+        
+        <Route path="/freelancer-profile" element={<FreelancerProfileLayout/>}>
+          <Route index element={<ViewPerfilFreeLancer/>} />
+          <Route path="view-profile" element={<ViewPerfilFreeLancer />} />
+          <Route path="my-postulations" element={<MyPostulations />} />
+          <Route path="availability" element={<MyAvailability />} />
+        </Route>
+
+        {/* <Route path="/viewperfilfreelancer" element={<FreelancerProfile />} />  */}
         <Route path="/viewperfilfreelancer" element={<ViewPerfilFreeLancer />} />
         <Route path="/viewmoredetailsfreelancer" element={<ViewMoreDetailsFreelancer />} />
       </Route>
@@ -71,7 +90,15 @@ const AppRoutes = () => {
       <Route element={<ProtectedRoute allowedRoles={['empresa']} />}>
         <Route path="/empresa" element={<Empresa />} />
         <Route path="/myprojects" element={<MyProjects />} />
-        <Route path="/viewperfilempresa" element={<ViewPerfilEmpresa />} />
+
+        <Route path="/company-profile" element={<EmpresaProfileLayout />}>
+          {/* Redirect the base path to the first section */}
+          <Route index element={<EmpresaInfo />} />
+          <Route path="info" element={<EmpresaInfo />} />
+          <Route path="representante" element={<RepresentanteInfo />} />
+          <Route path="acceso" element={<EmpresaAccess />} />
+        </Route>
+
         <Route path="/findfreelancer" element={<FindFreelancer />} />
         <Route path="/viewfreelancer/:id" element={<ViewFreelancer />} />
         <Route path="/projects/edit/:id" element={<EditProjectPage />} />
@@ -96,6 +123,7 @@ const AppRoutes = () => {
             <Route path="auditandsecurity" element={<AuditAndSecurity />} />
             <Route path="admin/support" element={<SupportTable />} />
             <Route path="admin/support/:id_ticket" element={<SupportChat />} />
+            <Route path="/adminhome/disputes" element={<DisputeManagement />} />
         </Route>
       </Route>
 

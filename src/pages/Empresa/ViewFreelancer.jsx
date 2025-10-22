@@ -1,58 +1,50 @@
-import React, {useState, useEffect} from "react";
-import {jwtDecode} from 'jwt-decode';
+import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
-import Navbar from "../../components/Home/Navbar";
-import Footer from "../../components/Home/Footer";
-import LoadingScreen from "../../components/LoadingScreen"; 
-import PerfilFreelancerEmpresaView from "../../components/Empresa/FreelancerList/PerfilFreelancerEmpresaView";
-import useAuth from "../../hooks/useAuth";
+import LoadingScreen from "@/components/LoadingScreen"; 
+import PerfilFreelancerEmpresaView from "@/components/Empresa/FreelancerList/PerfilFreelancerEmpresaView";
+import { useAuth } from "@/hooks";
+import {useFreelancerProfile} from "@/hooks";
+import { getEmpresaProfile } from "@/api/freelancerApi";
+import { Footer, Navbar } from '@/components/Home/';
 
 function ViewFreelancer() {
-    const [logoutStatus, setLogoutStatus] = useState("");
-    const [userType, setUserType] = useState("");
     const [isPerfilIncompleto, setIsPerfilIncompleto] = useState(null); 
     const navigate = useNavigate(); 
-    const { id_usuario, isAuthenticated, loading } = useAuth;
+    const { id_usuario, isAuthenticated, loading: authLoading } = useAuth();
     const { id } = useParams();
-    const [freelancer, setFreelancer] = useState(null);
-    const [freelancerError, setFreelancerError] = useState(false);
+    
+    // Usar el custom hook para obtener el perfil del freelancer
+    const { 
+        freelancer, 
+        loading: freelancerLoading, 
+        error: freelancerError 
+    } = useFreelancerProfile(id);
 
+    // Verificar el perfil de la empresa si el usuario está autenticado
     useEffect(() => {
-        const fetchFreelancerData = async () => {
-            try {
-                const response = await axios.get(`http://localhost:3001/api/freelancer/freelancer-perfil/${id}`);
-                console.log("Datos recibidos del backend:", response.data);
-                setFreelancer(response.data);
-                setFreelancerError(false);
-            } catch (error) {
-                console.error("Error al obtener los datos del freelancer:", error);
-                setFreelancerError(true);
+        const fetchPerfilEmpresa = async () => {
+            if (id_usuario) {
+                try {
+                    const data = await getEmpresaProfile(id_usuario);
+                    console.log("Se verificó el perfil de la empresa");
+                    setIsPerfilIncompleto(data.isPerfilIncompleto);
+                } catch (error) {
+                    console.error("Error al verificar el perfil de la empresa:", error);
+                }
             }
         };
-        fetchFreelancerData();
-        fetchPerfilEmpresa(id_usuario);
-    }, [id]);
-    
-    const fetchPerfilEmpresa = async (id_usuario) => {
-        try {
-            const response = await axios.get(`http://localhost:3001/api/empresa/${id_usuario}`);
-            console.log("Se verificó el perfil de la empresa");
-            setIsPerfilIncompleto(response.data.isPerfilIncompleto);
-        } catch (error) {
-            console.error("Error al verificar el perfil de la empresa:", error);
-        }
-    };
+
+        fetchPerfilEmpresa();
+    }, [id_usuario]);
+
+    // Loading combinado
+    const isLoading = authLoading || freelancerLoading;
 
     return (
         <div className="flex flex-col min-h-screen bg-gray-50">
-            {/* Loading Screen */}
-            {loading && <LoadingScreen />}
-
-            {/* Navbar */}
+            {isLoading && <LoadingScreen />}
             <Navbar />
             
-            {/* Main Content */}
             <main className="flex-1 pt-24 pb-16">
                 {freelancerError ? (
                     <div className="max-w-5xl mx-auto px-4">
@@ -64,7 +56,9 @@ function ViewFreelancer() {
                                 Error al cargar el perfil
                             </h2>
                             <p className="text-red-700 mb-6">
-                                No pudimos encontrar los datos del freelancer. Por favor, intenta nuevamente.
+                                {typeof freelancerError === 'string' 
+                                    ? freelancerError 
+                                    : 'No pudimos encontrar los datos del freelancer. Por favor, intenta nuevamente.'}
                             </p>
                             <button
                                 onClick={() => navigate("/")}
@@ -78,22 +72,23 @@ function ViewFreelancer() {
                 ) : freelancer ? (
                     <PerfilFreelancerEmpresaView freelancer={freelancer} />
                 ) : (
-                    <div className="max-w-5xl mx-auto px-4">
-                        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-16 text-center">
-                            <div className="flex justify-center mb-4">
-                                <div className="animate-spin">
-                                    <i className="fas fa-spinner text-4xl text-teal-600"></i>
+                    !isLoading && (
+                        <div className="max-w-5xl mx-auto px-4">
+                            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-16 text-center">
+                                <div className="flex justify-center mb-4">
+                                    <div className="animate-spin">
+                                        <i className="fas fa-spinner text-4xl text-teal-600"></i>
+                                    </div>
                                 </div>
+                                <p className="text-gray-600 text-lg">
+                                    Cargando perfil del freelancer...
+                                </p>
                             </div>
-                            <p className="text-gray-600 text-lg">
-                                Cargando perfil del freelancer...
-                            </p>
                         </div>
-                    </div>
+                    )
                 )}
             </main>
 
-            {/* Footer */}
             <Footer />
         </div>
     );

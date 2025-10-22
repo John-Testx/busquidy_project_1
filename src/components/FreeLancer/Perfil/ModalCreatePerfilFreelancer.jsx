@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import Select from "react-select";
 import { X, ChevronLeft, ChevronRight, Check, CheckCircle, ImageOff } from "lucide-react";
-import { initialFreelancerData } from "../../../common/consts";
-import { createFreelancerProfile } from "../../../api/freelancerApi";
+import { initialFreelancerData } from "@/common/consts";
+import { createFreelancerProfile } from "@/api/freelancerApi";
 
 // Componentes de cada paso
 import StepPresentacion from "./Sections/stepPresentacion";

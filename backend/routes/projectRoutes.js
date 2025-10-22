@@ -9,7 +9,8 @@ const {
   updateProject,
   createProject,
   deleteProject,
-  getProjectsByUser
+  getProjectsByUser,
+  releaseProjectPayment  // <- NUEVO
 } = require("../controllers/project/projectController");
 
 const {
@@ -25,6 +26,9 @@ router.put("/updateProject/:id", updateProject);
 router.post("/create-project", verifyToken, createProject);
 router.delete("/delete/:id_proyecto", deleteProject);
 router.get("/get/:id_usuario", getProjectsByUser);
+
+// ============= LIBERACIÓN DE PAGO (NUEVO) =============
+router.post("/release-payment/:id_proyecto", verifyToken, releaseProjectPayment);
 
 // ============= RUTAS DE PUBLICACIONES =============
 router.put("/update-proyecto-state/:id_proyecto", updateProjectState);
