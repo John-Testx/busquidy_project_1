@@ -1,0 +1,40 @@
+name: Deploy Frontend to Google Cloud Storage
+
+# Run this workflow on a push to the main branch
+on:
+  push:
+    branches:
+      - main  # Or master, or whatever your main branch is
+    paths:
+      - 'src/**'       # Only run if frontend files changed
+      - 'public/**'
+      - 'index.html'
+      - 'package.json'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18' # Use the Node version you develop with
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build Frontend
+        run: npm run build  # This creates the 'dist' folder on the runner
+
+      - name: Authenticate to Google Cloud
+        uses: 'google-github-actions/auth@v2'
+        with:
+          credentials_json: '${{ secrets.GCP_SA_KEY }}' # You must add this secret to GitHub
+
+      - name: Deploy to Google Cloud Storage
+        # Use rsync -d to delete old files from the bucket
+        run: gcloud storage rsync -d -r dist/ gs://YOUR-BUCKET-NAME
