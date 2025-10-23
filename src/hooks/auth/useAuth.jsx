@@ -29,10 +29,10 @@ function useAuth() {
     };
 
     /**
-     * Refresca el estado de autenticación desde localStorage
+     * Refresca el estado de autenticación desde sessionStorage
      */
     const refresh = useCallback(() => {
-        const token = localStorage.getItem("token");
+        const token = sessionStorage.getItem("token"); // CAMBIADO
         setIsAuthenticated(!!token);
 
         if (token) {
@@ -42,9 +42,9 @@ function useAuth() {
                 setIdUsuario(decoded.id_usuario || null);
             } catch (e) {
                 console.error("Error decoding token:", e);
-                localStorage.removeItem("token");
-                localStorage.removeItem("tipo_usuario");
-                localStorage.removeItem("correo");
+                sessionStorage.removeItem("token"); // CAMBIADO
+                sessionStorage.removeItem("tipo_usuario"); // CAMBIADO
+                sessionStorage.removeItem("correo"); // CAMBIADO
                 setTipoUsuario(null);
                 setIdUsuario(null);
                 setIsAuthenticated(false);
@@ -81,10 +81,10 @@ function useAuth() {
         try {
             const data = await loginUser(correo, contraseña);
 
-            // Guardar datos en localStorage
-            localStorage.setItem("token", data.token);
-            localStorage.setItem("tipo_usuario", data.tipo_usuario);
-            localStorage.setItem("correo", correo);
+            // Guardar datos en sessionStorage
+            sessionStorage.setItem("token", data.token); // CAMBIADO
+            sessionStorage.setItem("tipo_usuario", data.tipo_usuario); // CAMBIADO
+            sessionStorage.setItem("correo", correo); // CAMBIADO
             
             // Actualizar estado
             setIsAuthenticated(true);
@@ -141,9 +141,9 @@ function useAuth() {
      * Cierra la sesión del usuario
      */
     const logout = () => {
-        localStorage.removeItem("token");
-        localStorage.removeItem("tipo_usuario");
-        localStorage.removeItem("correo");
+        sessionStorage.removeItem("token"); // CAMBIADO
+        sessionStorage.removeItem("tipo_usuario"); // CAMBIADO
+        sessionStorage.removeItem("correo"); // CAMBIADO
         refresh();
     };
 

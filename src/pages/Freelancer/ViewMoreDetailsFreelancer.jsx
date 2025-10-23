@@ -17,7 +17,7 @@ function ViewMoreDetailsFreelancer() {
 
   useEffect(() => {
     const checkAuth = async () => {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       setIsAuthenticated(!!token);
 
       if (token) {
@@ -32,7 +32,7 @@ function ViewMoreDetailsFreelancer() {
         } catch (error) {
           console.error("Error decodificando token:", error);
           setError("Error al verificar sesión");
-          localStorage.removeItem("token");
+          sessionStorage.removeItem("token");
           setIsAuthenticated(false);
         }
       }

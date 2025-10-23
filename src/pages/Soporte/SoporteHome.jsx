@@ -16,7 +16,7 @@ function SoporteHome() {
   const [guestEmail, setGuestEmail] = useState(null);
   const [showEmailVerification, setShowEmailVerification] = useState(false);
 
-  const token = localStorage.getItem("token");
+  const token = sessionStorage.getItem("token");
 
   useEffect(() => {
     checkAuthAndLoadTickets();

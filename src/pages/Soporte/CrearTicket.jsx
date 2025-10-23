@@ -11,7 +11,7 @@ function CrearTicket() {
   const [success, setSuccess] = useState(false);
   const [ticketCreado, setTicketCreado] = useState(null);
 
-  const token = localStorage.getItem("token");
+  const token = sessionStorage.getItem("token");
 
   if (!token) {
     navigate("/");

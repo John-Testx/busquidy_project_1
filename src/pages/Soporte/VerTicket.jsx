@@ -13,9 +13,9 @@ function VerTicket() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Obtener el token y usuario del localStorage
-  const token = localStorage.getItem("token");
-  const usuario = JSON.parse(localStorage.getItem("usuario") || "{}");
+  // Obtener el token y usuario del sessionStorage
+  const token = sessionStorage.getItem("token");
+  const usuario = JSON.parse(sessionStorage.getItem("usuario") || "{}");
 
   useEffect(() => {
     if (!token) {

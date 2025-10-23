@@ -5,7 +5,7 @@ import { useAdminPermissions } from "@/hooks";
 
 export default function ProtectedAdminRoute({ requiredPermission }) {
   const { isAuthenticated, tipo_usuario, loading } = useAuth();
-  const { permissions } = useAdminPermissions(localStorage.getItem("id_usuario")); // optional optimization
+  const { permissions } = useAdminPermissions(sessionStorage.getItem("id_usuario")); // optional optimization
 
   if (loading) return <div>Cargando...</div>;
 
