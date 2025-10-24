@@ -3,7 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 
 // Import General components
 import { Home, BusquidyPage, AboutUsPage } from '@pages/General';
-import { User, Unauthorized, PaymentReturn, NotAuthenticated } from '@pages/User';
+import { User, Unauthorized, PaymentReturn, NotAuthenticated, NotFoundPage } from '@pages/User';
 
 // Import Empresa components
 import { Empresa, FindFreelancer, MyProjects, ViewFreelancer, ProjectView } from '@pages/Empresa';
@@ -126,6 +126,8 @@ const AppRoutes = () => {
             <Route path="/adminhome/disputes" element={<DisputeManagement />} />
         </Route>
       </Route>
+    
+    <Route path="*" element={<NotFoundPage />} />
 
     </Routes>
   );
