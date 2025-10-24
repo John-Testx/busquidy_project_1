@@ -49,7 +49,7 @@ function App() {
   }
 
 return (
-    <Router basename="/" >
+    <Router basename={import.meta.env.BASE_URL} >
       <div className="h-full w-full">
           <AppRoutes />
       </div>
