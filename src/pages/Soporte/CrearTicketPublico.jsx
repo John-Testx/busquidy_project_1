@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../../components/Home/Navbar";
-import Footer from "../../components/Home/Footer";
-import { createPublicTicket } from "../../api/supportApi";
+import { createPublicTicket } from "@/api/supportApi";
 import { ArrowLeft, CheckCircle, AlertCircle, User, Mail as MailIcon } from "lucide-react";
+import { Footer, Navbar } from '@/components/Home/';
 
 const categorias = [
   { value: "Cuenta", icon: "👤", descripcion: "Problemas con acceso o recuperación de cuenta" },
@@ -157,7 +156,7 @@ function CrearTicketPublico() {
           {/* Header */}
           <div className="mb-6">
             <button
-              onClick={() => navigate("/soporte")}
+              onClick={() => navigate("/soportehome")}
               className="flex items-center gap-2 text-gray-600 hover:text-gray-800 mb-4 transition-colors"
             >
               <ArrowLeft className="w-5 h-5" />
@@ -395,18 +394,6 @@ function CrearTicketPublico() {
                 <span>Tiempo promedio de respuesta: 2-4 horas en horario laboral</span>
               </li>
             </ul>
-          </div>
-
-          <div className="max-w-3xl mx-auto mt-6 bg-white border border-gray-200 rounded-xl p-6 text-center">
-            <p className="text-gray-600 mb-3">
-              ¿Ya tienes una cuenta?
-            </p>
-            <button
-              onClick={() => navigate("/login")}
-              className="inline-flex items-center gap-2 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors font-semibold"
-            >
-              Inicia sesión aquí
-            </button>
           </div>
         </div>
       </div>

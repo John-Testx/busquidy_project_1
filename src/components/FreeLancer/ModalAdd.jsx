@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { optionsCategorySkills } from '../../common/consts';
+import { optionsCategorySkills } from '@/common/consts';
 
 const ModalAdd = ({ isOpen, onClose, onConfirm, id_usuario, itemType, initialData }) => {
     const [formData, setFormData] = useState({});

@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
 import {jwtDecode} from 'jwt-decode';
 import { useNavigate } from "react-router-dom";
-import Navbar from "../../components/Home/Navbar";
-import LittleSearchSection from "../../components/FreeLancer/PanelFreelancer/LittleSearchSection";
-import Footer from "../../components/Home/Footer";
-import LoadingScreen from "../../components/LoadingScreen";
-import InfoSectionFreelancer from "../../components/FreeLancer/PanelFreelancer/InfoSectionFreelancer";
+import LittleSearchSection from "@/components/FreeLancer/PanelFreelancer/LittleSearchSection";
+import LoadingScreen from "@/components/LoadingScreen";
+import InfoSectionFreelancer from "@/components/FreeLancer/PanelFreelancer/InfoSectionFreelancer";
+import { Footer, Navbar } from '@/components/Home/';
 
 function FreeLancer() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -40,32 +39,10 @@ function FreeLancer() {
         return () => window.removeEventListener('storage', checkAuth);
     }, []);
 
-    const handleLogout = () => {
-        setLoading(true);
-        setLogoutStatus("Cerrando sesión...");
-        
-        setTimeout(() => {
-            localStorage.removeItem("token");
-            localStorage.removeItem("correo");
-            setIsAuthenticated(false);
-            setUserType(null);
-            setLogoutStatus("Sesión cerrada");
-            
-            setTimeout(() => {
-                setLoading(false);
-                navigate("/");
-            }, 1000);
-        });
-    };
-
-    const renderNavbar = () => {
-        return <Navbar />;
-    };
-
     return (
         <div>
             {loading && <LoadingScreen />}
-            {renderNavbar()}
+            <Navbar />;
             <LittleSearchSection/>
             <InfoSectionFreelancer/>
             <Footer/>

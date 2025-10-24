@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-// import { getPermissions, updatePermissions } from "../../api/userApi";
+// import { getPermissions, updatePermissions } from "@/api/userApi";
 
 const PermissionManagement = () => {
   const [permissions, setPermissions] = useState([]);

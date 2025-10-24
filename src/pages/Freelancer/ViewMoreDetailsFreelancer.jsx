@@ -2,10 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";     
 import { AlertCircle, Loader } from "lucide-react";
-import Navbar from "../../components/Home/Navbar";
-import Footer from "../../components/Home/Footer";
-import LoadingScreen from "../../components/LoadingScreen";
-import { getFreelancerProfile } from "../../api/freelancerApi";
+import LoadingScreen from "@/components/LoadingScreen";
+import { getFreelancerProfile } from "@/api/freelancerApi";
+import { Footer, Navbar } from '@/components/Home/';
 
 function ViewMoreDetailsFreelancer() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -59,16 +58,7 @@ function ViewMoreDetailsFreelancer() {
   if (loading) return <LoadingScreen />;
 
   if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Debes iniciar sesión</h1>
-          <button onClick={() => navigate("/login")} className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-            Ir a iniciar sesión
-          </button>
-        </div>
-      </div>
-    );
+    return navigate("/notauthenticated")
   }
 
   if (error) {

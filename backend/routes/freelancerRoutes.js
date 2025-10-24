@@ -11,6 +11,7 @@ const sectionsController = require("../controllers/freelancer/freelancerSections
 const applicationController = require("../controllers/freelancer/freelancerApplicationController");
 const searchController = require("../controllers/freelancer/freelancerSearchController");
 const cvController = require("../controllers/freelancer/freelancerCVController");
+const availabilityRoutes = require('./availabilityRoutes');
 
 // ============================================
 // RUTAS DE PERFIL
@@ -68,5 +69,11 @@ router.post("/upload-cv", uploadCV.single("cv"), cvController.uploadCV);
 
 // Obtener URL del CV
 router.get("/freelancer/:id/cv", cvController.getCVUrl);
+
+
+// Rutas para la gestión de disponibilidad del freelancer
+router.use('/availability', availabilityRoutes);
+
+
 
 module.exports = router;

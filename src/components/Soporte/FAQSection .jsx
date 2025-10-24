@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-// import '../../styles/Home/FAQSection.css';
 
 const FAQSection = () => {
     const [activeIndex, setActiveIndex] = useState(null);

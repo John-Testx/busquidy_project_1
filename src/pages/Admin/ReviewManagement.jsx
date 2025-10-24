@@ -1,5 +1,5 @@
 import React from "react";
-import ReviewsTable from "../../components/Admin/ReviewTable";
+import ReviewsTable from "@/components/Admin/ReviewTable";
 
 function ReviewsManagement() {
     return (

@@ -6,3 +6,4 @@ export { default as SupportManagement} from "./SupportManagement";
 export { default as ProjectManagement} from "./ProjectManagement";
 export { default as PaymentManagement} from "./PaymentManagement";
 export { default as AuditAndSecurity} from "./AuditAndSecurity";
+export { default as DisputeManagement} from "./DisputeManagement";

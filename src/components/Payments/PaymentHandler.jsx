@@ -1,7 +1,6 @@
-// src/components/Payments/PaymentHandler.jsx
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { commitTransaction } from "../../api/paymentApi";
+import { commitTransaction } from "@/api/paymentApi";
 
 function PaymentHandler() {
   const location = useLocation();

@@ -1,22 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
-import Navbar from "../../components/Home/Navbar";
-import Footer from "../../components/Home/Footer";
-import TicketChat from "../../components/Soporte/TicketChat";
-import { 
-  getPublicTicketDetails, 
-  getPublicTicketMessages, 
-  sendPublicTicketMessage 
-} from "../../api/supportApi";
-import { 
-  ArrowLeft, 
-  Clock, 
-  Tag, 
-  AlertTriangle,
-  CheckCircle,
-  Loader2,
-  Mail
-} from "lucide-react";
+import TicketChat from "@/components/Soporte/TicketChat";
+import { getPublicTicketDetails, getPublicTicketMessages, sendPublicTicketMessage } from "@/api/supportApi";
+import { ArrowLeft, Clock, Tag, AlertTriangle, CheckCircle, Loader2, Mail } from "lucide-react";
+import { Footer, Navbar } from '@/components/Home/';
 
 function VerTicketPublico() {
   const { id_ticket } = useParams();

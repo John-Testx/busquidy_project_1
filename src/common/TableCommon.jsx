@@ -100,7 +100,10 @@ function AdminTable({
                 >
                   {columns.map(col => (
                     <td key={col.key} className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                      {col.render ? col.render(row[col.key], row, actions) : row[col.key]}
+                      {col.render 
+                        ? col.render(row[col.key] ?? "", row, actions)
+                        : (row[col.key] ?? "")
+                      }
                     </td>
                   ))}
                 </tr>

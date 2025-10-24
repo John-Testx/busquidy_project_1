@@ -29,7 +29,7 @@ export const profileLinks = [
     },
     {
         label: "Mi perfil",
-        link: "/viewperfilempresa",
+        link: "/company-profile",
         icon: "bi bi-person",
         roles: ["empresa"]
     },
@@ -49,7 +49,7 @@ export const profileLinks = [
 
 
 export const profileLinksEmpresa = [
-    { label: "Mi perfil", link: "/viewperfilempresa", icon: "bi bi-person" },
+    { label: "Mi perfil", link: "/company-profile", icon: "bi bi-person" },
     { label: "Mis publicaciones", link: "/myprojects", icon: "bi bi-file-earmark-text" },
     { label: "Mejorar Busquidy", link: "#", icon: "bi bi-arrow-up-right-circle" }
 ];

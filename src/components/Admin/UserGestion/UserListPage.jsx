@@ -1,5 +1,7 @@
+// Creo que no se ocupa este archivo
+
 import React, { useEffect, useState } from "react";
-import { getUsuarios } from "../../api/userApi";
+import { getUsuarios } from "@/api/userApi";
 import { useNavigate } from "react-router-dom";
 import { 
   Users, 

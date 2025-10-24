@@ -2,101 +2,69 @@ import { jwtDecode } from "jwt-decode";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AlertCircle, Loader, FileText, User, Briefcase, Eye, Upload, Edit } from "lucide-react";
-import Navbar from "../../components/Home/Navbar";
-import Footer from "../../components/Home/Footer";
-import CreateProfileCv from "../../components/FreeLancer/Perfil/CreateProfileCv";
-import LoadingScreen from "../../components/LoadingScreen";
-import ModalCreatePerfilFreelancer from "../../components/FreeLancer/Perfil/ModalCreatePerfilFreelancer";
-import { checkProfileExists, getFreelancerProfile } from "../../api/freelancerApi";
+import CreateProfileCv from "@/components/FreeLancer/Perfil/CreateProfileCv";
+import LoadingScreen from "@/components/LoadingScreen";
+import ModalCreatePerfilFreelancer from "@/components/FreeLancer/Perfil/ModalCreatePerfilFreelancer";
+import { checkProfileExists, getFreelancerProfile } from "@/api/freelancerApi";
+import { useAuth } from "@/hooks";
+import { Footer, Navbar } from '@/components/Home/';
 
 function ViewPerfilFreeLancer() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [userType, setUserType] = useState(null);
-  const [id_usuario, setIdUsuario] = useState(null);
+  const navigate = useNavigate();
+
+  // Authentication data 
+  const {
+    isAuthenticated,
+    tipo_usuario: userType,
+    id_usuario,
+    loading,
+    refresh,
+  } = useAuth();
+
+  // ✅ Component state
   const [isPerfilIncompleto, setIsPerfilIncompleto] = useState(null);
   const [perfilData, setPerfilData] = useState(null);
   const [error, setError] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [showCvUpload, setShowCvUpload] = useState(false);
-  const [creationMethod, setCreationMethod] = useState(null); // 'form' o 'cv'
-  const navigate = useNavigate();
+  const [creationMethod, setCreationMethod] = useState(null); // 'form' or 'cv'
 
+  // ✅ Fetch freelancer profile once authenticated and id_usuario is known
   useEffect(() => {
-    const checkAuth = async () => {
-      const token = localStorage.getItem("token");
-      setIsAuthenticated(!!token);
+    if (!loading && isAuthenticated && id_usuario) {
+      fetchPerfilFreelancer(id_usuario);
+    }
+  }, [loading, isAuthenticated, id_usuario]);
 
-      if (token) {
-        try {
-          const decoded = jwtDecode(token);
-          setUserType(decoded.tipo_usuario);
-          setIdUsuario(decoded.id_usuario);
-
-          if (decoded.id_usuario) {
-            await fetchPerfilFreelancer(decoded.id_usuario);
-          }
-        } catch (error) {
-          console.error("Error decodificando token:", error);
-          setError("Error al verificar sesión");
-          localStorage.removeItem("token");
-          setIsAuthenticated(false);
-        }
-      }
-
-      setLoading(false);
-    };
-
-    checkAuth();
-    window.addEventListener("storage", checkAuth);
-    return () => window.removeEventListener("storage", checkAuth);
-  }, []);
-
-  const fetchPerfilFreelancer = async (id_usuario) => {
+  const fetchPerfilFreelancer = async (id) => {
     try {
-      const response = await checkProfileExists(id_usuario);
+      const response = await checkProfileExists(id);
       setIsPerfilIncompleto(response.isPerfilIncompleto);
-      
-      // Si el perfil ya está completo, obtener los datos
+
       if (!response.isPerfilIncompleto) {
-        const perfilCompleto = await getFreelancerProfile(id_usuario);
-        setPerfilData(perfilCompleto);
+        const perfilCompleto = await getFreelancerProfile(id);
+        console.log(perfilCompleto);
+        setPerfilData(perfilCompleto.data);
       }
-    } catch (error) {
-      console.error("Error verificando perfil:", error);
+    } catch (err) {
+      console.error("Error verificando perfil:", err);
       setError("Error al verificar perfil");
     }
   };
 
   const handleSelectCreationMethod = (method) => {
     setCreationMethod(method);
-    if (method === 'form') {
+    if (method === "form") {
       setShowModal(true);
       setShowCvUpload(false);
-    } else if (method === 'cv') {
+    } else if (method === "cv") {
       setShowCvUpload(true);
       setShowModal(false);
     }
   };
 
   if (loading) return <LoadingScreen />;
-
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Debes iniciar sesión</h1>
-          <button
-            onClick={() => navigate("/login")}
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            Ir a iniciar sesión
-          </button>
-        </div>
-      </div>
-    );
-  }
-
+  
   if (userType !== "freelancer") {
     return (
       <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
@@ -251,26 +219,27 @@ function ViewPerfilFreeLancer() {
                 <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-8 mb-6">
                   <div className="flex items-start gap-6">
                     <div className="flex-shrink-0">
-                      <div className="w-24 h-24 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white text-3xl font-bold">
-                        {perfilData.antecedentes_personales?.nombres?.charAt(0) || 'U'}
+                      <div className="w-24 h-24 bg-gradient-to-br from-[#07767c] to-[#055a5f] rounded-full flex items-center justify-center text-white text-3xl font-bold">
+                        {perfilData.antecedentesPersonales?.nombres?.charAt(0) || 'U'}
                       </div>
                     </div>
                     <div className="flex-1">
                       <h2 className="text-3xl font-bold text-gray-900 mb-2">
-                        {perfilData.antecedentes_personales?.nombres} {perfilData.antecedentes_personales?.apellidos}
+                        {perfilData.antecedentesPersonales?.nombres} {perfilData.antecedentesPersonales?.apellidos}
                       </h2>
                       <p className="text-gray-600 mb-4">
-                        {perfilData.freelancer?.descripcion_freelancer}
+                        {perfilData.freelancer?.descripcion}
                       </p>
                       <div className="flex flex-wrap gap-4">
                         <div className="flex items-center gap-2 text-gray-700">
                           <User size={18} />
-                          <span>{perfilData.antecedentes_personales?.ciudad_freelancer}, {perfilData.antecedentes_personales?.comuna}</span>
+                          <span>{perfilData.antecedentesPersonales?.ciudad}, {perfilData.antecedentesPersonales?.comuna}</span>
                         </div>
-                        {perfilData.educacion_superior?.carrera && (
+                        {/* CORREGIDO: Acceso a un array */}
+                        {perfilData.educacionSuperior && perfilData.educacionSuperior.length > 0 && (
                           <div className="flex items-center gap-2 text-gray-700">
                             <Briefcase size={18} />
-                            <span>{perfilData.educacion_superior.carrera}</span>
+                            <span>{perfilData.educacionSuperior[0].carrera}</span>
                           </div>
                         )}
                       </div>
@@ -286,7 +255,7 @@ function ViewPerfilFreeLancer() {
                       <div className="space-y-2">
                         {perfilData.idiomas.slice(0, 2).map((idioma, idx) => (
                           <div key={idx} className="text-sm text-gray-700">
-                            {idioma.idioma} - {idioma.nivel_idioma}
+                            {idioma.idioma} - {idioma.nivel}
                           </div>
                         ))}
                         {perfilData.idiomas.length > 2 && (
@@ -335,7 +304,7 @@ function ViewPerfilFreeLancer() {
                 <div className="flex flex-wrap gap-4">
                   <button
                     onClick={() => navigate("/viewmoredetailsfreelancer")}
-                    className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-lg font-semibold transition-all flex items-center gap-2 shadow-lg hover:shadow-xl"
+                    className="px-6 py-3 bg-gradient-to-r from-[#07767c] to-[#055a5f] hover:from-blue-700 hover:to-indigo-700 text-white rounded-lg font-semibold transition-all flex items-center gap-2 shadow-lg hover:shadow-xl"
                   >
                     <Eye size={20} />
                     Ver Perfil Completo

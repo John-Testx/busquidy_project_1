@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { getUserDetails, updateUserDetails } from "../../../api/userApi";
+import React from "react";
+import { useParams } from "react-router-dom";
+import { useUserEditor } from "@/hooks";
 import { 
   ArrowLeft, 
   Save, 
@@ -13,41 +13,15 @@ import {
 
 const UserEditPage = () => {
   const { id } = useParams();
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState(null);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        setLoading(true);
-        const userDetails = await getUserDetails(Number(id));
-        setUser(userDetails);
-        setError(null);
-      } catch (error) {
-        console.error("Error fetching user details:", error);
-        setError("No se pudo cargar la información del usuario");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchUser();
-  }, [id]);
-
-  const saveUser = async () => {
-    try {
-      setSaving(true);
-      await updateUserDetails(user.id_usuario, user);
-      navigate("/adminhome/usermanagement/users");
-    } catch (error) {
-      console.error("Error saving user:", error);
-      setError("Error al guardar los cambios");
-    } finally {
-      setSaving(false);
-    }
-  };
+  const {
+    user,
+    loading,
+    saving,
+    error,
+    updateField,
+    saveUser,
+    cancelEdit
+  } = useUserEditor(id);
 
   if (loading) {
     return (
@@ -70,7 +44,7 @@ const UserEditPage = () => {
           </div>
           <p className="text-gray-600 mb-6">{error}</p>
           <button
-            onClick={() => navigate("/adminhome/usermanagement/users")}
+            onClick={cancelEdit}
             className="w-full bg-[#07767c] hover:bg-[#055a5f] text-white font-medium py-3 rounded-lg transition-colors"
           >
             Volver a la lista
@@ -86,7 +60,7 @@ const UserEditPage = () => {
         {/* Header */}
         <div className="mb-6">
           <button
-            onClick={() => navigate("/adminhome/usermanagement/users")}
+            onClick={cancelEdit}
             className="flex items-center gap-2 text-gray-600 hover:text-[#07767c] transition-colors mb-4 group"
           >
             <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
@@ -125,7 +99,7 @@ const UserEditPage = () => {
               <input
                 type="email"
                 value={user.correo}
-                onChange={(e) => setUser({ ...user, correo: e.target.value })}
+                onChange={(e) => updateField('correo', e.target.value)}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#07767c] focus:border-transparent transition-all outline-none"
                 placeholder="usuario@ejemplo.com"
               />
@@ -142,7 +116,7 @@ const UserEditPage = () => {
               </label>
               <select
                 value={user.tipo_usuario}
-                onChange={(e) => setUser({ ...user, tipo_usuario: e.target.value })}
+                onChange={(e) => updateField('tipo_usuario', e.target.value)}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#07767c] focus:border-transparent transition-all outline-none appearance-none bg-white cursor-pointer"
               >
                 <option value="freelancer">Freelancer</option>
@@ -181,7 +155,7 @@ const UserEditPage = () => {
           {/* Form Actions */}
           <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end gap-3">
             <button
-              onClick={() => navigate("/adminhome/usermanagement/users")}
+              onClick={cancelEdit}
               className="px-6 py-2.5 bg-white border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors"
               disabled={saving}
             >
