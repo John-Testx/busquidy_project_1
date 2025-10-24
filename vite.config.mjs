@@ -17,8 +17,8 @@ export default defineConfig(({ mode }) => {
       tailwindcss(),
     ],
     // This base config will now work
-    base: mode === 'production' ? '/busquidy-project-files/' : '/',
-    
+    // base: mode === 'production' ? '/busquidy-project-files/' : '/',
+    base: '/',
     // Your existing resolve config (which now has __dirname)
     resolve: {
       alias: {
