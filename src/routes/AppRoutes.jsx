@@ -6,7 +6,7 @@ import { Home, BusquidyPage, AboutUsPage } from '@pages/General';
 import { User, Unauthorized, PaymentReturn, NotAuthenticated } from '@pages/User';
 
 // Import Empresa components
-import { Empresa, FindFreelancer, MyProjects, ViewFreelancer } from '@pages/Empresa';
+import { Empresa, FindFreelancer, MyProjects, ViewFreelancer, ProjectView } from '@pages/Empresa';
 
 // Import Freelancer components
 import { FreeLancer, MyPostulations, ViewMoreDetailsFreelancer, ViewPerfilFreeLancer, FreelancerProfileLayout} from '@pages/Freelancer';
@@ -90,7 +90,7 @@ const AppRoutes = () => {
       <Route element={<ProtectedRoute allowedRoles={['empresa']} />}>
         <Route path="/empresa" element={<Empresa />} />
         <Route path="/myprojects" element={<MyProjects />} />
-
+        <Route path="/project-view/:id" element={<ProjectView/>}/>
         <Route path="/company-profile" element={<EmpresaProfileLayout />}>
           {/* Redirect the base path to the first section */}
           <Route index element={<EmpresaInfo />} />
