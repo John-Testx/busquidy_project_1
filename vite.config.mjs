@@ -2,7 +2,7 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import path from "path";
-
+import { visualizer } from 'rollup-plugin-visualizer'; // Import the plugin
 import { fileURLToPath } from 'url' // <-- ADD THIS
 
 // --- ADD THESE TWO LINES to define __dirname ---
@@ -15,7 +15,43 @@ export default defineConfig(({ mode }) => {
     plugins: [
       react(),
       tailwindcss(),
+      visualizer({
+        open: true, // Automatically open the report in your browser after build
+        filename: 'stats.html', // Output file name
+        gzipSize: true, // Show GZIP size
+        brotliSize: true, // Show Brotli size
+      }),
     ],
+    
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            // This is the only logic you need.
+            // It targets the giant vendor file.
+            if (id.includes('node_modules')) {
+              
+              // Group React libraries
+              if (id.includes('react-dom') || id.includes('react-router-dom') || id.includes('react')) {
+                return 'vendor-react';
+              }
+
+              // Group Bootstrap
+              if (id.includes('bootstrap')) {
+                return 'vendor-bootstrap';
+              }
+
+              // Put all other node_modules in a "core" chunk
+              return 'vendor-core';
+            }
+            
+            // Let Vite handle all your app code (/src/) automatically.
+            // Don't add rules for /src/components/ or /src/pages/.
+          }
+        }
+      }
+    },
+
     // This base config will now work
     base: mode === 'production' ? '/busquidy-project-files/' : '/',
     
