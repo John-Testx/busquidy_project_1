@@ -5,6 +5,8 @@ import LoadingScreen from "@/components/LoadingScreen";
 import { useAuth } from "@/hooks";
 import io from "socket.io-client";
 
+//** WAZA */
+
 function App() {
   const [connectedUsers, setConnectedUsers] = useState(0);
   const socketRef = useRef(null);

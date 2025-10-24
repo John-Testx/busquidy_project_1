@@ -36,5 +36,4 @@ jobs:
           credentials_json: '${{ secrets.GCP_SA_KEY }}' # You must add this secret to GitHub
 
       - name: Deploy to Google Cloud Storage
-        # Use rsync -d to delete old files from the bucket
         run: gcloud storage rsync --delete-unmatched-destination-objects -r dist/ gs://my-busquidy-app-assets
