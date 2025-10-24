@@ -36,4 +36,4 @@ jobs:
           credentials_json: '${{ secrets.GCP_SA_KEY }}' # You must add this secret to GitHub
 
       - name: Deploy to Google Cloud Storage
-        run: gcloud storage rsync --delete-unmatched-destination-objects -r dist/ gs://my-busquidy-app-assets
+        run: gcloud storage rsync --delete-unmatched-destination-objects -r dist/ gs://busquidy-project-files
