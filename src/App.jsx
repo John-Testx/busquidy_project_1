@@ -5,7 +5,15 @@ import LoadingScreen from "@/components/LoadingScreen";
 import { useAuth } from "@/hooks";
 import io from "socket.io-client";
 
-//** waza triste :c*/
+//** waza triste :c dandadan 
+// Akirame no warui yakara
+// Antara nanka ja taba natte mo kanawan
+// Kuwabara, kuwabara, kuwabara
+// Me ni mo tomaran hayasa, hey
+// Kutabaran damaran
+// Sagaran oshitoosu wagamama, hey
+// Soko doki na jama da ore wa mou hitori no anata
+// Sada-Chan, Kaya-Chan*/
 
 function App() {
   const [connectedUsers, setConnectedUsers] = useState(0);
