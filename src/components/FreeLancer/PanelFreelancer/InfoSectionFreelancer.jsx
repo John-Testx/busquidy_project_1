@@ -1,19 +1,11 @@
 import React from "react";
 import { 
-  Search, 
-  CheckCircle2, 
-  CreditCard, 
-  Users, 
-  MessageCircle, 
-  BookOpen, 
-  Sparkles,
-  Crown,
-  Shield,
-  Zap,
-  TrendingUp,
-  Award,
-  ArrowRight
+  Search, CheckCircle2, CreditCard, 
+  Users, MessageCircle, BookOpen, 
+  Sparkles, Crown, Shield,
+  Zap, TrendingUp, Award, ArrowRight
 } from 'lucide-react';
+
 
 function InfoSectionFreelancer() {
     return(
