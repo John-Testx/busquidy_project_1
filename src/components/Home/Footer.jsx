@@ -183,14 +183,14 @@ function Footer() {
                     <div className="flex justify-center gap-4 mt-5">
                         <button className="bg-transparent border-none inline-block p-0 cursor-pointer">
                             <img 
-                                src="images/googlePlay.svg" 
+                                src="/images/googlePlay.svg" 
                                 alt="Google Play" 
                                 className="w-32 h-auto transition-transform duration-300 hover:scale-110"
                             />
                         </button>
                         <button className="bg-transparent border-none inline-block p-0 cursor-pointer">
                             <img 
-                                src="images/appleStore.svg" 
+                                src="/images/appleStore.svg" 
                                 alt="App Store" 
                                 className="w-32 h-auto transition-transform duration-300 hover:scale-110"
                             />
