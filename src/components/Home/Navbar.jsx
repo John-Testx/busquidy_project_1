@@ -145,7 +145,7 @@ function Navbar() {
                     <div className="flex items-center flex-shrink-0">
                         <Link to="/" className="flex items-center group">
                             <img 
-                                src="/images/Busquidy.png" 
+                                src="images/Busquidy.png" 
                                 alt="Busquidy Logo" 
                                 className="h-24 sm:h-28 lg:h-32 w-auto transition-transform duration-300 group-hover:scale-105" 
                             />
