@@ -17,7 +17,7 @@ const FindFreelancer = lazy(() => import('@pages/Empresa/FindFreelancer'));
 const SoporteHome = lazy(() => import('@pages/Soporte/SoporteHome'));
 const ProjectList = lazy(() =>import('@/pages/Publications/ProjectList'));
 const UserManagement = lazy(()=> import('@pages/Admin/UserManagement'));
-const Empresa = lazy(()=> import('@pages/Empresa'));
+const Empresa = lazy(()=> import('@pages/Empresa/Empresa'));
 const CrearTicketPublico = lazy(()=>import('@pages/Soporte'));
 import LoadingScreen from '@/components/LoadingScreen';
 
