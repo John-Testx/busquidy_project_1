@@ -5,8 +5,8 @@ import { initialFreelancerData } from "@/common/consts";
 import { createFreelancerProfile } from "@/api/freelancerApi";
 
 // Componentes de cada paso
-import StepPresentacion from "./Sections/stepPresentacion";
-import StepDatosPersonales from "./Sections/stepDatosPersonales";
+import StepPresentacion from "./Sections/StepPresentacion";
+import StepDatosPersonales from "./Sections/StepDatosPersonales";
 import StepInclusionLaboral from "./Sections/StepInclusionLaboral";
 import StepEmprendimiento from "./Sections/StepEmprendimiento";
 import StepExperiencia from "./Sections/StepExperiencia";
