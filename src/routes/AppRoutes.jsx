@@ -1,9 +1,16 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
 
 // Import General components
-import { Home, BusquidyPage, AboutUsPage } from '@pages/General';
-import { User, Unauthorized, PaymentReturn, NotAuthenticated, NotFoundPage } from '@pages/User';
+import {  BusquidyPage, AboutUsPage } from '@pages/General';
+// import { User, Unauthorized, PaymentReturn, NotAuthenticated, NotFoundPage } from '@pages/User';
+
+const Home = lazy(() => import('@pages/General/Home')); 
+const User = lazy(() => import('@pages/User/User')); // No @pages/User
+const Unauthorized = lazy(() => import('@pages/User/Unauthorized'));
+const PaymentReturn = lazy(() => import('@pages/User/PaymentReturn'));
+const NotAuthenticated = lazy(() => import('@pages/User/NotAuthenticated'));
+const NotFoundPage = lazy(() => import('@pages/User/NotFoundPage'));
 
 // Import Empresa components
 import { Empresa, FindFreelancer, MyProjects, ViewFreelancer, ProjectView } from '@pages/Empresa';
@@ -38,6 +45,7 @@ import EmpresaAccess from '@/components/Empresa/Perfil/EmpresaAccess';
 
 const AppRoutes = () => {
   return (
+    <Suspense fallback={<LoadingScreen />}>
     <Routes>
       {/* Public Routes */}
       <Route path="/" element={<Home />} />
@@ -130,6 +138,7 @@ const AppRoutes = () => {
     <Route path="*" element={<NotFoundPage />} />
 
     </Routes>
+    </Suspense>
   );
 };
 
