@@ -14,23 +14,25 @@ function App() {
   
   useEffect(() => {
     // Create socket only once
-    if (!socketRef.current) {
-      socketRef.current = io("http://localhost:3001", {
-        transports: ["websocket"],
-        withCredentials: true
-      });
+    
+    //** UNCOMMENT LATER, RIGHT NOW IM TESTING THE PUBLIC URL */
+    // if (!socketRef.current) {
+    //   socketRef.current = io("http://localhost:3001", {
+    //     transports: ["websocket"],
+    //     withCredentials: true
+    //   });
 
-      socketRef.current.on("usersCount", (count) => {
-        setConnectedUsers(count);
-      });
-    }
+    //   socketRef.current.on("usersCount", (count) => {
+    //     setConnectedUsers(count);
+    //   });
+    // }
 
-    return () => {
-      if (socketRef.current) {
-        socketRef.current.disconnect();
-        socketRef.current = null;
-      }
-    };
+    // return () => {
+    //   if (socketRef.current) {
+    //     socketRef.current.disconnect();
+    //     socketRef.current = null;
+    //   }
+    // };
       
   }, []);
 
