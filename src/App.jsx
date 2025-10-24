@@ -5,7 +5,7 @@ import LoadingScreen from "@/components/LoadingScreen";
 import { useAuth } from "@/hooks";
 import io from "socket.io-client";
 
-//** WAZA raza no pesquen este mensaje */
+//** WAZA raza no pesquen este mensaje =U */
 
 function App() {
   const [connectedUsers, setConnectedUsers] = useState(0);
