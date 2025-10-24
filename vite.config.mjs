@@ -57,7 +57,7 @@ export default defineConfig(({ mode }) => {
     },
 
     // This base config will now work
-    base: mode === 'production' ? '/busquidy-project-files/' : '/',
+    // base: mode === 'production' ? '/busquidy-project-files/' : '/',
     
     // base: '/',
     
