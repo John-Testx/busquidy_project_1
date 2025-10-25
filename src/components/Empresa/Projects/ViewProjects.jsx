@@ -244,7 +244,10 @@ function ViewProjects({ userType, id_usuario }) {
     );
 
     const handleEdit = id => navigate(`/projects/edit/${id}`);
-    const handleViewDetails = id => console.log('View', id);
+    const handleViewDetails = (id) => {
+
+      navigate(`/project-view/${id}`);
+    };
     
     const openPublishModal = (project) => {
         console.log("Abriendo modal para proyecto:", project);

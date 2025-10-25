@@ -5,6 +5,16 @@ import LoadingScreen from "@/components/LoadingScreen";
 import { useAuth } from "@/hooks";
 import io from "socket.io-client";
 
+//** waza triste :c dandadan 
+// Akirame no warui yakara
+// Antara nanka ja taba natte mo kanawan
+// Kuwabara, kuwabara, kuwabara
+// Me ni mo tomaran hayasa, hey
+// Kutabaran damaran
+// Sagaran oshitoosu wagamama, hey
+// Soko doki na jama da ore wa mou hitori no anata
+// Sada-Chan, Kaya-Chan*/
+
 function App() {
   const [connectedUsers, setConnectedUsers] = useState(0);
   const socketRef = useRef(null);
@@ -12,23 +22,25 @@ function App() {
   
   useEffect(() => {
     // Create socket only once
-    if (!socketRef.current) {
-      socketRef.current = io("http://localhost:3001", {
-        transports: ["websocket"],
-        withCredentials: true
-      });
+    
+    //** UNCOMMENT LATER, RIGHT NOW IM TESTING THE PUBLIC URL */
+    // if (!socketRef.current) {
+    //   socketRef.current = io("http://localhost:3001", {
+    //     transports: ["websocket"],
+    //     withCredentials: true
+    //   });
 
-      socketRef.current.on("usersCount", (count) => {
-        setConnectedUsers(count);
-      });
-    }
+    //   socketRef.current.on("usersCount", (count) => {
+    //     setConnectedUsers(count);
+    //   });
+    // }
 
-    return () => {
-      if (socketRef.current) {
-        socketRef.current.disconnect();
-        socketRef.current = null;
-      }
-    };
+    // return () => {
+    //   if (socketRef.current) {
+    //     socketRef.current.disconnect();
+    //     socketRef.current = null;
+    //   }
+    // };
       
   }, []);
 
@@ -37,7 +49,7 @@ function App() {
   }
 
 return (
-    <Router>
+    <Router >
       <div className="h-full w-full">
           <AppRoutes />
       </div>

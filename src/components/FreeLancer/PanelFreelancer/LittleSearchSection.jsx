@@ -50,7 +50,7 @@ function LittleSearchSection() {
                 <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-white/5 rounded-full blur-3xl"></div>
                 
                 {/* Pattern overlay */}
-                <div className="absolute inset-0 bg-[url('/images/pattern.png')] opacity-5"></div>
+                {/* <div className="absolute inset-0 bg- opacity-5"></div> */}
             </div>
            
             <div className="relative max-w-7xl mx-auto">

@@ -1,12 +1,28 @@
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
 
 // Import General components
-import { Home, BusquidyPage, AboutUsPage } from '@pages/General';
-import { User, Unauthorized, PaymentReturn, NotAuthenticated } from '@pages/User';
+// import {  BusquidyPage, AboutUsPage } from '@pages/General';
+// import { User, Unauthorized, PaymentReturn, NotAuthenticated, NotFoundPage } from '@pages/User';
+
+const AboutUsPage = lazy(()=>import('@pages/General/AboutUsPage'));
+const Home = lazy(() => import('@pages/General/Home')); 
+const BusquidyPage = lazy(() => import('@pages/General/BusquidyPage'));
+const User = lazy(() => import('@pages/User/User')); // No @pages/User
+const Unauthorized = lazy(() => import('@pages/User/Unauthorized'));
+const PaymentReturn = lazy(() => import('@pages/User/PaymentReturn'));
+const NotAuthenticated = lazy(() => import('@pages/User/NotAuthenticated'));
+const NotFoundPage = lazy(() => import('@pages/User/NotFoundPage'));
+const FindFreelancer = lazy(() => import('@pages/Empresa/FindFreelancer'));
+const SoporteHome = lazy(() => import('@pages/Soporte/SoporteHome'));
+const ProjectList = lazy(() =>import('@/pages/Publications/ProjectList'));
+const UserManagement = lazy(()=> import('@pages/Admin/UserManagement'));
+const Empresa = lazy(()=> import('@pages/Empresa/Empresa'));
+const CrearTicketPublico = lazy(()=>import('@pages/Soporte'));
+import LoadingScreen from '@/components/LoadingScreen';
 
 // Import Empresa components
-import { Empresa, FindFreelancer, MyProjects, ViewFreelancer } from '@pages/Empresa';
+import { MyProjects, ViewFreelancer, ProjectView } from '@pages/Empresa';
 
 // Import Freelancer components
 import { FreeLancer, MyPostulations, ViewMoreDetailsFreelancer, ViewPerfilFreeLancer, FreelancerProfileLayout} from '@pages/Freelancer';
@@ -15,15 +31,14 @@ import VideoCallPage from "@pages/Video/VideoCallPage";
 import MyCallsPage from "@pages/Video/MyCallsPage";
 
 // Import Soporte components
-import { SoporteHome, CrearTicket, VerTicket, CrearTicketPublico, VerTicketPublico, BusquidyGuia } from "@pages/Soporte";
+import { CrearTicket, VerTicket, VerTicketPublico, BusquidyGuia } from "@pages/Soporte";
 
-import ProjectList from '@/pages/Publications/ProjectList';
 import EditProjectPage from '@/components/Empresa/Projects/ProjectForm/EditProjectPage';
 
 import ChatPage from '@/pages/Chat/ChatPage';
 
 // Import Admin components
-import { AdminHome, UserManagement, ProjectManagement, ReviewManagement, SupportManagement, PaymentManagement, NotificationManagement, AuditAndSecurity, DisputeManagement } from '@pages/Admin';
+import {AdminHome, ProjectManagement, ReviewManagement, SupportManagement, PaymentManagement, NotificationManagement, AuditAndSecurity, DisputeManagement } from '@pages/Admin';
 import { Dashboard, UserTable, SupportTable, SupportChat, AdminRoles, UserEditPage } from '@components/Admin';
 
 
@@ -38,6 +53,7 @@ import EmpresaAccess from '@/components/Empresa/Perfil/EmpresaAccess';
 
 const AppRoutes = () => {
   return (
+    <Suspense fallback={<LoadingScreen />}>
     <Routes>
       {/* Public Routes */}
       <Route path="/" element={<Home />} />
@@ -90,7 +106,7 @@ const AppRoutes = () => {
       <Route element={<ProtectedRoute allowedRoles={['empresa']} />}>
         <Route path="/empresa" element={<Empresa />} />
         <Route path="/myprojects" element={<MyProjects />} />
-
+        <Route path="/project-view/:id" element={<ProjectView/>}/>
         <Route path="/company-profile" element={<EmpresaProfileLayout />}>
           {/* Redirect the base path to the first section */}
           <Route index element={<EmpresaInfo />} />
@@ -126,8 +142,11 @@ const AppRoutes = () => {
             <Route path="/adminhome/disputes" element={<DisputeManagement />} />
         </Route>
       </Route>
+    
+    <Route path="*" element={<NotFoundPage />} />
 
     </Routes>
+    </Suspense>
   );
 };
 
