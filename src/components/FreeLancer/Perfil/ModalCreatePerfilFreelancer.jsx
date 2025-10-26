@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import Select from "react-select";
-import { X, ChevronLeft, ChevronRight, Check, CheckCircle, ImageOff } from "lucide-react";
+import { X, ChevronLeft, ChevronRight, Check, CheckCircle } from "lucide-react";
 import { initialFreelancerData } from "@/common/consts";
 import { createFreelancerProfile } from "@/api/freelancerApi";
 
@@ -38,6 +37,7 @@ const STEP_TITLES = {
 function ModalCreatePerfilFreelancer({ closeModal, id_usuario }) {
   const [freelancerData, setFreelancerData] = useState(initialFreelancerData);
   const [currentStep, setCurrentStep] = useState(1);
+  const [completedSteps, setCompletedSteps] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -176,6 +176,7 @@ function ModalCreatePerfilFreelancer({ closeModal, id_usuario }) {
   // ============================================
   const nextStep = () => {
     if (validateStep()) {
+      setCompletedSteps([...new Set([...completedSteps, currentStep])]);
       setCurrentStep((prev) => Math.min(prev + 1, TOTAL_STEPS));
       setErrorMessage("");
     }
@@ -184,6 +185,12 @@ function ModalCreatePerfilFreelancer({ closeModal, id_usuario }) {
   const prevStep = () => {
     setCurrentStep((prev) => Math.max(prev - 1, 1));
     setErrorMessage("");
+  };
+
+  const jumpToStep = (index) => {
+    if (completedSteps.includes(index) || index === currentStep) {
+      setCurrentStep(index);
+    }
   };
 
   // ============================================
@@ -200,10 +207,8 @@ function ModalCreatePerfilFreelancer({ closeModal, id_usuario }) {
     try {
       await createFreelancerProfile(freelancerData, id_usuario);
       
-      // Mostrar mensaje de éxito
       setShowSuccess(true);
       
-      // Esperar 2 segundos y recargar
       setTimeout(() => {
         window.location.reload();
       }, 2000);
@@ -256,14 +261,19 @@ function ModalCreatePerfilFreelancer({ closeModal, id_usuario }) {
     }
   };
 
+  const progressPercentage = ((currentStep) / TOTAL_STEPS) * 100;
+
+  // ============================================
+  // PANTALLA DE ÉXITO
+  // ============================================
   if (showSuccess) {
     return (
       <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8">
           <div className="text-center">
             <div className="flex justify-center mb-4">
-              <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center">
-                <CheckCircle className="text-green-600" size={48} />
+              <div className="w-20 h-20 bg-teal-100 rounded-full flex items-center justify-center">
+                <CheckCircle className="text-teal-600" size={48} />
               </div>
             </div>
             <h2 className="text-3xl font-bold text-gray-900 mb-3">
@@ -272,9 +282,9 @@ function ModalCreatePerfilFreelancer({ closeModal, id_usuario }) {
             <p className="text-gray-600 mb-6">
               Tu perfil profesional ha sido creado exitosamente. Los reclutadores ya pueden encontrarte.
             </p>
-            <div className="flex items-center justify-center gap-2 text-blue-600">
-              <div className="animate-spin rounded-full h-5 w-5 border-2 border-blue-600 border-t-transparent" />
-              <span className="font-medium">Redirigiendo...</span>
+            <div className="flex items-center justify-center gap-2 text-teal-600">
+              <div className="animate-spin rounded-full h-5 w-5 border-2 border-teal-600 border-t-transparent" />
+              <span className="font-medium">Cargando tu perfil...</span>
             </div>
           </div>
         </div>
@@ -282,97 +292,133 @@ function ModalCreatePerfilFreelancer({ closeModal, id_usuario }) {
     );
   }
 
+  // ============================================
+  // FORMULARIO PRINCIPAL
+  // ============================================
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-y-auto">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-5xl my-8">
+        
         {/* Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-4 flex items-center justify-between">
+        <div className="bg-gradient-to-r from-teal-600 to-teal-700 px-8 py-5 flex items-center justify-between border-b border-teal-800 rounded-t-2xl">
           <div>
-            <h2 className="text-2xl font-bold text-white">Crear Perfil Freelancer</h2>
-            <p className="text-blue-100 text-sm mt-1">
-              Paso {currentStep} de {TOTAL_STEPS}: {STEP_TITLES[currentStep]}
-            </p>
+            <h2 className="text-2xl font-bold text-white">Crear Perfil Profesional</h2>
+            <p className="text-teal-100 text-sm mt-1">Paso {currentStep} de {TOTAL_STEPS}: {STEP_TITLES[currentStep]}</p>
           </div>
           <button
             onClick={closeModal}
-            className="text-white hover:bg-white/20 p-2 rounded-lg transition-colors"
+            disabled={isSubmitting}
+            className="bg-white/20 hover:bg-white/30 text-white w-10 h-10 rounded-full flex items-center justify-center transition-colors duration-200 disabled:opacity-50"
+            aria-label="Cerrar"
           >
-            <X size={24} />
+            <X size={20} />
           </button>
         </div>
 
-        {/* Progress Bar */}
-        <div className="bg-gray-100 h-2">
-          <div
-            className="bg-gradient-to-r from-blue-600 to-indigo-600 h-full transition-all duration-300"
-            style={{ width: `${(currentStep / TOTAL_STEPS) * 100}%` }}
-          />
-        </div>
-
-        {/* Content */}
-        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto">
-          <div className="p-6">{renderStep()}</div>
-
-          {/* Error Message */}
-          {errorMessage && (
-            <div className="mx-6 mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-              <p className="text-red-600 text-sm font-medium">{errorMessage}</p>
-            </div>
-          )}
-
-          {/* Footer */}
-          <div className="border-t bg-gray-50 px-6 py-4 flex items-center justify-between">
-            <button
-              type="button"
-              onClick={closeModal}
-              className="px-6 py-2.5 text-gray-700 hover:bg-gray-200 rounded-lg font-medium transition-colors"
-            >
-              Cancelar
-            </button>
-
-            <div className="flex gap-3">
-              {currentStep > 1 && (
-                <button
-                  type="button"
-                  onClick={prevStep}
-                  className="px-6 py-2.5 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg font-medium transition-colors flex items-center gap-2"
-                >
-                  <ChevronLeft size={20} />
-                  Anterior
-                </button>
-              )}
-
-              {currentStep < TOTAL_STEPS ? (
-                <button
-                  type="button"
-                  onClick={nextStep}
-                  className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-lg font-medium transition-all flex items-center gap-2"
-                >
-                  Siguiente
-                  <ChevronRight size={20} />
-                </button>
-              ) : (
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="px-8 py-2.5 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white rounded-lg font-medium transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {isSubmitting ? (
-                    <>
-                      <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent" />
-                      Creando...
-                    </>
-                  ) : (
-                    <>
-                      <Check size={20} />
-                      Crear Perfil
-                    </>
+        {/* Progress Bar - Mejorado */}
+        <div className="px-8 py-5 bg-gray-50 border-b border-gray-200">
+          {/* Indicadores de pasos con scroll horizontal */}
+          <div className="overflow-x-auto pb-3">
+            <div className="flex items-center gap-2 min-w-max">
+              {Array.from({ length: TOTAL_STEPS }, (_, index) => index + 1).map((step) => (
+                <React.Fragment key={step}>
+                  <button
+                    onClick={() => jumpToStep(step)}
+                    disabled={!completedSteps.includes(step) && step !== currentStep}
+                    title={STEP_TITLES[step]}
+                    className={`flex-shrink-0 w-8 h-8 rounded-full font-bold text-xs flex items-center justify-center transition-all duration-300 ${
+                      step === currentStep
+                        ? 'bg-teal-600 text-white shadow-lg scale-110'
+                        : completedSteps.includes(step)
+                        ? 'bg-teal-100 text-teal-600 border-2 border-teal-600 cursor-pointer hover:bg-teal-200'
+                        : 'bg-gray-300 text-gray-600 cursor-not-allowed'
+                    }`}
+                  >
+                    {completedSteps.includes(step) ? (
+                      <Check size={14} />
+                    ) : (
+                      step
+                    )}
+                  </button>
+                  {step < TOTAL_STEPS && (
+                    <div className={`w-6 h-0.5 ${
+                      completedSteps.includes(step) ? 'bg-teal-600' : 'bg-gray-300'
+                    }`}></div>
                   )}
-                </button>
-              )}
+                </React.Fragment>
+              ))}
             </div>
           </div>
-        </form>
+          
+          {/* Barra de progreso */}
+          <div className="w-full bg-gray-300 rounded-full h-2 overflow-hidden mt-2">
+            <div
+              className="bg-teal-600 h-full transition-all duration-500 ease-out"
+              style={{ width: `${progressPercentage}%` }}
+            ></div>
+          </div>
+        </div>
+
+        {/* Form Content */}
+        <div className="px-8 py-6 max-h-[60vh] overflow-y-auto">
+          <form onSubmit={handleSubmit}>
+            {renderStep()}
+
+            {/* Error Message */}
+            {errorMessage && (
+              <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                <p className="text-red-600 text-sm font-medium">{errorMessage}</p>
+              </div>
+            )}
+          </form>
+        </div>
+
+        {/* Footer Actions */}
+        <div className="px-8 py-5 bg-gray-50 border-t border-gray-200 rounded-b-2xl">
+          <div className="flex gap-4">
+            {currentStep > 1 && (
+              <button
+                type="button"
+                onClick={prevStep}
+                disabled={isSubmitting}
+                className="flex-1 px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold rounded-lg transition-colors duration-200 flex items-center justify-center gap-2 disabled:opacity-50"
+              >
+                <ChevronLeft size={20} />
+                Anterior
+              </button>
+            )}
+            {currentStep < TOTAL_STEPS ? (
+              <button
+                type="button"
+                onClick={nextStep}
+                disabled={isSubmitting}
+                className="flex-1 px-6 py-3 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-lg transition-colors duration-200 flex items-center justify-center gap-2 disabled:opacity-50"
+              >
+                Siguiente
+                <ChevronRight size={20} />
+              </button>
+            ) : (
+              <button
+                type="submit"
+                onClick={handleSubmit}
+                disabled={isSubmitting}
+                className="flex-1 px-6 py-3 bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white font-semibold rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
+              >
+                {isSubmitting ? (
+                  <>
+                    <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent" />
+                    Guardando...
+                  </>
+                ) : (
+                  <>
+                    <Check size={20} />
+                    Crear Perfil
+                  </>
+                )}
+              </button>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

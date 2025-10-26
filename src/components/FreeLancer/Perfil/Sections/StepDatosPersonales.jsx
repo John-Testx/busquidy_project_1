@@ -9,7 +9,7 @@ function StepDatosPersonales({ freelancerData, handleChange, handleSelectChange 
 
   return (
     <div className="space-y-6">
-      <h3 className="text-lg font-semibold text-gray-800 pb-2 border-b">
+      <h3 className="text-lg font-semibold text-gray-800 pb-2 border-b border-teal-200">
         Información Personal
       </h3>
 
@@ -24,7 +24,7 @@ function StepDatosPersonales({ freelancerData, handleChange, handleSelectChange 
             placeholder="Ej: Juan Pablo"
             value={freelancerData.antecedentes_personales.nombres}
             onChange={(e) => handleChange(e, "antecedentes_personales")}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
             required
           />
         </div>
@@ -39,7 +39,7 @@ function StepDatosPersonales({ freelancerData, handleChange, handleSelectChange 
             placeholder="Ej: González Silva"
             value={freelancerData.antecedentes_personales.apellidos}
             onChange={(e) => handleChange(e, "antecedentes_personales")}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
             required
           />
         </div>
@@ -56,7 +56,7 @@ function StepDatosPersonales({ freelancerData, handleChange, handleSelectChange 
             placeholder="12.345.678-9"
             value={freelancerData.antecedentes_personales.identificacion}
             onChange={(e) => handleChange(e, "antecedentes_personales")}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
             required
           />
         </div>
@@ -70,7 +70,7 @@ function StepDatosPersonales({ freelancerData, handleChange, handleSelectChange 
             name="fecha_nacimiento"
             value={freelancerData.antecedentes_personales.fecha_nacimiento}
             onChange={(e) => handleChange(e, "antecedentes_personales")}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
             required
           />
         </div>
@@ -86,7 +86,7 @@ function StepDatosPersonales({ freelancerData, handleChange, handleSelectChange 
           placeholder="Av. Principal 1234, Depto 56"
           value={freelancerData.antecedentes_personales.direccion}
           onChange={(e) => handleChange(e, "antecedentes_personales")}
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
           required
         />
       </div>
@@ -102,6 +102,19 @@ function StepDatosPersonales({ freelancerData, handleChange, handleSelectChange 
             onChange={(option) => handleSelectChange(option, "antecedentes_personales", "region")}
             className="react-select-container"
             classNamePrefix="react-select"
+            styles={{
+              control: (base) => ({
+                ...base,
+                borderColor: '#d1d5db',
+                '&:hover': { borderColor: '#14b8a6' },
+                boxShadow: 'none',
+              }),
+              option: (base, state) => ({
+                ...base,
+                backgroundColor: state.isSelected ? '#14b8a6' : state.isFocused ? '#ccfbf1' : 'white',
+                color: state.isSelected ? 'white' : '#374151',
+              }),
+            }}
           />
         </div>
 
@@ -115,7 +128,7 @@ function StepDatosPersonales({ freelancerData, handleChange, handleSelectChange 
             placeholder="Santiago"
             value={freelancerData.antecedentes_personales.ciudad_freelancer}
             onChange={(e) => handleChange(e, "antecedentes_personales")}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
             required
           />
         </div>
@@ -132,7 +145,7 @@ function StepDatosPersonales({ freelancerData, handleChange, handleSelectChange 
             placeholder="Lo Prado"
             value={freelancerData.antecedentes_personales.comuna}
             onChange={(e) => handleChange(e, "antecedentes_personales")}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
             required
           />
         </div>
@@ -147,7 +160,7 @@ function StepDatosPersonales({ freelancerData, handleChange, handleSelectChange 
             placeholder="Chileno/a"
             value={freelancerData.antecedentes_personales.nacionalidad}
             onChange={(e) => handleChange(e, "antecedentes_personales")}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
             required
           />
         </div>
@@ -163,7 +176,7 @@ function StepDatosPersonales({ freelancerData, handleChange, handleSelectChange 
           placeholder="Soltero/a, Casado/a, etc."
           value={freelancerData.antecedentes_personales.estado_civil}
           onChange={(e) => handleChange(e, "antecedentes_personales")}
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
           required
         />
       </div>

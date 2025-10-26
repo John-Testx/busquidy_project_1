@@ -1,6 +1,20 @@
 import React from "react";
 import Select from "react-select";
 
+const customSelectStyles = {
+  control: (base) => ({
+    ...base,
+    borderColor: '#d1d5db',
+    '&:hover': { borderColor: '#14b8a6' },
+    boxShadow: 'none',
+  }),
+  option: (base, state) => ({
+    ...base,
+    backgroundColor: state.isSelected ? '#14b8a6' : state.isFocused ? '#ccfbf1' : 'white',
+    color: state.isSelected ? 'white' : '#374151',
+  }),
+};
+
 function StepEducacionBasica({ freelancerData, handleChange, handleSelectChange }) {
   const tipoOptions = [
     { value: "Educación básica", label: "Educación básica" },
@@ -8,7 +22,6 @@ function StepEducacionBasica({ freelancerData, handleChange, handleSelectChange 
     { value: "Educación básica y media", label: "Educación básica y media" },
   ];
 
-  // Generar años dinámicamente
   const currentYear = new Date().getFullYear();
   const yearOptions = Array.from({ length: 50 }, (_, i) => {
     const year = currentYear - i;
@@ -17,7 +30,7 @@ function StepEducacionBasica({ freelancerData, handleChange, handleSelectChange 
 
   return (
     <div className="space-y-6">
-      <h3 className="text-lg font-semibold text-gray-800 pb-2 border-b">
+      <h3 className="text-lg font-semibold text-gray-800 pb-2 border-b border-teal-200">
         Educación Básica/Media
       </h3>
 
@@ -32,7 +45,7 @@ function StepEducacionBasica({ freelancerData, handleChange, handleSelectChange 
             placeholder="Nombre del colegio/liceo"
             value={freelancerData.educacion_basica_media.institucion_basica_media}
             onChange={(e) => handleChange(e, "educacion_basica_media")}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
             required
           />
         </div>
@@ -48,7 +61,10 @@ function StepEducacionBasica({ freelancerData, handleChange, handleSelectChange 
             className="react-select-container"
             classNamePrefix="react-select"
             menuPortalTarget={document.body}
-            styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
+            styles={{
+              ...customSelectStyles,
+              menuPortal: (base) => ({ ...base, zIndex: 9999 })
+            }}
           />
         </div>
       </div>
@@ -64,7 +80,7 @@ function StepEducacionBasica({ freelancerData, handleChange, handleSelectChange 
             placeholder="País"
             value={freelancerData.educacion_basica_media.pais}
             onChange={(e) => handleChange(e, "educacion_basica_media")}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
             required
           />
         </div>
@@ -79,7 +95,7 @@ function StepEducacionBasica({ freelancerData, handleChange, handleSelectChange 
             placeholder="Ciudad"
             value={freelancerData.educacion_basica_media.ciudad_basica_media}
             onChange={(e) => handleChange(e, "educacion_basica_media")}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
             required
           />
         </div>
@@ -97,7 +113,10 @@ function StepEducacionBasica({ freelancerData, handleChange, handleSelectChange 
             className="react-select-container"
             classNamePrefix="react-select"
             menuPortalTarget={document.body}
-            styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
+            styles={{
+              ...customSelectStyles,
+              menuPortal: (base) => ({ ...base, zIndex: 9999 })
+            }}
           />
         </div>
 
@@ -112,7 +131,10 @@ function StepEducacionBasica({ freelancerData, handleChange, handleSelectChange 
             className="react-select-container"
             classNamePrefix="react-select"
             menuPortalTarget={document.body}
-            styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
+            styles={{
+              ...customSelectStyles,
+              menuPortal: (base) => ({ ...base, zIndex: 9999 })
+            }}
           />
         </div>
       </div>

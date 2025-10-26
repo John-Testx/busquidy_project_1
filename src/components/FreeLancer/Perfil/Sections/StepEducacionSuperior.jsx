@@ -1,5 +1,19 @@
 import React from "react";
-import Select from "react-select"; 
+import Select from "react-select";
+
+const customSelectStyles = {
+  control: (base) => ({
+    ...base,
+    borderColor: '#d1d5db',
+    '&:hover': { borderColor: '#14b8a6' },
+    boxShadow: 'none',
+  }),
+  option: (base, state) => ({
+    ...base,
+    backgroundColor: state.isSelected ? '#14b8a6' : state.isFocused ? '#ccfbf1' : 'white',
+    color: state.isSelected ? 'white' : '#374151',
+  }),
+};
 
 function StepEducacionSuperior({ freelancerData, handleChange, handleSelectChange }) {
   const carreraAfinOptions = [
@@ -16,7 +30,6 @@ function StepEducacionSuperior({ freelancerData, handleChange, handleSelectChang
     { value: "Incompleta", label: "Incompleta" },
   ];
 
-  // Generar años dinámicamente
   const currentYear = new Date().getFullYear();
   const yearOptions = Array.from({ length: 30 }, (_, i) => {
     const year = currentYear - i;
@@ -25,7 +38,9 @@ function StepEducacionSuperior({ freelancerData, handleChange, handleSelectChang
 
   return (
     <div className="space-y-6">
-      <h3 className="text-lg font-semibold text-gray-800 pb-2 border-b">Educación Superior</h3>
+      <h3 className="text-lg font-semibold text-gray-800 pb-2 border-b border-teal-200">
+        Educación Superior
+      </h3>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
@@ -38,7 +53,7 @@ function StepEducacionSuperior({ freelancerData, handleChange, handleSelectChang
             placeholder="Universidad, Instituto..."
             value={freelancerData.educacion_superior.institucion_superior}
             onChange={(e) => handleChange(e, "educacion_superior")}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
             required
           />
         </div>
@@ -53,7 +68,7 @@ function StepEducacionSuperior({ freelancerData, handleChange, handleSelectChang
             placeholder="Nombre de la carrera"
             value={freelancerData.educacion_superior.carrera}
             onChange={(e) => handleChange(e, "educacion_superior")}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
             required
           />
         </div>
@@ -70,6 +85,7 @@ function StepEducacionSuperior({ freelancerData, handleChange, handleSelectChang
             onChange={(option) => handleSelectChange(option, "educacion_superior", "carrera_afin")}
             className="react-select-container"
             classNamePrefix="react-select"
+            styles={customSelectStyles}
           />
         </div>
 
@@ -83,6 +99,7 @@ function StepEducacionSuperior({ freelancerData, handleChange, handleSelectChang
             onChange={(option) => handleSelectChange(option, "educacion_superior", "estado_superior")}
             className="react-select-container"
             classNamePrefix="react-select"
+            styles={customSelectStyles}
           />
         </div>
       </div>
@@ -98,6 +115,7 @@ function StepEducacionSuperior({ freelancerData, handleChange, handleSelectChang
             onChange={(option) => handleSelectChange(option, "educacion_superior", "ano_inicio_superior")}
             className="react-select-container"
             classNamePrefix="react-select"
+            styles={customSelectStyles}
           />
         </div>
 
@@ -111,6 +129,7 @@ function StepEducacionSuperior({ freelancerData, handleChange, handleSelectChang
             onChange={(option) => handleSelectChange(option, "educacion_superior", "ano_termino_superior")}
             className="react-select-container"
             classNamePrefix="react-select"
+            styles={customSelectStyles}
           />
         </div>
       </div>

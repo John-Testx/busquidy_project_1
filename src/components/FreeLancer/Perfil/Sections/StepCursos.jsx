@@ -1,6 +1,20 @@
 import React, { useState } from "react";
 import Select from "react-select";
-import { Plus, Trash2 } from "lucide-react";    
+import { Plus, Trash2 } from "lucide-react";
+
+const customSelectStyles = {
+  control: (base) => ({
+    ...base,
+    borderColor: '#d1d5db',
+    '&:hover': { borderColor: '#14b8a6' },
+    boxShadow: 'none',
+  }),
+  option: (base, state) => ({
+    ...base,
+    backgroundColor: state.isSelected ? '#14b8a6' : state.isFocused ? '#ccfbf1' : 'white',
+    color: state.isSelected ? 'white' : '#374151',
+  }),
+};
 
 function StepCursos({ freelancerData, handleChange, handleSelectChange, setFreelancerData }) {
   const [nuevoCurso, setNuevoCurso] = useState({
@@ -50,7 +64,9 @@ function StepCursos({ freelancerData, handleChange, handleSelectChange, setFreel
 
   return (
     <div className="space-y-6">
-      <h3 className="text-lg font-semibold text-gray-800 pb-2 border-b">Cursos y Certificaciones</h3>
+      <h3 className="text-lg font-semibold text-gray-800 pb-2 border-b border-teal-200">
+        Cursos y Certificaciones
+      </h3>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
@@ -60,7 +76,7 @@ function StepCursos({ freelancerData, handleChange, handleSelectChange, setFreel
             placeholder="Ej: Certificación en React.js"
             value={nuevoCurso.nombre_curso}
             onChange={(e) => setNuevoCurso({ ...nuevoCurso, nombre_curso: e.target.value })}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
           />
         </div>
 
@@ -71,7 +87,7 @@ function StepCursos({ freelancerData, handleChange, handleSelectChange, setFreel
             placeholder="Ej: Coursera, Udemy, Universidad"
             value={nuevoCurso.institucion_curso}
             onChange={(e) => setNuevoCurso({ ...nuevoCurso, institucion_curso: e.target.value })}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
           />
         </div>
       </div>
@@ -85,6 +101,7 @@ function StepCursos({ freelancerData, handleChange, handleSelectChange, setFreel
             onChange={(option) => setNuevoCurso({ ...nuevoCurso, ano_inicio_curso: option.value })}
             className="react-select-container"
             classNamePrefix="react-select"
+            styles={customSelectStyles}
           />
         </div>
 
@@ -96,6 +113,7 @@ function StepCursos({ freelancerData, handleChange, handleSelectChange, setFreel
             onChange={(option) => setNuevoCurso({ ...nuevoCurso, mes_inicio_curso: option.value })}
             className="react-select-container"
             classNamePrefix="react-select"
+            styles={customSelectStyles}
           />
         </div>
       </div>
@@ -103,18 +121,18 @@ function StepCursos({ freelancerData, handleChange, handleSelectChange, setFreel
       <button
         type="button"
         onClick={addCurso}
-        className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors flex items-center gap-2"
+        className="px-6 py-3 bg-teal-600 hover:bg-teal-700 text-white rounded-lg font-medium transition-colors flex items-center gap-2"
       >
         <Plus size={20} />
         Agregar Curso
       </button>
 
       {freelancerData.cursos && freelancerData.cursos.length > 0 && (
-        <div className="border-t pt-6">
+        <div className="border-t border-teal-200 pt-6">
           <h4 className="font-semibold text-gray-800 mb-4">Cursos Agregados</h4>
           <div className="space-y-3">
             {freelancerData.cursos.map((curso, index) => (
-              <div key={index} className="flex items-center justify-between bg-gray-50 p-4 rounded-lg border border-gray-200">
+              <div key={index} className="flex items-center justify-between bg-teal-50 p-4 rounded-lg border border-teal-200">
                 <div>
                   <p className="font-medium text-gray-800">{curso.nombre_curso}</p>
                   <p className="text-sm text-gray-600">{curso.institucion_curso} • {curso.mes_inicio_curso} {curso.ano_inicio_curso}</p>
