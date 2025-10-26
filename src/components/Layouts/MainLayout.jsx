@@ -1,14 +1,15 @@
+// MainLayout.jsx - Versión actualizada
 import React from 'react';
-import Navbar from '../Home/Navbar';
+import { Navbar, Footer } from '@/components/Home';
 
-const MainLayout = ({ children }) => {
+const MainLayout = ({ children, fullHeight = false, noPadding = false }) => {
   return (
-    <div className="flex flex-col h-screen bg-gray-100 dark:bg-gray-900">
+    <div className={`flex flex-col ${fullHeight ? 'h-screen overflow-hidden' : 'min-h-screen'}`}>
       <Navbar />
-      {/* ✅ Agregamos pt-20 lg:pt-24 para compensar la altura del Navbar */}
-      <main className="flex-1 overflow-y-auto pt-20 lg:pt-24">
+      <main className={`flex-grow ${!noPadding ? 'pt-20' : ''} ${fullHeight ? 'overflow-hidden' : ''}`}>
         {children}
       </main>
+      {!fullHeight && <Footer />}
     </div>
   );
 };
