@@ -152,29 +152,29 @@ function CrearTicketPublico() {
     <>
       <Navbar />
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 pt-20">
-        <div className="container mx-auto px-4 py-8">
+        <div className="container mx-auto px-3 md:px-4 py-4 md:py-8">
           {/* Header */}
-          <div className="mb-6">
+          <div className="mb-4 md:mb-6">
             <button
               onClick={() => navigate("/soportehome")}
-              className="flex items-center gap-2 text-gray-600 hover:text-gray-800 mb-4 transition-colors"
+              className="flex items-center gap-2 text-gray-600 hover:text-gray-800 mb-3 md:mb-4 transition-colors text-sm md:text-base"
             >
-              <ArrowLeft className="w-5 h-5" />
+              <ArrowLeft className="w-4 h-4 md:w-5 md:h-5" />
               Volver al centro de soporte
             </button>
 
-            <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl shadow-lg p-8 text-white">
-              <h1 className="text-3xl font-bold mb-2">
+            <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg md:rounded-xl shadow-lg p-4 md:p-8 text-white">
+              <h1 className="text-xl md:text-3xl font-bold mb-1 md:mb-2">
                 Crear Solicitud de Soporte
               </h1>
-              <p className="text-blue-100">
+              <p className="text-sm md:text-base text-blue-100">
                 Completa el formulario y nuestro equipo te responderá lo antes posible
               </p>
             </div>
           </div>
 
           {/* Formulario */}
-          <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-lg p-8 border border-gray-200">
+          <div className="max-w-3xl mx-auto bg-white rounded-lg md:rounded-xl shadow-lg p-4 md:p-8 border border-gray-200">
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Información de contacto */}
               <div className="grid md:grid-cols-2 gap-6">

@@ -98,11 +98,11 @@ function TicketForm({ onSubmit, isSubmitting }) {
         <label className="block text-sm font-semibold text-gray-700 mb-3">
           Categoría *
         </label>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 md:gap-3">
           {categorias.map((cat) => (
             <label
               key={cat.value}
-              className={`relative flex flex-col p-4 border-2 rounded-lg cursor-pointer transition-all hover:border-blue-400 ${
+              className={`relative flex flex-col p-3 md:p-4 border-2 rounded-lg cursor-pointer transition-all hover:border-blue-400 ${
                 form.categoria === cat.value
                   ? "border-blue-500 bg-blue-50 shadow-md"
                   : "border-gray-200 bg-white"
@@ -118,12 +118,12 @@ function TicketForm({ onSubmit, isSubmitting }) {
                 disabled={isSubmitting}
               />
               <div className="flex items-center gap-2 mb-1">
-                <span className="text-2xl">{cat.icon}</span>
-                <span className="font-semibold text-gray-800">{cat.value}</span>
+                <span className="text-xl md:text-2xl">{cat.icon}</span>
+                <span className="font-semibold text-gray-800 text-sm md:text-base">{cat.value}</span>
               </div>
-              <span className="text-xs text-gray-500">{cat.descripcion}</span>
+              <span className="text-[10px] md:text-xs text-gray-500">{cat.descripcion}</span>
               {form.categoria === cat.value && (
-                <CheckCircle className="absolute top-2 right-2 w-5 h-5 text-blue-600" />
+                <CheckCircle className="absolute top-2 right-2 w-4 h-4 md:w-5 md:h-5 text-blue-600" />
               )}
             </label>
           ))}
@@ -135,11 +135,11 @@ function TicketForm({ onSubmit, isSubmitting }) {
         <label className="block text-sm font-semibold text-gray-700 mb-3">
           Prioridad *
         </label>
-        <div className="flex gap-3">
+        <div className="flex flex-col sm:flex-row gap-2 md:gap-3">
           {prioridades.map((prior) => (
             <label
               key={prior.value}
-              className={`flex-1 flex items-center justify-center px-4 py-3 border-2 rounded-lg cursor-pointer transition-all ${
+              className={`flex-1 flex items-center justify-center px-3 md:px-4 py-2 md:py-3 border-2 rounded-lg cursor-pointer transition-all ${
                 form.prioridad === prior.value
                   ? `${prior.color} border-current shadow-md`
                   : "border-gray-200 bg-white hover:border-gray-300"
@@ -154,7 +154,7 @@ function TicketForm({ onSubmit, isSubmitting }) {
                 className="sr-only"
                 disabled={isSubmitting}
               />
-              <span className="font-semibold">{prior.label}</span>
+              <span className="font-semibold text-sm md:text-base">{prior.label}</span>
             </label>
           ))}
         </div>
