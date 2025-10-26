@@ -1,6 +1,7 @@
 import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
-import { usePaymentAnalytics} from '@/hooks';
+import { usePaymentAnalytics } from '@/hooks';
+import { Loader2, AlertTriangle, BarChart3, PieChart as PieChartIcon } from 'lucide-react';
 
 const PaymentAnalytics = () => {
   const {
@@ -115,30 +116,30 @@ const PaymentAnalytics = () => {
       <div className="flex justify-center gap-3 mb-6">
         <button 
           onClick={() => setTipoGrafico('general')}
-          className={`px-5 py-2 rounded-full font-medium transition-all duration-200 ${
+          className={`px-5 py-2.5 rounded-lg font-medium transition-all duration-200 ${
             tipoGrafico === 'general'
-              ? 'bg-[#07767c] text-white shadow-lg'
-              : 'bg-white text-gray-600 border-2 border-[#07767c] hover:bg-[#07767c] hover:text-white'
+              ? 'bg-gradient-to-r from-[#07767c] to-[#055a5f] text-white shadow-lg scale-105'
+              : 'bg-white text-gray-600 border-2 border-gray-200 hover:border-[#07767c] hover:text-[#07767c] hover:scale-105'
           }`}
         >
           General
         </button>
         <button 
           onClick={() => setTipoGrafico('proyectos')}
-          className={`px-5 py-2 rounded-full font-medium transition-all duration-200 ${
+          className={`px-5 py-2.5 rounded-lg font-medium transition-all duration-200 ${
             tipoGrafico === 'proyectos'
-              ? 'bg-[#07767c] text-white shadow-lg'
-              : 'bg-white text-gray-600 border-2 border-[#07767c] hover:bg-[#07767c] hover:text-white'
+              ? 'bg-gradient-to-r from-[#07767c] to-[#055a5f] text-white shadow-lg scale-105'
+              : 'bg-white text-gray-600 border-2 border-gray-200 hover:border-[#07767c] hover:text-[#07767c] hover:scale-105'
           }`}
         >
           Proyectos
         </button>
         <button 
           onClick={() => setTipoGrafico('suscripciones')}
-          className={`px-5 py-2 rounded-full font-medium transition-all duration-200 ${
+          className={`px-5 py-2.5 rounded-lg font-medium transition-all duration-200 ${
             tipoGrafico === 'suscripciones'
-              ? 'bg-[#07767c] text-white shadow-lg'
-              : 'bg-white text-gray-600 border-2 border-[#07767c] hover:bg-[#07767c] hover:text-white'
+              ? 'bg-gradient-to-r from-[#07767c] to-[#055a5f] text-white shadow-lg scale-105'
+              : 'bg-white text-gray-600 border-2 border-gray-200 hover:border-[#07767c] hover:text-[#07767c] hover:scale-105'
           }`}
         >
           Suscripciones
@@ -155,7 +156,7 @@ const PaymentAnalytics = () => {
               <select 
                 value={filtroProyectos} 
                 onChange={(e) => setFiltroProyectos(e.target.value)}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#07767c] focus:border-transparent outline-none transition-all"
+                className="px-4 py-2 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-[#07767c] focus:border-transparent outline-none transition-all"
               >
                 <option value="todos">Todos</option>
                 <option value="completados">Completados</option>
@@ -167,7 +168,7 @@ const PaymentAnalytics = () => {
               <select 
                 value={filtroSuscripciones} 
                 onChange={(e) => setFiltroSuscripciones(e.target.value)}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#07767c] focus:border-transparent outline-none transition-all"
+                className="px-4 py-2 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-[#07767c] focus:border-transparent outline-none transition-all"
               >
                 <option value="todos">Todos</option>
                 <option value="activas">Activas</option>
@@ -196,7 +197,7 @@ const PaymentAnalytics = () => {
               <select 
                 value={filtroProyectos} 
                 onChange={(e) => setFiltroProyectos(e.target.value)}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#07767c] focus:border-transparent outline-none transition-all"
+                className="px-4 py-2 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-[#07767c] focus:border-transparent outline-none transition-all"
               >
                 <option value="todos">Todos</option>
                 <option value="completados">Completados</option>
@@ -208,7 +209,7 @@ const PaymentAnalytics = () => {
               <select 
                 value={filtroSuscripciones} 
                 onChange={(e) => setFiltroSuscripciones(e.target.value)}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#07767c] focus:border-transparent outline-none transition-all"
+                className="px-4 py-2 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-[#07767c] focus:border-transparent outline-none transition-all"
               >
                 <option value="todos">Todos</option>
                 <option value="activas">Activas</option>
@@ -229,45 +230,52 @@ const PaymentAnalytics = () => {
 
   if (loading) {
     return (
-      <div className="p-6 flex justify-center items-center min-h-screen">
-        <div className="text-xl text-gray-600">Cargando datos...</div>
+      <div className="flex justify-center items-center min-h-[400px]">
+        <div className="text-center">
+          <Loader2 className="w-12 h-12 text-[#07767c] animate-spin mx-auto mb-4" />
+          <p className="text-lg text-gray-600 font-medium">Cargando datos de análisis...</p>
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="p-6 flex justify-center items-center min-h-screen">
-        <div className="text-xl text-red-600">Error al cargar los datos. Por favor, intenta nuevamente.</div>
+      <div className="flex justify-center items-center min-h-[400px]">
+        <div className="text-center">
+          <AlertTriangle className="w-12 h-12 text-red-500 mx-auto mb-4" />
+          <p className="text-lg text-red-600 font-medium">Error al cargar los datos</p>
+          <p className="text-sm text-gray-600 mt-2">Por favor, intenta nuevamente</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="p-6">
-      <h2 className="text-2xl font-bold text-gray-800 mb-6">Análisis de Pagos</h2>
-      
+    <div>
       {/* Visualization Toggle */}
       <div className="flex justify-center mb-8">
-        <div className="inline-flex rounded-lg bg-gray-100 p-1 shadow-md">
+        <div className="inline-flex rounded-xl bg-white shadow-lg p-1.5">
           <button 
             onClick={() => setTipoVisualizacion('barras')}
-            className={`px-6 py-2.5 rounded-lg font-medium transition-all duration-200 ${
+            className={`px-6 py-3 rounded-lg font-medium transition-all duration-200 flex items-center gap-2 ${
               tipoVisualizacion === 'barras'
-                ? 'bg-[#07767c] text-white shadow-lg'
-                : 'text-gray-600 hover:text-[#07767c]'
+                ? 'bg-gradient-to-r from-[#07767c] to-[#055a5f] text-white shadow-md'
+                : 'text-gray-600 hover:text-[#07767c] hover:bg-gray-50'
             }`}
           >
+            <BarChart3 size={18} />
             Gráfico de Barras
           </button>
           <button 
             onClick={() => setTipoVisualizacion('pastel')}
-            className={`px-6 py-2.5 rounded-lg font-medium transition-all duration-200 ${
+            className={`px-6 py-3 rounded-lg font-medium transition-all duration-200 flex items-center gap-2 ${
               tipoVisualizacion === 'pastel'
-                ? 'bg-[#07767c] text-white shadow-lg'
-                : 'text-gray-600 hover:text-[#07767c]'
+                ? 'bg-gradient-to-r from-[#07767c] to-[#055a5f] text-white shadow-md'
+                : 'text-gray-600 hover:text-[#07767c] hover:bg-gray-50'
             }`}
           >
+            <PieChartIcon size={18} />
             Gráfico de Pastel
           </button>
         </div>
@@ -280,19 +288,19 @@ const PaymentAnalytics = () => {
       
       {/* Summary Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-gradient-to-br from-[#07767c] to-[#055a5f] rounded-xl shadow-lg p-6 text-white">
+        <div className="bg-gradient-to-br from-[#07767c] to-[#055a5f] rounded-xl shadow-lg p-6 text-white transform hover:scale-105 transition-transform">
           <h3 className="text-lg font-semibold mb-2 opacity-90">Total Proyectos</h3>
           <p className="text-3xl font-bold">
             {totales.proyectos.toLocaleString('es-CL', { style: 'currency', currency: 'CLP' })}
           </p>
         </div>
-        <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-xl shadow-lg p-6 text-white">
+        <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-xl shadow-lg p-6 text-white transform hover:scale-105 transition-transform">
           <h3 className="text-lg font-semibold mb-2 opacity-90">Total Suscripciones</h3>
           <p className="text-3xl font-bold">
             {totales.suscripciones.toLocaleString('es-CL', { style: 'currency', currency: 'CLP' })}
           </p>
         </div>
-        <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl shadow-lg p-6 text-white">
+        <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl shadow-lg p-6 text-white transform hover:scale-105 transition-transform">
           <h3 className="text-lg font-semibold mb-2 opacity-90">Total General</h3>
           <p className="text-3xl font-bold">
             {totales.general.toLocaleString('es-CL', { style: 'currency', currency: 'CLP' })}
