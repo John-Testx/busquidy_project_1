@@ -178,14 +178,17 @@ function Navbar() {
         >
             <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-center h-20 lg:h-24 gap-8">
-                    
+
                     {/* Logo */}
                     <div className="flex items-center flex-shrink-0">
-                        <Link to="/" className="flex items-center group">
+                        <Link 
+                            to="/" 
+                            className="relative inline-flex items-center justify-center group h-20 sm:h-24 lg:h-28"
+                        >
                             <img 
                                 src="/images/Busquidy.png" 
                                 alt="Busquidy Logo" 
-                                className="h-24 sm:h-28 lg:h-32 w-auto transition-transform duration-300 group-hover:scale-105" 
+                                className="h-full w-auto object-contain transition-transform duration-300 group-hover:scale-105"
                             />
                         </Link>
                     </div>
