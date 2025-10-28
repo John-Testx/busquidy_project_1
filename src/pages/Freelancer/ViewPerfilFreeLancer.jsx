@@ -7,7 +7,7 @@ import LoadingScreen from "@/components/LoadingScreen";
 import ModalCreatePerfilFreelancer from "@/components/FreeLancer/Perfil/ModalCreatePerfilFreelancer";
 import { checkProfileExists, getFreelancerProfile } from "@/api/freelancerApi";
 import { useAuth } from "@/hooks";
-import { Footer, Navbar } from '@/components/Home/';
+import MainLayout from "@/components/Layouts/MainLayout";
 
 function ViewPerfilFreeLancer() {
   const navigate = useNavigate();
@@ -21,7 +21,7 @@ function ViewPerfilFreeLancer() {
     refresh,
   } = useAuth();
 
-  // ✅ Component state
+  // Component state
   const [isPerfilIncompleto, setIsPerfilIncompleto] = useState(null);
   const [perfilData, setPerfilData] = useState(null);
   const [error, setError] = useState(null);
@@ -29,7 +29,7 @@ function ViewPerfilFreeLancer() {
   const [showCvUpload, setShowCvUpload] = useState(false);
   const [creationMethod, setCreationMethod] = useState(null); // 'form' or 'cv'
 
-  // ✅ Fetch freelancer profile once authenticated and id_usuario is known
+  // Fetch freelancer profile once authenticated and id_usuario is known
   useEffect(() => {
     if (!loading && isAuthenticated && id_usuario) {
       fetchPerfilFreelancer(id_usuario);
@@ -68,7 +68,7 @@ function ViewPerfilFreeLancer() {
   if (userType !== "freelancer") {
     return (
       <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-        <Navbar />
+        <MainLayout >
         <div className="max-w-4xl mx-auto px-4 py-16">
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 flex items-start gap-4">
             <AlertCircle className="text-yellow-600 flex-shrink-0 mt-0.5" size={24} />
@@ -78,7 +78,7 @@ function ViewPerfilFreeLancer() {
             </div>
           </div>
         </div>
-        <Footer />
+        </MainLayout>
       </div>
     );
   }
@@ -86,7 +86,7 @@ function ViewPerfilFreeLancer() {
   if (error) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-        <Navbar />
+        <MainLayout >
         <div className="max-w-4xl mx-auto px-4 py-16">
           <div className="bg-red-50 border border-red-200 rounded-lg p-6 flex items-start gap-4">
             <AlertCircle className="text-red-600 flex-shrink-0 mt-0.5" size={24} />
@@ -96,14 +96,14 @@ function ViewPerfilFreeLancer() {
             </div>
           </div>
         </div>
-        <Footer />
+        </MainLayout >
       </div>
     );
   }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-      <Navbar />
+      <MainLayout >
       <main className="pt-20 pb-12">
         {isPerfilIncompleto === null ? (
           <div className="flex justify-center items-center py-20">
@@ -325,7 +325,7 @@ function ViewPerfilFreeLancer() {
           </div>
         )}
       </main>
-      <Footer />
+      </MainLayout >
 
       {/* Modal de Formulario */}
       {showModal && (

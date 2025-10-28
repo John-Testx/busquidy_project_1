@@ -4,7 +4,7 @@ import LoadingScreen from "@/components/LoadingScreen";
 import ViewProjects from "@/components/Empresa/Projects/ViewProjects";
 import { useAuth } from "@/hooks";
 import { usePaymentCallback } from "@/hooks";
-import { Footer, Navbar } from '@/components/Home/';
+import MainLayout from "@/components/Layouts/MainLayout";
 
 function MyProjects() {
     const [logoutStatus, setLogoutStatus] = useState("");
@@ -25,7 +25,6 @@ function MyProjects() {
     const searchParams = new URLSearchParams(location.search);
     
     if (searchParams.has('token_ws') || searchParams.has('TBK_TOKEN')) {
-        // ✅ Procesar solo una vez
         processPaymentCallback(searchParams);
         
         // Limpiar URL inmediatamente para evitar reprocesamiento
@@ -60,7 +59,7 @@ function MyProjects() {
     if (!isAuthenticated) {
         return (
             <div className="min-h-screen flex flex-col">
-                <Navbar />
+                <MainLayout >
                 <div className="flex-1 flex items-center justify-center bg-gradient-to-br from-teal-50 via-cyan-50 to-white px-4">
                     <div className="max-w-lg w-full p-8 text-center bg-white border-2 border-red-200 rounded-2xl shadow-xl">
                         <div className="mb-6">
@@ -80,7 +79,7 @@ function MyProjects() {
                         </button>
                     </div>
                 </div>
-                <Footer />
+                </MainLayout>
             </div>
         );
     }
@@ -88,7 +87,7 @@ function MyProjects() {
     if (userType !== "empresa") {
         return (
             <div className="min-h-screen flex flex-col">
-                <Navbar />
+                <MainLayout >
                 <div className="flex-1 flex items-center justify-center bg-gradient-to-br from-teal-50 via-cyan-50 to-white px-4">
                     <div className="max-w-2xl w-full p-8 text-center bg-white border-2 border-amber-200 rounded-2xl shadow-xl">
                         <div className="mb-6">
@@ -108,14 +107,14 @@ function MyProjects() {
                         </button>
                     </div>
                 </div>
-                <Footer />
+                </ MainLayout>
             </div>
         );
     }
 
     return (
         <div className="min-h-screen flex flex-col">
-            <Navbar />
+            <MainLayout >
 
             <div className="flex-1 bg-gradient-to-br from-teal-50 via-cyan-50 to-white pt-24 pb-12 px-4">
                 <ViewProjects userType={userType} id_usuario={id_usuario} />
@@ -161,7 +160,7 @@ function MyProjects() {
                 )}
             </div>
 
-            <Footer />
+            </ MainLayout>
         </div>
     );
 }

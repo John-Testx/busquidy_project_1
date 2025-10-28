@@ -5,7 +5,7 @@ import { getProjectById } from "@/api/projectsApi";
 import { getPostulationsForProject } from "@/api/publicationsApi";
 import PostulationCard from "@/components/Empresa/Projects/PostulationCard";
 import LoadingScreen from "@/components/LoadingScreen";
-import { Navbar, Footer } from '@/components/Home';
+import MainLayout from "@/components/Layouts/MainLayout";
 
 function ProjectView() {
     const { idProyecto } = useParams();
@@ -123,7 +123,7 @@ function ProjectView() {
     if (error) {
         return (
             <div className="min-h-screen flex flex-col">
-                <Navbar />
+                <MainLayout >
                 <div className="flex-1 flex items-center justify-center bg-gradient-to-br from-teal-50 via-cyan-50 to-white px-4">
                     <div className="max-w-lg w-full p-8 text-center bg-white border-2 border-red-200 rounded-2xl shadow-xl">
                         <div className="mb-6">
@@ -143,7 +143,7 @@ function ProjectView() {
                         </button>
                     </div>
                 </div>
-                <Footer />
+                </ MainLayout>
             </div>
         );
     }
@@ -151,11 +151,11 @@ function ProjectView() {
     if (!projectDetails) {
         return (
             <div className="min-h-screen flex flex-col">
-                <Navbar />
+                <MainLayout >
                 <div className="flex-1 flex items-center justify-center bg-gradient-to-br from-teal-50 via-cyan-50 to-white">
                     <p className="text-gray-600 text-lg">Proyecto no encontrado</p>
                 </div>
-                <Footer />
+                </ MainLayout>
             </div>
         );
     }
@@ -165,7 +165,7 @@ function ProjectView() {
 
     return (
         <div className="min-h-screen flex flex-col bg-gradient-to-br from-teal-50 via-cyan-50 to-white">
-            <Navbar />
+            <MainLayout >
             
             <div className="flex-1 pt-24 pb-12 px-4">
                 <div className="max-w-7xl mx-auto">
@@ -326,7 +326,7 @@ function ProjectView() {
                 </div>
             </div>
 
-            <Footer />
+            </ MainLayout>
 
             {/* Estilos personalizados para scrollbar */}
             <style jsx>{`
