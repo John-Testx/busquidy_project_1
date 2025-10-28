@@ -106,7 +106,7 @@ const AppRoutes = () => {
       <Route element={<ProtectedRoute allowedRoles={['empresa']} />}>
         <Route path="/empresa" element={<Empresa />} />
         <Route path="/myprojects" element={<MyProjects />} />
-        <Route path="/project-view/:id" element={<ProjectView/>}/>
+        <Route path="/empresa/proyectos/:idProyecto" element={<ProjectView/>}/>
         <Route path="/company-profile" element={<EmpresaProfileLayout />}>
           {/* Redirect the base path to the first section */}
           <Route index element={<EmpresaInfo />} />

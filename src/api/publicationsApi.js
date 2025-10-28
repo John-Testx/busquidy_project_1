@@ -31,3 +31,12 @@ export const createApplication = async (id_publicacion, id_usuario) => {
   });
   return response.data;
 };
+
+/**
+ * Obtiene las postulaciones para un proyecto específico
+ * @param {number} id_proyecto - ID del proyecto
+ */
+export const getPostulationsForProject = async (id_proyecto) => {
+  const response = await apiClient.get(`${BASE}/${id_proyecto}/postulaciones`);
+  return response.data;
+};

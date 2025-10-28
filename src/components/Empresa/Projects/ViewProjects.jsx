@@ -245,8 +245,7 @@ function ViewProjects({ userType, id_usuario }) {
 
     const handleEdit = id => navigate(`/projects/edit/${id}`);
     const handleViewDetails = (id) => {
-
-      navigate(`/project-view/${id}`);
+      navigate(`/empresa/proyectos/${id}`);
     };
     
     const openPublishModal = (project) => {
