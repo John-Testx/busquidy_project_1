@@ -139,7 +139,8 @@ function ProjectView() {
                             onClick={() => navigate("/myprojects")}
                             className="w-full px-6 py-3 bg-gradient-to-r from-[#07767c] to-[#05595d] text-white font-semibold rounded-lg hover:from-[#05595d] hover:to-[#044449] transform hover:scale-105 transition-all duration-200 shadow-md"
                         >
-                            Volver a Mis Proyectos
+                            <ArrowLeft size={20} className="transition-transform duration-200 group-hover:-translate-x-1" />
+                            <span>Volver a Mis Proyectos</span>
                         </button>
                     </div>
                 </div>
@@ -174,8 +175,8 @@ function ProjectView() {
                         onClick={() => navigate("/myprojects")}
                         className="flex items-center gap-2 text-[#07767c] hover:text-[#055a5f] font-medium mb-6 transition-colors duration-200"
                     >
-                        <ArrowLeft size={20} />
-                        Volver a Mis Proyectos
+                        <ArrowLeft size={20} className="transition-transform duration-200 group-hover:-translate-x-1" />
+                        <span>Volver a Mis Proyectos</span>
                     </button>
 
                     {/* Layout de dos columnas */}

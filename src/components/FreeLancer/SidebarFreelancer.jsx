@@ -1,40 +1,130 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { FaTachometerAlt, FaUser, FaClipboardList, FaCalendarAlt } from 'react-icons/fa'; // Íconos para un look más pro
+import { FaUser, FaClipboardList, FaCalendarAlt, FaBars, FaTimes, FaChevronRight } from 'react-icons/fa';
 
 const SidebarFreelancer = () => {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
   const menuItems = [
-    //{ path: "/freelancer-profile", name: "Panel Principal", icon: <FaTachometerAlt /> },
-    { path: "/freelancer-profile/view-profile", name: "Mi Perfil / CV", icon: <FaUser /> },
-    { path: "/freelancer-profile/my-postulations", name: "Mis Postulaciones", icon: <FaClipboardList /> },
-    { path: "/freelancer-profile/availability", name: "Mi Horario/Disponibilidad", icon: <FaCalendarAlt /> },
+    { 
+      path: "/freelancer-profile/view-profile", 
+      name: "Mi Perfil / CV", 
+      icon: <FaUser />,
+      description: "Gestiona tu información"
+    },
+    { 
+      path: "/freelancer-profile/my-postulations", 
+      name: "Mis Postulaciones", 
+      icon: <FaClipboardList />,
+      description: "Ver tus aplicaciones"
+    },
+    { 
+      path: "/freelancer-profile/availability", 
+      name: "Disponibilidad", 
+      icon: <FaCalendarAlt />,
+      description: "Configura tu horario"
+    },
   ];
 
-  const linkClasses = "flex items-center p-4 text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200";
-  const activeLinkClasses = "bg-[#055a5f] text-white";
-
   return (
-    // 'lg:block' la hace visible en pantallas grandes, 'hidden' la oculta en móviles.
-    <aside className="w-64 bg-gray-800 text-white flex-col fixed top-20 left-0 h-[calc(100vh-5rem)] hidden lg:flex">
-      <div className="mt-6 p-4 border-b border-gray-700">
-        <h3 className="text-xl font-bold text-center">Opciones Freelancer</h3>
-      </div>
-      <nav className="flex-grow mt-4">
-        {menuItems.map((item) => (
-          <NavLink
-            key={item.path}
-            to={item.path}
-            end={item.path === "/freelancer"}
-            className={({ isActive }) =>
-              isActive ? `${linkClasses} ${activeLinkClasses}` : linkClasses
-            }
-          >
-            <span className="mr-3">{item.icon}</span>
-            <span>{item.name}</span>
-          </NavLink>
-        ))}
-      </nav>
-    </aside>
+    <>
+      {/* Mobile Menu Button */}
+      <button
+        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        className="lg:hidden fixed top-24 left-4 z-50 w-12 h-12 bg-gradient-to-br from-[#07767c] to-[#05595d] text-white rounded-xl shadow-lg flex items-center justify-center hover:shadow-xl transition-all duration-300"
+      >
+        {isMobileMenuOpen ? <FaTimes size={20} /> : <FaBars size={20} />}
+      </button>
+
+      {/* Overlay for mobile */}
+      {isMobileMenuOpen && (
+        <div 
+          className="lg:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-40 top-20"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
+
+      {/* Sidebar */}
+      <aside className={`
+        w-72 bg-white border-r border-gray-200 flex-col fixed top-20 left-0 h-[calc(100vh-5rem)] shadow-xl z-40
+        transition-transform duration-300 ease-in-out
+        ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
+        lg:translate-x-0 lg:flex
+      `}>
+        {/* Header */}
+        <div className="p-6 border-b border-gray-200 bg-gradient-to-br from-[#07767c] to-[#05595d]">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
+              <FaUser className="text-white text-xl" />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-white">Panel Freelancer</h3>
+              <p className="text-white/80 text-xs">Gestiona tu perfil</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Navigation */}
+        <nav className="flex-grow py-6 overflow-y-auto">
+          <div className="px-4 space-y-2">
+            {menuItems.map((item) => (
+              <NavLink
+                key={item.path}
+                to={item.path}
+                onClick={() => setIsMobileMenuOpen(false)}
+                className={({ isActive }) =>
+                  `group flex items-center gap-4 p-4 rounded-xl transition-all duration-300 ${
+                    isActive 
+                      ? 'bg-gradient-to-r from-[#07767c] to-[#05595d] text-white shadow-lg' 
+                      : 'text-gray-700 hover:bg-gray-100'
+                  }`
+                }
+              >
+                {({ isActive }) => (
+                  <>
+                    <div className={`w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-300 ${
+                      isActive 
+                        ? 'bg-white/20 backdrop-blur-sm' 
+                        : 'bg-gray-100 group-hover:bg-[#07767c]/10'
+                    }`}>
+                      <span className={`text-lg ${isActive ? 'text-white' : 'text-[#07767c]'}`}>
+                        {item.icon}
+                      </span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className={`font-bold text-sm mb-0.5 ${isActive ? 'text-white' : 'text-gray-900'}`}>
+                        {item.name}
+                      </p>
+                      <p className={`text-xs ${isActive ? 'text-white/80' : 'text-gray-500'}`}>
+                        {item.description}
+                      </p>
+                    </div>
+                    <FaChevronRight className={`flex-shrink-0 transition-all duration-300 ${
+                      isActive ? 'text-white opacity-100' : 'text-gray-400 opacity-0 group-hover:opacity-100'
+                    }`} />
+                  </>
+                )}
+              </NavLink>
+            ))}
+          </div>
+        </nav>
+
+        {/* Footer */}
+        <div className="p-4 border-t border-gray-200 bg-gradient-to-br from-blue-50 to-indigo-50">
+          <div className="flex items-start gap-3 p-4 bg-white rounded-xl shadow-sm">
+            <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+              <span className="text-lg">💡</span>
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-bold text-gray-900 mb-1">Consejo</p>
+              <p className="text-xs text-gray-600 leading-relaxed">
+                Mantén tu perfil actualizado para más oportunidades
+              </p>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </>
   );
 };
 

@@ -1,10 +1,12 @@
 import React, { useState } from "react";
+import { FaSearch, FaMapMarkerAlt, FaStar, FaTags, FaFilter, FaUndo } from 'react-icons/fa';
 
 function SearchFilters({ onFilterChange }) {
     const [location, setLocation] = useState("");
     const [rating, setRating] = useState("");
     const [skills, setSkills] = useState("");
     const [search, setSearch] = useState("");
+    const [activeFilters, setActiveFilters] = useState(0);
     
     const handleFilterChange = () => {
         const filters = {
@@ -13,6 +15,15 @@ function SearchFilters({ onFilterChange }) {
             rating: rating ? parseInt(rating) : null,
             skills
         };
+        
+        // Contar filtros activos
+        let count = 0;
+        if (search) count++;
+        if (location) count++;
+        if (rating) count++;
+        if (skills) count++;
+        setActiveFilters(count);
+        
         onFilterChange(filters);
     };
     
@@ -21,6 +32,7 @@ function SearchFilters({ onFilterChange }) {
         setRating("");
         setSkills("");
         setSearch("");
+        setActiveFilters(0);
        
         onFilterChange({
             search: "",
@@ -31,67 +43,66 @@ function SearchFilters({ onFilterChange }) {
     };
     
     return (
-        <div className="w-full lg:w-64 flex-shrink-0">
-            <div className="sticky top-24 bg-white rounded-xl shadow-lg border border-gray-200 p-6 transition-all duration-300 hover:shadow-xl">
-                {/* Header */}
-                <div className="mb-6 pb-4 border-b-2 border-[#07767c]">
-                    <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-gradient-to-br from-[#07767c] to-[#0a474f] rounded-lg flex items-center justify-center">
-                            <svg 
-                                className="w-5 h-5 text-white" 
-                                fill="none" 
-                                stroke="currentColor" 
-                                viewBox="0 0 24 24"
-                            >
-                                <path 
-                                    strokeLinecap="round" 
-                                    strokeLinejoin="round" 
-                                    strokeWidth={2} 
-                                    d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" 
-                                />
-                            </svg>
+        <div className="w-full lg:w-80 flex-shrink-0">
+            <div className="sticky top-24 bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden transition-all duration-300 hover:shadow-xl">
+                {/* Header con gradiente */}
+                <div className="bg-gradient-to-br from-[#07767c] to-[#05595d] px-6 py-5">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                            <div className="w-11 h-11 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
+                                <FaFilter className="text-white text-lg" />
+                            </div>
+                            <div>
+                                <h2 className="text-xl font-bold text-white">
+                                    Filtros de Búsqueda
+                                </h2>
+                                {activeFilters > 0 && (
+                                    <p className="text-white/80 text-xs mt-0.5">
+                                        {activeFilters} {activeFilters === 1 ? 'filtro activo' : 'filtros activos'}
+                                    </p>
+                                )}
+                            </div>
                         </div>
-                        <h2 className="text-xl font-bold text-gray-900">
-                            Filtros
-                        </h2>
+                        
+                        {activeFilters > 0 && (
+                            <div className="w-7 h-7 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
+                                <span className="text-white font-bold text-sm">{activeFilters}</span>
+                            </div>
+                        )}
                     </div>
                 </div>
                 
                 {/* Filter Groups */}
-                <div className="space-y-5">
+                <div className="p-6 space-y-5">
                     
                     {/* Buscar por nombre */}
                     <div className="filter-group">
                         <label 
                             htmlFor="search" 
-                            className="block text-sm font-semibold text-gray-700 mb-2"
+                            className="flex items-center gap-2 text-sm font-bold text-gray-800 mb-3"
                         >
+                            <FaSearch className="text-[#07767c]" />
                             Buscar por nombre
                         </label>
                         <div className="relative">
-                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <svg 
-                                    className="w-4 h-4 text-gray-400" 
-                                    fill="none" 
-                                    stroke="currentColor" 
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path 
-                                        strokeLinecap="round" 
-                                        strokeLinejoin="round" 
-                                        strokeWidth={2} 
-                                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" 
-                                    />
-                                </svg>
-                            </div>
                             <input
                                 type="text"
                                 id="search"
-                                placeholder="Ej. Ricardo"
+                                placeholder="Ej. Ricardo García"
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
-                                className="w-full pl-10 pr-3 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#07767c] focus:border-transparent transition-all duration-200 outline-none"
+                                className="w-full px-4 py-3 text-sm border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#07767c]/20 focus:border-[#07767c] transition-all duration-200 outline-none hover:border-gray-300"
                             />
+                            {search && (
+                                <button
+                                    onClick={() => setSearch("")}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                                >
+                                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                                    </svg>
+                                </button>
+                            )}
                         </div>
                     </div>
                     
@@ -99,40 +110,30 @@ function SearchFilters({ onFilterChange }) {
                     <div className="filter-group">
                         <label 
                             htmlFor="location" 
-                            className="block text-sm font-semibold text-gray-700 mb-2"
+                            className="flex items-center gap-2 text-sm font-bold text-gray-800 mb-3"
                         >
+                            <FaMapMarkerAlt className="text-[#07767c]" />
                             Ubicación
                         </label>
                         <div className="relative">
-                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <svg 
-                                    className="w-4 h-4 text-gray-400" 
-                                    fill="none" 
-                                    stroke="currentColor" 
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path 
-                                        strokeLinecap="round" 
-                                        strokeLinejoin="round" 
-                                        strokeWidth={2} 
-                                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" 
-                                    />
-                                    <path 
-                                        strokeLinecap="round" 
-                                        strokeLinejoin="round" 
-                                        strokeWidth={2} 
-                                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" 
-                                    />
-                                </svg>
-                            </div>
                             <input
                                 type="text"
                                 id="location"
-                                placeholder="Ej. Santiago"
+                                placeholder="Ej. Santiago, Valparaíso"
                                 value={location}
                                 onChange={(e) => setLocation(e.target.value)}
-                                className="w-full pl-10 pr-3 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#07767c] focus:border-transparent transition-all duration-200 outline-none"
+                                className="w-full px-4 py-3 text-sm border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#07767c]/20 focus:border-[#07767c] transition-all duration-200 outline-none hover:border-gray-300"
                             />
+                            {location && (
+                                <button
+                                    onClick={() => setLocation("")}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                                >
+                                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                                    </svg>
+                                </button>
+                            )}
                         </div>
                     </div>
                     
@@ -140,128 +141,95 @@ function SearchFilters({ onFilterChange }) {
                     <div className="filter-group">
                         <label 
                             htmlFor="rating" 
-                            className="block text-sm font-semibold text-gray-700 mb-2"
+                            className="flex items-center gap-2 text-sm font-bold text-gray-800 mb-3"
                         >
-                            Calificación
+                            <FaStar className="text-[#07767c]" />
+                            Calificación mínima
                         </label>
-                        <div className="relative">
-                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <svg 
-                                    className="w-4 h-4 text-yellow-500" 
-                                    fill="currentColor" 
-                                    viewBox="0 0 20 20"
+                        <div className="grid grid-cols-5 gap-2">
+                            {[5, 4, 3, 2, 1].map((star) => (
+                                <button
+                                    key={star}
+                                    type="button"
+                                    onClick={() => setRating(star.toString())}
+                                    className={`flex flex-col items-center justify-center py-3 rounded-xl border-2 transition-all duration-200 ${
+                                        rating === star.toString()
+                                            ? 'bg-gradient-to-br from-[#07767c] to-[#05595d] border-[#07767c] text-white shadow-lg scale-105'
+                                            : 'bg-white border-gray-200 text-gray-700 hover:border-[#07767c]/30 hover:bg-gray-50'
+                                    }`}
                                 >
-                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                </svg>
-                            </div>
-                            <select
-                                id="rating"
-                                value={rating}
-                                onChange={(e) => setRating(e.target.value)}
-                                className="w-full pl-10 pr-3 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#07767c] focus:border-transparent transition-all duration-200 outline-none appearance-none bg-white cursor-pointer"
-                            >
-                                <option value="">Todas</option>
-                                <option value="5">⭐⭐⭐⭐⭐</option>
-                                <option value="4">⭐⭐⭐⭐</option>
-                                <option value="3">⭐⭐⭐</option>
-                                <option value="2">⭐⭐</option>
-                                <option value="1">⭐</option>
-                            </select>
-                            <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                <svg 
-                                    className="w-4 h-4 text-gray-400" 
-                                    fill="none" 
-                                    stroke="currentColor" 
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path 
-                                        strokeLinecap="round" 
-                                        strokeLinejoin="round" 
-                                        strokeWidth={2} 
-                                        d="M19 9l-7 7-7-7" 
-                                    />
-                                </svg>
-                            </div>
+                                    <span className="text-lg mb-1">
+                                        {rating === star.toString() ? '⭐' : '☆'}
+                                    </span>
+                                    <span className="text-xs font-bold">{star}</span>
+                                </button>
+                            ))}
                         </div>
+                        {rating && (
+                            <button
+                                onClick={() => setRating("")}
+                                className="mt-2 text-xs text-gray-500 hover:text-[#07767c] font-medium transition-colors"
+                            >
+                                Limpiar calificación
+                            </button>
+                        )}
                     </div>
                     
                     {/* Habilidades */}
                     <div className="filter-group">
                         <label 
                             htmlFor="skills" 
-                            className="block text-sm font-semibold text-gray-700 mb-2"
+                            className="flex items-center gap-2 text-sm font-bold text-gray-800 mb-3"
                         >
+                            <FaTags className="text-[#07767c]" />
                             Habilidades
                         </label>
                         <div className="relative">
-                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <svg 
-                                    className="w-4 h-4 text-gray-400" 
-                                    fill="none" 
-                                    stroke="currentColor" 
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path 
-                                        strokeLinecap="round" 
-                                        strokeLinejoin="round" 
-                                        strokeWidth={2} 
-                                        d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" 
-                                    />
-                                </svg>
-                            </div>
                             <input
                                 type="text"
                                 id="skills"
-                                placeholder="Ej. React, Node.js"
+                                placeholder="Ej. React, Node.js, Python"
                                 value={skills}
                                 onChange={(e) => setSkills(e.target.value)}
-                                className="w-full pl-10 pr-3 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#07767c] focus:border-transparent transition-all duration-200 outline-none"
+                                className="w-full px-4 py-3 text-sm border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#07767c]/20 focus:border-[#07767c] transition-all duration-200 outline-none hover:border-gray-300"
                             />
+                            {skills && (
+                                <button
+                                    onClick={() => setSkills("")}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                                >
+                                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                                    </svg>
+                                </button>
+                            )}
                         </div>
+                        <p className="text-xs text-gray-500 mt-2">
+                            Separa múltiples habilidades con comas
+                        </p>
                     </div>
                     
                 </div>
                 
                 {/* Buttons */}
-                <div className="mt-6 space-y-3 pt-5 border-t border-gray-200">
+                <div className="px-6 pb-6 space-y-3">
                     <button 
                         onClick={handleFilterChange} 
-                        className="w-full bg-gradient-to-r from-[#07767c] to-[#0a474f] text-white font-semibold py-3 px-4 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 hover:scale-105 active:scale-95 flex items-center justify-center gap-2"
+                        className="w-full bg-gradient-to-r from-[#07767c] to-[#05595d] text-white font-bold py-4 px-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 active:scale-95 flex items-center justify-center gap-2"
                     >
-                        <svg 
-                            className="w-4 h-4" 
-                            fill="none" 
-                            stroke="currentColor" 
-                            viewBox="0 0 24 24"
-                        >
-                            <path 
-                                strokeLinecap="round" 
-                                strokeLinejoin="round" 
-                                strokeWidth={2} 
-                                d="M5 13l4 4L19 7" 
-                            />
-                        </svg>
-                        Aplicar Filtros
+                        <FaSearch className="text-sm" />
+                        <span>Aplicar Filtros</span>
                     </button>
-                    <button 
-                        onClick={handleReset} 
-                        className="w-full bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-4 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 hover:scale-105 active:scale-95 flex items-center justify-center gap-2"
-                    >
-                        <svg 
-                            className="w-4 h-4" 
-                            fill="none" 
-                            stroke="currentColor" 
-                            viewBox="0 0 24 24"
+                    
+                    {activeFilters > 0 && (
+                        <button 
+                            onClick={handleReset} 
+                            className="w-full bg-white border-2 border-gray-300 text-gray-700 font-bold py-4 px-4 rounded-xl hover:bg-gray-50 hover:border-gray-400 transition-all duration-300 active:scale-95 flex items-center justify-center gap-2"
                         >
-                            <path 
-                                strokeLinecap="round" 
-                                strokeLinejoin="round" 
-                                strokeWidth={2} 
-                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" 
-                            />
-                        </svg>
-                        Restablecer
-                    </button>
+                            <FaUndo className="text-sm" />
+                            <span>Limpiar Filtros</span>
+                        </button>
+                    )}
                 </div>
             </div>
         </div>
