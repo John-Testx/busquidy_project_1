@@ -109,7 +109,7 @@ function ViewMoreDetailsFreelancer() {
       <main className="pt-20 pb-12">
         <div className="max-w-5xl mx-auto px-4">
           <div className="flex items-center gap-4 mb-8">
-            <button onClick={() => navigate("/perfil-freelancer")} className="p-2 hover:bg-gray-200 rounded-lg transition-colors">
+            <button onClick={() => navigate("/viewperfilfreelancer")} className="p-2 hover:bg-gray-200 rounded-lg transition-colors">
               ← Volver
             </button>
             <h1 className="text-4xl font-bold text-gray-900">Tu Perfil Completo</h1>
