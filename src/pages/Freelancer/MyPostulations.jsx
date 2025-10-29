@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from "react";
 import {jwtDecode} from 'jwt-decode';
 import { useNavigate } from "react-router-dom";
-import MyPostulationsTable from "@/components/FreeLancer/MyPostulationsTable";
+import MyPostulationsTable from "@/components/FreeLancer/Postulation/MyPostulationsTable";
 import LoadingScreen from "@/components/LoadingScreen";
 import { Footer, Navbar } from '@/components/Home/';
 
