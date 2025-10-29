@@ -269,7 +269,7 @@ function ModalCreatePerfilFreelancer({ closeModal, id_usuario }) {
   if (showSuccess) {
     return (
       <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8">
+        <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 animate-[modalSlideIn_0.3s_ease-out]">
           <div className="text-center">
             <div className="flex justify-center mb-4">
               <div className="w-20 h-20 bg-teal-100 rounded-full flex items-center justify-center">
@@ -296,29 +296,29 @@ function ModalCreatePerfilFreelancer({ closeModal, id_usuario }) {
   // FORMULARIO PRINCIPAL
   // ============================================
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-y-auto">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-5xl my-8">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 pt-24 animate-[fadeIn_0.2s_ease-out]">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-5xl max-h-[80vh] overflow-hidden flex flex-col">
         
-        {/* Header */}
-        <div className="bg-gradient-to-r from-teal-600 to-teal-700 px-8 py-5 flex items-center justify-between border-b border-teal-800 rounded-t-2xl">
+        {/* Header - Más compacto */}
+        <div className="bg-gradient-to-r from-teal-600 to-teal-700 px-6 py-4 flex items-center justify-between border-b border-teal-800 rounded-t-2xl flex-shrink-0">
           <div>
-            <h2 className="text-2xl font-bold text-white">Crear Perfil Profesional</h2>
-            <p className="text-teal-100 text-sm mt-1">Paso {currentStep} de {TOTAL_STEPS}: {STEP_TITLES[currentStep]}</p>
+            <h2 className="text-xl font-bold text-white">Crear Perfil Profesional</h2>
+            <p className="text-teal-100 text-xs mt-1">Paso {currentStep} de {TOTAL_STEPS}: {STEP_TITLES[currentStep]}</p>
           </div>
           <button
             onClick={closeModal}
             disabled={isSubmitting}
-            className="bg-white/20 hover:bg-white/30 text-white w-10 h-10 rounded-full flex items-center justify-center transition-colors duration-200 disabled:opacity-50"
+            className="bg-white/20 hover:bg-white/30 text-white w-9 h-9 rounded-full flex items-center justify-center transition-all duration-200 disabled:opacity-50 group"
             aria-label="Cerrar"
           >
-            <X size={20} />
+            <X size={18} className="group-hover:rotate-90 transition-transform duration-300" />
           </button>
         </div>
 
-        {/* Progress Bar - Mejorado */}
-        <div className="px-8 py-5 bg-gray-50 border-b border-gray-200">
+        {/* Progress Bar - Más compacto */}
+        <div className="px-6 py-3 bg-gray-50 border-b border-gray-200 flex-shrink-0">
           {/* Indicadores de pasos con scroll horizontal */}
-          <div className="overflow-x-auto pb-3">
+          <div className="overflow-x-auto pb-2">
             <div className="flex items-center gap-2 min-w-max">
               {Array.from({ length: TOTAL_STEPS }, (_, index) => index + 1).map((step) => (
                 <React.Fragment key={step}>
@@ -326,7 +326,7 @@ function ModalCreatePerfilFreelancer({ closeModal, id_usuario }) {
                     onClick={() => jumpToStep(step)}
                     disabled={!completedSteps.includes(step) && step !== currentStep}
                     title={STEP_TITLES[step]}
-                    className={`flex-shrink-0 w-8 h-8 rounded-full font-bold text-xs flex items-center justify-center transition-all duration-300 ${
+                    className={`flex-shrink-0 w-7 h-7 rounded-full font-bold text-xs flex items-center justify-center transition-all duration-300 ${
                       step === currentStep
                         ? 'bg-teal-600 text-white shadow-lg scale-110'
                         : completedSteps.includes(step)
@@ -335,13 +335,13 @@ function ModalCreatePerfilFreelancer({ closeModal, id_usuario }) {
                     }`}
                   >
                     {completedSteps.includes(step) ? (
-                      <Check size={14} />
+                      <Check size={12} />
                     ) : (
                       step
                     )}
                   </button>
                   {step < TOTAL_STEPS && (
-                    <div className={`w-6 h-0.5 ${
+                    <div className={`w-4 h-0.5 ${
                       completedSteps.includes(step) ? 'bg-teal-600' : 'bg-gray-300'
                     }`}></div>
                   )}
@@ -351,7 +351,7 @@ function ModalCreatePerfilFreelancer({ closeModal, id_usuario }) {
           </div>
           
           {/* Barra de progreso */}
-          <div className="w-full bg-gray-300 rounded-full h-2 overflow-hidden mt-2">
+          <div className="w-full bg-gray-300 rounded-full h-1.5 overflow-hidden mt-2">
             <div
               className="bg-teal-600 h-full transition-all duration-500 ease-out"
               style={{ width: `${progressPercentage}%` }}
@@ -359,31 +359,31 @@ function ModalCreatePerfilFreelancer({ closeModal, id_usuario }) {
           </div>
         </div>
 
-        {/* Form Content */}
-        <div className="px-8 py-6 max-h-[60vh] overflow-y-auto">
+        {/* Form Content - Con scroll optimizado */}
+        <div className="flex-1 overflow-y-auto px-6 py-4">
           <form onSubmit={handleSubmit}>
             {renderStep()}
 
             {/* Error Message */}
             {errorMessage && (
-              <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+              <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
                 <p className="text-red-600 text-sm font-medium">{errorMessage}</p>
               </div>
             )}
           </form>
         </div>
 
-        {/* Footer Actions */}
-        <div className="px-8 py-5 bg-gray-50 border-t border-gray-200 rounded-b-2xl">
-          <div className="flex gap-4">
+        {/* Footer Actions - Más compacto */}
+        <div className="px-6 py-3 bg-gray-50 border-t border-gray-200 rounded-b-2xl flex-shrink-0">
+          <div className="flex gap-3">
             {currentStep > 1 && (
               <button
                 type="button"
                 onClick={prevStep}
                 disabled={isSubmitting}
-                className="flex-1 px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold rounded-lg transition-colors duration-200 flex items-center justify-center gap-2 disabled:opacity-50"
+                className="flex-1 px-5 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold rounded-lg transition-colors duration-200 flex items-center justify-center gap-2 disabled:opacity-50"
               >
-                <ChevronLeft size={20} />
+                <ChevronLeft size={18} />
                 Anterior
               </button>
             )}
@@ -392,17 +392,17 @@ function ModalCreatePerfilFreelancer({ closeModal, id_usuario }) {
                 type="button"
                 onClick={nextStep}
                 disabled={isSubmitting}
-                className="flex-1 px-6 py-3 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-lg transition-colors duration-200 flex items-center justify-center gap-2 disabled:opacity-50"
+                className="flex-1 px-5 py-2 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-lg transition-colors duration-200 flex items-center justify-center gap-2 disabled:opacity-50"
               >
                 Siguiente
-                <ChevronRight size={20} />
+                <ChevronRight size={18} />
               </button>
             ) : (
               <button
                 type="submit"
                 onClick={handleSubmit}
                 disabled={isSubmitting}
-                className="flex-1 px-6 py-3 bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white font-semibold rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
+                className="flex-1 px-5 py-2 bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white font-semibold rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
               >
                 {isSubmitting ? (
                   <>
@@ -411,7 +411,7 @@ function ModalCreatePerfilFreelancer({ closeModal, id_usuario }) {
                   </>
                 ) : (
                   <>
-                    <Check size={20} />
+                    <Check size={18} />
                     Crear Perfil
                   </>
                 )}
@@ -420,6 +420,23 @@ function ModalCreatePerfilFreelancer({ closeModal, id_usuario }) {
           </div>
         </div>
       </div>
+
+      <style jsx>{`
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes modalSlideIn {
+          from {
+            opacity: 0;
+            transform: scale(0.95);
+          }
+          to {
+            opacity: 1;
+            transform: scale(1);
+          }
+        }
+      `}</style>
     </div>
   );
 }
