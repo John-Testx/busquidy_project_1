@@ -1,12 +1,12 @@
 import { useState, useEffect, useCallback } from 'react';
-import { getFreelancerPublicProfile } from '@/api/freelancerApi';
+import { getFreelancerPublicProfileByUserId } from '@/api/freelancerApi';
 
 /**
  * Custom hook para gestionar la obtención del perfil público de un freelancer
- * @param {string|number} id_freelancer - ID del freelancer a obtener
+ * @param {string|number} id_usuario - ID del usuario freelancer
  * @returns {Object} Estado y funciones para gestionar el perfil del freelancer
  */
-function useFreelancerProfile(id_freelancer) {
+function useFreelancerProfile(id_usuario) {
   const [freelancer, setFreelancer] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -15,8 +15,8 @@ function useFreelancerProfile(id_freelancer) {
    * Obtiene los datos del perfil del freelancer
    */
   const fetchFreelancerProfile = useCallback(async () => {
-    if (!id_freelancer) {
-      setError('ID de freelancer no proporcionado');
+    if (!id_usuario) {
+      setError('ID de usuario no proporcionado');
       setLoading(false);
       return;
     }
@@ -24,18 +24,28 @@ function useFreelancerProfile(id_freelancer) {
     try {
       setLoading(true);
       setError(null);
-
-      const response = await getFreelancerPublicProfile(id_freelancer);
-      console.log("Datos recibidos del backend:", response.data);
       
-      setFreelancer(response.data);
+      console.log("Obteniendo perfil para id_usuario:", id_usuario);
+      
+      const response = await getFreelancerPublicProfileByUserId(id_usuario);
+      
+      console.log("Respuesta completa del backend:", response);
+      console.log("Datos del freelancer:", response.data);
+      
+      // Verificar si la respuesta tiene la estructura correcta
+      if (response && response.data) {
+        setFreelancer(response.data);
+      } else {
+        throw new Error('Estructura de datos incorrecta');
+      }
     } catch (err) {
       console.error("Error al obtener los datos del freelancer:", err);
-      setError(err.response?.data?.message || 'Error al cargar el perfil del freelancer');
+      console.error("Detalles del error:", err.response);
+      setError(err.response?.data?.error || err.message || 'Error al cargar el perfil del freelancer');
     } finally {
       setLoading(false);
     }
-  }, [id_freelancer]);
+  }, [id_usuario]);
 
   /**
    * Recarga el perfil del freelancer

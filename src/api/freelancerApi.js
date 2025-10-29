@@ -92,6 +92,7 @@ export const deleteApplication = async (id_postulacion) => {
   const response = await apiClient.delete(`${BASE}/delete-postulacion/${id_postulacion}`);
   return response.data;
 };
+
 // =============================================
 // BÚSQUEDA Y LISTADO - NUEVAS FUNCIONES
 // =============================================
@@ -139,6 +140,14 @@ export const getFreelancersList = async () => {
 
 export const getFreelancerPublicProfile = (id_freelancer) =>
   apiClient.get(`${BASE}/freelancer-perfil/${id_freelancer}`);
+
+/**
+ * Obtiene el perfil público del freelancer usando id_usuario
+ * @param {number} id_usuario - ID del usuario freelancer
+ * @returns {Promise<Object>} Perfil del freelancer
+ */
+export const getFreelancerPublicProfileByUserId = (id_usuario) =>
+  apiClient.get(`${BASE}/perfil-by-user/${id_usuario}`);
 
 // =============================================
 // VERIFICACIÓN DE PERFIL

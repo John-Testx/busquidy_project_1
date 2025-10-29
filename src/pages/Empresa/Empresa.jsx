@@ -14,21 +14,6 @@ function Empresa() {
     const navigate = useNavigate();
     
     const { isAuthenticated, tipo_usuario: userType, loading, logout } = useAuth();
-    
-    const handleLogout = () => {
-        setLogoutStatus("Cerrando sesión...");
-        setShowNotification(true);
-        
-        setTimeout(() => {
-            logout();
-            setLogoutStatus("Sesión cerrada");
-            
-            setTimeout(() => {
-                navigate("/");
-                setShowNotification(false);
-            }, 500);
-        }, 500);
-    };
 
     // Stats data (estos podrían venir de una API)
     const stats = [

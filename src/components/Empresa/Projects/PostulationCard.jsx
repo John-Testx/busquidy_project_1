@@ -1,10 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Calendar, MessageSquare, ChevronDown, User as UserIcon } from 'lucide-react';
 import ProfileCircle from '@/components/ProfileCircle';
 
 const PostulationCard = ({ postulant }) => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const dropdownRef = useRef(null);
+    const navigate = useNavigate();
 
     // Cerrar dropdown al hacer clic fuera
     useEffect(() => {
@@ -21,6 +23,15 @@ const PostulationCard = ({ postulant }) => {
     const userInitials = postulant?.nombre 
         ? postulant.nombre.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()
         : 'NN';
+
+    const handleVerPerfil = () => {
+        if (postulant?.id_usuario) {
+            console.log('Navegando al perfil del usuario:', postulant.id_usuario);
+            navigate(`/viewfreelancer/${postulant.id_usuario}`);
+        } else {
+            console.error('No hay id_usuario disponible en postulant:', postulant);
+        }
+    };
 
     return (
         <div className="bg-white rounded-xl p-5 border border-gray-200 hover:border-[#07767c]/30 transition-all duration-200 hover:shadow-md">
@@ -41,7 +52,7 @@ const PostulationCard = ({ postulant }) => {
                     <div className="flex gap-2">
                         {/* Botón Ver Perfil */}
                         <button
-                            onClick={() => window.open(`/viewfreelancer/${postulant?.id_usuario}`, '_blank')}
+                            onClick={handleVerPerfil}
                             className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors duration-200 text-sm font-medium"
                         >
                             <UserIcon size={16} />
