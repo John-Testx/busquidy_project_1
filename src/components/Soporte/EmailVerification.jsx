@@ -27,16 +27,16 @@ function EmailVerification({ onEmailVerified }) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full">
-        <div className="text-center mb-8">
-          <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Mail className="w-10 h-10 text-white" />
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-3 md:p-4">
+      <div className="bg-white rounded-xl md:rounded-2xl shadow-2xl p-6 md:p-8 max-w-md w-full">
+        <div className="text-center mb-6 md:mb-8">
+          <div className="w-16 h-16 md:w-20 md:h-20 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-3 md:mb-4">
+            <Mail className="w-8 h-8 md:w-10 md:h-10 text-white" />
           </div>
-          <h2 className="text-3xl font-bold text-gray-800 mb-2">
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
             Verificar Email
           </h2>
-          <p className="text-gray-600">
+          <p className="text-sm md:text-base text-gray-600">
             Ingresa tu email para ver tus tickets de soporte
           </p>
         </div>

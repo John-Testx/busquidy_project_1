@@ -4,7 +4,7 @@ import ProjectForm from "./ProjectForm";
 import { getProjectById, updateProject } from "@/api/projectsApi";
 import { toast } from "react-toastify";
 import LoadingScreen from "../../../LoadingScreen";
-import { Footer, Navbar } from '@/components/Home/';
+import MainLayout from "@/components/Layouts/MainLayout";
 
 function EditProjectPage() {
   const { id } = useParams();
@@ -45,13 +45,13 @@ useEffect(() => {
 
   return (
     <>
-        <Navbar />
+        <MainLayout>
             <main className="min-h-screen bg-gray-50 flex items-center justify-center py-20 px-4 sm:px-6 lg:px-8">
                 <div className="w-full max-w-5xl">
                     <ProjectForm projectData={project} onSubmit={handleUpdate}/>
                 </div>
             </main>
-        <Footer />
+        </ MainLayout>
     </>
   );
 }

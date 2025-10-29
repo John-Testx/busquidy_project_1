@@ -22,6 +22,31 @@
   }
 }
 
+/* ========== SCROLLBAR PERSONALIZADO ========== */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #07767c;
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #055a5f;
+}
+
+/* Para Firefox */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #07767c #f1f1f1;
+}
+
 /* ========== ANIMACIONES DE MODALES ========== */
 
 /* Animación para el backdrop (fondo oscuro) */

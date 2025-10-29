@@ -1,6 +1,20 @@
 import React from "react";
 import Select from "react-select";
 
+const customSelectStyles = {
+  control: (base) => ({
+    ...base,
+    borderColor: '#d1d5db',
+    '&:hover': { borderColor: '#14b8a6' },
+    boxShadow: 'none',
+  }),
+  option: (base, state) => ({
+    ...base,
+    backgroundColor: state.isSelected ? '#14b8a6' : state.isFocused ? '#ccfbf1' : 'white',
+    color: state.isSelected ? 'white' : '#374151',
+  }),
+};
+
 function StepEmprendimiento({ freelancerData, handleChange, handleSelectChange }) {
   const siNoOptions = [
     { value: "Si", label: "Sí" },
@@ -9,7 +23,9 @@ function StepEmprendimiento({ freelancerData, handleChange, handleSelectChange }
 
   return (
     <div className="space-y-6">
-      <h3 className="text-lg font-semibold text-gray-800 pb-2 border-b">Emprendimiento</h3>
+      <h3 className="text-lg font-semibold text-gray-800 pb-2 border-b border-teal-200">
+        Emprendimiento
+      </h3>
 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -21,6 +37,7 @@ function StepEmprendimiento({ freelancerData, handleChange, handleSelectChange }
           onChange={(option) => handleSelectChange(option, "emprendimiento", "emprendedor")}
           className="react-select-container"
           classNamePrefix="react-select"
+          styles={customSelectStyles}
         />
       </div>
 
@@ -35,6 +52,7 @@ function StepEmprendimiento({ freelancerData, handleChange, handleSelectChange }
             onChange={(option) => handleSelectChange(option, "emprendimiento", "interesado")}
             className="react-select-container"
             classNamePrefix="react-select"
+            styles={customSelectStyles}
           />
         </div>
       )}
@@ -52,7 +70,7 @@ function StepEmprendimiento({ freelancerData, handleChange, handleSelectChange }
                 placeholder="2020"
                 value={freelancerData.emprendimiento.ano_inicio_emprendimiento}
                 onChange={(e) => handleChange(e, "emprendimiento")}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
               />
             </div>
 
@@ -66,7 +84,7 @@ function StepEmprendimiento({ freelancerData, handleChange, handleSelectChange }
                 placeholder="Enero"
                 value={freelancerData.emprendimiento.mes_inicio_emprendimiento}
                 onChange={(e) => handleChange(e, "emprendimiento")}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
               />
             </div>
           </div>
@@ -81,7 +99,7 @@ function StepEmprendimiento({ freelancerData, handleChange, handleSelectChange }
               placeholder="Tecnología, Comercio, Servicios..."
               value={freelancerData.emprendimiento.sector_emprendimiento}
               onChange={(e) => handleChange(e, "emprendimiento")}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
             />
           </div>
         </>

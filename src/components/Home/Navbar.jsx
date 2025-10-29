@@ -5,6 +5,7 @@ import SecondaryRegisterModal from "./Modals/SecondaryRegisterModal";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import LoginModal from "./Modals/LoginModal";
 import LoginSecondaryModal from "./Modals/LoginSecondaryModal";
+import MessageModal from "../MessageModal"; // IMPORTAR MessageModal
 import { useAuth } from "@/hooks";
 import { navbarOptions, profileLinks } from "@/common/navbarOptions";
 import ProfileCircle from "../ProfileCircle";
@@ -32,10 +33,12 @@ function Navbar() {
         handleRegister, 
         logout, 
         errors, 
-        loading 
+        loading,
+        message,        // NUEVO: Estado de mensajes
+        clearMessage    // NUEVO: Función para limpiar mensajes
     } = useAuth();
 
-    // Add registration formData in Navbar
+    // Registration formData
     const [registerData, setRegisterData] = useState({
         correo: "",
         contraseña: "",
@@ -62,12 +65,33 @@ function Navbar() {
             registerData.contraseña,
             registerData.tipoUsuario,
             () => {
+                // 1. Cierra el modal de registro
                 setShowSecondaryRegisterModal(false);
                 setShowRegisterModal(false);
-                console.log("Registro exitoso, redirigiendo...");
-                navigate("/");
+                // 2. Limpia el formulario
+                clearRegisterForm();
+                // 3. El MessageModal se mostrará solo
             }
         );
+    };
+
+    // Esta función maneja el cierre del MessageModal y la redirección
+    const handleCloseMessageModal = () => {
+        const messageType = message.type; // Captura el tipo ANTES de limpiar
+        
+        clearMessage(); // Cierra el modal de mensaje (pone message.show = false)
+        
+        // Si fue un mensaje de éxito (de login o register), redirigimos AHORA.
+        if (messageType === 'success') {
+            if (tipo_usuario === 'empresa') {
+                navigate('/empresa');
+            } else if (tipo_usuario === 'freelancer') {
+                navigate('/freelancer');
+            } else {
+                navigate('/');
+            }
+        }
+        // Si fue un error o info, solo se cierra el modal y el usuario sigue donde estaba.
     };
 
     // Modal states
@@ -80,12 +104,24 @@ function Navbar() {
     const [formData, setFormData] = useState({ correo: "", contraseña: "" });
     const updateFormData = (key, value) => setFormData((prev) => ({ ...prev, [key]: value }));
 
+    // Función para limpiar formulario de login
+    const clearLoginForm = () => {
+        setFormData({ correo: "", contraseña: "" });
+    };
+
+    // Función para limpiar formulario de registro
+    const clearRegisterForm = () => {
+        setRegisterData({ correo: "", contraseña: "", tipoUsuario: "" });
+    };
+
     const handleLoginSubmit = async () => {
         await handleLogin(formData.correo, formData.contraseña, (tipo_usuario) => {
+            // 1. Cierra el modal de login
             setShowLoginSecondaryModal(false);
             setShowLoginModal(false);
-            console.log(tipo_usuario);
-            navigate("/");
+            // 2. Limpia el formulario
+            clearLoginForm();
+            // 3. El MessageModal se mostrará solo porque 'message.show' es true
         });
     };
 
@@ -98,6 +134,8 @@ function Navbar() {
     const handleLogout = () => {
         logout();
         setIsProfileMenuOpen(false);
+        clearLoginForm(); // LIMPIAR al cerrar sesión
+        clearRegisterForm();
         navigate("/");
     };
 
@@ -140,14 +178,17 @@ function Navbar() {
         >
             <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-center h-20 lg:h-24 gap-8">
-                    
+
                     {/* Logo */}
                     <div className="flex items-center flex-shrink-0">
-                        <Link to="/" className="flex items-center group">
+                        <Link 
+                            to="/" 
+                            className="relative inline-flex items-center justify-center group h-20 sm:h-24 lg:h-28"
+                        >
                             <img 
                                 src="/images/Busquidy.png" 
                                 alt="Busquidy Logo" 
-                                className="h-24 sm:h-28 lg:h-32 w-auto transition-transform duration-300 group-hover:scale-105" 
+                                className="h-full w-auto object-contain transition-transform duration-300 group-hover:scale-105"
                             />
                         </Link>
                     </div>
@@ -193,7 +234,6 @@ function Navbar() {
                                 />
                             </button>
 
-                            {/* Help Dropdown Menu */}
                             {isHelpDropdownOpen && (
                                 <div className="absolute top-full mt-2 right-0 w-56 bg-white rounded-xl shadow-xl border border-gray-100 py-2 animate-in fade-in slide-in-from-top-2 duration-200">
                                     <Link 
@@ -218,7 +258,7 @@ function Navbar() {
                         </div>
                     </nav>
 
-                    {/* Right Section - Auth Buttons / Profile - Ahora con ml-auto para empujar a la derecha */}
+                    {/* Right Section - Auth Buttons / Profile */}
                     <div className="hidden lg:flex items-center gap-3 ml-auto">
                         {!isAuthenticated ? (
                             <>
@@ -237,13 +277,11 @@ function Navbar() {
                             </>
                         ) : (
                             <div className="flex items-center gap-4">
-                                {/* Notifications Icon (optional) */}
                                 <button className="relative p-2 text-gray-600 hover:text-[#07767c] hover:bg-gray-50 rounded-lg transition-colors">
                                     <Bell size={20} />
                                     <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
                                 </button>
 
-                                {/* Profile Menu */}
                                 <div className="relative" ref={profileMenuRef}>
                                     <button 
                                         onClick={toggleProfileMenu}
@@ -258,10 +296,8 @@ function Navbar() {
                                         />
                                     </button>
 
-                                    {/* Profile Dropdown */}
                                     {isProfileMenuOpen && (
                                         <div className="absolute top-full right-0 mt-2 w-64 bg-white rounded-xl shadow-xl border border-gray-100 py-2 animate-in fade-in slide-in-from-top-2 duration-200">
-                                            {/* User Info */}
                                             <div className="px-4 py-3 border-b border-gray-100">
                                                 <p className="text-sm font-semibold text-gray-800 truncate">
                                                     {userInitials}
@@ -271,7 +307,6 @@ function Navbar() {
                                                 </p>
                                             </div>
 
-                                            {/* Menu Links */}
                                             <div className="py-2">
                                                 {filteredProfileLinks.map(link => (
                                                     <Link 
@@ -286,7 +321,6 @@ function Navbar() {
                                                 ))}
                                             </div>
 
-                                            {/* Logout */}
                                             <div className="border-t border-gray-100 pt-2">
                                                 <button 
                                                     onClick={handleLogout}
@@ -317,7 +351,6 @@ function Navbar() {
             {isMenuOpen && (
                 <div className="lg:hidden bg-white border-t border-gray-100 animate-in slide-in-from-top duration-300">
                     <div className="px-4 py-4 space-y-1">
-                        {/* Navigation Links */}
                         {navOptions
                             .filter(opt => opt.roles.includes(tipo_usuario) || opt.roles.includes(null))
                             .map((opt) => (
@@ -335,7 +368,6 @@ function Navbar() {
                                 </Link>
                             ))}
 
-                        {/* Help Section */}
                         <div className="pt-2 border-t border-gray-100">
                             <p className="px-4 py-2 text-xs font-semibold text-gray-400 uppercase">Ayuda</p>
                             <Link 
@@ -356,7 +388,6 @@ function Navbar() {
                             </Link>
                         </div>
 
-                        {/* Auth Buttons / Profile - Mobile */}
                         <div className="pt-4 border-t border-gray-100 space-y-2">
                             {!isAuthenticated ? (
                                 <>
@@ -417,13 +448,17 @@ function Navbar() {
 
             {showLoginModal && (
                 <LoginModal
-                    onClose={() => setShowLoginModal(false)}
+                    onClose={() => {
+                        setShowLoginModal(false);
+                        clearLoginForm(); // LIMPIAR al cerrar
+                    }}
                     onOpenSecondary={() => {
                         setShowLoginModal(false);
                         setShowLoginSecondaryModal(true);
                     }}
                     onOpenRegister={() => {
                         setShowLoginModal(false);
+                        clearLoginForm(); // LIMPIAR al cambiar a registro
                         setShowRegisterModal(true);
                     }}
                 />
@@ -431,7 +466,10 @@ function Navbar() {
 
             {showLoginSecondaryModal && (
                 <LoginSecondaryModal
-                    onClose={() => setShowLoginSecondaryModal(false)}
+                    onClose={() => {
+                        setShowLoginSecondaryModal(false);
+                        clearLoginForm(); // LIMPIAR al cerrar
+                    }}
                     onBack={() => {
                         setShowLoginSecondaryModal(false);
                         setShowLoginModal(true);
@@ -443,6 +481,7 @@ function Navbar() {
                     loading={loading}
                     onOpenRegister={() => {
                         setShowLoginSecondaryModal(false);
+                        clearLoginForm(); // LIMPIAR al cambiar a registro
                         setShowRegisterModal(true);
                     }}
                 />
@@ -450,21 +489,28 @@ function Navbar() {
 
             {showRegisterModal && (
                 <RegisterModal
-                    onClose={() => setShowRegisterModal(false)}
+                    onClose={() => {
+                        setShowRegisterModal(false);
+                        clearRegisterForm(); // LIMPIAR al cerrar
+                    }}
                     onOpenSecondary={() => {
                         setShowRegisterModal(false);
                         setShowSecondaryRegisterModal(true);
                     }}
                     onOpenLogin={() => {
                         setShowRegisterModal(false);
+                        clearRegisterForm(); // LIMPIAR al cambiar a login
                         setShowLoginModal(true);
-              }}
+                    }}
                 />
             )}
 
             {showSecondaryRegisterModal && (
                 <SecondaryRegisterModal
-                    onClose={() => setShowSecondaryRegisterModal(false)}
+                    onClose={() => {
+                        setShowSecondaryRegisterModal(false);
+                        clearRegisterForm(); // LIMPIAR al cerrar
+                    }}
                     onBack={() => {
                         setShowSecondaryRegisterModal(false);
                         setShowRegisterModal(true);
@@ -477,8 +523,18 @@ function Navbar() {
                     onOpenLogin={() => {
                         setShowSecondaryRegisterModal(false);
                         setShowRegisterModal(false);
+                        clearRegisterForm(); // LIMPIAR al cambiar a login
                         setShowLoginModal(true);
-              }}
+                    }}
+                />
+            )}
+
+            {/* ----------------------------- MESSAGE MODAL ---------------------------------- */}
+            {message.show && (
+                <MessageModal
+                    message={message.text}
+                    type={message.type}
+                    closeModal={handleCloseMessageModal}
                 />
             )}
         </header>

@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from "react";
 import {jwtDecode} from 'jwt-decode';
 import { useNavigate } from "react-router-dom";
-import MyPostulationsTable from "@/components/FreeLancer/MyPostulationsTable";
+import MyPostulationsTable from "@/components/FreeLancer/Postulation/MyPostulationsTable";
 import LoadingScreen from "@/components/LoadingScreen";
 import { Footer, Navbar } from '@/components/Home/';
 
@@ -16,7 +16,7 @@ function MyPostulations() {
 
     useEffect(() => {
         const checkAuth = () => {
-            const token = localStorage.getItem('token');    
+            const token = sessionStorage.getItem('token');    
             setIsAuthenticated(!!token);
             
             if (token) {
@@ -46,8 +46,8 @@ function MyPostulations() {
         setLogoutStatus("Cerrando sesión...");
         
         setTimeout(() => {
-            localStorage.removeItem("token");
-            localStorage.removeItem("correo");
+            sessionStorage.removeItem("token");
+            sessionStorage.removeItem("correo");
             setIsAuthenticated(false);
             setUserType(null);
             setLogoutStatus("Sesión cerrada");

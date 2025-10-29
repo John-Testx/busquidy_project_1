@@ -4,7 +4,7 @@ import { jwtDecode } from "jwt-decode";
 import { AlertCircle, Loader } from "lucide-react";
 import LoadingScreen from "@/components/LoadingScreen";
 import { getFreelancerProfile } from "@/api/freelancerApi";
-import { Footer, Navbar } from '@/components/Home/';
+import MainLayout from "@/components/Layouts/MainLayout";
 
 function ViewMoreDetailsFreelancer() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -17,7 +17,7 @@ function ViewMoreDetailsFreelancer() {
 
   useEffect(() => {
     const checkAuth = async () => {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       setIsAuthenticated(!!token);
 
       if (token) {
@@ -32,7 +32,7 @@ function ViewMoreDetailsFreelancer() {
         } catch (error) {
           console.error("Error decodificando token:", error);
           setError("Error al verificar sesión");
-          localStorage.removeItem("token");
+          sessionStorage.removeItem("token");
           setIsAuthenticated(false);
         }
       }
@@ -64,7 +64,7 @@ function ViewMoreDetailsFreelancer() {
   if (error) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-        <Navbar />
+        <MainLayout>
         <div className="max-w-4xl mx-auto px-4 py-16">
           <div className="bg-red-50 border border-red-200 rounded-lg p-6 flex items-start gap-4">
             <AlertCircle className="text-red-600 flex-shrink-0 mt-0.5" size={24} />
@@ -77,7 +77,7 @@ function ViewMoreDetailsFreelancer() {
             </div>
           </div>
         </div>
-        <Footer />
+        </ MainLayout >
       </div>
     );
   }
@@ -85,11 +85,11 @@ function ViewMoreDetailsFreelancer() {
   if (!perfilData) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-        <Navbar />
+        <MainLayout >
         <div className="flex justify-center items-center py-32">
           <Loader className="animate-spin text-blue-600" size={40} />
         </div>
-        <Footer />
+        </MainLayout >
       </div>
     );
   }
@@ -105,7 +105,7 @@ function ViewMoreDetailsFreelancer() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-      <Navbar />
+      <MainLayout>
       <main className="pt-20 pb-12">
         <div className="max-w-5xl mx-auto px-4">
           <div className="flex items-center gap-4 mb-8">
@@ -249,7 +249,7 @@ function ViewMoreDetailsFreelancer() {
           </div>
         </div>
       </main>
-      <Footer />
+      </MainLayout >
     </div>
   );
 }

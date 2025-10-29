@@ -138,7 +138,7 @@ export default function SidebarAdmin() {
           <div className="p-4 border-t border-gray-200 bg-gray-50">
             <button
               onClick={() => {
-                localStorage.removeItem("token");
+                sessionStorage.removeItem("token");
                 window.location.href = "/";
               }}
               className="w-full flex items-center justify-center gap-2 bg-white hover:bg-red-50 text-red-600 font-medium py-3 rounded-xl transition-all border border-red-200 hover:border-red-300 shadow-sm hover:shadow"

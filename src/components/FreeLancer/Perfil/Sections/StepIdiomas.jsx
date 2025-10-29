@@ -2,6 +2,20 @@ import React, { useState } from "react";
 import Select from "react-select";
 import { Plus, Trash2 } from "lucide-react";
 
+const customSelectStyles = {
+  control: (base) => ({
+    ...base,
+    borderColor: '#d1d5db',
+    '&:hover': { borderColor: '#14b8a6' },
+    boxShadow: 'none',
+  }),
+  option: (base, state) => ({
+    ...base,
+    backgroundColor: state.isSelected ? '#14b8a6' : state.isFocused ? '#ccfbf1' : 'white',
+    color: state.isSelected ? 'white' : '#374151',
+  }),
+};
+
 function StepIdiomas({ freelancerData, handleChange, handleSelectChange, setFreelancerData }) {
   const [nuevoIdioma, setNuevoIdioma] = useState({ idioma: "", nivel_idioma: "" });
 
@@ -31,7 +45,9 @@ function StepIdiomas({ freelancerData, handleChange, handleSelectChange, setFree
 
   return (
     <div className="space-y-6">
-      <h3 className="text-lg font-semibold text-gray-800 pb-2 border-b">Idiomas</h3>
+      <h3 className="text-lg font-semibold text-gray-800 pb-2 border-b border-teal-200">
+        Idiomas
+      </h3>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
@@ -41,9 +57,10 @@ function StepIdiomas({ freelancerData, handleChange, handleSelectChange, setFree
             placeholder="Ej: Inglés, Francés, Alemán"
             value={nuevoIdioma.idioma}
             onChange={(e) => setNuevoIdioma({ ...nuevoIdioma, idioma: e.target.value })}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
           />
         </div>
+
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">Nivel</label>
           <Select
@@ -54,6 +71,7 @@ function StepIdiomas({ freelancerData, handleChange, handleSelectChange, setFree
             }
             className="react-select-container"
             classNamePrefix="react-select"
+            styles={customSelectStyles}
           />
         </div>
       </div>
@@ -61,18 +79,18 @@ function StepIdiomas({ freelancerData, handleChange, handleSelectChange, setFree
       <button
         type="button"
         onClick={addIdioma}
-        className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors flex items-center gap-2"
+        className="px-6 py-3 bg-teal-600 hover:bg-teal-700 text-white rounded-lg font-medium transition-colors flex items-center gap-2"
       >
         <Plus size={20} />
         Agregar Idioma
       </button>
 
       {freelancerData.idiomas.length > 0 && (
-        <div className="border-t pt-6">
+        <div className="border-t border-teal-200 pt-6">
           <h4 className="font-semibold text-gray-800 mb-4">Idiomas Agregados</h4>
           <div className="space-y-3">
             {freelancerData.idiomas.map((idioma, index) => (
-              <div key={index} className="flex items-center justify-between bg-gray-50 p-4 rounded-lg border border-gray-200">
+              <div key={index} className="flex items-center justify-between bg-teal-50 p-4 rounded-lg border border-teal-200">
                 <div>
                   <p className="font-medium text-gray-800">{idioma.idioma}</p>
                   <p className="text-sm text-gray-600">Nivel: {idioma.nivel_idioma}</p>

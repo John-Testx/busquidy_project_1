@@ -27,6 +27,7 @@ export { default as usePaymentCallback } from './payment/usePaymentCallback';
 export { default as usePaymentVerification } from './payment/usePaymentVerification';
 export { default as useProjectPayment } from './payment/useProjectPayment';
 export { default as useSubscription } from './payment/useSubscription';
+export { default as usePaymentData } from './payment/usePaymentData'; 
 
 // Publications
 export { default as usePublications } from './publications/usePublications';

@@ -16,7 +16,7 @@ function SoporteHome() {
   const [guestEmail, setGuestEmail] = useState(null);
   const [showEmailVerification, setShowEmailVerification] = useState(false);
 
-  const token = localStorage.getItem("token");
+  const token = sessionStorage.getItem("token");
 
   useEffect(() => {
     checkAuthAndLoadTickets();
@@ -115,16 +115,16 @@ function SoporteHome() {
     <>
       <Navbar />
       <main className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 pt-20">
-        <div className="container mx-auto px-4 py-8">
+        <div className="container mx-auto px-3 md:px-4 py-4 md:py-8">
           {/* Header */}
-          <div className="mb-8">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+          <div className="mb-6 md:mb-8">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 md:gap-4 mb-4 md:mb-6">
               <div>
-                <h1 className="text-4xl font-bold text-gray-800 mb-2 flex items-center gap-3">
-                  <Headset className="w-10 h-10 text-blue-600" />
+                <h1 className="text-2xl md:text-4xl font-bold text-gray-800 mb-2 flex items-center gap-2 md:gap-3">
+                  <Headset className="w-8 h-8 md:w-10 md:h-10 text-blue-600" />
                   Centro de Soporte
                 </h1>
-                <p className="text-gray-600">
+                <p className="text-sm md:text-base text-gray-600">
                   {isAuthenticated 
                     ? "Gestiona tus solicitudes de ayuda y mantente en contacto con nuestro equipo"
                     : `Visualizando tickets de: ${guestEmail}`
@@ -132,42 +132,41 @@ function SoporteHome() {
                 </p>
               </div>
               
-              <div className="flex gap-3">
+              <div className="flex gap-2 md:gap-3">
                 {!isAuthenticated && (
-                  <>
-                    <button
-                      onClick={handleChangeEmail}
-                      className="flex items-center gap-2 bg-gray-600 text-white px-4 py-3 rounded-xl hover:bg-gray-700 transition-all duration-200 shadow-lg hover:shadow-xl font-semibold"
-                    >
-                      <Mail className="w-5 h-5" />
-                      Cambiar Email
-                    </button>
-                  </>
+                  <button
+                    onClick={handleChangeEmail}
+                    className="flex items-center gap-2 bg-gray-600 text-white px-3 md:px-4 py-2 md:py-3 rounded-lg md:rounded-xl hover:bg-gray-700 transition-all duration-200 shadow-lg hover:shadow-xl font-semibold text-sm md:text-base"
+                  >
+                    <Mail className="w-4 h-4 md:w-5 md:h-5" />
+                    <span className="hidden sm:inline">Cambiar Email</span>
+                  </button>
                 )}
                 <button
                   onClick={() => navigate(isAuthenticated ? "/soporte/crearticket" : "/soporte/crearticket-publico")}
-                  className="flex items-center gap-2 bg-gradient-to-r from-green-600 to-green-700 text-white px-6 py-3 rounded-xl hover:from-green-700 hover:to-green-800 transition-all duration-200 shadow-lg hover:shadow-xl font-semibold"
+                  className="flex items-center gap-2 bg-gradient-to-r from-green-600 to-green-700 text-white px-4 md:px-6 py-2 md:py-3 rounded-lg md:rounded-xl hover:from-green-700 hover:to-green-800 transition-all duration-200 shadow-lg hover:shadow-xl font-semibold text-sm md:text-base"
                 >
-                  <Plus className="w-5 h-5" />
-                  Nueva Solicitud
+                  <Plus className="w-4 h-4 md:w-5 md:h-5" />
+                  <span className="hidden sm:inline">Nueva Solicitud</span>
+                  <span className="sm:hidden">Nueva</span>
                 </button>
               </div>
             </div>
 
             {/* Estadísticas */}
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 md:gap-4 mb-4 md:mb-6">
               {filtros.map((f) => (
                 <button
                   key={f.value}
                   onClick={() => setFiltro(f.value)}
-                  className={`p-4 rounded-xl border-2 transition-all ${
+                  className={`p-3 md:p-4 rounded-lg md:rounded-xl border-2 transition-all ${
                     filtro === f.value
                       ? "border-blue-500 bg-blue-50 shadow-lg"
                       : "border-gray-200 bg-white hover:border-gray-300 hover:shadow-md"
                   }`}
                 >
-                  <div className="text-2xl font-bold text-gray-800">{f.count}</div>
-                  <div className={`text-sm mt-1 ${
+                  <div className="text-xl md:text-2xl font-bold text-gray-800">{f.count}</div>
+                  <div className={`text-xs md:text-sm mt-1 ${
                     filtro === f.value ? "text-blue-600 font-semibold" : "text-gray-600"
                   }`}>
                     {f.label}

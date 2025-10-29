@@ -4,6 +4,7 @@ import TicketChat from "@/components/Soporte/TicketChat";
 import { getPublicTicketDetails, getPublicTicketMessages, sendPublicTicketMessage } from "@/api/supportApi";
 import { ArrowLeft, Clock, Tag, AlertTriangle, CheckCircle, Loader2, Mail } from "lucide-react";
 import { Footer, Navbar } from '@/components/Home/';
+import MainLayout from '@/components/layouts/MainLayout';
 
 function VerTicketPublico() {
   const { id_ticket } = useParams();
@@ -25,7 +26,6 @@ function VerTicketPublico() {
     cargarTicket();
     cargarMensajes();
 
-    // Actualizar mensajes cada 10 segundos
     const interval = setInterval(() => {
       cargarMensajes();
     }, 10000);
@@ -71,28 +71,28 @@ function VerTicketPublico() {
         bg: "bg-yellow-100",
         text: "text-yellow-800",
         border: "border-yellow-300",
-        icon: <Clock className="w-4 h-4" />,
+        icon: <Clock className="w-3 h-3 md:w-4 md:h-4" />,
         label: "Pendiente"
       },
       "en proceso": {
         bg: "bg-blue-100",
         text: "text-blue-800",
         border: "border-blue-300",
-        icon: <Loader2 className="w-4 h-4 animate-spin" />,
+        icon: <Loader2 className="w-3 h-3 md:w-4 md:h-4 animate-spin" />,
         label: "En Proceso"
       },
       resuelto: {
         bg: "bg-green-100",
         text: "text-green-800",
         border: "border-green-300",
-        icon: <CheckCircle className="w-4 h-4" />,
+        icon: <CheckCircle className="w-3 h-3 md:w-4 md:h-4" />,
         label: "Resuelto"
       },
       cerrado: {
         bg: "bg-gray-100",
         text: "text-gray-800",
         border: "border-gray-300",
-        icon: <CheckCircle className="w-4 h-4" />,
+        icon: <CheckCircle className="w-3 h-3 md:w-4 md:h-4" />,
         label: "Cerrado"
       }
     };
@@ -100,7 +100,7 @@ function VerTicketPublico() {
     const badge = badges[estado] || badges.pendiente;
 
     return (
-      <span className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-semibold border ${badge.bg} ${badge.text} ${badge.border}`}>
+      <span className={`inline-flex items-center gap-1 md:gap-2 px-2 md:px-3 py-1 rounded-full text-xs md:text-sm font-semibold border ${badge.bg} ${badge.text} ${badge.border}`}>
         {badge.icon}
         {badge.label}
       </span>
@@ -112,17 +112,17 @@ function VerTicketPublico() {
       baja: {
         bg: "bg-green-100",
         text: "text-green-800",
-        icon: <AlertTriangle className="w-4 h-4" />
+        icon: <AlertTriangle className="w-3 h-3 md:w-4 md:h-4" />
       },
       media: {
         bg: "bg-yellow-100",
         text: "text-yellow-800",
-        icon: <AlertTriangle className="w-4 h-4" />
+        icon: <AlertTriangle className="w-3 h-3 md:w-4 md:h-4" />
       },
       alta: {
         bg: "bg-red-100",
         text: "text-red-800",
-        icon: <AlertTriangle className="w-4 h-4" />
+        icon: <AlertTriangle className="w-3 h-3 md:w-4 md:h-4" />
       }
     };
 
@@ -138,121 +138,128 @@ function VerTicketPublico() {
 
   if (loading) {
     return (
-      <>
-        <Navbar />
-        <div className="min-h-screen flex items-center justify-center">
+      <MainLayout fullHeight>
+        <div className="h-screen flex items-center justify-center">
           <div className="text-center">
-            <Loader2 className="w-12 h-12 animate-spin text-blue-600 mx-auto mb-4" />
-            <p className="text-gray-600">Cargando ticket...</p>
+            <Loader2 className="w-10 h-10 md:w-12 md:h-12 animate-spin text-blue-600 mx-auto mb-4" />
+            <p className="text-gray-600 text-sm md:text-base">Cargando ticket...</p>
           </div>
         </div>
-        <Footer />
-      </>
+      </MainLayout>
     );
   }
 
   if (error || !ticket) {
     return (
-      <>
-        <Navbar />
-        <div className="min-h-screen flex items-center justify-center">
+      <MainLayout fullHeight>
+        <div className="h-screen flex items-center justify-center px-4">
           <div className="text-center">
-            <AlertTriangle className="w-12 h-12 text-red-600 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-gray-800 mb-2">Error</h2>
-            <p className="text-gray-600 mb-4">{error || "Ticket no encontrado"}</p>
+            <AlertTriangle className="w-10 h-10 md:w-12 md:h-12 text-red-600 mx-auto mb-4" />
+            <h2 className="text-xl md:text-2xl font-bold text-gray-800 mb-2">Error</h2>
+            <p className="text-gray-600 mb-4 text-sm md:text-base">{error || "Ticket no encontrado"}</p>
             <button
               onClick={() => navigate("/soportehome")}
-              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              className="px-4 md:px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm md:text-base"
             >
               Volver al inicio
             </button>
           </div>
         </div>
-        <Footer />
-      </>
+      </MainLayout>
     );
   }
 
   return (
-    <>
-      <Navbar />
-      <div className="min-h-screen bg-gray-50 pt-20">
-        <div className="container mx-auto px-4 py-6">
-          {/* Header */}
-          <div className="mb-6">
-            <button
-              onClick={() => navigate("/soportehome")}
-              className="flex items-center gap-2 text-gray-600 hover:text-gray-800 mb-4 transition-colors"
-            >
-              <ArrowLeft className="w-5 h-5" />
-              Volver a tickets
-            </button>
+    <MainLayout fullHeight noPadding>
+      <div className="fixed inset-0 flex flex-col">
+        {/* Espaciador para navbar */}
+        <div className="h-16 md:h-20 flex-shrink-0"></div>
 
-            <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200">
-              <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-4">
-                <div className="flex-1">
-                  <h1 className="text-2xl font-bold text-gray-800 mb-2">
-                    {ticket.asunto}
-                  </h1>
-                  <div className="flex flex-wrap gap-3 items-center">
-                    {getEstadoBadge(ticket.estado)}
-                    {getPrioridadBadge(ticket.prioridad)}
-                    <span className="flex items-center gap-1 text-sm text-gray-600">
-                      <Tag className="w-4 h-4" />
-                      {ticket.categoria}
-                    </span>
+        {/* Contenedor principal */}
+        <div className="flex-1 flex flex-col overflow-hidden bg-gradient-to-br from-gray-50 via-blue-50/30 to-gray-50">
+          {/* Header - scrolleable en móvil si es necesario */}
+          <div className="flex-shrink-0 overflow-y-auto">
+            <div className="container mx-auto px-3 md:px-6 lg:px-8 py-3 md:py-4 lg:py-6 max-w-7xl">
+              <button
+                onClick={() => navigate("/soportehome")}
+                className="flex items-center gap-2 text-gray-600 hover:text-gray-800 mb-2 md:mb-3 lg:mb-4 transition-colors text-sm md:text-base group"
+              >
+                <ArrowLeft className="w-4 h-4 md:w-5 md:h-5 group-hover:-translate-x-1 transition-transform" />
+                Volver a tickets
+              </button>
+
+              <div className="bg-white rounded-lg md:rounded-xl lg:rounded-2xl shadow-lg p-3 md:p-4 lg:p-6 border border-gray-200/50">
+                <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-2 md:gap-3 lg:gap-4">
+                  <div className="flex-1 min-w-0">
+                    <h1 className="text-base md:text-xl lg:text-2xl xl:text-3xl font-bold text-gray-800 mb-1.5 md:mb-2 lg:mb-3 break-words">
+                      {ticket.asunto}
+                    </h1>
+                    <div className="flex flex-wrap gap-1.5 md:gap-2 lg:gap-3 items-center">
+                      {getEstadoBadge(ticket.estado)}
+                      {getPrioridadBadge(ticket.prioridad)}
+                      <span className="flex items-center gap-1 text-xs md:text-sm text-gray-600">
+                        <Tag className="w-3 h-3 md:w-4 md:h-4" />
+                        <span className="truncate max-w-[100px] md:max-w-none">{ticket.categoria}</span>
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="text-xs md:text-sm text-gray-500 space-y-0.5 md:space-y-1 flex-shrink-0 lg:text-right">
+                    <p className="flex lg:justify-end items-center gap-1.5 md:gap-2">
+                      <Mail className="w-3 h-3 md:w-4 md:h-4" />
+                      <span className="font-semibold">Ticket #{ticket.id_ticket}</span>
+                    </p>
+                    <p className="flex lg:justify-end items-center gap-1.5 md:gap-2">
+                      <Clock className="w-3 h-3 md:w-4 md:h-4" />
+                      <span className="text-[10px] md:text-xs lg:text-sm">{new Date(ticket.fecha_creacion).toLocaleDateString('es-ES', {
+                        day: '2-digit',
+                        month: 'short',
+                        year: 'numeric'
+                      })}</span>
+                    </p>
+                    {ticket.nombre_admin && (
+                      <p className="text-blue-600 font-semibold text-[10px] md:text-xs lg:text-sm">
+                        Asignado a: {ticket.nombre_admin}
+                      </p>
+                    )}
                   </div>
                 </div>
 
-                <div className="text-sm text-gray-500 space-y-1">
-                  <p className="flex items-center gap-2">
-                    <Mail className="w-4 h-4" />
-                    <span className="font-semibold">{ticket.email_contacto}</span>
-                  </p>
-                  <p className="flex items-center gap-2">
-                    <Clock className="w-4 h-4" />
-                    Creado: {new Date(ticket.fecha_creacion).toLocaleDateString('es-ES', {
-                      day: '2-digit',
-                      month: 'long',
-                      year: 'numeric'
-                    })}
-                  </p>
-                  <p className="text-blue-600 font-semibold">
-                    Ticket #{ticket.id_ticket}
+                {ticket.estado === 'cerrado' && (
+                  <div className="mt-2 md:mt-3 lg:mt-4 p-2 md:p-3 lg:p-4 bg-gray-100 border border-gray-300 rounded-lg">
+                    <p className="text-[10px] md:text-xs lg:text-sm text-gray-700">
+                      <strong>Nota:</strong> Este ticket está cerrado. No se pueden enviar más mensajes.
+                    </p>
+                  </div>
+                )}
+
+                <div className="mt-2 md:mt-3 lg:mt-4 p-2 md:p-3 lg:p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                  <p className="text-[10px] md:text-xs lg:text-sm text-blue-800">
+                    <strong>💡 Nota:</strong> Estás viendo este ticket como invitado usando el email: <strong className="break-all text-[9px] md:text-[10px] lg:text-xs">{guestEmail}</strong>
                   </p>
                 </div>
-              </div>
-
-              {ticket.estado === 'cerrado' && (
-                <div className="mt-4 p-4 bg-gray-100 border border-gray-300 rounded-lg">
-                  <p className="text-sm text-gray-700">
-                    <strong>Nota:</strong> Este ticket está cerrado. No se pueden enviar más mensajes.
-                  </p>
-                </div>
-              )}
-
-              <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                <p className="text-sm text-blue-800">
-                  <strong>💡 Nota:</strong> Estás viendo este ticket como invitado usando el email: <strong>{guestEmail}</strong>
-                </p>
               </div>
             </div>
           </div>
 
-          {/* Chat */}
-          <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden" style={{ height: "calc(100vh - 450px)", minHeight: "500px" }}>
-            <TicketChat
-              id_ticket={id_ticket}
-              mensajes={mensajes}
-              onSendMessage={handleSendMessage}
-              currentUserId={null}
-              isPublic={true}
-            />
+          {/* Chat - ocupa todo el espacio restante */}
+          <div className="flex-1 min-h-0 overflow-hidden">
+            <div className="container mx-auto px-3 md:px-6 lg:px-8 h-full max-w-7xl">
+              <div className="h-full bg-white rounded-t-lg md:rounded-t-xl lg:rounded-t-2xl shadow-xl border border-b-0 border-gray-200/50 overflow-hidden">
+                <TicketChat
+                  id_ticket={id_ticket}
+                  mensajes={mensajes}
+                  onSendMessage={handleSendMessage}
+                  currentUserId={null}
+                  isPublic={true}
+                  guestEmail={guestEmail}
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>
-      <Footer />
-    </>
+    </MainLayout>
   );
 }
 

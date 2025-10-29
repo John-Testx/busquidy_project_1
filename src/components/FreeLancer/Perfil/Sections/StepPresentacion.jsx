@@ -15,7 +15,7 @@ function StepPresentacion({ freelancerData, handleChange }) {
           placeholder="Cuéntanos sobre ti, tu experiencia, habilidades y qué te hace único como profesional..."
           value={freelancerData.freelancer.descripcion_freelancer}
           onChange={(e) => handleChange(e, "freelancer")}
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent resize-none"
           required
         />
         <p className="mt-2 text-sm text-gray-500">
@@ -27,7 +27,7 @@ function StepPresentacion({ freelancerData, handleChange }) {
         <div>
           <label htmlFor="correo_contacto" className="block text-sm font-medium text-gray-700 mb-2">
             <div className="flex items-center gap-2">
-              <Mail size={16} />
+              <Mail size={16} className="text-teal-600" />
               Correo de Contacto <span className="text-red-500">*</span>
             </div>
           </label>
@@ -38,7 +38,7 @@ function StepPresentacion({ freelancerData, handleChange }) {
             placeholder="tu.correo@ejemplo.com"
             value={freelancerData.freelancer.correo_contacto}
             onChange={(e) => handleChange(e, "freelancer")}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
             required
           />
         </div>
@@ -46,7 +46,7 @@ function StepPresentacion({ freelancerData, handleChange }) {
         <div>
           <label htmlFor="telefono_contacto" className="block text-sm font-medium text-gray-700 mb-2">
             <div className="flex items-center gap-2">
-              <Phone size={16} />
+              <Phone size={16} className="text-teal-600" />
               Teléfono de Contacto <span className="text-red-500">*</span>
             </div>
           </label>
@@ -57,7 +57,7 @@ function StepPresentacion({ freelancerData, handleChange }) {
             placeholder="+56 9 1234 5678"
             value={freelancerData.freelancer.telefono_contacto}
             onChange={(e) => handleChange(e, "freelancer")}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
             required
           />
         </div>
@@ -66,7 +66,7 @@ function StepPresentacion({ freelancerData, handleChange }) {
       <div>
         <label htmlFor="linkedin_link" className="block text-sm font-medium text-gray-700 mb-2">
           <div className="flex items-center gap-2">
-            <Linkedin size={16} />
+            <Linkedin size={16} className="text-teal-600" />
             Perfil de LinkedIn
             <span className="text-gray-400 text-xs">(Opcional)</span>
           </div>
@@ -78,7 +78,7 @@ function StepPresentacion({ freelancerData, handleChange }) {
           placeholder="https://linkedin.com/in/tu-perfil"
           value={freelancerData.freelancer.linkedin_link}
           onChange={(e) => handleChange(e, "freelancer")}
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
         />
       </div>
     </div>

@@ -66,14 +66,9 @@ export const commitPaymentTransaction = async (token) => {
 };
 
 // =============================================
-// LIBERACIÓN DE PAGO (NUEVO)
+// LIBERACIÓN DE PAGO
 // =============================================
 
-/**
- * Libera el pago en garantía al freelancer
- * @param {number} id_proyecto - ID del proyecto
- * @returns {Promise<Object>} Respuesta del servidor
- */
 export const releaseProjectPayment = async (id_proyecto) => {
   const response = await apiClient.post(`${BASE}/release-payment/${id_proyecto}`);
   return response.data;

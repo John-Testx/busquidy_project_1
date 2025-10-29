@@ -18,7 +18,7 @@ const SoporteHome = lazy(() => import('@pages/Soporte/SoporteHome'));
 const ProjectList = lazy(() =>import('@/pages/Publications/ProjectList'));
 const UserManagement = lazy(()=> import('@pages/Admin/UserManagement'));
 const Empresa = lazy(()=> import('@pages/Empresa/Empresa'));
-const CrearTicketPublico = lazy(()=>import('@pages/Soporte'));
+const CrearTicketPublico = lazy(()=>import('@pages/Soporte/CrearTicketPublico'));
 import LoadingScreen from '@/components/LoadingScreen';
 
 // Import Empresa components
@@ -106,7 +106,7 @@ const AppRoutes = () => {
       <Route element={<ProtectedRoute allowedRoles={['empresa']} />}>
         <Route path="/empresa" element={<Empresa />} />
         <Route path="/myprojects" element={<MyProjects />} />
-        <Route path="/project-view/:id" element={<ProjectView/>}/>
+        <Route path="/empresa/proyectos/:idProyecto" element={<ProjectView/>}/>
         <Route path="/company-profile" element={<EmpresaProfileLayout />}>
           {/* Redirect the base path to the first section */}
           <Route index element={<EmpresaInfo />} />
