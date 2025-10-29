@@ -87,7 +87,7 @@ const MyAvailability = () => {
 
     // Agrupar horarios por día
     const availabilityByDay = diasSemana.reduce((acc, dia) => {
-        acc[dia] = availability.filter(slot => slot.dia_semana === dia);
+        acc[dia] = (availability || []).filter(slot => slot.dia_semana === dia);;
         return acc;
     }, {});
     
@@ -201,7 +201,7 @@ const MyAvailability = () => {
                                 Tus Horarios Programados
                             </h3>
                             <p className="text-gray-600 text-sm mt-1">
-                                {availability.length} {availability.length === 1 ? 'bloque configurado' : 'bloques configurados'}
+
                             </p>
                         </div>
 
