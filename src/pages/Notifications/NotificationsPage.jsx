@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Bell, CheckCheck, Trash2, Filter, RefreshCw } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { es } from 'date-fns/locale';
-import Navbar from '@/components/Home/Navbar';
+import MainLayout from "@/components/Layouts/MainLayout";
 
 const NotificationsPage = () => {
   const navigate = useNavigate();
@@ -85,17 +85,18 @@ const NotificationsPage = () => {
   if (loading && notifications.length === 0) {
     return (
       <>
-        <Navbar />
+        <MainLayout >
         <div className="min-h-screen pt-24 flex items-center justify-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#07767c]"></div>
         </div>
+        </MainLayout >
       </>
     );
   }
 
   return (
     <>
-      <Navbar />
+      <MainLayout >
       <div className="min-h-screen bg-gray-50 pt-24 pb-12">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
@@ -218,6 +219,7 @@ const NotificationsPage = () => {
           </div>
         </div>
       </div>
+      </MainLayout >
     </>
   );
 };
