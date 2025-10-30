@@ -19,6 +19,7 @@ const ProjectList = lazy(() =>import('@/pages/Publications/ProjectList'));
 const UserManagement = lazy(()=> import('@pages/Admin/UserManagement'));
 const Empresa = lazy(()=> import('@pages/Empresa/Empresa'));
 const CrearTicketPublico = lazy(()=>import('@pages/Soporte/CrearTicketPublico'));
+const NotificationsPage = lazy(() => import('@/pages/Notifications/NotificationsPage'));
 import LoadingScreen from '@/components/LoadingScreen';
 
 // Import Empresa components
@@ -141,6 +142,11 @@ const AppRoutes = () => {
             <Route path="admin/support/:id_ticket" element={<SupportChat />} />
             <Route path="/adminhome/disputes" element={<DisputeManagement />} />
         </Route>
+      </Route>
+
+      {/* Notifications Route */}
+      <Route element={<ProtectedRoute allowedRoles={['freelancer', 'empresa', 'administrador']} />}>
+        <Route path="/notifications" element={<NotificationsPage />} />
       </Route>
     
     <Route path="*" element={<NotFoundPage />} />

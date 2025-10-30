@@ -40,5 +40,8 @@ export { default as useSupportChat } from './support/useSupportChat';
 export { default as useUserEditor } from './user/useUserEditor';
 export { default as useUserManagement } from './user/useUserManagement';
 
+// Notifications
+export { default as useNotifications } from './notifications/useNotifications';
+
 // Shared
 export { default as useFetch } from './shared/useFetch';
