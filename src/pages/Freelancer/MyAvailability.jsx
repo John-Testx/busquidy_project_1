@@ -87,6 +87,10 @@ const MyAvailability = () => {
 
     // Agrupar horarios por día
     const availabilityByDay = diasSemana.reduce((acc, dia) => {
+        if(availability.length == 0){
+            return;
+        }
+        
         acc[dia] = availability.filter(slot => slot.dia_semana === dia);
         return acc;
     }, {});
