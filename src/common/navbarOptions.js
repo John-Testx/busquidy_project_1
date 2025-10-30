@@ -17,7 +17,7 @@ export const helpDropdownOptions = [
 export const profileLinks = [
     {
         label: "Mi perfil",
-        link: "/viewperfilfreelancer",
+        link: "/freelancer-profile/",
         icon: "bi bi-person",
         roles: ["freelancer"]
     },
