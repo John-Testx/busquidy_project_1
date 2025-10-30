@@ -1,6 +1,7 @@
 import React from "react";
 import { useParams } from "react-router-dom";
 import { useUserEditor } from "@/hooks";
+import LoadingScreen from "@/components/LoadingScreen";
 import { 
   ArrowLeft, 
   Save, 
@@ -23,16 +24,7 @@ const UserEditPage = () => {
     cancelEdit
   } = useUserEditor(id);
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-        <div className="text-center">
-          <Loader2 className="w-12 h-12 text-[#07767c] animate-spin mx-auto mb-4" />
-          <p className="text-gray-600 font-medium">Cargando información del usuario...</p>
-        </div>
-      </div>
-    );
-  }
+  if (loading) return <LoadingScreen />;
 
   if (error && !user) {
     return (

@@ -3,6 +3,7 @@ import { useChat } from '@/hooks';
 import ConversationList from '@/components/Chat/ConversationList';
 import ChatWindow from '@/components/Chat/ChatWindow';
 import MainLayout from '@/components/layouts/MainLayout';
+import LoadingScreen from '@/components/LoadingScreen';
 
 const ChatPage = () => {
   const {
@@ -17,7 +18,8 @@ const ChatPage = () => {
     getOtherUserInfo,
     sortedConversations,
     handleNewConversation,
-    id_usuario
+    id_usuario,
+    loading
   } = useChat();
 
   // Estado para manejar vista móvil
@@ -31,6 +33,8 @@ const ChatPage = () => {
   const handleBackToList = () => {
     setShowChat(false);
   };
+  
+  if (loading) return <LoadingScreen />;
 
   return (
     <MainLayout fullHeight noPadding>

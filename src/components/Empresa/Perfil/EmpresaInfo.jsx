@@ -2,9 +2,10 @@ import React from 'react';
 import { toast } from 'react-toastify';
 import { useOutletContext } from 'react-router-dom';
 import { Building2, Mail, Phone, Globe, MapPin, Briefcase, FileText } from 'lucide-react';
+import LoadingScreen from '@/components/LoadingScreen';
 
 function EmpresaInfo() {
-  const { perfilData, setPerfilData, handleUpdateProfile } = useOutletContext();
+  const { perfilData, setPerfilData, handleUpdateProfile, loading } = useOutletContext();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -19,6 +20,7 @@ function EmpresaInfo() {
   };
 
   const { perfilEmpresa } = perfilData || {};
+  if (loading) return <LoadingScreen />;
 
   return (
     <div className="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden">

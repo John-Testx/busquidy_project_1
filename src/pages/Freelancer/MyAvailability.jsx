@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getAvailability, addAvailability, deleteAvailability } from '@/api/availabilityApi';
+import LoadingScreen from '@/components/LoadingScreen';
 import { useAuth } from '@/hooks';
 import { FaClock, FaCalendarAlt, FaPlus, FaTrash, FaCheckCircle } from 'react-icons/fa';
 
@@ -85,11 +86,13 @@ const MyAvailability = () => {
         return `${hours}:${minutes}`;
     }
 
-    // Agrupar horarios por día
     const availabilityByDay = diasSemana.reduce((acc, dia) => {
-        acc[dia] = (availability || []).filter(slot => slot.dia_semana === dia);;
+        acc[dia] = (availability || []).filter(slot => slot.dia_semana === dia);
         return acc;
     }, {});
+
+    // ✅ Agregar LoadingScreen para carga inicial
+    if (loading) return <LoadingScreen />;
     
     return (
         <div className="max-w-7xl mx-auto">
@@ -200,18 +203,10 @@ const MyAvailability = () => {
                                 <FaCalendarAlt className="text-[#07767c]" />
                                 Tus Horarios Programados
                             </h3>
-                            <p className="text-gray-600 text-sm mt-1">
-
-                            </p>
                         </div>
 
                         <div className="p-6">
-                            {loading ? (
-                                <div className="flex flex-col items-center justify-center py-16">
-                                    <div className="w-16 h-16 border-4 border-[#07767c] border-t-transparent rounded-full animate-spin mb-4"></div>
-                                    <p className="text-gray-600 font-semibold">Cargando horarios...</p>
-                                </div>
-                            ) : availability.length === 0 ? (
+                            {availability.length === 0 ? (
                                 <div className="flex flex-col items-center justify-center py-16">
                                     <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
                                         <FaCalendarAlt className="text-gray-400 text-4xl" />

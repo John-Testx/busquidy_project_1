@@ -10,7 +10,7 @@ const LoadingScreen = ({ message = "Cargando..." }) => {
         <div className="absolute inset-0 w-24 h-24 rounded-full border-4 border-[#07767c]/20 animate-ping"></div>
         
         {/* Anillo medio */}
-        <div className="absolute inset-2 w-20 h-20 rounded-full border-4 border-[#40E0D0]/30 animate-spin" style={{ animationDuration: '3s' }}></div>
+        <div className="absolute inset-2 w-20 h-20 rounded-full border-4 border-[#40E0D0]/30 animate-spin" style={{ animationDuration: '10s' }}></div>
         
         {/* Círculo principal */}
         <div className="relative w-24 h-24 rounded-full border-4 border-gray-200 border-t-[#07767c] animate-spin flex items-center justify-center">

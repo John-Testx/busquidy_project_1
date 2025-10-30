@@ -3,6 +3,7 @@ import AdminTable from "@/common/TableCommon";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, } from "recharts";
 import { Users, Crown, FileText, Activity, TrendingUp, DollarSign, AlertCircle, RefreshCw } from "lucide-react";
 import { useDashboardData } from "@/hooks";
+import LoadingScreen from "@/components/LoadingScreen";
 
 function Dashboard() {
   const {
@@ -85,16 +86,7 @@ function Dashboard() {
     },
   ];
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="flex flex-col items-center gap-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#07767c] border-t-transparent"></div>
-          <p className="text-gray-600 font-medium">Cargando dashboard...</p>
-        </div>
-      </div>
-    );
-  }
+  if (loading) return <LoadingScreen />;
 
   return (
     <div className="p-6 space-y-6 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">

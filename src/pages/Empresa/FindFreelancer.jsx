@@ -12,19 +12,17 @@ function FindFreelancer() {
     const [showNotification, setShowNotification] = useState(false);
     const [isPerfilIncompleto, setIsPerfilIncompleto] = useState(null);
     const {id_usuario, tipo_usuario, loading} = useAuth();
-    
-    const navigate = useNavigate();
-    
+        
     useEffect(() => {
         if (id_usuario) {
             console.log("ID usuario actualizado:", id_usuario);
         }
     }, [id_usuario]);
+
+    if (loading) return <LoadingScreen />;
     
     return (
-        <div className="min-h-screen flex flex-col bg-gradient-to-br from-gray-50 via-white to-gray-100">
-            {loading && <LoadingScreen />}
-            
+        <div className="min-h-screen flex flex-col bg-gradient-to-br from-gray-50 via-white to-gray-100">            
             <Navbar/>
             
             {/* Main Content */}

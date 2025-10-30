@@ -5,7 +5,7 @@ import ViewProjects from "@/components/Empresa/Projects/ViewProjects";
 import { useAuth } from "@/hooks";
 import { usePaymentCallback } from "@/hooks";
 import MainLayout from "@/components/Layouts/MainLayout";
-import { ArrowLeft, Sparkles, Lock, Loader2, DollarSign, Calendar, Tag } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 
 function MyProjects() {
     const [logoutStatus, setLogoutStatus] = useState("");

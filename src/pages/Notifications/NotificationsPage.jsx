@@ -5,6 +5,7 @@ import { Bell, CheckCheck, Trash2, Filter, RefreshCw } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { es } from 'date-fns/locale';
 import MainLayout from "@/components/Layouts/MainLayout";
+import LoadingScreen from "@/components/LoadingScreen";
 
 const NotificationsPage = () => {
   const navigate = useNavigate();
@@ -82,17 +83,11 @@ const NotificationsPage = () => {
     }
   };
 
+  // ✅ Agregar LoadingScreen para carga inicial
   if (loading && notifications.length === 0) {
-    return (
-      <>
-        <MainLayout >
-        <div className="min-h-screen pt-24 flex items-center justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#07767c]"></div>
-        </div>
-        </MainLayout >
-      </>
-    );
+    return <LoadingScreen />;
   }
+
 
   return (
     <>

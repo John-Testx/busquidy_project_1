@@ -4,6 +4,7 @@ import SearchFilters from "./SearchFilters";
 import MessageModal from "@/components/MessageModal";
 import {useFreelancers} from "@/hooks";
 import { FaStar, FaMapMarkerAlt, FaCheckCircle, FaFire, FaEnvelope, FaPhone } from 'react-icons/fa';
+import LoadingScreen from "@/components/LoadingScreen";
 
 function FreelancerList({ userType, id_usuario }) {
     const [showMessageModal, setShowMessageModal] = useState(false);
@@ -66,20 +67,7 @@ function FreelancerList({ userType, id_usuario }) {
         applyFilters(filters);
     };
 
-    if (loading) {
-        return (
-            <div className="flex flex-col lg:flex-row gap-6 w-full">
-                <SearchFilters onFilterChange={handleFilterChange} />
-                <div className="flex-1 flex items-center justify-center py-20">
-                    <div className="flex flex-col items-center gap-4">
-                        <div className="w-16 h-16 border-4 border-[#07767c] border-t-transparent rounded-full animate-spin"></div>
-                        <p className="text-gray-700 font-semibold text-lg">Buscando el mejor talento...</p>
-                        <p className="text-gray-500 text-sm">Esto no tomará mucho tiempo</p>
-                    </div>
-                </div>
-            </div>
-        );
-    }
+    if (loading) return <LoadingScreen />;
 
     if (error) {
         return (
