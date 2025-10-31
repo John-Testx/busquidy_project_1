@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { toast } from "react-toastify";
 import { createProject } from "@/api/projectsApi";
+import useAuth from "@/hooks/auth/useAuth";
 
 import StepProjectInfo from "./ProjectForm/StepProjectInfo";
 import StepProjectDetails from "./ProjectForm/StepProjectDetails";
@@ -11,6 +12,18 @@ function ModalCreateProject({ closeModal, id_usuario, addProject, terminologia, 
   const [currentStep, setCurrentStep] = useState(0);
   const [completedSteps, setCompletedSteps] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // ✅ Obtén el usuario para asegurar que tenemos la terminología correcta
+  const { user } = useAuth();
+  const esNatural = user?.tipo_usuario === "empresa_natural";
+
+  // ✅ Define terminología interna por si no se pasa como prop
+  const terminologiaInterna = terminologia || {
+    singular: esNatural ? "Tarea" : "Proyecto",
+    plural: esNatural ? "Tareas" : "Proyectos",
+  };
+  
+  const tipoParaBackendInterno = tipoParaBackend || (esNatural ? "tarea" : "proyecto");
 
   const methods = useForm({
     defaultValues: {
@@ -24,14 +37,20 @@ function ModalCreateProject({ closeModal, id_usuario, addProject, terminologia, 
       ubicacion: "",
       tipo_contratacion: "",
       metodologia_trabajo: "",
+      tipo: tipoParaBackendInterno, // ✅ AGREGAR: Campo tipo inicializado
     },
   });
 
-  const { handleSubmit, trigger, control, getValues } = methods;
+  const { handleSubmit, trigger, control, getValues, setValue } = methods;
+
+  // ✅ AGREGAR: useEffect para actualizar el tipo cuando cambie
+  useEffect(() => {
+    setValue("tipo", tipoParaBackendInterno);
+  }, [tipoParaBackendInterno, setValue]);
 
   const steps = [
     { 
-      title: "Información del Proyecto", 
+      title: `Información de${terminologiaInterna.singular === 'Tarea' ? ' la' : 'l'} ${terminologiaInterna.singular}`, 
       component: StepProjectInfo,
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -82,22 +101,34 @@ function ModalCreateProject({ closeModal, id_usuario, addProject, terminologia, 
     try {
       setIsSubmitting(true);
       
-      const response = await createProject(data, id_usuario);
+      // ✅ MODIFICADO: Asegurar que el tipo esté incluido en los datos
+      const finalData = {
+        ...data,
+        tipo: tipoParaBackendInterno, // Forzar el tipo correcto
+      };
+
+      console.log("📤 Datos enviados al backend:", finalData); // Para debug
+      
+      const response = await createProject(finalData, id_usuario);
 
       const newProject = {
         id_proyecto: response.projectId,
         ...response,
-        ...data,
+        ...finalData,
         estado_publicacion: "sin publicar",
         fecha_creacion: new Date().toISOString(),
       };
       
       addProject(newProject);
-      toast.success("Proyecto creado exitosamente");
+      toast.success(`${terminologiaInterna.singular} creada exitosamente`);
       closeModal();
     } catch (error) {
-      console.error("Error al crear el proyecto:", error);
-      toast.error(error.response?.data?.message || error.message || "Error al crear el proyecto");
+      console.error(`Error al crear ${terminologiaInterna.singular.toLowerCase()}:`, error);
+      toast.error(
+        error.response?.data?.message || 
+        error.message || 
+        `Error al crear ${terminologiaInterna.singular.toLowerCase()}`
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -114,7 +145,9 @@ function ModalCreateProject({ closeModal, id_usuario, addProject, terminologia, 
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
               </svg>
             </div>
-            <h2 className="text-xl font-bold text-white">Crear Nuev{terminologia.singular === 'Tarea' ? 'a' : 'o'} {terminologia.singular}</h2>
+            <h2 className="text-xl font-bold text-white">
+              Crear Nuev{terminologiaInterna.singular === 'Tarea' ? 'a' : 'o'} {terminologiaInterna.singular}
+            </h2>
           </div>
           <button 
             onClick={closeModal} 
@@ -197,7 +230,7 @@ function ModalCreateProject({ closeModal, id_usuario, addProject, terminologia, 
               <div className="flex-1 px-6 py-4">
                 <StepComponent 
                   control={control} 
-                  terminologia={terminologia} 
+                  terminologia={terminologiaInterna}
                 />
               </div>
 
@@ -264,7 +297,7 @@ function ModalCreateProject({ closeModal, id_usuario, addProject, terminologia, 
                           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
                           </svg>
-                          Crear Proyecto
+                          Crear {terminologiaInterna.singular}
                         </>
                       )}
                     </button>

@@ -53,7 +53,7 @@ function ViewProjects({ userType, id_usuario, terminologia, tipoParaBackend }) {
         if (isComplete) {
             setShowModalProject(true);
         } else {
-            setMessage('Por favor, completa tu perfil de empresa antes de crear un proyecto.');
+            setMessage(`Por favor, completa tu perfil de empresa antes de crear un ${terminologia.singular.toLowerCase()}.`);
             setMessageType('warning');
             setShowMessageModal(true);
         }
@@ -88,7 +88,7 @@ function ViewProjects({ userType, id_usuario, terminologia, tipoParaBackend }) {
             console.log('✅ Respuesta del servidor:', response);
             
             setMessage(
-                `El pago de $${Number(projectToRelease.presupuesto * 0.90).toLocaleString('es-CL')} fue liberado exitosamente al freelancer. El proyecto "${projectToRelease.titulo}" ha sido marcado como completado.`
+                `El pago de $${Number(projectToRelease.presupuesto * 0.90).toLocaleString('es-CL')} fue liberado exitosamente al freelancer. El ${terminologia.singular.toLowerCase()} "${projectToRelease.titulo}" ha sido marcado como completado.`
             );
             setMessageType('success');
             setShowMessageModal(true);
@@ -240,8 +240,8 @@ function ViewProjects({ userType, id_usuario, terminologia, tipoParaBackend }) {
                                 </svg>
                             </div>
                             <div>
-                                <p className="text-gray-500 text-lg font-medium mb-2">No tienes proyectos aún</p>
-                                <p className="text-gray-400 text-sm">Crea tu primer proyecto para empezar</p>
+                                <p className="text-gray-500 text-lg font-medium mb-2">No tienes {terminologia.plural.toLowerCase()} aún</p>
+                                <p className="text-gray-400 text-sm">Crea tu primer {terminologia.singular.toLowerCase()} para empezar</p>
                             </div>
                         </div>
                     </div>
@@ -280,7 +280,7 @@ function ViewProjects({ userType, id_usuario, terminologia, tipoParaBackend }) {
                     isOpen={deleteModalOpen} 
                     onClose={() => setDeleteModalOpen(false)} 
                     onConfirm={handleDelete} 
-                    message="¿Estás seguro que deseas eliminar este proyecto?" 
+                    message={`¿Estás seguro que deseas eliminar este ${terminologia.singular.toLowerCase()}?`}
                 />
             )}
             

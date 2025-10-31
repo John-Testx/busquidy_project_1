@@ -13,14 +13,22 @@ function Empresa() {
     const [showNotification, setShowNotification] = useState(false);
     const navigate = useNavigate();
     
-    const { isAuthenticated, tipo_usuario: userType, loading, logout } = useAuth();
+    const { isAuthenticated, tipo_usuario: userType, loading, logout, user } = useAuth();
+
+    // ✅ AGREGAR: Determinar terminología según tipo de usuario
+    const esNatural = user?.tipo_usuario === 'empresa_natural';
+    
+    const terminologia = {
+        singular: esNatural ? 'Tarea' : 'Proyecto',
+        plural: esNatural ? 'Tareas' : 'Proyectos'
+    };
 
     // Stats data (estos podrían venir de una API)
     const stats = [
         {
             icon: <Briefcase size={24} />,
             value: "0",
-            label: "Proyectos Activos",
+            label: `${terminologia.plural} Activos`, // ✅ Dinámico
             color: "from-blue-500 to-blue-600"
         },
         {
@@ -67,7 +75,7 @@ function Empresa() {
                             </h1>
                             
                             <p className="text-xl text-white/90 max-w-2xl mx-auto">
-                                Gestiona tus proyectos, encuentra talento y haz crecer tu negocio
+                                Gestiona tus {terminologia.plural.toLowerCase()}, encuentra talento y haz crecer tu negocio
                             </p>
                         </div>
 
@@ -97,7 +105,7 @@ function Empresa() {
                 
                 {/* Actions Card Section con margen negativo para superposición */}
                 <div className="relative -mt-8 z-20">
-                    <EmpresaActionsCard />
+                    <EmpresaActionsCard terminologia={terminologia} /> {/* ✅ Pasar terminología */}
                 </div>
                 
                 {/* Quick Links Section */}
@@ -112,8 +120,8 @@ function Empresa() {
                         />
                         <QuickLinkCard
                             icon={<Briefcase size={24} />}
-                            title="Mis Publicaciones"
-                            description="Gestiona tus proyectos"
+                            title={`Mis ${terminologia.plural}`}
+                            description={`Gestiona tus ${terminologia.plural.toLowerCase()}`}
                             link="/myprojects"
                             color="from-blue-600 to-blue-700"
                         />
@@ -130,7 +138,7 @@ function Empresa() {
                 {/* Info Section */}
                 <div className="w-full">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                        <InfoSectionEmpresa />
+                        <InfoSectionEmpresa /> {/* Ya tiene su propia lógica de uso del plan */}
                     </div>
                 </div>
 
@@ -141,14 +149,14 @@ function Empresa() {
                             ¿Listo para comenzar?
                         </h2>
                         <p className="text-xl text-white/90 mb-8">
-                            Publica tu primer proyecto y conecta con los mejores freelancers
+                            Publica tu primer{esNatural ? 'a' : ''} {terminologia.singular.toLowerCase()} y conecta con los mejores freelancers
                         </p>
                         <button
                             onClick={() => navigate('/myprojects')}
                             className="inline-flex items-center gap-3 bg-white text-[#07767c] px-8 py-4 rounded-xl font-bold text-lg shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1"
                         >
                             <Briefcase size={20} />
-                            Publicar Proyecto Ahora
+                            Publicar {terminologia.singular} Ahora
                         </button>
                     </div>
                 </div>

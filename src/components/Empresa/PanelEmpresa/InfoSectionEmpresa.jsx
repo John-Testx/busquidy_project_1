@@ -5,10 +5,20 @@ import {
   CreditCard, 
 } from 'lucide-react';
 import { getMyUsage } from "@/api/userApi";
+import useAuth from "@/hooks/auth/useAuth";
 
 function InfoSectionEmpresa() {
-        const [usage, setUsage] = useState(null);
+    const [usage, setUsage] = useState(null);
     const [loadingUsage, setLoadingUsage] = useState(true);
+
+    // ✅ AGREGAR: Obtener tipo de usuario para terminología
+    const { user } = useAuth();
+    const esNatural = user?.tipo_usuario === 'empresa_natural';
+    
+    const terminologia = {
+        singular: esNatural ? 'Tarea' : 'Proyecto',
+        plural: esNatural ? 'Tareas' : 'Proyectos'
+    };
 
     useEffect(() => {
         const fetchUsage = async () => {
@@ -116,7 +126,7 @@ function InfoSectionEmpresa() {
                                     Trabajo de calidad – eficiente y confiable
                                 </h3>
                                 <p className="text-gray-600 text-sm sm:text-base leading-relaxed">
-                                    Recibe entregas puntuales y de alta calidad, ya sea un trabajo a corto plazo o un proyecto complejo.
+                                    Recibe entregas puntuales y de alta calidad, ya sea un trabajo a corto plazo o un {terminologia.singular.toLowerCase()} complejo.
                                 </p>
                             </div>
                         </div>
@@ -205,7 +215,8 @@ function InfoSectionEmpresa() {
                     </div>
                 </div>
             </section>
-               {/* NUEVA SECCIÓN: Uso del Plan */}
+
+            {/* NUEVA SECCIÓN: Uso del Plan - ✅ ACTUALIZADA CON TERMINOLOGÍA */}
             <section className="w-full px-4 sm:px-6 lg:px-8">
                 <div className="max-w-5xl mx-auto">
                     {loadingUsage ? (
@@ -228,11 +239,13 @@ function InfoSectionEmpresa() {
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                {/* Publicaciones de Proyectos */}
+                                {/* Publicaciones de Proyectos - ✅ CON TERMINOLOGÍA */}
                                 {usage.limites.publicacion_proyectos !== undefined && (
                                     <div className="bg-gradient-to-br from-blue-50 to-blue-100/50 p-5 rounded-xl border border-blue-200">
                                         <div className="flex items-center justify-between mb-2">
-                                            <span className="text-sm font-semibold text-blue-900">Publicaciones de Proyectos</span>
+                                            <span className="text-sm font-semibold text-blue-900">
+                                                Publicaciones de {terminologia.plural}
+                                            </span>
                                             <span className={`text-xs font-bold px-2 py-1 rounded ${
                                                 usage.uso.publicacion_proyectos >= (usage.limites.publicacion_proyectos || Infinity)
                                                     ? 'bg-red-200 text-red-800'
@@ -260,11 +273,13 @@ function InfoSectionEmpresa() {
                                     </div>
                                 )}
 
-                                {/* Publicaciones de Tareas */}
-                                {usage.limites.publicacion_tareas !== undefined && (
+                                {/* Publicaciones de Tareas - ✅ MOSTRAR SOLO SI ES NATURAL */}
+                                {usage.limites.publicacion_tareas !== undefined && esNatural && (
                                     <div className="bg-gradient-to-br from-green-50 to-green-100/50 p-5 rounded-xl border border-green-200">
                                         <div className="flex items-center justify-between mb-2">
-                                            <span className="text-sm font-semibold text-green-900">Publicaciones de Tareas</span>
+                                            <span className="text-sm font-semibold text-green-900">
+                                                Publicaciones de {terminologia.plural}
+                                            </span>
                                             <span className={`text-xs font-bold px-2 py-1 rounded ${
                                                 usage.uso.publicacion_tareas >= (usage.limites.publicacion_tareas || Infinity)
                                                     ? 'bg-red-200 text-red-800'
@@ -311,6 +326,7 @@ function InfoSectionEmpresa() {
                     )}
                 </div>
             </section>
+
         </div>
     );
 }

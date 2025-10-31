@@ -11,19 +11,19 @@ function MyProjects() {
     const [logoutStatus, setLogoutStatus] = useState("");
     const navigate = useNavigate();
     const location = useLocation();
-
+    
     const {
         isAuthenticated,
         tipo_usuario: userType,
         id_usuario,
         loading,
         refresh,
+        user,
     } = useAuth();
-
+    
     const { paymentStatus, processPaymentCallback, clearPaymentStatus } = usePaymentCallback();
-
-    // Obtener terminología según tipo de usuario
-    const { user } = useAuth();
+    
+    // ✅ Obtener terminología según tipo de usuario
     const esNatural = user?.tipo_usuario === 'empresa_natural';
     
     const terminologia = {
@@ -32,7 +32,8 @@ function MyProjects() {
     };
     
     const tipoParaBackend = esNatural ? 'tarea' : 'proyecto';
-
+    
+    // Procesar callback de pago
     useEffect(() => {
         const searchParams = new URLSearchParams(location.search);
         
@@ -43,7 +44,8 @@ function MyProjects() {
             window.history.replaceState({}, document.title, newURL);
         }
     }, [location.search, processPaymentCallback]);
-
+    
+    // Manejar estado de pago
     useEffect(() => {
         if (paymentStatus?.success && paymentStatus?.type === "PROJECT_PUBLICATION") {
             const timer = setTimeout(() => {
@@ -52,81 +54,86 @@ function MyProjects() {
                 sessionStorage.removeItem('processed_token');
                 window.location.reload();
             }, 3000);
-
             return () => clearTimeout(timer);
         } else if (paymentStatus && !paymentStatus.success) {
             const timer = setTimeout(() => {
                 clearPaymentStatus();
             }, 5000);
-
             return () => clearTimeout(timer);
         }
     }, [paymentStatus, clearPaymentStatus]);
-
+    
     if (loading) return <LoadingScreen />;
-
+    
+    // Validación de autenticación
     if (!isAuthenticated) {
         return (
             <div className="min-h-screen flex flex-col">
-                <MainLayout >
-                <div className="flex-1 flex items-center justify-center bg-gradient-to-br from-teal-50 via-cyan-50 to-white px-4">
-                    <div className="max-w-lg w-full p-8 text-center bg-white border-2 border-red-200 rounded-2xl shadow-xl">
-                        <div className="mb-6">
-                            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                                </svg>
+                <MainLayout>
+                    <div className="flex-1 flex items-center justify-center bg-gradient-to-br from-teal-50 via-cyan-50 to-white px-4">
+                        <div className="max-w-lg w-full p-8 text-center bg-white border-2 border-red-200 rounded-2xl shadow-xl">
+                            <div className="mb-6">
+                                <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                    </svg>
+                                </div>
+                                <h2 className="text-3xl font-bold mb-3 text-gray-900">Acceso Denegado</h2>
+                                <p className="text-gray-600 text-lg">
+                                    Debes iniciar sesión para acceder a tus {terminologia.plural.toLowerCase()}.
+                                </p>
                             </div>
-                            <h2 className="text-3xl font-bold mb-3 text-gray-900">Acceso Denegado</h2>
-                            <p className="text-gray-600 text-lg">Debes iniciar sesión para acceder a tus {terminologia.plural.toLowerCase()}.</p>
+                            <button
+                                onClick={() => navigate("/login")}
+                                className="w-full px-6 py-3 bg-gradient-to-r from-[#07767c] to-[#05595d] text-white font-semibold rounded-lg hover:from-[#05595d] hover:to-[#044449] transform hover:scale-105 transition-all duration-200 shadow-md"
+                            >
+                                Ir al Login
+                            </button>
                         </div>
-                        <button
-                            onClick={() => navigate("/login")}
-                            className="w-full px-6 py-3 bg-gradient-to-r from-[#07767c] to-[#05595d] text-white font-semibold rounded-lg hover:from-[#05595d] hover:to-[#044449] transform hover:scale-105 transition-all duration-200 shadow-md"
-                        >
-                            Ir al Login
-                        </button>
                     </div>
-                </div>
                 </MainLayout>
             </div>
         );
     }
-
+    
+    // Validación de tipo de usuario
     const isEmpresa = userType === "empresa" || userType === "empresa_juridico" || userType === "empresa_natural";
-
+    
     if (!isEmpresa) {
         return (
             <div className="min-h-screen flex flex-col">
-                <MainLayout >
-                <div className="flex-1 flex items-center justify-center bg-gradient-to-br from-teal-50 via-cyan-50 to-white px-4">
-                    <div className="max-w-2xl w-full p-8 text-center bg-white border-2 border-amber-200 rounded-2xl shadow-xl">
-                        <div className="mb-6">
-                            <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <svg className="w-8 h-8 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
+                <MainLayout>
+                    <div className="flex-1 flex items-center justify-center bg-gradient-to-br from-teal-50 via-cyan-50 to-white px-4">
+                        <div className="max-w-2xl w-full p-8 text-center bg-white border-2 border-amber-200 rounded-2xl shadow-xl">
+                            <div className="mb-6">
+                                <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <svg className="w-8 h-8 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </div>
+                                <h2 className="text-3xl font-bold mb-3 text-gray-900">Acceso Restringido</h2>
+                                <p className="text-gray-600 text-lg">
+                                    Esta sección está disponible solo para usuarios de tipo empresa.
+                                </p>
                             </div>
-                            <h2 className="text-3xl font-bold mb-3 text-gray-900">Acceso Restringido</h2>
-                            <p className="text-gray-600 text-lg">Esta sección está disponible solo para usuarios de tipo empresa.</p>
+                            <button
+                                onClick={() => navigate("/")}
+                                className="w-full px-6 py-3 bg-gradient-to-r from-[#07767c] to-[#05595d] text-white font-semibold rounded-lg hover:from-[#05595d] hover:to-[#044449] transform hover:scale-105 transition-all duration-200 shadow-md"
+                            >
+                                Volver al Inicio
+                            </button>
                         </div>
-                        <button
-                            onClick={() => navigate("/")}
-                            className="w-full px-6 py-3 bg-gradient-to-r from-[#07767c] to-[#05595d] text-white font-semibold rounded-lg hover:from-[#05595d] hover:to-[#044449] transform hover:scale-105 transition-all duration-200 shadow-md"
-                        >
-                            Volver al Inicio
-                        </button>
                     </div>
-                </div>
                 </MainLayout>
             </div>
         );
     }
-
+    
     return (
         <div className="min-h-screen flex flex-col">
             <MainLayout>
                 <div className="flex-1 bg-gradient-to-br from-teal-50 via-cyan-50 to-white pt-20 pb-12 px-4">
+                    {/* Botón de volver */}
                     <div className="max-w-7xl mx-auto mb-8">
                         <button
                             onClick={() => navigate("/empresa")}
@@ -136,7 +143,8 @@ function MyProjects() {
                             <span>Volver a Mis {terminologia.plural}</span>
                         </button>
                     </div>
-
+                    
+                    {/* ✅ Pasar terminología y tipoParaBackend a ViewProjects */}
                     <ViewProjects 
                         userType={userType} 
                         id_usuario={id_usuario} 
@@ -144,6 +152,7 @@ function MyProjects() {
                         tipoParaBackend={tipoParaBackend}
                     />
                     
+                    {/* Notificación de estado de pago */}
                     {paymentStatus && (
                         <div 
                             className={`fixed top-24 left-1/2 transform -translate-x-1/2 p-5 rounded-xl shadow-2xl z-50 w-11/12 max-w-lg text-center transition-all duration-300 animate-[slideIn_0.5s_ease-out] backdrop-blur-sm ${
@@ -173,6 +182,7 @@ function MyProjects() {
                         </div>
                     )}
                     
+                    {/* Notificación de logout */}
                     {logoutStatus && (
                         <div className="fixed top-24 left-1/2 transform -translate-x-1/2 bg-white/95 backdrop-blur-sm p-5 rounded-xl shadow-2xl z-50 border-2 border-gray-200 animate-[slideIn_0.5s_ease-out] max-w-md">
                             <div className="flex items-center gap-3">

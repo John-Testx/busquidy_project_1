@@ -5,9 +5,9 @@ import SecondaryRegisterModal from "./Modals/SecondaryRegisterModal";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import LoginModal from "./Modals/LoginModal";
 import LoginSecondaryModal from "./Modals/LoginSecondaryModal";
-import MessageModal from "../MessageModal"; // IMPORTAR MessageModal
+import MessageModal from "../MessageModal";
 import { useAuth } from "@/hooks";
-import { navbarOptions, profileLinks } from "@/common/navbarOptions";
+import { getNavbarOptions, helpDropdownOptions } from "@/common/navbarOptions"; // ✅ CAMBIO AQUÍ
 import ProfileCircle from "../ProfileCircle";
 import NotificationIcon from '@/components/Notifications/NotificationIcon';
 import { getUserInitials } from "@/common/utils";
@@ -35,9 +35,12 @@ function Navbar() {
         logout, 
         errors, 
         loading,
-        message,        // NUEVO: Estado de mensajes
-        clearMessage    // NUEVO: Función para limpiar mensajes
+        message,
+        clearMessage
     } = useAuth();
+
+    // ✅ Obtener opciones dinámicas según tipo de usuario
+    const { navbarOptions: navOptions, profileLinks: dynamicProfileLinks, terminologia } = getNavbarOptions(tipo_usuario);
 
     // Registration formData
     const [registerData, setRegisterData] = useState({
@@ -66,36 +69,26 @@ function Navbar() {
             registerData.contraseña,
             registerData.tipoUsuario,
             () => {
-                // 1. Cierra el modal de registro
                 setShowSecondaryRegisterModal(false);
                 setShowRegisterModal(false);
-                // 2. Limpia el formulario
                 clearRegisterForm();
-                // 3. El MessageModal se mostrará solo
             }
         );
     };
 
-    // Esta función maneja el cierre del MessageModal y la redirección
     const handleCloseMessageModal = () => {
-        const messageType = message.type; // Captura el tipo ANTES de limpiar
+        const messageType = message.type;
+        clearMessage();
         
-        clearMessage(); // Cierra el modal de mensaje (pone message.show = false)
-        
-        // Si fue un mensaje de éxito (de login o register), redirigimos AHORA.
         if (messageType === 'success') {
-            
-            // AQUÍ ESTÁ EL CAMBIO
             if (tipo_usuario === 'empresa_juridico' || tipo_usuario === 'empresa_natural') {
                 navigate('/empresa');
             } else if (tipo_usuario === 'freelancer') {
                 navigate('/freelancer');
             } else {
-                // Redirección por defecto si no es ninguno de los anteriores
                 navigate('/');
             }
         }
-        // Si fue un error o info, solo se cierra el modal y el usuario sigue donde estaba.
     };
 
     // Modal states
@@ -108,24 +101,19 @@ function Navbar() {
     const [formData, setFormData] = useState({ correo: "", contraseña: "" });
     const updateFormData = (key, value) => setFormData((prev) => ({ ...prev, [key]: value }));
 
-    // Función para limpiar formulario de login
     const clearLoginForm = () => {
         setFormData({ correo: "", contraseña: "" });
     };
 
-    // Función para limpiar formulario de registro
     const clearRegisterForm = () => {
         setRegisterData({ correo: "", contraseña: "", tipoUsuario: "" });
     };
 
     const handleLoginSubmit = async () => {
         await handleLogin(formData.correo, formData.contraseña, (tipo_usuario) => {
-            // 1. Cierra el modal de login
             setShowLoginSecondaryModal(false);
             setShowLoginModal(false);
-            // 2. Limpia el formulario
             clearLoginForm();
-            // 3. El MessageModal se mostrará solo porque 'message.show' es true
         });
     };
 
@@ -138,13 +126,15 @@ function Navbar() {
     const handleLogout = () => {
         logout();
         setIsProfileMenuOpen(false);
-        clearLoginForm(); // LIMPIAR al cerrar sesión
+        clearLoginForm();
         clearRegisterForm();
         navigate("/");
     };
 
-    const navOptions = navbarOptions;
-    const filteredProfileLinks = profileLinks.filter(link => link.roles.includes(tipo_usuario));
+    // ✅ Filtrar links de perfil según roles
+    const filteredProfileLinks = dynamicProfileLinks.filter(link => 
+        link.roles.includes(tipo_usuario)
+    );
 
     // Handle scroll effect
     useEffect(() => {
@@ -240,23 +230,23 @@ function Navbar() {
 
                             {isHelpDropdownOpen && (
                                 <div className="absolute top-full mt-2 right-0 w-56 bg-white rounded-xl shadow-xl border border-gray-100 py-2 animate-in fade-in slide-in-from-top-2 duration-200">
-                                    <Link 
-                                        to="/soportehome"
-                                        onClick={() => setIsHelpDropdownOpen(false)}
-                                        className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-[#07767c]/5 hover:text-[#07767c] transition-colors"
-                                    >
-                                        <MessageSquare size={18} />
-                                        <span>Soporte al Cliente</span>
-                                    </Link>
-                                    <div className="h-px bg-gray-100 my-1"></div>
-                                    <Link 
-                                        to="/busquidyGuia"
-                                        onClick={() => setIsHelpDropdownOpen(false)}
-                                        className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-[#07767c]/5 hover:text-[#07767c] transition-colors"
-                                    >
-                                        <HelpCircle size={18} />
-                                        <span>Busquidy Guía</span>
-                                    </Link>
+                                    {helpDropdownOptions.map((option, index) => (
+                                        <React.Fragment key={option.link}>
+                                            <Link 
+                                                to={option.link}
+                                                onClick={() => setIsHelpDropdownOpen(false)}
+                                                className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-[#07767c]/5 hover:text-[#07767c] transition-colors"
+                                            >
+                                                {option.label === "Soporte al Cliente" ? (
+                                                    <MessageSquare size={18} />
+                                                ) : (
+                                                    <HelpCircle size={18} />
+                                                )}
+                                                <span>{option.label}</span>
+                                            </Link>
+                                            {index === 0 && <div className="h-px bg-gray-100 my-1"></div>}
+                                        </React.Fragment>
+                                    ))}
                                 </div>
                             )}
                         </div>
@@ -371,22 +361,21 @@ function Navbar() {
 
                         <div className="pt-2 border-t border-gray-100">
                             <p className="px-4 py-2 text-xs font-semibold text-gray-400 uppercase">Ayuda</p>
-                            <Link 
-                                to="/soportehome"
-                                onClick={() => setIsMenuOpen(false)}
-                                className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 rounded-lg"
-                            >
-                                <MessageSquare size={18} />
-                                <span>Soporte al Cliente</span>
-                            </Link>
-                            <Link 
-                                to="/busquidyGuia"
-                                onClick={() => setIsMenuOpen(false)}
-                                className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 rounded-lg"
-                            >
-                                <HelpCircle size={18} />
-                                <span>Busquidy Guía</span>
-                            </Link>
+                            {helpDropdownOptions.map(option => (
+                                <Link 
+                                    key={option.link}
+                                    to={option.link}
+                                    onClick={() => setIsMenuOpen(false)}
+                                    className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 rounded-lg"
+                                >
+                                    {option.label === "Soporte al Cliente" ? (
+                                        <MessageSquare size={18} />
+                                    ) : (
+                                        <HelpCircle size={18} />
+                                    )}
+                                    <span>{option.label}</span>
+                                </Link>
+                            ))}
                         </div>
 
                         <div className="pt-4 border-t border-gray-100 space-y-2">
@@ -451,7 +440,7 @@ function Navbar() {
                 <LoginModal
                     onClose={() => {
                         setShowLoginModal(false);
-                        clearLoginForm(); // LIMPIAR al cerrar
+                        clearLoginForm();
                     }}
                     onOpenSecondary={() => {
                         setShowLoginModal(false);
@@ -459,7 +448,7 @@ function Navbar() {
                     }}
                     onOpenRegister={() => {
                         setShowLoginModal(false);
-                        clearLoginForm(); // LIMPIAR al cambiar a registro
+                        clearLoginForm();
                         setShowRegisterModal(true);
                     }}
                 />
@@ -469,7 +458,7 @@ function Navbar() {
                 <LoginSecondaryModal
                     onClose={() => {
                         setShowLoginSecondaryModal(false);
-                        clearLoginForm(); // LIMPIAR al cerrar
+                        clearLoginForm();
                     }}
                     onBack={() => {
                         setShowLoginSecondaryModal(false);
@@ -482,7 +471,7 @@ function Navbar() {
                     loading={loading}
                     onOpenRegister={() => {
                         setShowLoginSecondaryModal(false);
-                        clearLoginForm(); // LIMPIAR al cambiar a registro
+                        clearLoginForm();
                         setShowRegisterModal(true);
                     }}
                 />
@@ -492,7 +481,7 @@ function Navbar() {
                 <RegisterModal
                     onClose={() => {
                         setShowRegisterModal(false);
-                        clearRegisterForm(); // LIMPIAR al cerrar
+                        clearRegisterForm();
                     }}
                     onOpenSecondary={() => {
                         setShowRegisterModal(false);
@@ -500,7 +489,7 @@ function Navbar() {
                     }}
                     onOpenLogin={() => {
                         setShowRegisterModal(false);
-                        clearRegisterForm(); // LIMPIAR al cambiar a login
+                        clearRegisterForm();
                         setShowLoginModal(true);
                     }}
                 />
@@ -510,7 +499,7 @@ function Navbar() {
                 <SecondaryRegisterModal
                     onClose={() => {
                         setShowSecondaryRegisterModal(false);
-                        clearRegisterForm(); // LIMPIAR al cerrar
+                        clearRegisterForm();
                     }}
                     onBack={() => {
                         setShowSecondaryRegisterModal(false);
@@ -524,7 +513,7 @@ function Navbar() {
                     onOpenLogin={() => {
                         setShowSecondaryRegisterModal(false);
                         setShowRegisterModal(false);
-                        clearRegisterForm(); // LIMPIAR al cambiar a login
+                        clearRegisterForm();
                         setShowLoginModal(true);
                     }}
                 />
