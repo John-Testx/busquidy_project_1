@@ -8,18 +8,21 @@ function CreatePerfilEmpresa({ userType, id_usuario, onProfileCreated }) {
     const [message, setMessage] = useState('');
 
     const openModalCreatePerfilEmpresa = () => {
-        console.log(userType);
-        if (userType === 'empresa') {
-            setShowModalCreatePerfilEmpresa(true);
-            console.log('id:', id_usuario);
-        } else if (userType === 'freelancer') {
-            setMessage('Esta función es exclusiva para usuarios de tipo Empresa.');
-            setShowMessageModal(true);
-        } else {
-            setMessage('Debes iniciar sesión como Empresa para desbloquear esta función.');
-            setShowMessageModal(true);
-        }
-    };    
+        console.log(userType);
+        
+        // AQUÍ ESTÁ EL CAMBIO
+        if (userType === 'empresa' || userType === 'empresa_juridico' || userType === 'empresa_natural') {
+            setShowModalCreatePerfilEmpresa(true);
+            console.log('id:', id_usuario);
+        } else if (userType === 'freelancer') {
+            setMessage('Esta función es exclusiva para usuarios de tipo Empresa.');
+            setShowMessageModal(true);
+        } else {
+            // Mensaje para usuarios no logueados o con roles desconocidos
+            setMessage('Debes iniciar sesión como Empresa para desbloquear esta función.');
+            setShowMessageModal(true);
+        }
+    };
    
     const closeMessageModal = () => {
         setShowMessageModal(false);

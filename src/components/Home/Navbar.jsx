@@ -84,11 +84,14 @@ function Navbar() {
         
         // Si fue un mensaje de éxito (de login o register), redirigimos AHORA.
         if (messageType === 'success') {
-            if (tipo_usuario === 'empresa') {
+            
+            // AQUÍ ESTÁ EL CAMBIO
+            if (tipo_usuario === 'empresa_juridico' || tipo_usuario === 'empresa_natural') {
                 navigate('/empresa');
             } else if (tipo_usuario === 'freelancer') {
                 navigate('/freelancer');
             } else {
+                // Redirección por defecto si no es ninguno de los anteriores
                 navigate('/');
             }
         }

@@ -83,7 +83,7 @@ const AppRoutes = () => {
       <Route path="/my-calls" element={<MyCallsPage />} />
 
       {/* Authenticated User Routes */}
-      <Route element={<ProtectedRoute allowedRoles={['freelancer', 'empresa', 'administrador']} />}>
+      <Route element={<ProtectedRoute allowedRoles={['freelancer', 'empresa_juridico', 'empresa_natural', 'administrador']} />}>
           <Route path="/user" element={<User />} />
           <Route path="/soporte/crearticket" element={<CrearTicket />} />
           <Route path="/soporte/ticket/:id_ticket" element={<VerTicket />} />
@@ -107,7 +107,7 @@ const AppRoutes = () => {
       </Route>
 
       {/* Empresa Routes */}
-      <Route element={<ProtectedRoute allowedRoles={['empresa']} />}>
+      <Route element={<ProtectedRoute allowedRoles={['empresa_juridico', 'empresa_natural']} />}>
         <Route path="/empresa" element={<Empresa />} />
         <Route path="/myprojects" element={<MyProjects />} />
         <Route path="/empresa/proyectos/:idProyecto" element={<ProjectView/>}/>
@@ -148,7 +148,7 @@ const AppRoutes = () => {
       </Route>
 
       {/* Notifications Route */}
-      <Route element={<ProtectedRoute allowedRoles={['freelancer', 'empresa', 'administrador']} />}>
+      <Route element={<ProtectedRoute allowedRoles={['freelancer', 'empresa_juridico', 'empresa_natural', 'administrador']} />}>
         <Route path="/notifications" element={<NotificationsPage />} />
       </Route>
     

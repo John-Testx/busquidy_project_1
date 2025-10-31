@@ -27,37 +27,39 @@ function FreelancerList({ userType, id_usuario }) {
     }, [profileWarning]);
 
     const contactarFreelancer = (correo, telefono) => {
-        if (userType === 'empresa') {
-            if (correo && telefono) {
-                setMessage(`Puedes contactar a este freelancer por correo: ${correo} o por teléfono: ${telefono}`);
-            } else if (correo) {
-                setMessage(`Puedes contactar a este freelancer por correo: ${correo}`);
-            } else if (telefono) {
-                setMessage(`Puedes contactar a este freelancer por teléfono: ${telefono}`);
-            } else {
-                setMessage('Este freelancer no tiene datos de contacto disponibles.');
-            }
-            setShowMessageModal(true);
-        } else if (userType === 'freelancer') {
-            setMessage('Esta función es exclusiva para usuarios de tipo empresa.');
-            setShowMessageModal(true);
-        } else {
-            setMessage('Debes iniciar sesión como empresa para desbloquear esta función.');
-            setShowMessageModal(true);
-        }
-    };
+        // AQUÍ ESTÁ EL CAMBIO
+        if (userType === 'empresa' || userType === 'empresa_juridico' || userType === 'empresa_natural') {
+            if (correo && telefono) {
+                setMessage(`Puedes contactar a este freelancer por correo: ${correo} o por teléfono: ${telefono}`);
+            } else if (correo) {
+                setMessage(`Puedes contactar a este freelancer por correo: ${correo}`);
+            } else if (telefono) {
+                setMessage(`Puedes contactar a este freelancer por teléfono: ${telefono}`);
+            } else {
+                setMessage('Este freelancer no tiene datos de contacto disponibles.');
+            }
+            setShowMessageModal(true);
+        } else if (userType === 'freelancer') {
+            setMessage('Esta función es exclusiva para usuarios de tipo empresa.');
+            setShowMessageModal(true);
+        } else {
+            setMessage('Debes iniciar sesión como empresa para desbloquear esta función.');
+            setShowMessageModal(true);
+        }
+    };
 
     const verPerfilFreelancer = (idFreelancer) => {
-        if (userType === 'empresa') {
-            navigate(`/viewfreelancer/${idFreelancer}`);
-        } else if (userType === 'freelancer') {
-            setMessage('Esta función es exclusiva para usuarios de tipo empresa.');
-            setShowMessageModal(true);
-        } else {
-            setMessage('Debes iniciar sesión como empresa para desbloquear esta función.');
-            setShowMessageModal(true);
-        }
-    };
+        // Y AQUÍ ESTÁ EL OTRO CAMBIO
+        if (userType === 'empresa' || userType === 'empresa_juridico' || userType === 'empresa_natural') {
+            navigate(`/viewfreelancer/${idFreelancer}`);
+        } else if (userType === 'freelancer') {
+            setMessage('Esta función es exclusiva para usuarios de tipo empresa.');
+            setShowMessageModal(true);
+        } else {
+            setMessage('Debes iniciar sesión como empresa para desbloquear esta función.');
+            setShowMessageModal(true);
+        }
+    };
 
     const closeMessageModal = () => {
         setShowMessageModal(false);

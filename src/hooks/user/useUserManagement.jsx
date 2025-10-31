@@ -47,28 +47,44 @@ const useUserManagement = () => {
     }
   };
 
-  // Filter users
-  const filteredUsers = useMemo(() => {
-    return usuarios.filter((user) => {
-      const typeMatch = filterType === "all" || user.tipo_usuario === filterType;
-      const statusMatch = 
-        filterStatus === "all" || 
-        (filterStatus === "active" && user.is_active) || 
-        (filterStatus === "inactive" && !user.is_active);
-      return typeMatch && statusMatch;
-    });
-  }, [usuarios, filterType, filterStatus]);
+// Filter users
+  const filteredUsers = useMemo(() => {
+    return usuarios.filter((user) => {
+      
+      // AQUÍ ESTÁ EL CAMBIO
+      let typeMatch = false;
+      if (filterType === "all") {
+        typeMatch = true;
+      } else if (filterType === "empresa") {
+        typeMatch = ["empresa", "empresa_juridico", "empresa_natural"].includes(user.tipo_usuario);
+      } else {
+        typeMatch = user.tipo_usuario === filterType;
+      }
 
-  // Stats
-  const stats = useMemo(() => {
-    return {
-      total: usuarios.length,
-      empresas: usuarios.filter((u) => u.tipo_usuario === "empresa").length,
-      freelancers: usuarios.filter((u) => u.tipo_usuario === "freelancer").length,
-      admins: usuarios.filter((u) => u.tipo_usuario === "administrador").length,
-      activos: usuarios.filter((u) => u.is_active).length,
-    };
-  }, [usuarios]);
+      const statusMatch = 
+        filterStatus === "all" || 
+        (filterStatus === "active" && user.is_active) || 
+        (filterStatus === "inactive" && !user.is_active);
+        
+      return typeMatch && statusMatch;
+    });
+  }, [usuarios, filterType, filterStatus]);
+
+// Stats
+  const stats = useMemo(() => {
+    return {
+      total: usuarios.length,
+      
+      // AQUÍ ESTÁ EL CAMBIO
+      empresas: usuarios.filter((u) => 
+        ["empresa", "empresa_juridico", "empresa_natural"].includes(u.tipo_usuario)
+      ).length,
+      
+      freelancers: usuarios.filter((u) => u.tipo_usuario === "freelancer").length,
+      admins: usuarios.filter((u) => u.tipo_usuario === "administrador").length,
+      activos: usuarios.filter((u) => u.is_active).length,
+  M };
+  }, [usuarios]);
 
   // Clear filters
   const clearFilters = () => {

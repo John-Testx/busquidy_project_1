@@ -85,7 +85,9 @@ function MyProjects() {
         );
     }
 
-    if (userType !== "empresa") {
+    const isEmpresa = userType === "empresa" || userType === "empresa_juridico" || userType === "empresa_natural";
+
+    if (!isEmpresa) {
         return (
             <div className="min-h-screen flex flex-col">
                 <MainLayout >
@@ -100,12 +102,12 @@ function MyProjects() {
                             <h2 className="text-3xl font-bold mb-3 text-gray-900">Acceso Restringido</h2>
                             <p className="text-gray-600 text-lg">Esta sección está disponible solo para usuarios de tipo empresa.</p>
                         </div>
-                        <button
+            A               <button
                             onClick={() => navigate("/")}
-                            className="w-full px-6 py-3 bg-gradient-to-r from-[#07767c] to-[#05595d] text-white font-semibold rounded-lg hover:from-[#05595d] hover:to-[#044449] transform hover:scale-105 transition-all duration-200 shadow-md"
+className="w-full px-6 py-3 bg-gradient-to-r from-[#07767c] to-[#05595d] text-white font-semibold rounded-lg hover:from-[#05595d] hover:to-[#044449] transform hover:scale-105 transition-all duration-200 shadow-md"
                         >
                             Volver al Inicio
-                        </button>
+Next                       </button>
                     </div>
                 </div>
                 </ MainLayout>

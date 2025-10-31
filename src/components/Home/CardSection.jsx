@@ -150,12 +150,19 @@ function CardSection({ userType }) {
                             </div>
 
                             {/* CTA Button */}
-                            <Link to="/empresa" className="block">
-                                <button className="group/btn w-full bg-gradient-to-r from-[#40E0D0] to-[#20B0A0] hover:from-[#20B0A0] hover:to-[#10A090] text-white font-bold py-4 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 transform hover:-translate-y-1">
-                                    <span>{userType === "empresa" ? "Ir a mi panel" : "Comenzar como Empresa"}</span>
-                                    <ArrowRight size={20} className="group-hover/btn:translate-x-1 transition-transform" />
-                                </button>
-                            </Link>
+                            <Link to="/empresa" className="block">
+                                <button className="group/btn w-full bg-gradient-to-r from-[#40E0D0] to-[#20B0A0] hover:from-[#20B0A0] hover:to-[#10A090] text-white font-bold py-4 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 transform hover:-translate-y-1">
+                                    <span>
+                                        {
+                                            // AQUÍ ESTÁ EL CAMBIO
+                                            (userType === "empresa" || userType === "empresa_juridico" || userType === "empresa_natural")
+                                            ? "Ir a mi panel" 
+                                            : "Comenzar como Empresa"
+                                        }
+                                    </span>
+                                    <ArrowRight size={20} className="group-hover/btn:translate-x-1 transition-transform" />
+                                </button>
+                            </Link>
 
                             {/* Stats badge */}
                             <div className="mt-6 pt-6 border-t border-gray-100">

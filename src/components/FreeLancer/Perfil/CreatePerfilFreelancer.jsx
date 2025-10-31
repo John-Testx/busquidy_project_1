@@ -8,17 +8,21 @@ function CreatePerfilFreelancer({ userType, id_usuario }) {
   const [alertMessage, setAlertMessage] = useState("");
 
   const handleOpenModal = () => {
-    if (userType === "freelancer") {
-      setShowModal(true);
-    } else {
-      setAlertMessage(
-        userType === "empresa"
-          ? "Esta función es exclusiva para usuarios de tipo Freelancer."
-          : "Debes iniciar sesión como Freelancer para crear tu perfil."
-      );
-      setShowAlert(true);
-    }
-  };
+    if (userType === "freelancer") {
+      setShowModal(true);
+    } else {
+      
+      // AQUÍ ESTÁ EL CAMBIO
+      const isEmpresa = userType === "empresa" || userType === "empresa_juridico" || userType === "empresa_natural";
+
+      setAlertMessage(
+        isEmpresa
+          ? "Esta función es exclusiva para usuarios de tipo Freelancer."
+          : "Debes iniciar sesión como Freelancer para crear tu perfil." // Esto se aplica a usuarios no logueados o administradores
+      );
+      setShowAlert(true);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-12 px-4">
