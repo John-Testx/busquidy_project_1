@@ -113,6 +113,15 @@ function PublicationCard({ publication, isApplied, onApply, id_usuario, userType
           <div className="flex justify-between items-start mb-3">
             <h3 className="text-lg font-bold text-gray-900 leading-snug pr-8 group-hover:text-[#07767c] transition-colors line-clamp-2">
               {publication.titulo || 'Título no disponible'}
+              {publication.tipo === 'tarea' ? (
+                <span className="px-3 py-1 bg-gradient-to-r from-green-100 to-green-50 text-green-700 rounded-lg text-sm font-semibold border border-green-300">
+                  Tarea
+                </span>
+              ) : (
+                <span className="px-3 py-1 bg-gradient-to-r from-blue-100 to-blue-50 text-blue-700 rounded-lg text-sm font-semibold border border-blue-300">
+                  Proyecto
+                </span>
+              )}
             </h3>
             <div className="relative" ref={menuRef}>
               <button 

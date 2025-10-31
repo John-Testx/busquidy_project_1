@@ -70,7 +70,20 @@ export const registerUser = async (correo, contraseña, tipo_usuario) => {
   const response = await apiClient.post(`${BASE}/register`, {
     correo,
     contraseña,
-    tipo_usuario, // Ahora soporta: freelancer, empresa_juridico, empresa_natural
+    tipo_usuario,
   });
+  return response.data;
+};
+
+// =============================================
+// USO DEL PLAN
+// =============================================
+
+/**
+ * Obtiene el uso del plan del usuario logueado
+ * @returns {Promise<Object>} Información del plan y uso de créditos
+ */
+export const getMyUsage = async () => {
+  const response = await apiClient.get('/me/usage');
   return response.data;
 };

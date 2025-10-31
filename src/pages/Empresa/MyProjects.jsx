@@ -22,19 +22,28 @@ function MyProjects() {
 
     const { paymentStatus, processPaymentCallback, clearPaymentStatus } = usePaymentCallback();
 
-    useEffect(() => {
-    const searchParams = new URLSearchParams(location.search);
+    // Obtener terminología según tipo de usuario
+    const { user } = useAuth();
+    const esNatural = user?.tipo_usuario === 'empresa_natural';
     
-    if (searchParams.has('token_ws') || searchParams.has('TBK_TOKEN')) {
-        processPaymentCallback(searchParams);
-        
-        // Limpiar URL inmediatamente para evitar reprocesamiento
-        const newURL = `${window.location.origin}${window.location.pathname}`;
-        window.history.replaceState({}, document.title, newURL);
-    }
-    }, [location.search, processPaymentCallback]); // ✅ Agregar dependencias
+    const terminologia = {
+        singular: esNatural ? 'Tarea' : 'Proyecto',
+        plural: esNatural ? 'Tareas' : 'Proyectos'
+    };
+    
+    const tipoParaBackend = esNatural ? 'tarea' : 'proyecto';
 
-    // Auto-cerrar notificación y recargar si es exitoso
+    useEffect(() => {
+        const searchParams = new URLSearchParams(location.search);
+        
+        if (searchParams.has('token_ws') || searchParams.has('TBK_TOKEN')) {
+            processPaymentCallback(searchParams);
+            
+            const newURL = `${window.location.origin}${window.location.pathname}`;
+            window.history.replaceState({}, document.title, newURL);
+        }
+    }, [location.search, processPaymentCallback]);
+
     useEffect(() => {
         if (paymentStatus?.success && paymentStatus?.type === "PROJECT_PUBLICATION") {
             const timer = setTimeout(() => {
@@ -42,11 +51,10 @@ function MyProjects() {
                 sessionStorage.removeItem('processing_token');
                 sessionStorage.removeItem('processed_token');
                 window.location.reload();
-            }, 3000); // 3 segundos para que el usuario vea el mensaje
+            }, 3000);
 
             return () => clearTimeout(timer);
         } else if (paymentStatus && !paymentStatus.success) {
-            // Para errores, solo cerrar la notificación
             const timer = setTimeout(() => {
                 clearPaymentStatus();
             }, 5000);
@@ -70,7 +78,7 @@ function MyProjects() {
                                 </svg>
                             </div>
                             <h2 className="text-3xl font-bold mb-3 text-gray-900">Acceso Denegado</h2>
-                            <p className="text-gray-600 text-lg">Debes iniciar sesión para acceder a tus proyectos.</p>
+                            <p className="text-gray-600 text-lg">Debes iniciar sesión para acceder a tus {terminologia.plural.toLowerCase()}.</p>
                         </div>
                         <button
                             onClick={() => navigate("/login")}
@@ -102,15 +110,15 @@ function MyProjects() {
                             <h2 className="text-3xl font-bold mb-3 text-gray-900">Acceso Restringido</h2>
                             <p className="text-gray-600 text-lg">Esta sección está disponible solo para usuarios de tipo empresa.</p>
                         </div>
-            A               <button
+                        <button
                             onClick={() => navigate("/")}
-className="w-full px-6 py-3 bg-gradient-to-r from-[#07767c] to-[#05595d] text-white font-semibold rounded-lg hover:from-[#05595d] hover:to-[#044449] transform hover:scale-105 transition-all duration-200 shadow-md"
+                            className="w-full px-6 py-3 bg-gradient-to-r from-[#07767c] to-[#05595d] text-white font-semibold rounded-lg hover:from-[#05595d] hover:to-[#044449] transform hover:scale-105 transition-all duration-200 shadow-md"
                         >
                             Volver al Inicio
-Next                       </button>
+                        </button>
                     </div>
                 </div>
-                </ MainLayout>
+                </MainLayout>
             </div>
         );
     }
@@ -119,18 +127,22 @@ Next                       </button>
         <div className="min-h-screen flex flex-col">
             <MainLayout>
                 <div className="flex-1 bg-gradient-to-br from-teal-50 via-cyan-50 to-white pt-20 pb-12 px-4">
-                    {/* Header con botón volver - MEJOR POSICIONADO */}
                     <div className="max-w-7xl mx-auto mb-8">
                         <button
                             onClick={() => navigate("/empresa")}
                             className="group inline-flex items-center gap-2 text-[#07767c] hover:text-[#055a5f] font-semibold transition-all duration-200 hover:gap-3"
                         >
                             <ArrowLeft size={20} className="transition-transform duration-200 group-hover:-translate-x-1" />
-                            <span>Volver a Mis Proyectos</span>
+                            <span>Volver a Mis {terminologia.plural}</span>
                         </button>
                     </div>
 
-                    <ViewProjects userType={userType} id_usuario={id_usuario} />
+                    <ViewProjects 
+                        userType={userType} 
+                        id_usuario={id_usuario} 
+                        terminologia={terminologia}
+                        tipoParaBackend={tipoParaBackend}
+                    />
                     
                     {paymentStatus && (
                         <div 

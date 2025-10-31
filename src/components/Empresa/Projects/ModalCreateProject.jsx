@@ -7,7 +7,7 @@ import StepProjectInfo from "./ProjectForm/StepProjectInfo";
 import StepProjectDetails from "./ProjectForm/StepProjectDetails";
 import StepProjectAdditional from "./ProjectForm/StepProjectAdditional";
 
-function ModalCreateProject({ closeModal, id_usuario, addProject }) {
+function ModalCreateProject({ closeModal, id_usuario, addProject, terminologia, tipoParaBackend }) {
   const [currentStep, setCurrentStep] = useState(0);
   const [completedSteps, setCompletedSteps] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -114,7 +114,7 @@ function ModalCreateProject({ closeModal, id_usuario, addProject }) {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
               </svg>
             </div>
-            <h2 className="text-xl font-bold text-white">Crear Nuevo Proyecto</h2>
+            <h2 className="text-xl font-bold text-white">Crear Nuev{terminologia.singular === 'Tarea' ? 'a' : 'o'} {terminologia.singular}</h2>
           </div>
           <button 
             onClick={closeModal} 
@@ -195,7 +195,10 @@ function ModalCreateProject({ closeModal, id_usuario, addProject }) {
           <FormProvider {...methods}>
             <form onSubmit={handleSubmit(onSubmit)} className="h-full flex flex-col">
               <div className="flex-1 px-6 py-4">
-                <StepComponent control={control} />
+                <StepComponent 
+                  control={control} 
+                  terminologia={terminologia} 
+                />
               </div>
 
               {/* Footer - Sticky en la parte inferior */}
