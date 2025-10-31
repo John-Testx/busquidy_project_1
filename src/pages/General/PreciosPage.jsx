@@ -11,7 +11,7 @@ import MainLayout from "@/components/Layouts/MainLayout";
 
 function PreciosPage() {
   const navigate = useNavigate();
-  const { isAuthenticated, tipo_usuario, id_usuario } = useAuth();
+  const { isAuthenticated, tipo_usuario, id_usuario, refresh } = useAuth();
   
   const [planes, setPlanes] = useState({
     empresa_juridico: [],
@@ -29,25 +29,59 @@ function PreciosPage() {
   // Cargar planes al montar
   useEffect(() => {
     fetchAllPlans();
-  }, []);
+  }, [isAuthenticated, tipo_usuario]);
 
   const fetchAllPlans = async () => {
     try {
       setLoading(true);
       setError(null);
+      
+      // Reiniciamos los planes antes de cada carga
+      const planesVacios = {
+        empresa_juridico: [],
+        empresa_natural: [],
+        freelancer: []
+      };
+      setPlanes(planesVacios);
 
-      // Obtener planes para cada tipo de usuario
-      const [planesEmpresaJuridico, planesEmpresaNatural, planesFreelancer] = await Promise.all([
-        getSubscriptionPlans("empresa_juridico"),
-        getSubscriptionPlans("empresa_natural"),
-        getSubscriptionPlans("freelancer")
-      ]);
+      if (isAuthenticated) {
+        
+        // --- LÓGICA DE USUARIO AUTENTICADO ---
+        // Si el usuario está logueado, solo buscamos planes de su tipo
+        
+        if (tipo_usuario) { // (ej. 'freelancer', 'empresa_juridico', etc.)
+          const planesUsuario = await getSubscriptionPlans(tipo_usuario);
+          
+          // Usamos el setPlanes con el estado anterior para asegurar
+          // que solo se llene la categoría correcta
+          setPlanes(prevPlanes => ({
+             ...prevPlanes, // Mantiene los arrays vacíos de los otros tipos
+             [tipo_usuario]: planesUsuario || [] // Llena solo el tipo del usuario
+          }));
+        }
+        // Si está autenticado pero tipo_usuario es null, no cargará nada,
+        // lo cual es correcto.
+        
+      } else {
+        
+        // --- LÓGICA DE USUARIO INVITADO (NO AUTENTICADO) ---
+        // Carga todos los planes (comportamiento original)
+        
+        const [planesEmpresaJuridico, planesEmpresaNatural, planesFreelancer] = await Promise.all([
+          getSubscriptionPlans("empresa_juridico"),
+          getSubscriptionPlans("empresa_natural"),
+          getSubscriptionPlans("freelancer")
+        ]);
 
-      setPlanes({
-        empresa_juridico: planesEmpresaJuridico || [],
-        empresa_natural: planesEmpresaNatural || [],
-        freelancer: planesFreelancer || []
-      });
+        setPlanes({
+          empresa_juridico: planesEmpresaJuridico || [],
+          empresa_natural: planesEmpresaNatural || [],
+          freelancer: planesFreelancer || []
+        });
+      }
+      
+    // ===== FIN DE LA CORRECCIÓN 1 =====
+      
     } catch (err) {
       console.error("Error cargando planes:", err);
       setError("No pudimos cargar los planes. Por favor, intenta nuevamente.");
@@ -76,6 +110,7 @@ function PreciosPage() {
   };
 
   const handleLoginSuccess = () => {
+    refresh();
     // Después del login exitoso, si hay un plan seleccionado, abrir modal de pago
     setShowLoginModal(false);
     setShowLoginSecondaryModal(false);

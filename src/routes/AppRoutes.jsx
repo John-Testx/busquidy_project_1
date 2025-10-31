@@ -69,7 +69,7 @@ const AppRoutes = () => {
       <Route path="/unauthorized" element={<Unauthorized />} />
 
       {/* Chat Routes */}
-      <Route element={<ProtectedRoute allowedRoles={['freelancer', 'empresa']} />}>
+      <Route element={<ProtectedRoute allowedRoles={['freelancer', 'empresa_juridico', 'empresa_natural']} />}>
         <Route path="/chat" element={<ChatPage />} />
       </Route>
 
