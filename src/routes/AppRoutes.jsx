@@ -20,6 +20,8 @@ const UserManagement = lazy(()=> import('@pages/Admin/UserManagement'));
 const Empresa = lazy(()=> import('@pages/Empresa/Empresa'));
 const CrearTicketPublico = lazy(()=>import('@pages/Soporte/CrearTicketPublico'));
 const NotificationsPage = lazy(() => import('@/pages/Notifications/NotificationsPage'));
+const PreciosPage = lazy(() => import('@pages/General/PreciosPage'));
+
 import LoadingScreen from '@/components/LoadingScreen';
 
 // Import Empresa components
@@ -63,6 +65,7 @@ const AppRoutes = () => {
       <Route path="/projectlist" element={<ProjectList />} />
       <Route path="/payment/return" element={<PaymentReturn />} />
       <Route path="/notauthenticated" element={<NotAuthenticated />} />
+      <Route path="/precios" element={<PreciosPage />} />
       <Route path="/unauthorized" element={<Unauthorized />} />
 
       {/* Chat Routes */}

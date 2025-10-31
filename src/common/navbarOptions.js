@@ -5,7 +5,7 @@ export const navbarOptions = [
 //    { label: "Empresa", link: "/empresa", roles: ["empresa"] },
     { label: "Busquidy", link: "/busquidypage", roles: ["freelancer", "empresa", null] },
     { label: "Sobre Nosotros", link: "/sobrenosotrospage", roles: ["freelancer", "empresa", null] },
-    { label: "Comunidad", link: "/comunidadpage", roles: ["freelancer", "empresa", null] },
+    { label: "Precios", link: "/precios", roles: ["freelancer", "empresa", null] },
     // Help dropdown can be handled separately if needed
 ];
 
