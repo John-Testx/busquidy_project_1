@@ -83,7 +83,7 @@ const useUserManagement = () => {
       freelancers: usuarios.filter((u) => u.tipo_usuario === "freelancer").length,
       admins: usuarios.filter((u) => u.tipo_usuario === "administrador").length,
       activos: usuarios.filter((u) => u.is_active).length,
-  M };
+   };
   }, [usuarios]);
 
   // Clear filters
