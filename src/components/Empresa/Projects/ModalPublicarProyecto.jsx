@@ -4,13 +4,17 @@ import { useProjectPayment } from '@/hooks';
 const ModalPublicarProyecto = ({ 
   id_usuario, 
   projectData, // ✅ CAMBIO: Recibe objeto con { id_proyecto, titulo, presupuesto }
-  closeModal
+  closeModal,
+  terminologia, 
+  tipoParaBackend
 }) => {
   const { loading, error, initiatePayment } = useProjectPayment();
 
   const API_URL_FRONT = import.meta.env.VITE_API_URL_FRONT || 'http://localhost:5173';
 
   console.log("ModalPublicarProyecto recibió projectData:", projectData);
+  
+  const articulo = terminologia?.singular === 'Tarea' ? 'la' : 'el';
 
   const handlePayment = async () => {
     const paymentData = {
@@ -77,7 +81,7 @@ const ModalPublicarProyecto = ({
               <div>
                 <p className="text-sm font-semibold text-blue-900 mb-1">¿Por qué pagar?</p>
                 <p className="text-sm text-blue-800 leading-relaxed">
-                  Al publicar tu proyecto, el monto será retenido de forma segura hasta que el trabajo sea completado y aprobado. Esto protege tanto a tu empresa como al freelancer.
+                  Al publicar tu {terminologia?.singular.toLowerCase() || 'proyecto'}, el monto será retenido de forma segura hasta que el trabajo sea completado y aprobado. Esto protege tanto a tu empresa como al freelancer.
                 </p>
               </div>
             </div>

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { X, CheckCircle } from "lucide-react";
 
-const ReleasePaymentModal = ({ isOpen, onClose, onConfirm, project }) => {
+const ReleasePaymentModal = ({ isOpen, onClose, onConfirm, project, terminologia }) => {
   const [inputValue, setInputValue] = useState("");
   const [error, setError] = useState("");
 
@@ -25,6 +25,11 @@ const ReleasePaymentModal = ({ isOpen, onClose, onConfirm, project }) => {
 
   const comision = project?.presupuesto * 0.10;
   const montoFreelancer = project?.presupuesto * 0.90;
+
+  // ✅ Definimos la terminología para usarla fácil
+  const term = terminologia?.singular || 'Proyecto';
+  const articulo = term === 'Tarea' ? 'la' : 'el';
+  const delOdeLa = term === 'Tarea' ? 'de la' : 'del';
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
@@ -51,13 +56,13 @@ const ReleasePaymentModal = ({ isOpen, onClose, onConfirm, project }) => {
 
           {/* Título */}
           <h3 className="text-2xl font-bold text-emerald-800 mb-3 text-center">
-            Completar Proyecto y Liberar Pago
+            Liberar Pago {delOdeLa} {term}
           </h3>
 
           {/* Información del proyecto */}
           <div className="bg-gray-50 rounded-xl p-4 mb-4 border border-gray-200">
             <p className="text-sm text-gray-600 mb-2">
-              <span className="font-semibold">Proyecto:</span> {project?.titulo}
+              <span className="font-semibold">{term}:</span> {project?.titulo}
             </p>
             <div className="mt-3 space-y-2">
               <div className="flex justify-between items-center text-sm">
@@ -88,7 +93,7 @@ const ReleasePaymentModal = ({ isOpen, onClose, onConfirm, project }) => {
             </p>
             <ul className="text-emerald-700 text-sm space-y-1 list-disc list-inside">
               <li>El freelancer recibirá el pago acordado</li>
-              <li>El proyecto será marcado como finalizado</li>
+              <li>Se marcará como finalizado el estado de {term}</li>
               <li>Esta acción <span className="font-bold">NO se puede deshacer</span></li>
             </ul>
           </div>

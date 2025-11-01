@@ -264,6 +264,8 @@ function ViewProjects({ userType, id_usuario, terminologia, tipoParaBackend }) {
                     closeModal={() => setShowModalPublicar(false)} 
                     id_usuario={id_usuario} 
                     projectData={projectToPublishData}
+                    terminologia={terminologia}
+                    tipoParaBackend={tipoParaBackend}
                 />
             )}
             
@@ -293,6 +295,7 @@ function ViewProjects({ userType, id_usuario, terminologia, tipoParaBackend }) {
                     }}
                     onConfirm={confirmReleasePayment}
                     project={projectToRelease}
+                    terminologia={terminologia}
                 />
             )}
         </div>

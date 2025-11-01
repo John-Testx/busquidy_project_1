@@ -19,11 +19,12 @@ function useCompanyProjects({ userType, id_usuario }) {
    * Carga los proyectos del usuario
    */
   const loadProjects = useCallback(async () => {
-    if (userType !== 'empresa' || !id_usuario) {
+    const isEmpresa = userType && userType.startsWith('empresa');
+    
+    if (!isEmpresa || !id_usuario) {
       setLoading(false);
       return;
     }
-
     setLoading(true);
     setError(null);
 
