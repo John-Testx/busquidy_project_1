@@ -4,18 +4,18 @@ import { initialFreelancerData } from "@/common/consts";
 import { createFreelancerProfile } from "@/api/freelancerApi";
 
 // Componentes de cada paso
-import StepPresentacion from "./Sections/StepPresentacion";
-import StepDatosPersonales from "./Sections/StepDatosPersonales";
-import StepInclusionLaboral from "./Sections/StepInclusionLaboral";
-import StepEmprendimiento from "./Sections/StepEmprendimiento";
-import StepExperiencia from "./Sections/StepExperiencia";
-import StepNivelEducacional from "./Sections/StepNivelEducacional";
-import StepEducacionSuperior from "./Sections/StepEducacionSuperior";
-import StepEducacionBasica from "./Sections/StepEducacionBasica";
-import StepIdiomas from "./Sections/StepIdiomas";
-import StepHabilidades from "./Sections/StepHabilidades";
-import StepCursos from "./Sections/StepCursos";
-import StepPretensiones from "./Sections/StepPretensiones";
+import StepPresentacion from "./FormSections/StepPresentacion";
+import StepDatosPersonales from "./FormSections/StepDatosPersonales";
+import StepInclusionLaboral from "./FormSections/StepInclusionLaboral";
+import StepEmprendimiento from "./FormSections/StepEmprendimiento";
+import StepExperiencia from "./FormSections/StepExperiencia";
+import StepNivelEducacional from "./FormSections/StepNivelEducacional";
+import StepEducacionSuperior from "./FormSections/StepEducacionSuperior";
+import StepEducacionBasica from "./FormSections/StepEducacionBasica";
+import StepIdiomas from "./FormSections/StepIdiomas";
+import StepHabilidades from "./FormSections/StepHabilidades";
+import StepCursos from "./FormSections/StepCursos";
+import StepPretensiones from "./FormSections/StepPretensiones";
 
 const TOTAL_STEPS = 12;
 

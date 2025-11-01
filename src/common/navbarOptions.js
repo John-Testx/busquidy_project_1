@@ -45,8 +45,20 @@ export const getNavbarOptions = (tipo_usuario) => {
             },
             {
                 label: "Mis postulaciones",
-                link: "/mypostulations",
+                link: "/freelancer-profile/my-postulations",
                 icon: "bi bi-file-earmark-text",
+                roles: ["freelancer"]
+            },
+            {
+                label: "Mis Disponibilidad",
+                link: "/freelancer-profile/availability",
+                icon: "bi bi-calendar-check",
+                roles: ["freelancer"]
+            },
+            {
+                label: "Configuración",
+                // link: "/freelancer-profile/availability",
+                icon: "bi bi-gear",
                 roles: ["freelancer"]
             },
             {
@@ -60,6 +72,12 @@ export const getNavbarOptions = (tipo_usuario) => {
                 label: `Mis ${terminologia.plural.toLowerCase()}`,
                 link: "/myprojects",
                 icon: "bi bi-kanban",
+                roles: ["empresa", "empresa_juridico", "empresa_natural"]
+            },
+            {
+                label: "Configuración",
+                // link: "/freelancer-profile/availability",
+                icon: "bi bi-gear",
                 roles: ["empresa", "empresa_juridico", "empresa_natural"]
             },
             {

@@ -28,7 +28,7 @@ import LoadingScreen from '@/components/LoadingScreen';
 import { MyProjects, ViewFreelancer, ProjectView } from '@pages/Empresa';
 
 // Import Freelancer components
-import { FreeLancer, MyPostulations, ViewMoreDetailsFreelancer, ViewPerfilFreeLancer, FreelancerProfileLayout} from '@pages/Freelancer';
+import { FreeLancer, MyPostulations, ViewPerfilFreeLancer, FreelancerProfileLayout} from '@pages/Freelancer';
 
 import VideoCallPage from "@pages/Video/VideoCallPage";
 import MyCallsPage from "@pages/Video/MyCallsPage";
@@ -99,11 +99,7 @@ const AppRoutes = () => {
           <Route path="view-profile" element={<ViewPerfilFreeLancer />} />
           <Route path="my-postulations" element={<MyPostulations />} />
           <Route path="availability" element={<MyAvailability />} />
-        </Route>
-
-        {/* <Route path="/viewperfilfreelancer" element={<FreelancerProfile />} />  */}
-        <Route path="/viewperfilfreelancer" element={<ViewPerfilFreeLancer />} />
-        <Route path="/viewmoredetailsfreelancer" element={<ViewMoreDetailsFreelancer />} />
+        </Route>        
       </Route>
 
       {/* Empresa Routes */}

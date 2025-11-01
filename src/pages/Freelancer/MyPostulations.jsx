@@ -3,8 +3,6 @@ import {jwtDecode} from 'jwt-decode';
 import { useNavigate } from "react-router-dom";
 import MyPostulationsTable from "@/components/FreeLancer/Postulation/MyPostulationsTable";
 import LoadingScreen from "@/components/LoadingScreen";
-import { Footer, Navbar } from '@/components/Home/';
-
 
 function MyPostulations() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -41,47 +39,23 @@ function MyPostulations() {
         return () => window.removeEventListener('storage', checkAuth);
     }, []);
 
-    const handleLogout = () => {
-        setLoading(true);
-        setLogoutStatus("Cerrando sesión...");
-        
-        setTimeout(() => {
-            sessionStorage.removeItem("token");
-            sessionStorage.removeItem("correo");
-            setIsAuthenticated(false);
-            setUserType(null);
-            setLogoutStatus("Sesión cerrada");
-            
-            setTimeout(() => {
-                setLoading(false);
-                navigate("/");
-            }, 1000);
-        });
-    };
-
     useEffect(() => {
         if (id_usuario) {
             console.log("ID usuario actualizado:", id_usuario);
         }
     }, [id_usuario]);
 
-    const renderNavbar = () => {
-        return <Navbar />;
-    };
-
     return (
-        <div className="mt-20">
+        <>
             {loading && <LoadingScreen />}
-            {renderNavbar()}
             <MyPostulationsTable id_usuario={id_usuario}/>
-            <Footer />
             
             {logoutStatus && (
                 <div className="fixed bottom-4 right-4 bg-[#07767c] text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-[modalSlideIn_0.3s_ease-out]">
                     {logoutStatus}
                 </div>
             )}
-        </div>
+        </>
     );
 }
 

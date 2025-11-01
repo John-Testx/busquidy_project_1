@@ -1,4 +1,3 @@
-// ViewFreelancer.js
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import LoadingScreen from "@/components/LoadingScreen"; 
