@@ -62,14 +62,18 @@ function ViewProjects({ userType, id_usuario, terminologia, tipoParaBackend }) {
     const handleEdit = (id) => navigate(`/projects/edit/${id}`);
     
     const handleViewDetails = (id) => navigate(`/empresa/proyectos/${id}`);
+
+    /* Esta función interceptará el proyecto creado desde ModalCreateProject */
+    const handleProjectCreated = (nuevoProyecto) => {
+        addProject(nuevoProyecto);
+        setProjectToPublishData(nuevoProyecto);
+        setShowModalProject(false); // Cierra el modal de creación
+        setShowModalPublicar(true);  // Abre el modal de publicación
+    };
     
     const openPublishModal = (project) => {
         console.log("Abriendo modal para proyecto:", project);
-        setProjectToPublishData({
-            id_proyecto: project.id_proyecto,
-            titulo: project.titulo,
-            presupuesto: project.presupuesto
-        });
+        setProjectToPublishData(project);
         setShowModalPublicar(true);
     };
 
@@ -252,7 +256,7 @@ function ViewProjects({ userType, id_usuario, terminologia, tipoParaBackend }) {
             {showModalProject && (
                 <ModalCreateProject 
                     closeModal={() => setShowModalProject(false)} 
-                    addProject={addProject} 
+                    addProject={handleProjectCreated}
                     id_usuario={id_usuario} 
                     terminologia={terminologia}
                     tipoParaBackend={tipoParaBackend}
