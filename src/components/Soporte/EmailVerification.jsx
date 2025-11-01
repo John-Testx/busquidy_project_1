@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Mail, ArrowRight, Loader2, ShieldCheck } from "lucide-react";
+import { Mail, ArrowRight, Loader2, ShieldCheck, ArrowLeft } from "lucide-react";
+import { sendSupportCode, verifySupportCode } from "../../api/supportApi"; // <--- AÑADIR
 
 function EmailVerification({ onEmailVerified }) {
   const [email, setEmail] = useState("");
@@ -28,50 +29,68 @@ function EmailVerification({ onEmailVerified }) {
     setIsLoading(false);
   };
 
-  // Maneja el envío del email (simulado)
-  const handleSendCode = async (e) => {
-    e.preventDefault();
-    setError("");
+  // Maneja el envío del email (AHORA ES REAL)
+const handleSendCode = async (e) => {
+  e.preventDefault();
+  setError("");
 
-    if (!email || !email.includes("@")) {
-      setError("Por favor ingresa un email válido");
-      return;
-    }
+  if (!email || !email.includes("@")) {
+    setError("Por favor ingresa un email válido");
+    return;
+  }
 
-    setIsLoading(true);
-    
-    // Simular llamada a API para enviar código
-    setTimeout(() => {
-      setIsLoading(false);
-      setEmailSent(true); // Mostrar el campo de código
-      setError(""); // Limpiar errores
-    }, 1000);
-  };
+  setIsLoading(true);
 
-  // Maneja la verificación del código (simulado)
-  const handleVerifyCode = async (e) => {
-    e.preventDefault();
-    setError("");
+  try {
+    // Llamada real a la API
+    await sendSupportCode(email);
 
-    // Como solicitaste, cualquier número funciona
-    if (!code.trim()) {
-      setError("Por favor ingresa el código de verificación");
-      return;
-    }
+    setIsLoading(false);
+    setEmailSent(true); // Mostrar el campo de código
+    setError(""); // Limpiar errores
 
-    setIsLoading(true);
+  } catch (apiError) {
+    setIsLoading(false);
+    setError(apiError.response?.data?.error || "Error al enviar el código. Intenta de nuevo.");
+  }
+};
 
-    // Simular verificación de código
-    setTimeout(() => {
-      // Guardar email en sessionStorage
-      sessionStorage.setItem("guest_email", email);
-      
-      // Llamar al callback con el email verificado
-      onEmailVerified(email);
-      
-      setIsLoading(false);
-    }, 500);
-  };
+// Maneja la verificación del código (AHORA ES REAL)
+const handleVerifyCode = async (e) => {
+  e.preventDefault();
+  setError("");
+
+  if (!code.trim()) {
+    setError("Por favor ingresa el código de verificación");
+    return;
+  }
+
+  setIsLoading(true);
+
+  try {
+    // Llamada real a la API
+    const response = await verifySupportCode(email, code);
+
+    // Guardar email en sessionStorage
+    sessionStorage.setItem("guest_email", response.data.email);
+
+    // Llamar al callback con el email verificado
+    onEmailVerified(response.data.email);
+
+    setIsLoading(false);
+
+  } catch (apiError) {
+    setIsLoading(false);
+    setError(apiError.response?.data?.error || "Error al verificar el código.");
+  }
+};
+
+// Función para permitir al usuario cambiar el email
+const handleChangeEmail = () => {
+  setEmailSent(false);
+  setCode("");
+  setError("");
+};
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-3 md:p-4">
@@ -123,7 +142,6 @@ function EmailVerification({ onEmailVerified }) {
             />
           </div>
 
-
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
               {error}
@@ -155,6 +173,27 @@ function EmailVerification({ onEmailVerified }) {
             )}
           </button>
         </form>
+        {emailSent && (
+          <div className="mt-4 text-center text-sm">
+            <button
+              onClick={handleChangeEmail}
+              className="text-gray-600 hover:text-gray-800"
+              disabled={isLoading}
+            >
+              <ArrowLeft className="w-4 h-4 inline-block mr-1" />
+              Cambiar email
+            </button>
+            <span className="mx-2 text-gray-400">|</span>
+            {/* El botón de "Enviar Código" se convierte en "Reenviar" */}
+            <button
+              onClick={handleSendCode} 
+              className="text-blue-600 hover:text-blue-800 font-semibold"
+              disabled={isLoading}
+            >
+              Reenviar código
+            </button>
+          </div>
+        )}
 
         <div className="mt-6 pt-6 border-t border-gray-200">
           <p className="text-center text-sm text-gray-600">
