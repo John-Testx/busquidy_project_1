@@ -58,3 +58,12 @@ export const createSubscriptionTransaction = async (paymentData) => {
   );
   return response.data;
 };
+
+/**
+ * Obtiene TODOS los planes de suscripción sin filtro
+ * @returns {Promise} - Lista completa de planes
+ */
+export const getAllSubscriptionPlans = async () => {
+  const response = await apiClient.get("/payments/plan");
+  return response.data;
+};

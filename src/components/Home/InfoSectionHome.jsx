@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from "react-router-dom";
 import { 
   Search, 
   CheckCircle2, 
@@ -23,6 +24,7 @@ const InfoSectionHome = ({ tipo_usuario, id_usuario }) => {
     const [showMessageModal, setShowMessageModal] = useState(false);
     const [message, setMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const navigate = useNavigate();
     
     const openModalPagarSuscripcion = async () => {
         try {
@@ -261,22 +263,10 @@ const InfoSectionHome = ({ tipo_usuario, id_usuario }) => {
                     {/* CTA Button */}
                     <div className="text-center">
                         <button
-                            onClick={openModalPagarSuscripcion}
-                            disabled={isLoading}
-                            className="group inline-flex items-center gap-3 bg-gradient-to-r from-[#07767c] to-[#055a5f] text-white px-10 py-5 rounded-xl font-bold text-lg shadow-2xl hover:shadow-[#07767c]/50 transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
-                        >
-                            {isLoading ? (
-                                <>
-                                    <div className="w-6 h-6 border-3 border-white border-t-transparent rounded-full animate-spin"></div>
-                                    Verificando...
-                                </>
-                            ) : (
-                                <>
-                                    <Crown size={24} />
-                                    Probar Busquidy+ ahora
-                                    <ArrowRight className="group-hover:translate-x-1 transition-transform" size={24} />
-                                </>
-                            )}
+                            onClick={() => navigate("/precios")}
+                            className="px-8 py-3 bg-gradient-to-r from-[#07767c] to-[#40E0D0] text-white font-semibold rounded-lg hover:shadow-lg hover:from-[#05595d] hover:to-[#07767c] transition-all duration-300"
+                            >
+                            Probar Busquidy+
                         </button>
                         <p className="text-sm text-gray-600 mt-4">
                             Comienza tu prueba gratuita hoy • Sin tarjeta de crédito requerida

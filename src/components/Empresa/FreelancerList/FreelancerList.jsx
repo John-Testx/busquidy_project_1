@@ -4,6 +4,7 @@ import SearchFilters from "./SearchFilters";
 import MessageModal from "@/components/MessageModal";
 import {useFreelancers} from "@/hooks";
 import { FaStar, FaMapMarkerAlt, FaCheckCircle, FaFire, FaEnvelope, FaPhone } from 'react-icons/fa';
+import LoadingScreen from "@/components/LoadingScreen";
 
 function FreelancerList({ userType, id_usuario }) {
     const [showMessageModal, setShowMessageModal] = useState(false);
@@ -26,37 +27,39 @@ function FreelancerList({ userType, id_usuario }) {
     }, [profileWarning]);
 
     const contactarFreelancer = (correo, telefono) => {
-        if (userType === 'empresa') {
-            if (correo && telefono) {
-                setMessage(`Puedes contactar a este freelancer por correo: ${correo} o por teléfono: ${telefono}`);
-            } else if (correo) {
-                setMessage(`Puedes contactar a este freelancer por correo: ${correo}`);
-            } else if (telefono) {
-                setMessage(`Puedes contactar a este freelancer por teléfono: ${telefono}`);
-            } else {
-                setMessage('Este freelancer no tiene datos de contacto disponibles.');
-            }
-            setShowMessageModal(true);
-        } else if (userType === 'freelancer') {
-            setMessage('Esta función es exclusiva para usuarios de tipo empresa.');
-            setShowMessageModal(true);
-        } else {
-            setMessage('Debes iniciar sesión como empresa para desbloquear esta función.');
-            setShowMessageModal(true);
-        }
-    };
+        // AQUÍ ESTÁ EL CAMBIO
+        if (userType === 'empresa' || userType === 'empresa_juridico' || userType === 'empresa_natural') {
+            if (correo && telefono) {
+                setMessage(`Puedes contactar a este freelancer por correo: ${correo} o por teléfono: ${telefono}`);
+            } else if (correo) {
+                setMessage(`Puedes contactar a este freelancer por correo: ${correo}`);
+            } else if (telefono) {
+                setMessage(`Puedes contactar a este freelancer por teléfono: ${telefono}`);
+            } else {
+                setMessage('Este freelancer no tiene datos de contacto disponibles.');
+            }
+            setShowMessageModal(true);
+        } else if (userType === 'freelancer') {
+            setMessage('Esta función es exclusiva para usuarios de tipo empresa.');
+            setShowMessageModal(true);
+        } else {
+            setMessage('Debes iniciar sesión como empresa para desbloquear esta función.');
+            setShowMessageModal(true);
+        }
+    };
 
     const verPerfilFreelancer = (idFreelancer) => {
-        if (userType === 'empresa') {
-            navigate(`/viewfreelancer/${idFreelancer}`);
-        } else if (userType === 'freelancer') {
-            setMessage('Esta función es exclusiva para usuarios de tipo empresa.');
-            setShowMessageModal(true);
-        } else {
-            setMessage('Debes iniciar sesión como empresa para desbloquear esta función.');
-            setShowMessageModal(true);
-        }
-    };
+        // Y AQUÍ ESTÁ EL OTRO CAMBIO
+        if (userType === 'empresa' || userType === 'empresa_juridico' || userType === 'empresa_natural') {
+            navigate(`/viewfreelancer/${idFreelancer}`);
+        } else if (userType === 'freelancer') {
+            setMessage('Esta función es exclusiva para usuarios de tipo empresa.');
+            setShowMessageModal(true);
+        } else {
+            setMessage('Debes iniciar sesión como empresa para desbloquear esta función.');
+            setShowMessageModal(true);
+        }
+    };
 
     const closeMessageModal = () => {
         setShowMessageModal(false);
@@ -66,20 +69,7 @@ function FreelancerList({ userType, id_usuario }) {
         applyFilters(filters);
     };
 
-    if (loading) {
-        return (
-            <div className="flex flex-col lg:flex-row gap-6 w-full">
-                <SearchFilters onFilterChange={handleFilterChange} />
-                <div className="flex-1 flex items-center justify-center py-20">
-                    <div className="flex flex-col items-center gap-4">
-                        <div className="w-16 h-16 border-4 border-[#07767c] border-t-transparent rounded-full animate-spin"></div>
-                        <p className="text-gray-700 font-semibold text-lg">Buscando el mejor talento...</p>
-                        <p className="text-gray-500 text-sm">Esto no tomará mucho tiempo</p>
-                    </div>
-                </div>
-            </div>
-        );
-    }
+    if (loading) return <LoadingScreen />;
 
     if (error) {
         return (

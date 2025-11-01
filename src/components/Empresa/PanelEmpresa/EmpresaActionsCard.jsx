@@ -2,7 +2,13 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Search, Plus, ArrowRight } from 'lucide-react';
 
-function EmpresaActionsCard() {
+function EmpresaActionsCard({ terminologia }) {
+    // ✅ Valores por defecto si no se pasa la prop
+    const term = terminologia || {
+        singular: 'Proyecto',
+        plural: 'Proyectos'
+    };
+
     return (
         <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             {/* Cards Container con sombra elevada */}
@@ -32,7 +38,7 @@ function EmpresaActionsCard() {
                     
                     <div className="p-6">
                         <p className="text-gray-600 text-base mb-6 leading-relaxed">
-                            Explora nuestra comunidad de profesionales verificados y encuentra el freelancer perfecto para tu proyecto
+                            Explora nuestra comunidad de profesionales verificados y encuentra el freelancer perfecto para tu {term.singular.toLowerCase()}
                         </p>
                         
                         <Link to="/findfreelancer" className="block">
@@ -45,7 +51,7 @@ function EmpresaActionsCard() {
                     </div>
                 </div>
                 
-                {/* Card 2: Publicar Proyecto */}
+                {/* Card 2: Publicar Proyecto/Tarea */}
                 <div className="group bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-200 hover:border-[#07767c]/30 hover:-translate-y-2">
                     <div className="relative h-32 bg-gradient-to-br from-blue-600 to-blue-700 overflow-hidden">
                         {/* Decorative circles */}
@@ -58,7 +64,7 @@ function EmpresaActionsCard() {
                             </div>
                             <div>
                                 <h3 className="text-2xl font-bold text-white">
-                                    Publicar Proyecto
+                                    Publicar {term.singular}
                                 </h3>
                                 <p className="text-white/80 text-sm">
                                     Recibe propuestas de expertos
@@ -69,7 +75,7 @@ function EmpresaActionsCard() {
                     
                     <div className="p-6">
                         <p className="text-gray-600 text-base mb-6 leading-relaxed">
-                            Publica tu proyecto y permite que los freelancers calificados te encuentren y te envíen sus mejores propuestas
+                            Publica tu {term.singular.toLowerCase()} y permite que los freelancers calificados te encuentren y te envíen sus mejores propuestas
                         </p>
                         
                         <Link to="/myprojects" className="block">

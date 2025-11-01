@@ -1,24 +1,35 @@
 import React, { useState } from "react";
 import Modal from "../Modal";
-import { ArrowLeft, Mail, Lock, AlertCircle, Loader2, User, Briefcase } from "lucide-react";
+import { ArrowLeft, Mail, Lock, AlertCircle, Loader2, User, Briefcase, Building2 } from "lucide-react";
 
 const SecondaryRegisterModal = ({ onClose, onBack, formData, setFormData, errors, handleRegister, loading, onOpenLogin }) => {
     const [showPassword, setShowPassword] = useState(false);
 
+    // ✅ ACTUALIZADO: 3 tipos de usuario
     const userTypes = [
-        {
-            value: "empresa",
-            label: "Empresa",
-            icon: Briefcase,
-            description: "Busco contratar talento",
-            color: "from-blue-500 to-blue-600"
-        },
         {
             value: "freelancer",
             label: "Freelancer",
             icon: User,
             description: "Busco proyectos",
-            color: "from-purple-500 to-purple-600"
+            detail: "Estudiante o profesional independiente",
+            color: "from-green-500 to-emerald-600"
+        },
+        {
+            value: "empresa_juridico",
+            label: "Empresa Jurídica",
+            icon: Building2,
+            description: "Busco contratar talento",
+            detail: "Empresa con RUT jurídico",
+            color: "from-blue-500 to-indigo-600"
+        },
+        {
+            value: "empresa_natural",
+            label: "Empresa Natural",
+            icon: Briefcase,
+            description: "Busco contratar talento",
+            detail: "Emprendedor con RUT natural",
+            color: "from-purple-500 to-pink-600"
         }
     ];
 
@@ -61,7 +72,7 @@ const SecondaryRegisterModal = ({ onClose, onBack, formData, setFormData, errors
                 </div>
 
                 {/* Right Section - Form */}
-                <div className="flex-1 p-12 flex flex-col justify-center bg-gray-50">
+                <div className="flex-1 p-12 flex flex-col justify-center bg-gray-50 overflow-y-auto max-h-screen">
                     <div className="max-w-md mx-auto w-full">
                         {/* Back Button */}
                         <button 
@@ -83,12 +94,12 @@ const SecondaryRegisterModal = ({ onClose, onBack, formData, setFormData, errors
                         </div>
 
                         <div className="space-y-5">
-                            {/* User Type Selection */}
+                            {/* User Type Selection - ACTUALIZADO A 3 OPCIONES */}
                             <div className="animate-[fadeIn_0.5s_ease-out]">
-                                <label className="block text-sm font-medium text-gray-700 mb-3">
-                                    ¿Cómo quieres usar Busquidy?
+                                <label className="block text-sm font-semibold text-gray-700 mb-3">
+                                    ¿Qué tipo de cuenta necesitas?
                                 </label>
-                                <div className="grid grid-cols-2 gap-3">
+                                <div className="space-y-3">
                                     {userTypes.map((type) => {
                                         const Icon = type.icon;
                                         const isSelected = formData.tipoUsuario === type.value;
@@ -98,23 +109,37 @@ const SecondaryRegisterModal = ({ onClose, onBack, formData, setFormData, errors
                                                 key={type.value}
                                                 type="button"
                                                 onClick={() => setFormData('tipoUsuario', type.value)}
-                                                className={`p-4 rounded-xl border-2 transition-all duration-200 text-left transform hover:-translate-y-0.5 ${
+                                                className={`w-full p-4 rounded-xl border-2 transition-all duration-200 text-left transform hover:-translate-y-0.5 ${
                                                     isSelected
                                                         ? 'border-[#07767c] bg-[#07767c]/5 shadow-md'
                                                         : 'border-gray-200 hover:border-gray-300 bg-white'
                                                 }`}
                                             >
-                                                <div className={`w-10 h-10 rounded-lg flex items-center justify-center mb-3 bg-gradient-to-br ${type.color} transition-transform duration-200 ${isSelected ? 'scale-110' : ''}`}>
-                                                    <Icon size={20} className="text-white" />
+                                                <div className="flex items-start gap-4">
+                                                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 bg-gradient-to-br ${type.color} transition-transform duration-200 ${isSelected ? 'scale-110' : ''}`}>
+                                                        <Icon size={24} className="text-white" />
+                                                    </div>
+                                                    <div className="flex-1">
+                                                        <p className={`font-bold text-base mb-1 transition-colors duration-200 ${
+                                                            isSelected ? 'text-[#07767c]' : 'text-gray-800'
+                                                        }`}>
+                                                            {type.label}
+                                                        </p>
+                                                        <p className="text-sm text-gray-600 mb-0.5">
+                                                            {type.description}
+                                                        </p>
+                                                        <p className="text-xs text-gray-500">
+                                                            {type.detail}
+                                                        </p>
+                                                    </div>
+                                                    {isSelected && (
+                                                        <div className="w-6 h-6 bg-[#07767c] rounded-full flex items-center justify-center flex-shrink-0">
+                                                            <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                                            </svg>
+                                                        </div>
+                                                    )}
                                                 </div>
-                                                <p className={`font-semibold text-sm mb-1 transition-colors duration-200 ${
-                                                    isSelected ? 'text-[#07767c]' : 'text-gray-800'
-                                                }`}>
-                                                    {type.label}
-                                                </p>
-                                                <p className="text-xs text-gray-500">
-                                                    {type.description}
-                                                </p>
                                             </button>
                                         );
                                     })}
@@ -166,7 +191,7 @@ const SecondaryRegisterModal = ({ onClose, onBack, formData, setFormData, errors
                                     <Lock size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 transition-colors duration-200" />
                                     <input
                                         type={showPassword ? "text" : "password"}
-                                        placeholder="Mínimo 8 caracteres"
+                                        placeholder="Mínimo 6 caracteres"
                                         value={formData.contraseña}
                                         onChange={(e) => setFormData('contraseña', e.target.value)}
                                         className={`w-full pl-12 pr-12 py-3.5 bg-white border-2 rounded-xl transition-all duration-200 outline-none ${
@@ -202,12 +227,12 @@ const SecondaryRegisterModal = ({ onClose, onBack, formData, setFormData, errors
                                 {formData.contraseña && !errors.contraseña && (
                                     <div className="mt-2 animate-[fadeIn_0.3s_ease-out]">
                                         <div className="flex gap-1">
-                                            {[1, 2, 3, 4].map((level) => (
+                                            {[1, 2, 3].map((level) => (
                                                 <div
                                                     key={level}
                                                     className={`h-1 flex-1 rounded-full transition-all duration-300 ${
                                                         formData.contraseña.length >= level * 2
-                                                            ? formData.contraseña.length >= 8
+                                                            ? formData.contraseña.length >= 6
                                                                 ? 'bg-green-500'
                                                                 : 'bg-yellow-500'
                                                             : 'bg-gray-200'
@@ -216,8 +241,8 @@ const SecondaryRegisterModal = ({ onClose, onBack, formData, setFormData, errors
                                             ))}
                                         </div>
                                         <p className="text-xs text-gray-500 mt-1">
-                                            {formData.contraseña.length < 8
-                                                ? `Faltan ${8 - formData.contraseña.length} caracteres`
+                                            {formData.contraseña.length < 6
+                                                ? `Faltan ${6 - formData.contraseña.length} caracteres`
                                                 : '¡Contraseña segura!'}
                                         </p>
                                     </div>

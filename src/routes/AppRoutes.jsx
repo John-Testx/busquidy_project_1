@@ -19,13 +19,16 @@ const ProjectList = lazy(() =>import('@/pages/Publications/ProjectList'));
 const UserManagement = lazy(()=> import('@pages/Admin/UserManagement'));
 const Empresa = lazy(()=> import('@pages/Empresa/Empresa'));
 const CrearTicketPublico = lazy(()=>import('@pages/Soporte/CrearTicketPublico'));
+const NotificationsPage = lazy(() => import('@/pages/Notifications/NotificationsPage'));
+const PreciosPage = lazy(() => import('@pages/General/PreciosPage'));
+
 import LoadingScreen from '@/components/LoadingScreen';
 
 // Import Empresa components
 import { MyProjects, ViewFreelancer, ProjectView } from '@pages/Empresa';
 
 // Import Freelancer components
-import { FreeLancer, MyPostulations, ViewMoreDetailsFreelancer, ViewPerfilFreeLancer, FreelancerProfileLayout} from '@pages/Freelancer';
+import { FreeLancer, MyPostulations, ViewPerfilFreeLancer, FreelancerProfileLayout} from '@pages/Freelancer';
 
 import VideoCallPage from "@pages/Video/VideoCallPage";
 import MyCallsPage from "@pages/Video/MyCallsPage";
@@ -62,10 +65,11 @@ const AppRoutes = () => {
       <Route path="/projectlist" element={<ProjectList />} />
       <Route path="/payment/return" element={<PaymentReturn />} />
       <Route path="/notauthenticated" element={<NotAuthenticated />} />
+      <Route path="/precios" element={<PreciosPage />} />
       <Route path="/unauthorized" element={<Unauthorized />} />
 
       {/* Chat Routes */}
-      <Route element={<ProtectedRoute allowedRoles={['freelancer', 'empresa']} />}>
+      <Route element={<ProtectedRoute allowedRoles={['freelancer', 'empresa_juridico', 'empresa_natural']} />}>
         <Route path="/chat" element={<ChatPage />} />
       </Route>
 
@@ -79,7 +83,7 @@ const AppRoutes = () => {
       <Route path="/my-calls" element={<MyCallsPage />} />
 
       {/* Authenticated User Routes */}
-      <Route element={<ProtectedRoute allowedRoles={['freelancer', 'empresa', 'administrador']} />}>
+      <Route element={<ProtectedRoute allowedRoles={['freelancer', 'empresa_juridico', 'empresa_natural', 'administrador']} />}>
           <Route path="/user" element={<User />} />
           <Route path="/soporte/crearticket" element={<CrearTicket />} />
           <Route path="/soporte/ticket/:id_ticket" element={<VerTicket />} />
@@ -95,15 +99,11 @@ const AppRoutes = () => {
           <Route path="view-profile" element={<ViewPerfilFreeLancer />} />
           <Route path="my-postulations" element={<MyPostulations />} />
           <Route path="availability" element={<MyAvailability />} />
-        </Route>
-
-        {/* <Route path="/viewperfilfreelancer" element={<FreelancerProfile />} />  */}
-        <Route path="/viewperfilfreelancer" element={<ViewPerfilFreeLancer />} />
-        <Route path="/viewmoredetailsfreelancer" element={<ViewMoreDetailsFreelancer />} />
+        </Route>        
       </Route>
 
       {/* Empresa Routes */}
-      <Route element={<ProtectedRoute allowedRoles={['empresa']} />}>
+      <Route element={<ProtectedRoute allowedRoles={['empresa_juridico', 'empresa_natural']} />}>
         <Route path="/empresa" element={<Empresa />} />
         <Route path="/myprojects" element={<MyProjects />} />
         <Route path="/empresa/proyectos/:idProyecto" element={<ProjectView/>}/>
@@ -141,6 +141,11 @@ const AppRoutes = () => {
             <Route path="admin/support/:id_ticket" element={<SupportChat />} />
             <Route path="/adminhome/disputes" element={<DisputeManagement />} />
         </Route>
+      </Route>
+
+      {/* Notifications Route */}
+      <Route element={<ProtectedRoute allowedRoles={['freelancer', 'empresa_juridico', 'empresa_natural', 'administrador']} />}>
+        <Route path="/notifications" element={<NotificationsPage />} />
       </Route>
     
     <Route path="*" element={<NotFoundPage />} />

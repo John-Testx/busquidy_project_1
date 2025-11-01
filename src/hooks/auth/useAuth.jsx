@@ -299,6 +299,7 @@ function useAuth() {
         errors,
         message,
         clearMessage,
+        user: { tipo_usuario, id_usuario },
     };
 }
 

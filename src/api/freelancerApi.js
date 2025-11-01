@@ -30,7 +30,7 @@ export const updateProfileSection = (id_usuario, section, data) =>
  * @returns {Promise<Object>} Datos del perfil de la empresa
  */
 export const getEmpresaProfile = async (id_usuario) => {
-  const response = await apiClient.get(`${EMPRESA_BASE}/${id_usuario}`);
+  const response = await apiClient.get(`${EMPRESA_BASE}/get/perfil-empresa/${id_usuario}`);
   return response.data;
 };
 
@@ -185,7 +185,7 @@ export const checkEmpresaProfileStatus = async (id_usuario) => {
 
 /**
  * Verifica el estado del perfil según el tipo de usuario para acceder a Premium
- * @param {string} tipo_usuario - Tipo de usuario (freelancer, empresa, administrador)
+ * @param {string} tipo_usuario - Tipo de usuario (freelancer, empresa, empresa_juridico, empresa_natural, administrador)
  * @param {number} id_usuario - ID del usuario
  * @returns {Promise<{isComplete: boolean, message?: string}>}
  */
@@ -209,7 +209,8 @@ export const verifyUserProfileForPremium = async (tipo_usuario, id_usuario) => {
       return { isComplete: true };
     } 
     
-    if (tipo_usuario === "empresa") {
+    // AQUÍ ESTÁ EL CAMBIO
+    if (tipo_usuario === "empresa" || tipo_usuario === "empresa_juridico" || tipo_usuario === "empresa_natural") {
       const response = await checkEmpresaProfileStatus(id_usuario);
       if (response.isPerfilIncompleto) {
         return {

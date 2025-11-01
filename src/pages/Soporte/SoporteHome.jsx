@@ -5,6 +5,7 @@ import EmailVerification from "@/components/Soporte/EmailVerification";
 import { getUserTickets, getTicketsByEmail } from "@/api/supportApi";
 import { Plus, Loader2, AlertCircle, Headset, Mail, LogIn } from "lucide-react";
 import { Footer, Navbar } from '@/components/Home/';
+import LoadingScreen from "@/components/LoadingScreen";
 
 function SoporteHome() {
   const navigate = useNavigate();
@@ -106,6 +107,8 @@ function SoporteHome() {
     { value: "cerrado", label: "Cerrados", count: stats.cerrado }
   ];
 
+  if (loading) return <LoadingScreen />;
+
   // Si debe mostrar verificación de email
   if (showEmailVerification && !isAuthenticated) {
     return <EmailVerification onEmailVerified={handleEmailVerified} />;
@@ -177,12 +180,7 @@ function SoporteHome() {
           </div>
 
           {/* Contenido */}
-          {loading ? (
-            <div className="flex flex-col items-center justify-center py-20">
-              <Loader2 className="w-12 h-12 animate-spin text-blue-600 mb-4" />
-              <p className="text-gray-600">Cargando tus tickets...</p>
-            </div>
-          ) : error ? (
+          {error ? (
             <div className="bg-white rounded-xl shadow-lg p-8 text-center border border-red-200">
               <AlertCircle className="w-12 h-12 text-red-600 mx-auto mb-4" />
               <h3 className="text-xl font-semibold text-gray-800 mb-2">Error al cargar</h3>

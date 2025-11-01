@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-function ProjectForm({ projectData, onSubmit }) {
+function ProjectForm({ projectData, onSubmit, terminologia, tipoParaBackend }) {
   const [form, setForm] = useState({
     titulo: "",
     descripcion: "",
@@ -11,7 +11,8 @@ function ProjectForm({ projectData, onSubmit }) {
     fecha_limite: "",
     ubicacion: "",
     tipo_contratacion: "",
-    metodologia_trabajo: ""
+    metodologia_trabajo: "",
+    tipo: tipoParaBackend || "proyecto" 
   });
 
   useEffect(() => {
@@ -27,6 +28,13 @@ function ProjectForm({ projectData, onSubmit }) {
     setForm(formattedData);
   }
 }, [projectData]);
+
+ // ✅ AGREGAR: Actualizar tipo cuando cambia tipoParaBackend
+  useEffect(() => {
+    if (tipoParaBackend) {
+      setForm(prev => ({ ...prev, tipo: tipoParaBackend }));
+    }
+  }, [tipoParaBackend]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -44,10 +52,10 @@ function ProjectForm({ projectData, onSubmit }) {
       className="max-w-4xl mx-auto bg-white rounded-2xl shadow-lg p-8 space-y-10 border border-gray-100"
     >
       <h2 className="text-3xl font-bold text-center text-[#07767c] mb-2">
-        {projectData ? "Editar Proyecto" : "Crear Nuevo Proyecto"}
+        {projectData ? `Editar ${terminologia?.singular || 'Proyecto'}` : `Crear Nuev${terminologia?.singular === 'Tarea' ? 'a' : 'o'} ${terminologia?.singular || 'Proyecto'}`}
       </h2>
       <p className="text-center text-gray-500 mb-6">
-        Completa los campos para definir todos los detalles de tu proyecto.
+        Completa los campos para definir todos los detalles de tu {terminologia?.singular.toLowerCase() || 'proyecto'}.
       </p>
 
       {/* ─────────────── Sección 1 ─────────────── */}

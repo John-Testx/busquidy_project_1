@@ -1,11 +1,9 @@
 import apiClient from "./apiClient";
-
 const BASE = "/users";
 
 // =============================================
 // GESTIÓN DE USUARIOS (Admin)
 // =============================================
-
 export const getUsuarios = async () => {
   const response = await apiClient.get(`${BASE}/get/usuarios`);
   return response.data;
@@ -65,7 +63,7 @@ export const loginUser = async (correo, contraseña) => {
  * Registra un nuevo usuario
  * @param {string} correo - Correo del usuario
  * @param {string} contraseña - Contraseña del usuario
- * @param {string} tipo_usuario - Tipo de usuario (freelancer, empresa, administrador)
+ * @param {string} tipo_usuario - Tipo de usuario: 'freelancer', 'empresa_juridico', 'empresa_natural'
  * @returns {Promise<Object>} Datos del usuario registrado
  */
 export const registerUser = async (correo, contraseña, tipo_usuario) => {
@@ -74,5 +72,18 @@ export const registerUser = async (correo, contraseña, tipo_usuario) => {
     contraseña,
     tipo_usuario,
   });
+  return response.data;
+};
+
+// =============================================
+// USO DEL PLAN
+// =============================================
+
+/**
+ * Obtiene el uso del plan del usuario logueado
+ * @returns {Promise<Object>} Información del plan y uso de créditos
+ */
+export const getMyUsage = async () => {
+  const response = await apiClient.get('/me/usage');
   return response.data;
 };

@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
-import { FaLocationArrow, FaClock, FaMoneyBillAlt, FaStar, FaBookmark, FaRegBookmark } from 'react-icons/fa';
+import React, { useState, useEffect, useRef } from 'react';
+import { FaLocationArrow, FaClock, FaMoneyBillAlt, FaStar, FaBookmark, FaRegBookmark, FaUserTie } from 'react-icons/fa';
 import { BsThreeDotsVertical } from 'react-icons/bs';
+import { BiHide, BiFlag } from 'react-icons/bi';
 import PublicationDetailModal from './PublicationDetailModal';
 
 function PublicationCard({ publication, isApplied, onApply, id_usuario, userType }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
+  const [showOptions, setShowOptions] = useState(false);
+  const menuRef = useRef(null);
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -18,131 +21,196 @@ function PublicationCard({ publication, isApplied, onApply, id_usuario, userType
   const toggleSave = (e) => {
     e.stopPropagation();
     setIsSaved(!isSaved);
+    setShowOptions(false);
   };
 
-  // Validación y valor por defecto para empresa
+  const handleHide = (e) => {
+    e.stopPropagation();
+    console.log('Ocultar publicación');
+    setShowOptions(false);
+  };
+
+  const handleReport = (e) => {
+    e.stopPropagation();
+    console.log('Denunciar publicación');
+    setShowOptions(false);
+  };
+
+  const handleApply = async (e) => {
+    e.stopPropagation();
+    if (!isApplied) {
+      await onApply(publication.id_publicacion);
+    }
+    setShowOptions(false);
+  };
+
+  // Calcular tiempo desde publicación
+  const getTimeAgo = () => {
+    if (!publication.fecha_publicacion) return 'Hace un momento';
+    
+    const now = new Date();
+    const pubDate = new Date(publication.fecha_publicacion);
+    const diffMs = now - pubDate;
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+
+    if (diffMins < 60) return `Hace ${diffMins} minuto${diffMins !== 1 ? 's' : ''}`;
+    if (diffHours < 24) return `Hace ${diffHours} hora${diffHours !== 1 ? 's' : ''}`;
+    if (diffDays < 30) return `Hace ${diffDays} día${diffDays !== 1 ? 's' : ''}`;
+    return 'Hace más de un mes';
+  };
+
   const empresaNombre = publication.empresa || 'Empresa no especificada';
   const empresaInicial = empresaNombre.charAt(0).toUpperCase();
+  const isRecommended = publication.recomendada || false; // Esto vendrá de la BD más adelante
+
+  // Cerrar menú al hacer clic fuera
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setShowOptions(false);
+      }
+    };
+
+    if (showOptions) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showOptions]);
 
   return (
     <>
       <div
-        className={`bg-white rounded-2xl shadow-sm transition-all duration-300 cursor-pointer overflow-hidden border border-gray-200 h-auto flex flex-col group relative ${
+        className={`bg-white rounded-xl shadow-sm transition-all duration-300 cursor-pointer overflow-hidden border border-gray-200 h-auto flex flex-col group relative ${
           isApplied 
             ? 'opacity-70 cursor-default' 
-            : 'hover:shadow-xl hover:border-[#07767c]/30 hover:-translate-y-1'
+            : 'hover:shadow-lg hover:border-[#40E0D0]/40 hover:-translate-y-1'
         }`}
         onClick={!isApplied ? openModal : undefined}
       >
-        {/* Badge de estado "Destacado" o "Aplicado" */}
-        {isApplied && (
-          <div className="absolute top-4 right-4 z-10">
-            <span className="bg-green-500 text-white text-xs px-3 py-1.5 rounded-full font-bold shadow-md">
-              ✓ Aplicado
-            </span>
+        {/* Badges superiores */}
+        <div className="absolute top-3 left-3 right-3 z-10 flex items-start justify-between">
+          <div className="flex flex-col gap-2">
+            {isRecommended && (
+              <span className="bg-gradient-to-r from-amber-400 to-orange-500 text-white text-xs px-3 py-1 rounded-full font-bold shadow-md inline-block">
+                ⭐ Publicación Recomendada
+              </span>
+            )}
+            {isApplied && (
+              <span className="bg-gradient-to-r from-green-400 to-emerald-500 text-white text-xs px-3 py-1 rounded-full font-bold shadow-md inline-block">
+                ✓ Aplicado
+              </span>
+            )}
           </div>
-        )}
+        </div>
         
         {/* Header con título y opciones */}
-        <div className="px-6 pt-6 pb-4">
+        <div className="px-5 pt-5 pb-3" style={{ marginTop: isRecommended || isApplied ? '2.5rem' : '0' }}>
           <div className="flex justify-between items-start mb-3">
-            <h3 className="text-xl font-bold text-gray-900 leading-tight pr-8 group-hover:text-[#07767c] transition-colors line-clamp-2">
+            <h3 className="text-lg font-bold text-gray-900 leading-snug pr-8 group-hover:text-[#07767c] transition-colors line-clamp-2">
               {publication.titulo || 'Título no disponible'}
+              {publication.tipo === 'tarea' ? (
+                <span className="px-3 py-1 bg-gradient-to-r from-green-100 to-green-50 text-green-700 rounded-lg text-sm font-semibold border border-green-300">
+                  Tarea
+                </span>
+              ) : (
+                <span className="px-3 py-1 bg-gradient-to-r from-blue-100 to-blue-50 text-blue-700 rounded-lg text-sm font-semibold border border-blue-300">
+                  Proyecto
+                </span>
+              )}
             </h3>
-            <button 
-              className="flex-shrink-0 text-gray-400 hover:text-[#07767c] transition-colors"
-              onClick={(e) => {
-                e.stopPropagation();
-              }}
-            >
-              <BsThreeDotsVertical className="text-xl" />
-            </button>
+            <div className="relative" ref={menuRef}>
+              <button 
+                className="flex-shrink-0 text-gray-400 hover:text-[#07767c] transition-colors p-1"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowOptions(!showOptions);
+                }}
+              >
+                <BsThreeDotsVertical className="text-xl" />
+              </button>
+
+              {/* Menú desplegable */}
+              {showOptions && (
+                <div className="absolute top-full right-0 mt-1 bg-white rounded-lg shadow-xl border border-gray-200 py-1 z-20 min-w-[180px]">
+                  {!isApplied && (
+                    <button
+                      className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2 transition-colors font-semibold"
+                      onClick={handleApply}
+                    >
+                      <FaUserTie className="text-[#07767c]" />
+                      Postularme
+                    </button>
+                  )}
+                  <button
+                    className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2 transition-colors"
+                    onClick={toggleSave}
+                  >
+                    {isSaved ? <FaBookmark className="text-[#07767c]" /> : <FaRegBookmark />}
+                    {isSaved ? 'Guardado' : 'Guardar'}
+                  </button>
+                  <button
+                    className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2 transition-colors"
+                    onClick={handleHide}
+                  >
+                    <BiHide />
+                    Ocultar publicación
+                  </button>
+                  <button
+                    className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 transition-colors"
+                    onClick={handleReport}
+                  >
+                    <BiFlag />
+                    Denunciar
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
           
           {/* Empresa con badge verificado */}
-          <div className="flex items-center gap-2 mb-4">
-            <div className="w-10 h-10 bg-gradient-to-br from-[#07767c] to-[#40E0D0] rounded-lg flex items-center justify-center flex-shrink-0">
+          <div className="flex items-center gap-2 mb-3">
+            <div className="w-9 h-9 bg-gradient-to-br from-[#07767c] to-[#40E0D0] rounded-lg flex items-center justify-center flex-shrink-0">
               <span className="text-white font-bold text-sm">{empresaInicial}</span>
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-semibold text-gray-800 truncate">{empresaNombre}</p>
               <div className="flex items-center gap-1">
-                <FaStar className="text-yellow-500 text-xs" />
-                <span className="text-sm text-gray-600 font-medium">{publication.rating || 'N/A'}</span>
+                <FaStar className="text-yellow-400 text-xs" />
+                <span className="text-xs text-gray-600 font-medium">{publication.rating || 'N/A'}</span>
               </div>
             </div>
           </div>
+
+          {/* Tiempo desde publicación */}
+          <p className="text-xs text-gray-500 flex items-center gap-1">
+            <FaClock className="text-gray-400" />
+            {getTimeAgo()}
+          </p>
         </div>
 
-        {/* Divider */}
-        <div className="h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent mx-6"></div>
-
-        {/* Info Grid mejorada */}
-        <div className="px-6 py-5 space-y-3">
-          <div className="flex items-center gap-3 text-sm text-gray-700">
-            <div className="w-9 h-9 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0">
-              <FaLocationArrow className="text-blue-600 text-sm" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-xs text-gray-500 mb-0.5">Ubicación</p>
-              <p className="font-medium truncate">{publication.ubicacion || 'No especificada'}</p>
-            </div>
+        {/* Info Grid compacta */}
+        <div className="px-5 py-3 space-y-2">
+          <div className="flex items-center gap-2 text-sm">
+            <FaLocationArrow className="text-blue-500 text-xs flex-shrink-0" />
+            <span className="text-gray-600 truncate">{publication.ubicacion || 'No especificada'}</span>
           </div>
-
-          <div className="flex items-center gap-3 text-sm text-gray-700">
-            <div className="w-9 h-9 bg-purple-50 rounded-lg flex items-center justify-center flex-shrink-0">
-              <FaClock className="text-purple-600 text-sm" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-xs text-gray-500 mb-0.5">Duración</p>
-              <p className="font-medium truncate">{publication.duracion_estimada || 'No especificada'}</p>
-            </div>
+          <div className="flex items-center gap-2 text-sm">
+            <FaClock className="text-purple-500 text-xs flex-shrink-0" />
+            <span className="text-gray-600 truncate">{publication.duracion_estimada || 'No especificada'}</span>
           </div>
-
-          <div className="flex items-center gap-3 text-sm text-gray-700">
-            <div className="w-9 h-9 bg-green-50 rounded-lg flex items-center justify-center flex-shrink-0">
-              <FaMoneyBillAlt className="text-green-600 text-sm" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-xs text-gray-500 mb-0.5">Presupuesto</p>
-              <p className="font-bold text-green-600 truncate">{publication.presupuesto || 'A convenir'}</p>
-            </div>
+          <div className="flex items-center gap-2 text-sm">
+            <FaMoneyBillAlt className="text-green-500 text-xs flex-shrink-0" />
+            <span className="font-semibold text-green-600 truncate">{publication.presupuesto || 'A convenir'}</span>
           </div>
         </div>
 
-        {/* Divider */}
-        <div className="h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent mx-6"></div>
-
-        {/* Footer con acciones */}
-        <div className="px-6 py-4 flex items-center justify-between">
-          <button
-            className={`flex-1 py-2.5 rounded-lg font-semibold text-sm transition-all duration-300 mr-3 ${
-              isApplied
-                ? 'bg-gray-100 text-gray-500 cursor-not-allowed'
-                : 'bg-gradient-to-r from-[#07767c] to-[#05595d] text-white hover:shadow-md'
-            }`}
-            disabled={isApplied}
-            onClick={async (e) => {
-              e.stopPropagation();
-              if (!isApplied) {
-                await onApply(publication.id_publicacion);
-              }
-            }}
-          >
-            {isApplied ? 'Ya aplicaste' : 'Postular'}
-          </button>
-          
-          <button 
-            className={`w-11 h-11 rounded-lg flex items-center justify-center transition-all duration-300 ${
-              isSaved 
-                ? 'bg-[#07767c] text-white' 
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-            }`}
-            onClick={toggleSave}
-          >
-            {isSaved ? <FaBookmark /> : <FaRegBookmark />}
-          </button>
-        </div>
+        {/* Espaciador para mantener altura */}
+        <div className="flex-grow"></div>
       </div>
 
       {isModalOpen && (

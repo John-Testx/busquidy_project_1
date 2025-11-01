@@ -3,12 +3,13 @@ import { Outlet } from "react-router-dom";
 import SidebarAdmin from "@/components/Admin/SidebarAdmin";
 import { useAuth } from "@/hooks";
 import { useAdminPermissions } from "@/hooks";
+import LoadingScreen from "@/components/LoadingScreen";
 
 export default function AdminHome() {
   const { id_usuario } = useAuth();
   const { permissions, loading } = useAdminPermissions(id_usuario);
 
-  if (loading) return <div>Cargando permisos...</div>;
+  if (loading) return <LoadingScreen />;
 
   return (
     <div className="flex h-screen overflow-hidden">

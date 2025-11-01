@@ -1,12 +1,25 @@
 import React from "react";
 import SupportTable from "@/components/Admin/Support/SupportTable";
+import LoadingScreen from "@/components/LoadingScreen";
+import { useAdminTickets } from "@/hooks";
 import { Headset } from "lucide-react";
 
 function SupportManagement() {
+  const { tickets, loading, error } = useAdminTickets();
+
+  if (loading) return <LoadingScreen />;
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-red-600">Error al cargar tickets: {error}</p>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 md:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
         <div className="mb-6 md:mb-8">
           <div className="flex items-center gap-3 mb-2">
             <div className="p-3 bg-gradient-to-br from-[#07767c] to-[#055a5f] rounded-xl shadow-lg">
@@ -23,8 +36,7 @@ function SupportManagement() {
           </div>
         </div>
 
-        {/* Tabla */}
-        <SupportTable />
+        <SupportTable tickets={tickets} />
       </div>
     </div>
   );

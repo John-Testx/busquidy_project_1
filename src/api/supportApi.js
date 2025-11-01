@@ -16,6 +16,12 @@ export const getPublicTicketMessages = (id_ticket, email) =>
 export const sendPublicTicketMessage = (id_ticket, mensaje, email) =>
   apiClient.post(`${BASE}/publico/${id_ticket}/mensajes`, { mensaje, email });
 
+export const sendSupportCode = (email) =>
+  apiClient.post(`${BASE}/publico/enviar-codigo`, { email });
+
+export const verifySupportCode = (email, code) =>
+  apiClient.post(`${BASE}/publico/verificar-codigo`, { email, code });
+
 // ========= FUNCIONES AUTENTICADAS =========
 export const createTicket = (data) => apiClient.post(BASE, data);
 

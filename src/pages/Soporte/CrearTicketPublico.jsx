@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { createPublicTicket } from "@/api/supportApi";
-import { ArrowLeft, CheckCircle, AlertCircle, User, Mail as MailIcon } from "lucide-react";
+import { ArrowLeft, CheckCircle, AlertCircle } from "lucide-react";
 import { Footer, Navbar } from '@/components/Home/';
 
 const categorias = [
@@ -25,9 +25,10 @@ function CrearTicketPublico() {
   const [success, setSuccess] = useState(false);
   const [ticketInfo, setTicketInfo] = useState(null);
 
+  // ✅ LEER el email verificado desde sessionStorage
+  const verifiedEmail = sessionStorage.getItem("guest_email");
+
   const [form, setForm] = useState({
-    nombre_contacto: "",
-    email_contacto: "",
     asunto: "",
     categoria: "Otro",
     prioridad: "media",
@@ -35,6 +36,14 @@ function CrearTicketPublico() {
   });
 
   const [errors, setErrors] = useState({});
+
+  // ✅ VERIFICAR si hay email al montar el componente
+  useEffect(() => {
+    if (!verifiedEmail) {
+      // Si no hay email verificado, redirigir a SoporteHome
+      navigate("/soportehome");
+    }
+  }, [verifiedEmail, navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -47,16 +56,6 @@ function CrearTicketPublico() {
 
   const validate = () => {
     const newErrors = {};
-
-    if (!form.nombre_contacto.trim()) {
-      newErrors.nombre_contacto = "El nombre es requerido";
-    }
-
-    if (!form.email_contacto.trim()) {
-      newErrors.email_contacto = "El email es requerido";
-    } else if (!form.email_contacto.includes("@")) {
-      newErrors.email_contacto = "Email inválido";
-    }
 
     if (!form.asunto.trim()) {
       newErrors.asunto = "El asunto es requerido";
@@ -83,10 +82,14 @@ function CrearTicketPublico() {
 
     setIsSubmitting(true);
     try {
-      const response = await createPublicTicket(form);
-      
-      // Guardar email en sessionStorage para futuras consultas
-      sessionStorage.setItem("guest_email", form.email_contacto);
+      // ✅ INCLUIR el email verificado en la petición
+      const ticketData = {
+        ...form,
+        email_contacto: verifiedEmail,
+        nombre_contacto: "Usuario Invitado" // O puedes pedir este campo si lo necesitas
+      };
+
+      const response = await createPublicTicket(ticketData);
       
       setTicketInfo({
         id_ticket: response.data.id_ticket,
@@ -96,7 +99,7 @@ function CrearTicketPublico() {
 
       // Redirigir después de 3 segundos
       setTimeout(() => {
-        navigate(`/soporte/ticket-publico/${response.data.id_ticket}?email=${form.email_contacto}`);
+        navigate(`/soporte/ticket-publico/${response.data.id_ticket}?email=${verifiedEmail}`);
       }, 3000);
     } catch (error) {
       console.error("Error al crear ticket:", error);
@@ -108,6 +111,11 @@ function CrearTicketPublico() {
       setIsSubmitting(false);
     }
   };
+
+  // ✅ Si no hay email, no renderizar nada (se redirige en useEffect)
+  if (!verifiedEmail) {
+    return null;
+  }
 
   if (success) {
     return (
@@ -135,7 +143,7 @@ function CrearTicketPublico() {
             </div>
             <p className="text-sm text-gray-600 mb-6">
               Te hemos enviado un email de confirmación a:<br />
-              <strong>{form.email_contacto}</strong>
+              <strong>{verifiedEmail}</strong>
             </p>
             <div className="flex items-center justify-center gap-2 text-blue-600">
               <div className="w-2 h-2 bg-blue-600 rounded-full animate-pulse"></div>
@@ -164,73 +172,26 @@ function CrearTicketPublico() {
             </button>
 
             <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg md:rounded-xl shadow-lg p-4 md:p-8 text-white">
-              <h1 className="text-xl md:text-3xl font-bold mb-1 md:mb-2">
-                Crear Solicitud de Soporte
-              </h1>
-              <p className="text-sm md:text-base text-blue-100">
-                Completa el formulario y nuestro equipo te responderá lo antes posible
-              </p>
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
+                <div>
+                  <h1 className="text-xl md:text-3xl font-bold mb-1 md:mb-2">
+                    Crear Solicitud de Soporte
+                  </h1>
+                  <p className="text-sm md:text-base text-blue-100">
+                    Completa el formulario y nuestro equipo te responderá lo antes posible
+                  </p>
+                </div>
+                <div className="bg-white/10 backdrop-blur-sm p-3 rounded-lg border border-blue-400">
+                  <p className="text-xs text-blue-200 mb-1">Email Verificado:</p>
+                  <p className="text-sm font-semibold text-white break-all">{verifiedEmail}</p>
+                </div>
+              </div>
             </div>
           </div>
 
           {/* Formulario */}
           <div className="max-w-3xl mx-auto bg-white rounded-lg md:rounded-xl shadow-lg p-4 md:p-8 border border-gray-200">
             <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Información de contacto */}
-              <div className="grid md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
-                    <User className="w-4 h-4" />
-                    Nombre Completo *
-                  </label>
-                  <input
-                    type="text"
-                    name="nombre_contacto"
-                    value={form.nombre_contacto}
-                    onChange={handleChange}
-                    placeholder="Juan Pérez"
-                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-all ${
-                      errors.nombre_contacto
-                        ? "border-red-300 focus:ring-red-500"
-                        : "border-gray-300 focus:ring-blue-500"
-                    }`}
-                    disabled={isSubmitting}
-                  />
-                  {errors.nombre_contacto && (
-                    <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
-                      <AlertCircle className="w-4 h-4" />
-                      {errors.nombre_contacto}
-                    </p>
-                  )}
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
-                    <MailIcon className="w-4 h-4" />
-                    Email *
-                  </label>
-                  <input
-                    type="email"
-                    name="email_contacto"
-                    value={form.email_contacto}
-                    onChange={handleChange}
-                    placeholder="tu@email.com"
-                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-all ${
-                      errors.email_contacto
-                        ? "border-red-300 focus:ring-red-500"
-                        : "border-gray-300 focus:ring-blue-500"
-                    }`}
-                    disabled={isSubmitting}
-                  />
-                  {errors.email_contacto && (
-                    <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
-                      <AlertCircle className="w-4 h-4" />
-                      {errors.email_contacto}
-                    </p>
-                  )}
-                </div>
-              </div>
-
               {/* Asunto */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -387,7 +348,7 @@ function CrearTicketPublico() {
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-blue-600">•</span>
-                <span>Revisa tu email para recibir actualizaciones del ticket</span>
+                <span>Revisa tu email ({verifiedEmail}) para recibir actualizaciones</span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-blue-600">•</span>

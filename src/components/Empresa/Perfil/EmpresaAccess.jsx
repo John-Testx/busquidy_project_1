@@ -133,7 +133,12 @@ const ReadOnlyField = ({ label, value, icon, badge = false }) => (
                 </span>
                 {badge && value && (
                     <span className="bg-gradient-to-r from-[#07767c] to-[#05595d] text-white text-xs font-bold px-3 py-1 rounded-full">
-                        {value === 'empresa' ? 'EMPRESA' : value.toUpperCase()}
+                        {
+                            /* AQUÍ ESTÁ EL CAMBIO */
+                            (value === 'empresa' || value === 'empresa_juridico' || value === 'empresa_natural')
+                              ? 'EMPRESA' 
+                              : value.toUpperCase()
+                        }
                     </span>
                 )}
             </div>

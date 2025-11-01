@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { getUsuarios } from "@/api/userApi";
 import { useNavigate } from "react-router-dom";
+import LoadingScreen from "@/components/LoadingScreen";
 import { 
   Users, 
   Pencil, 
@@ -46,41 +47,36 @@ const UserListPage = () => {
   }, [searchTerm, usuarios]);
 
   const getUserIcon = (tipo) => {
-    switch (tipo) {
-      case "freelancer":
-        return <UserCircle size={20} className="text-green-600" />;
-      case "empresa":
-        return <Building2 size={20} className="text-blue-600" />;
-      case "administrador":
-        return <Shield size={20} className="text-purple-600" />;
-      default:
-        return <UserCircle size={20} className="text-gray-600" />;
-    }
-  };
+    switch (tipo) {
+      case "freelancer":
+        return <UserCircle size={20} className="text-green-600" />;
+      case "empresa":
+      case "empresa_juridico":
+      case "empresa_natural":
+        return <Building2 size={20} className="text-blue-600" />;
+      case "administrador":
+        return <Shield size={20} className="text-purple-600" />;
+      default:
+        return <UserCircle size={20} className="text-gray-600" />;
+    }
+  };
 
   const getUserTypeColor = (tipo) => {
-    switch (tipo) {
-      case "freelancer":
-        return "bg-green-100 text-green-800";
-      case "empresa":
-        return "bg-blue-100 text-blue-800";
-      case "administrador":
-        return "bg-purple-100 text-purple-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
-  };
+    switch (tipo) {
+      case "freelancer":
+        return "bg-green-100 text-green-800";
+      case "empresa":
+      case "empresa_juridico":
+      case "empresa_natural":
+        return "bg-blue-100 text-blue-800";
+      case "administrador":
+        return "bg-purple-100 text-purple-800";
+      default:
+        return "bg-gray-100 text-gray-800";
+    }
+  };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-        <div className="text-center">
-          <Loader2 className="w-12 h-12 text-[#07767c] animate-spin mx-auto mb-4" />
-          <p className="text-gray-600 font-medium">Cargando usuarios...</p>
-        </div>
-      </div>
-    );
-  }
+  if (loading) return <LoadingScreen />;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6">
@@ -116,24 +112,26 @@ const UserListPage = () => {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          <div className="bg-white p-4 rounded-xl shadow-md border-l-4 border-[#07767c]">
-            <p className="text-sm text-gray-500 font-medium mb-1">Total Usuarios</p>
-            <p className="text-2xl font-bold text-gray-800">{usuarios.length}</p>
-          </div>
-          <div className="bg-white p-4 rounded-xl shadow-md border-l-4 border-blue-500">
-            <p className="text-sm text-gray-500 font-medium mb-1">Empresas</p>
-            <p className="text-2xl font-bold text-gray-800">
-              {usuarios.filter((u) => u.tipo_usuario === "empresa").length}
-            </p>
-          </div>
-          <div className="bg-white p-4 rounded-xl shadow-md border-l-4 border-green-500">
-            <p className="text-sm text-gray-500 font-medium mb-1">Freelancers</p>
-            <p className="text-2xl font-bold text-gray-800">
-              {usuarios.filter((u) => u.tipo_usuario === "freelancer").length}
-            </p>
-          </div>
-        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <div className="bg-white p-4 rounded-xl shadow-md border-l-4 border-[#07767c]">
+            <p className="text-sm text-gray-500 font-medium mb-1">Total Usuarios</p>
+            <p className="text-2xl font-bold text-gray-800">{usuarios.length}</p>
+          </div>
+          <div className="bg-white p-4 rounded-xl shadow-md border-l-4 border-blue-500">
+            <p className="text-sm text-gray-500 font-medium mb-1">Empresas</p>
+            <p className="text-2xl font-bold text-gray-800">
+              {usuarios.filter((u) => 
+                ["empresa", "empresa_juridico", "empresa_natural"].includes(u.tipo_usuario)
+              ).length}
+            </p>
+          </div>
+          <div className="bg-white p-4 rounded-xl shadow-md border-l-4 border-green-500">
+            <p className="text-sm text-gray-500 font-medium mb-1">Freelancers</p>
+            <p className="text-2xl font-bold text-gray-800">
+              {usuarios.filter((u) => u.tipo_usuario === "freelancer").length}
+            </p>
+          </div>
+        </div>
 
         {/* Users List */}
         <div className="bg-white rounded-xl shadow-lg overflow-hidden">
@@ -169,13 +167,15 @@ const UserListPage = () => {
                             {user.correo}
                           </p>
                           <span
-                            className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${getUserTypeColor(
-                              user.tipo_usuario
-                            )}`}
-                          >
-                            {user.tipo_usuario.charAt(0).toUpperCase() +
-                              user.tipo_usuario.slice(1)}
-                          </span>
+                            className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${getUserTypeColor(
+                              user.tipo_usuario
+                            )}`}
+                          >
+                            {["empresa", "empresa_juridico", "empresa_natural"].includes(user.tipo_usuario)
+                            ? "Empresa"
+                              : user.tipo_usuario.charAt(0).toUpperCase() +
+                                  user.tipo_usuario.slice(1)}
+                          </span>
                         </div>
                         <p className="text-sm text-gray-500">
                           ID: #{user.id_usuario}

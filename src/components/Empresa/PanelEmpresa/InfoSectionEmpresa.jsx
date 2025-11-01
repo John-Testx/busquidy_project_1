@@ -1,11 +1,39 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { 
   Search, 
   CheckCircle2, 
   CreditCard, 
 } from 'lucide-react';
+import { getMyUsage } from "@/api/userApi";
+import useAuth from "@/hooks/auth/useAuth";
 
 function InfoSectionEmpresa() {
+    const [usage, setUsage] = useState(null);
+    const [loadingUsage, setLoadingUsage] = useState(true);
+
+    // ✅ AGREGAR: Obtener tipo de usuario para terminología
+    const { user } = useAuth();
+    const esNatural = user?.tipo_usuario === 'empresa_natural';
+    
+    const terminologia = {
+        singular: esNatural ? 'Tarea' : 'Proyecto',
+        plural: esNatural ? 'Tareas' : 'Proyectos'
+    };
+
+    useEffect(() => {
+        const fetchUsage = async () => {
+            try {
+                const response = await getMyUsage();
+                setUsage(response.data);
+            } catch (error) {
+                console.error("Error al cargar uso del plan:", error);
+            } finally {
+                setLoadingUsage(false);
+            }
+        };
+        fetchUsage();
+    }, []);
+
     return (
         <div className="w-full space-y-12">
             
@@ -98,7 +126,7 @@ function InfoSectionEmpresa() {
                                     Trabajo de calidad – eficiente y confiable
                                 </h3>
                                 <p className="text-gray-600 text-sm sm:text-base leading-relaxed">
-                                    Recibe entregas puntuales y de alta calidad, ya sea un trabajo a corto plazo o un proyecto complejo.
+                                    Recibe entregas puntuales y de alta calidad, ya sea un trabajo a corto plazo o un {terminologia.singular.toLowerCase()} complejo.
                                 </p>
                             </div>
                         </div>
@@ -185,6 +213,117 @@ function InfoSectionEmpresa() {
                         </div>
                         
                     </div>
+                </div>
+            </section>
+
+            {/* NUEVA SECCIÓN: Uso del Plan - ✅ ACTUALIZADA CON TERMINOLOGÍA */}
+            <section className="w-full px-4 sm:px-6 lg:px-8">
+                <div className="max-w-5xl mx-auto">
+                    {loadingUsage ? (
+                        <div className="bg-white rounded-2xl shadow-lg p-8 text-center">
+                            <div className="flex items-center justify-center gap-3">
+                                <div className="w-6 h-6 border-3 border-[#07767c] border-t-transparent rounded-full animate-spin"></div>
+                                <p className="text-gray-600">Cargando información del plan...</p>
+                            </div>
+                        </div>
+                    ) : usage && (
+                        <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
+                            <div className="flex items-center gap-3 mb-6">
+                                <div className="w-12 h-12 bg-gradient-to-br from-[#07767c] to-[#0a9199] rounded-xl flex items-center justify-center">
+                                    <CreditCard className="w-6 h-6 text-white" />
+                                </div>
+                                <div>
+                                    <h3 className="text-2xl font-bold text-gray-900">Mi Plan</h3>
+                                    <p className="text-[#07767c] font-semibold text-lg">{usage.plan_nombre}</p>
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {/* Publicaciones de Proyectos - ✅ CON TERMINOLOGÍA */}
+                                {usage.limites.publicacion_proyectos !== undefined && (
+                                    <div className="bg-gradient-to-br from-blue-50 to-blue-100/50 p-5 rounded-xl border border-blue-200">
+                                        <div className="flex items-center justify-between mb-2">
+                                            <span className="text-sm font-semibold text-blue-900">
+                                                Publicaciones de {terminologia.plural}
+                                            </span>
+                                            <span className={`text-xs font-bold px-2 py-1 rounded ${
+                                                usage.uso.publicacion_proyectos >= (usage.limites.publicacion_proyectos || Infinity)
+                                                    ? 'bg-red-200 text-red-800'
+                                                    : 'bg-green-200 text-green-800'
+                                            }`}>
+                                                {usage.uso.publicacion_proyectos >= (usage.limites.publicacion_proyectos || Infinity) ? 'Límite' : 'Activo'}
+                                            </span>
+                                        </div>
+                                        <div className="flex items-baseline gap-2">
+                                            <span className="text-3xl font-bold text-blue-700">
+                                                {usage.uso.publicacion_proyectos}
+                                            </span>
+                                            <span className="text-gray-600">/ {usage.limites.publicacion_proyectos ?? '∞'}</span>
+                                        </div>
+                                        <div className="mt-3 bg-white/60 rounded-full h-2 overflow-hidden">
+                                            <div 
+                                                className="h-full bg-gradient-to-r from-blue-500 to-blue-600 transition-all duration-500"
+                                                style={{ 
+                                                    width: `${usage.limites.publicacion_proyectos 
+                                                        ? Math.min((usage.uso.publicacion_proyectos / usage.limites.publicacion_proyectos) * 100, 100) 
+                                                        : 0}%` 
+                                                }}
+                                            ></div>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Publicaciones de Tareas - ✅ MOSTRAR SOLO SI ES NATURAL */}
+                                {usage.limites.publicacion_tareas !== undefined && esNatural && (
+                                    <div className="bg-gradient-to-br from-green-50 to-green-100/50 p-5 rounded-xl border border-green-200">
+                                        <div className="flex items-center justify-between mb-2">
+                                            <span className="text-sm font-semibold text-green-900">
+                                                Publicaciones de {terminologia.plural}
+                                            </span>
+                                            <span className={`text-xs font-bold px-2 py-1 rounded ${
+                                                usage.uso.publicacion_tareas >= (usage.limites.publicacion_tareas || Infinity)
+                                                    ? 'bg-red-200 text-red-800'
+                                                    : 'bg-green-200 text-green-800'
+                                            }`}>
+                                                {usage.uso.publicacion_tareas >= (usage.limites.publicacion_tareas || Infinity) ? 'Límite' : 'Activo'}
+                                            </span>
+                                        </div>
+                                        <div className="flex items-baseline gap-2">
+                                            <span className="text-3xl font-bold text-green-700">
+                                                {usage.uso.publicacion_tareas}
+                                            </span>
+                                            <span className="text-gray-600">/ {usage.limites.publicacion_tareas ?? '∞'}</span>
+                                        </div>
+                                        <div className="mt-3 bg-white/60 rounded-full h-2 overflow-hidden">
+                                            <div 
+                                                className="h-full bg-gradient-to-r from-green-500 to-green-600 transition-all duration-500"
+                                                style={{ 
+                                                    width: `${usage.limites.publicacion_tareas 
+                                                        ? Math.min((usage.uso.publicacion_tareas / usage.limites.publicacion_tareas) * 100, 100) 
+                                                        : 0}%` 
+                                                }}
+                                            ></div>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Mensaje informativo */}
+                            <div className="mt-6 bg-[#07767c]/5 border border-[#07767c]/20 rounded-xl p-4">
+                                <div className="flex gap-3">
+                                    <svg className="w-5 h-5 text-[#07767c] flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                                    </svg>
+                                    <div>
+                                        <p className="text-sm font-medium text-gray-800">Información sobre tu plan</p>
+                                        <p className="text-xs text-gray-600 mt-1">
+                                            Los límites se renuevan mensualmente. Si necesitas más créditos, puedes actualizar tu plan en cualquier momento.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </section>
 

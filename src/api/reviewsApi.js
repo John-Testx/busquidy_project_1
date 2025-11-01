@@ -9,8 +9,10 @@ import apiClient from "./apiClient";
 export const verifyUserProfile = async (id_usuario, userType) => {
   let endpoint;
   
-  if (userType === 'empresa') {
-    endpoint = `/empresa/${id_usuario}`;
+  // CAMBIO 1: Incluir los nuevos roles de empresa
+  if (userType === 'empresa' || userType === 'empresa_juridico' || userType === 'empresa_natural') {
+    // CAMBIO 2: Corregir el endpoint para que coincida con tu 'empresaRoutes.js'
+    endpoint = `/empresa/get/${id_usuario}`;
   } else if (userType === 'freelancer') {
     endpoint = `/freelancer/get/${id_usuario}`;
   } else {
