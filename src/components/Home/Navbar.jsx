@@ -7,10 +7,11 @@ import LoginModal from "./Modals/LoginModal";
 import LoginSecondaryModal from "./Modals/LoginSecondaryModal";
 import MessageModal from "../MessageModal";
 import { useAuth } from "@/hooks";
-import { getNavbarOptions, helpDropdownOptions } from "@/common/navbarOptions"; // ✅ CAMBIO AQUÍ
+import { getNavbarOptions, helpDropdownOptions } from "@/common/navbarOptions";
 import ProfileCircle from "../ProfileCircle";
 import NotificationIcon from '@/components/Notifications/NotificationIcon';
 import { getUserInitials } from "@/common/utils";
+import { checkProfileExists } from "@/api/freelancerApi"; // ✅ AÑADIR IMPORT
 import { 
     Menu, 
     X, 
@@ -30,6 +31,7 @@ function Navbar() {
     const { 
         isAuthenticated, 
         tipo_usuario, 
+        id_usuario, // ✅ AÑADIR id_usuario
         handleLogin,
         handleRegister, 
         logout, 
@@ -38,6 +40,9 @@ function Navbar() {
         message,
         clearMessage
     } = useAuth();
+
+    // ✅ AÑADIR estado para verificar perfil
+    const [isPerfilIncompleto, setIsPerfilIncompleto] = useState(null);
 
     // ✅ Obtener opciones dinámicas según tipo de usuario
     const { navbarOptions: navOptions, profileLinks: dynamicProfileLinks, terminologia } = getNavbarOptions(tipo_usuario);
@@ -56,6 +61,22 @@ function Navbar() {
     
     const profileMenuRef = useRef(null);
     const helpMenuRef = useRef(null);
+
+    // ✅ VERIFICAR PERFIL cuando el usuario esté autenticado
+    useEffect(() => {
+        const fetchProfileStatus = async () => {
+            if (isAuthenticated && id_usuario && tipo_usuario === 'freelancer') {
+                try {
+                    const response = await checkProfileExists(id_usuario);
+                    setIsPerfilIncompleto(response.isPerfilIncompleto);
+                } catch (err) {
+                    console.error("Error verificando perfil:", err);
+                }
+            }
+        };
+        
+        fetchProfileStatus();
+    }, [id_usuario, isAuthenticated, tipo_usuario]);
 
     const toggleProfileMenu = () => setIsProfileMenuOpen(prev => !prev);
 
@@ -131,10 +152,38 @@ function Navbar() {
         navigate("/");
     };
 
-    // ✅ Filtrar links de perfil según roles
-    const filteredProfileLinks = dynamicProfileLinks.filter(link => 
-        link.roles.includes(tipo_usuario)
-    );
+    // ✅ Filtrar links de perfil según roles Y estado del perfil
+    const filteredProfileLinks = dynamicProfileLinks.filter(link => {
+        // Primero verificar si el rol coincide
+        if (!link.roles.includes(tipo_usuario)) return false;
+        
+        // Si es freelancer y el perfil está incompleto, filtrar opciones específicas
+        if (tipo_usuario === 'freelancer' && isPerfilIncompleto) {
+            const restrictedLinks = [
+                '/freelancer-profile/my-postulations',
+                '/freelancer-profile/availability'
+            ];
+            return !restrictedLinks.includes(link.link);
+        }
+        
+        return true;
+    });
+
+    // ✅ Función para manejar clics en links restringidos
+    const handleRestrictedLinkClick = (e, link) => {
+        if (tipo_usuario === 'freelancer' && isPerfilIncompleto) {
+            const restrictedLinks = [
+                '/freelancer-profile/my-postulations',
+                '/freelancer-profile/availability'
+            ];
+            
+            if (restrictedLinks.includes(link.link)) {
+                e.preventDefault();
+                alert('Debes completar tu perfil antes de acceder a esta sección');
+                navigate('/freelancer-profile/view-profile');
+            }
+        }
+    };
 
     // Handle scroll effect
     useEffect(() => {
@@ -303,7 +352,10 @@ function Navbar() {
                                                     <Link 
                                                         key={link.link}
                                                         to={link.link} 
-                                                        onClick={() => setIsProfileMenuOpen(false)}
+                                                        onClick={(e) => {
+                                                            handleRestrictedLinkClick(e, link);
+                                                            setIsProfileMenuOpen(false);
+                                                        }}
                                                         className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-[#07767c]/5 hover:text-[#07767c] transition-colors"
                                                     >
                                                         <i className={`${link.icon} text-lg`}></i>
@@ -410,7 +462,10 @@ function Navbar() {
                                         <Link 
                                             key={link.link}
                                             to={link.link}
-                                            onClick={() => setIsMenuOpen(false)}
+                                            onClick={(e) => {
+                                                handleRestrictedLinkClick(e, link);
+                                                setIsMenuOpen(false);
+                                            }}
                                             className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 rounded-lg"
                                         >
                                             <i className={`${link.icon} text-lg`}></i>
@@ -434,8 +489,7 @@ function Navbar() {
                 </div>
             )}
 
-            {/* ----------------------------- MODALS ---------------------------------- */}
-
+            {/* MODALS */}
             {showLoginModal && (
                 <LoginModal
                     onClose={() => {
@@ -519,7 +573,6 @@ function Navbar() {
                 />
             )}
 
-            {/* ----------------------------- MESSAGE MODAL ---------------------------------- */}
             {message.show && (
                 <MessageModal
                     message={message.text}

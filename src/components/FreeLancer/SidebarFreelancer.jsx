@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { FaUser, FaClipboardList, FaCalendarAlt, FaBars, FaTimes, FaChevronRight } from 'react-icons/fa';
+import { FaUser, FaClipboardList, FaCalendarAlt, FaBars, FaTimes, FaChevronRight, FaLock } from 'react-icons/fa';
 
-const SidebarFreelancer = () => {
+const SidebarFreelancer = ({ isPerfilIncompleto }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const menuItems = [
@@ -10,21 +10,32 @@ const SidebarFreelancer = () => {
       path: "/freelancer-profile/view-profile", 
       name: "Mi Perfil / CV", 
       icon: <FaUser />,
-      description: "Gestiona tu información"
+      description: "Gestiona tu información",
+      requiresProfile: false // Siempre visible
     },
     { 
       path: "/freelancer-profile/my-postulations", 
       name: "Mis Postulaciones", 
       icon: <FaClipboardList />,
-      description: "Ver tus aplicaciones"
+      description: "Ver tus aplicaciones",
+      requiresProfile: true // Solo visible si el perfil está completo
     },
     { 
       path: "/freelancer-profile/availability", 
       name: "Disponibilidad", 
       icon: <FaCalendarAlt />,
-      description: "Configura tu horario"
+      description: "Configura tu horario",
+      requiresProfile: true // Solo visible si el perfil está completo
     },
   ];
+
+  // Filtrar items según si el perfil está completo
+  const visibleMenuItems = menuItems.filter(item => {
+    if (item.requiresProfile) {
+      return !isPerfilIncompleto; // Solo mostrar si el perfil está completo
+    }
+    return true; // Siempre mostrar items que no requieren perfil
+  });
 
   return (
     <>
@@ -67,7 +78,7 @@ const SidebarFreelancer = () => {
         {/* Navigation */}
         <nav className="flex-grow py-6 overflow-y-auto">
           <div className="px-4 space-y-2">
-            {menuItems.map((item) => (
+            {visibleMenuItems.map((item) => (
               <NavLink
                 key={item.path}
                 to={item.path}
@@ -106,6 +117,23 @@ const SidebarFreelancer = () => {
                 )}
               </NavLink>
             ))}
+
+            {/* Mensaje si el perfil está incompleto */}
+            {isPerfilIncompleto && (
+              <div className="mt-6 p-4 bg-gradient-to-br from-yellow-50 to-amber-50 rounded-xl border-2 border-yellow-200">
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 bg-yellow-200 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <FaLock className="text-yellow-700 text-sm" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-bold text-yellow-900 mb-1">Completa tu perfil</p>
+                    <p className="text-xs text-yellow-800 leading-relaxed">
+                      Completa tu perfil para acceder a postulaciones y disponibilidad
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </nav>
 

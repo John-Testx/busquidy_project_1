@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
-import { CheckCircle } from "lucide-react";
+import { CheckCircle, X, ChevronLeft, ChevronRight } from "lucide-react";
 import StepEmpresa from "./Steps/StepEmpresa";
 import StepRepresentante from "./Steps/StepRepresentante";
 import { useEmpresaProfile } from "@/hooks";
@@ -9,7 +9,6 @@ function ModalCreatePerfilEmpresa({ closeModal, id_usuario, onProfileCreated }) 
   const [currentStep, setCurrentStep] = useState(0);
   const [completedSteps, setCompletedSteps] = useState([]);
 
-  // Usar el custom hook para gestionar la creación del perfil
   const { isSubmitting, showSuccess, createProfile } = useEmpresaProfile({
     id_usuario,
     onSuccess: async () => {
@@ -44,8 +43,8 @@ function ModalCreatePerfilEmpresa({ closeModal, id_usuario, onProfileCreated }) 
   const { handleSubmit, trigger } = methods;
 
   const steps = [
-    { title: "Empresa", component: StepEmpresa },
-    { title: "Representante", component: StepRepresentante },
+    { title: "Información Empresarial", component: StepEmpresa },
+    { title: "Representante Legal", component: StepRepresentante },
   ];
 
   const StepComponent = steps[currentStep].component;
@@ -75,28 +74,26 @@ function ModalCreatePerfilEmpresa({ closeModal, id_usuario, onProfileCreated }) 
 
   const progressPercentage = ((currentStep + 1) / steps.length) * 100;
 
-  // ============================================
   // PANTALLA DE ÉXITO
-  // ============================================
   if (showSuccess) {
     return (
-      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8">
+      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
+        <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 animate-in fade-in zoom-in duration-300">
           <div className="text-center">
-            <div className="flex justify-center mb-4">
-              <div className="w-20 h-20 bg-teal-100 rounded-full flex items-center justify-center">
-                <CheckCircle className="text-teal-600" size={48} />
+            <div className="flex justify-center mb-6">
+              <div className="w-24 h-24 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center shadow-lg">
+                <CheckCircle className="text-white" size={56} />
               </div>
             </div>
             <h2 className="text-3xl font-bold text-gray-900 mb-3">
-              ¡Perfil Creado!
+              ¡Perfil Creado Exitosamente!
             </h2>
-            <p className="text-gray-600 mb-6">
-              El perfil de tu empresa ha sido creado exitosamente. Ya puedes comenzar a publicar proyectos y contratar talento.
+            <p className="text-gray-600 mb-8 leading-relaxed">
+              Tu perfil empresarial está listo. Ya puedes comenzar a publicar proyectos y encontrar talento.
             </p>
-            <div className="flex items-center justify-center gap-2 text-teal-600">
-              <div className="animate-spin rounded-full h-5 w-5 border-2 border-teal-600 border-t-transparent" />
-              <span className="font-medium">Cargando tu perfil...</span>
+            <div className="flex items-center justify-center gap-3 text-teal-600">
+              <div className="animate-spin rounded-full h-6 w-6 border-3 border-teal-600 border-t-transparent" />
+              <span className="font-semibold">Cargando tu panel...</span>
             </div>
           </div>
         </div>
@@ -104,127 +101,119 @@ function ModalCreatePerfilEmpresa({ closeModal, id_usuario, onProfileCreated }) 
     );
   }
 
-  // ============================================
-  // FORMULARIO PRINCIPAL
-  // ============================================
+  // FORMULARIO PRINCIPAL - Con mejor posicionamiento
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-        
-        {/* Header */}
-        <div className="sticky top-0 bg-gradient-to-r from-teal-600 to-teal-700 px-8 py-6 flex items-center justify-between border-b border-teal-800">
-          <div>
-            <h2 className="text-2xl font-bold text-white">Crear Perfil de Empresa</h2>
-            <p className="text-teal-100 text-sm mt-1">Paso {currentStep + 1} de {steps.length}</p>
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] flex items-center justify-center p-4 overflow-y-auto">
+      {/* Wrapper con margen top para evitar navbar */}
+      <div className="w-full flex items-center justify-center min-h-full py-8">
+        <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl my-auto">
+          
+          {/* Header compacto */}
+          <div className="bg-gradient-to-r from-[#07767c] to-[#40E0D0] px-6 py-5 flex items-center justify-between rounded-t-2xl">
+            <div>
+              <h2 className="text-xl font-bold text-white">Crear Perfil Empresarial</h2>
+              <p className="text-white/80 text-sm">Paso {currentStep + 1} de {steps.length}</p>
+            </div>
+            <button
+              onClick={closeModal}
+              disabled={isSubmitting}
+              className="bg-white/20 hover:bg-white/30 text-white w-9 h-9 rounded-full flex items-center justify-center transition-colors duration-200 disabled:opacity-50"
+              aria-label="Cerrar"
+            >
+              <X size={20} />
+            </button>
           </div>
-          <button
-            onClick={closeModal}
-            disabled={isSubmitting}
-            className="bg-white/20 hover:bg-white/30 text-white w-10 h-10 rounded-full flex items-center justify-center transition-colors duration-200 disabled:opacity-50"
-            aria-label="Cerrar"
-          >
-            <i className="fas fa-times text-xl"></i>
-          </button>
-        </div>
 
-        {/* Progress Bar */}
-        <div className="px-8 py-6 bg-gray-50 border-b border-gray-200">
-          <div className="flex items-center gap-4 mb-4">
-            {steps.map((step, index) => (
-              <div key={index} className="flex items-center gap-2 flex-1">
-                {/* Step Circle */}
-                <button
-                  onClick={() => jumpToStep(index)}
-                  disabled={!completedSteps.includes(index) && index !== currentStep}
-                  className={`flex-shrink-0 w-10 h-10 rounded-full font-bold text-sm flex items-center justify-center transition-all duration-300 ${
-                    index === currentStep
-                      ? 'bg-teal-600 text-white shadow-lg scale-110'
-                      : completedSteps.includes(index)
-                      ? 'bg-teal-100 text-teal-600 border-2 border-teal-600 cursor-pointer hover:bg-teal-200'
-                      : 'bg-gray-300 text-gray-600'
-                  }`}
-                >
-                  {completedSteps.includes(index) ? (
-                    <i className="fas fa-check"></i>
-                  ) : (
-                    index + 1
-                  )}
-                </button>
-                {/* Step Title */}
-                <span className={`hidden sm:inline font-semibold text-sm ${
-                  index === currentStep ? 'text-teal-600' : 'text-gray-600'
-                }`}>
-                  {step.title}
-                </span>
-                {/* Connector Line */}
-                {index < steps.length - 1 && (
-                  <div className={`hidden sm:block flex-1 h-1 rounded ${
-                    completedSteps.includes(index) ? 'bg-teal-600' : 'bg-gray-300'
-                  }`}></div>
-                )}
-              </div>
-            ))}
-          </div>
-          {/* Progress Bar */}
-          <div className="w-full bg-gray-300 rounded-full h-2 overflow-hidden">
-            <div
-              className="bg-teal-600 h-full transition-all duration-500 ease-out"
-              style={{ width: `${progressPercentage}%` }}
-            ></div>
-          </div>
-        </div>
-
-        {/* Form Content */}
-        <div className="px-8 py-8">
-          <FormProvider {...methods}>
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <StepComponent />
-
-              {/* Form Actions */}
-              <div className="flex gap-4 mt-12 pt-8 border-t border-gray-200">
-                {currentStep > 0 && (
+          {/* Progress Bar compacto */}
+          <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
+            <div className="flex items-center gap-2 mb-3">
+              {steps.map((step, index) => (
+                <React.Fragment key={index}>
                   <button
-                    type="button"
-                    onClick={onPrevStep}
-                    disabled={isSubmitting}
-                    className="flex-1 px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold rounded-lg transition-colors duration-200 flex items-center justify-center gap-2 disabled:opacity-50"
+                    onClick={() => jumpToStep(index)}
+                    disabled={!completedSteps.includes(index) && index !== currentStep}
+                    className={`flex-shrink-0 w-8 h-8 rounded-full font-bold text-sm flex items-center justify-center transition-all duration-300 ${
+                      index === currentStep
+                        ? 'bg-[#07767c] text-white shadow-md scale-110'
+                        : completedSteps.includes(index)
+                        ? 'bg-green-100 text-green-600 border-2 border-green-600 cursor-pointer hover:bg-green-200'
+                        : 'bg-gray-300 text-gray-600'
+                    }`}
                   >
-                    <i className="fas fa-chevron-left"></i>
-                    Anterior
-                  </button>
-                )}
-                {currentStep < steps.length - 1 ? (
-                  <button
-                    type="button"
-                    onClick={onNextStep}
-                    disabled={isSubmitting}
-                    className="flex-1 px-6 py-3 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-lg transition-colors duration-200 flex items-center justify-center gap-2 disabled:opacity-50"
-                  >
-                    Siguiente
-                    <i className="fas fa-chevron-right"></i>
-                  </button>
-                ) : (
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="flex-1 px-6 py-3 bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white font-semibold rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <i className="fas fa-spinner fa-spin"></i>
-                        Guardando...
-                      </>
+                    {completedSteps.includes(index) ? (
+                      <CheckCircle size={16} />
                     ) : (
-                      <>
-                        <i className="fas fa-check-circle"></i>
-                        Guardar Perfil
-                      </>
+                      index + 1
                     )}
                   </button>
-                )}
-              </div>
-            </form>
-          </FormProvider>
+                  {index < steps.length - 1 && (
+                    <div className={`flex-1 h-1 rounded ${
+                      completedSteps.includes(index) ? 'bg-[#07767c]' : 'bg-gray-300'
+                    }`}></div>
+                  )}
+                </React.Fragment>
+              ))}
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-1.5 overflow-hidden">
+              <div
+                className="bg-gradient-to-r from-[#07767c] to-[#40E0D0] h-full transition-all duration-500 ease-out"
+                style={{ width: `${progressPercentage}%` }}
+              ></div>
+            </div>
+          </div>
+
+          {/* Form Content con altura máxima controlada */}
+          <div className="px-6 py-6 max-h-[calc(85vh-200px)] overflow-y-auto">
+            <FormProvider {...methods}>
+              <form onSubmit={handleSubmit(onSubmit)}>
+                <StepComponent />
+
+                {/* Form Actions */}
+                <div className="flex gap-3 mt-6 pt-6 border-t border-gray-200">
+                  {currentStep > 0 && (
+                    <button
+                      type="button"
+                      onClick={onPrevStep}
+                      disabled={isSubmitting}
+                      className="flex-1 px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50"
+                    >
+                      <ChevronLeft size={20} />
+                      Anterior
+                    </button>
+                  )}
+                  {currentStep < steps.length - 1 ? (
+                    <button
+                      type="button"
+                      onClick={onNextStep}
+                      disabled={isSubmitting}
+                      className="flex-1 px-6 py-3 bg-gradient-to-r from-[#07767c] to-[#40E0D0] hover:from-[#055a5f] hover:to-[#07767c] text-white font-semibold rounded-xl transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 shadow-md hover:shadow-lg"
+                    >
+                      Siguiente
+                      <ChevronRight size={20} />
+                    </button>
+                  ) : (
+                    <button
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="flex-1 px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 disabled:from-green-400 disabled:to-emerald-400 text-white font-semibold rounded-xl transition-all duration-200 flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
+                    >
+                      {isSubmitting ? (
+                        <>
+                          <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent" />
+                          Guardando...
+                        </>
+                      ) : (
+                        <>
+                          <CheckCircle size={20} />
+                          Guardar Perfil
+                        </>
+                      )}
+                    </button>
+                  )}
+                </div>
+              </form>
+            </FormProvider>
+          </div>
         </div>
       </div>
     </div>
