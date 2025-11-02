@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Check, Sparkles, TrendingUp, Zap, X, Lock } from "lucide-react";
+import { Check, Sparkles, TrendingUp, Zap, X, Lock, BadgeCheck, Ban, Loader2 } from "lucide-react";
 import { useAuth } from "@/hooks";
-import { getSubscriptionPlans } from "@/api/paymentApi";
+import { getSubscriptionPlans, getActiveSubscription, cancelSubscription } from "@/api/paymentApi";
+import { toast } from 'react-toastify';
 import ModalPagoSuscripcion from "@/components/ModalPagoSuscripcion";
 import LoginModal from "@/components/Home/Modals/LoginModal";
 import LoginSecondaryModal from "@/components/Home/Modals/LoginSecondaryModal";
@@ -25,6 +26,8 @@ function PreciosPage() {
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showLoginSecondaryModal, setShowLoginSecondaryModal] = useState(false);
+  const [activeSubscription, setActiveSubscription] = useState(null); // ⭐ NUEVO
+  const [isCanceling, setIsCanceling] = useState(false); // ⭐ NUEVO
 
   useEffect(() => {
     fetchAllPlans();
@@ -43,6 +46,17 @@ function PreciosPage() {
       setPlanes(planesVacios);
 
       if (isAuthenticated) {
+        // ⭐ Obtener suscripción activa si está autenticado
+        try {
+          const activeSub = await getActiveSubscription();
+          setActiveSubscription(activeSub);
+        } catch (err) {
+          if (err?.response?.status !== 404) {
+            console.error('Error fetching active subscription:', err);
+          }
+          setActiveSubscription(null);
+        }
+
         if (tipo_usuario) {
           const planesUsuario = await getSubscriptionPlans(tipo_usuario);
           
@@ -70,6 +84,25 @@ function PreciosPage() {
       setError("No pudimos cargar los planes. Por favor, intenta nuevamente.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  // ⭐ NUEVA FUNCIÓN para cancelar suscripción
+  const handleCancelSubscription = async () => {
+    if (!window.confirm('¿Estás seguro de que deseas cancelar tu suscripción? Tu plan seguirá activo hasta la fecha de vencimiento, pero no se renovará.')) {
+      return;
+    }
+
+    try {
+      setIsCanceling(true);
+      const response = await cancelSubscription();
+      toast.success(response.message || 'Suscripción cancelada con éxito.');
+      fetchAllPlans(); // Recargar datos
+    } catch (err) {
+      console.error('Error canceling subscription:', err);
+      toast.error(err.response?.data?.error || 'Error al cancelar la suscripción.');
+    } finally {
+      setIsCanceling(false);
     }
   };
 
@@ -101,6 +134,8 @@ function PreciosPage() {
 
   const PlanCard = ({ plan, tipoUsuario, destacado = false, compacto = false }) => {
     const beneficios = Array.isArray(plan.beneficios) ? plan.beneficios : [];
+    const planPrice = parseFloat(plan.precio) || 0; // ⭐ NUEVO
+    const isCurrentPlan = isAuthenticated && activeSubscription && activeSubscription.Plan?.id_plan === plan.id_plan; // ⭐ NUEVO
     
     return (
       <div className={`relative bg-white rounded-2xl border-2 transition-all duration-300 ${
@@ -121,10 +156,17 @@ function PreciosPage() {
             <h3 className={`${compacto ? 'text-xl' : 'text-2xl'} font-bold text-gray-900 mb-2`}>{plan.nombre}</h3>
             <div className="flex items-baseline justify-center gap-2">
               <span className={`${compacto ? 'text-4xl' : 'text-5xl'} font-extrabold text-[#07767c]`}>
-                ${plan.precio?.toLocaleString("es-CL")}
+                ${planPrice.toLocaleString("es-CL")} {/* ⭐ SIN DECIMALES */}
               </span>
-              <span className="text-gray-500 font-medium">/mes</span>
+              <span className="text-gray-500 font-medium">
+                / {plan.duracion_dias} días
+              </span>
             </div>
+            {planPrice > 0 && (
+              <p className="text-xs text-gray-500 mt-1">
+                ≈ ${Math.round(planPrice / (plan.duracion_dias / 30)).toLocaleString('es-CL')} por mes
+              </p>
+            )}
           </div>
 
           {/* Descripción */}
@@ -151,13 +193,16 @@ function PreciosPage() {
           {/* Botón */}
           <button
             onClick={() => handleSelectPlan(plan, tipoUsuario)}
+            disabled={isCurrentPlan} // ⭐ DESHABILITAR SI ES EL PLAN ACTUAL
             className={`w-full ${compacto ? 'py-3' : 'py-3.5'} rounded-xl font-bold ${compacto ? 'text-sm' : 'text-base'} transition-all duration-300 ${
-              destacado
+              isCurrentPlan
+                ? 'bg-gray-200 text-gray-500 cursor-not-allowed' // ⭐ ESTILO DESHABILITADO
+                : destacado
                 ? 'bg-gradient-to-r from-[#07767c] to-[#40E0D0] text-white hover:shadow-xl hover:from-[#05595d] hover:to-[#07767c]'
                 : 'bg-white border-2 border-[#07767c] text-[#07767c] hover:bg-[#07767c] hover:text-white'
             }`}
           >
-            Contratar Ahora
+            {isCurrentPlan ? 'Plan Actual' : 'Contratar Ahora'} {/* ⭐ CAMBIAR TEXTO */}
           </button>
         </div>
       </div>
@@ -200,7 +245,6 @@ function PreciosPage() {
 
     return (
       <div className="mb-16">
-        {/* Título de la sección */}
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold text-gray-900 mb-3">
             Planes <span className="text-[#07767c]">Gratuitos</span>
@@ -210,11 +254,9 @@ function PreciosPage() {
           </p>
         </div>
 
-        {/* Grid de planes gratuitos */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
           {planesGratuitos.map(({ plan, tipo, titulo, icono: Icono, gradiente }) => (
             <div key={tipo} className="flex flex-col">
-              {/* Etiqueta del tipo de usuario */}
               <div className="flex items-center gap-2 mb-4 justify-center">
                 <div className={`w-8 h-8 bg-gradient-to-br ${gradiente} rounded-lg flex items-center justify-center`}>
                   <Icono className="text-white" size={16} />
@@ -222,7 +264,6 @@ function PreciosPage() {
                 <h3 className="text-lg font-bold text-gray-900">{titulo}</h3>
               </div>
               
-              {/* Card del plan */}
               <PlanCard 
                 plan={plan} 
                 tipoUsuario={tipo}
@@ -232,7 +273,6 @@ function PreciosPage() {
           ))}
         </div>
 
-        {/* Card de llamado a acción centrado */}
         <div className="max-w-2xl mx-auto">
           <div className="bg-gradient-to-br from-[#07767c]/10 to-[#40E0D0]/10 rounded-2xl border-2 border-[#07767c]/30 p-10 text-center">
             <div className="w-20 h-20 bg-gradient-to-br from-[#07767c] to-[#40E0D0] rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
@@ -293,28 +333,80 @@ function PreciosPage() {
     const Icono = info.icono;
 
     return (
-      <section className="mb-16">
-        <div className="flex items-center gap-3 mb-8">
-          <div className={`w-10 h-10 bg-gradient-to-br ${info.gradiente} rounded-lg flex items-center justify-center shadow-md`}>
-            <Icono className="text-white" size={20} />
+      <div className="space-y-8">
+        {/* ⭐ MOSTRAR SUSCRIPCIÓN ACTIVA */}
+        {activeSubscription && activeSubscription.id_suscripcion && (
+          <div className="bg-white rounded-2xl shadow-lg border-2 border-green-600 p-6">
+            <div className="flex justify-between items-start">
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <BadgeCheck className="text-green-600" size={24} />
+                  <h3 className="text-xl font-bold text-gray-900">
+                    Tu Plan Actual
+                  </h3>
+                </div>
+                <p className="text-2xl font-bold text-[#07767c] mb-1">
+                  {activeSubscription.Plan?.nombre || 'Plan Desconocido'}
+                </p>
+                <p className="text-gray-600 text-sm">
+                  Suscripción {activeSubscription.estado}.
+                </p>
+                <p className="text-gray-600 text-sm">
+                  Válida hasta: {new Date(activeSubscription.fecha_fin).toLocaleDateString('es-CL')}
+                </p>
+              </div>
+              
+              {activeSubscription.estado === 'activa' && (
+                <button
+                  onClick={handleCancelSubscription}
+                  disabled={isCanceling}
+                  className="bg-red-100 text-red-700 border border-red-300 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-red-200 disabled:opacity-50 flex items-center gap-2"
+                >
+                  {isCanceling ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Ban className="w-4 h-4" />
+                  )}
+                  {isCanceling ? 'Cancelando...' : 'Cancelar Suscripción'}
+                </button>
+              )}
+              
+              {activeSubscription.estado === 'cancelada' && (
+                 <p className="text-orange-600 bg-orange-100 border border-orange-300 px-4 py-2 rounded-lg text-sm font-semibold">
+                   Tu plan no se renovará.
+                 </p>
+              )}
+            </div>
+            <p className="text-xs text-gray-500 mt-4">
+              Al cancelar, tu plan seguirá activo hasta la fecha de vencimiento, pero no se te cobrará el próximo período.
+            </p>
           </div>
-          <div>
-            <h2 className="text-3xl font-bold text-gray-900">{info.titulo}</h2>
-            <p className="text-gray-600">{info.subtitulo}</p>
+        )}
+
+        {/* PLANES DISPONIBLES */}
+        <section>
+          <div className="flex items-center gap-3 mb-8">
+            <div className={`w-10 h-10 bg-gradient-to-br ${info.gradiente} rounded-lg flex items-center justify-center shadow-md`}>
+              <Icono className="text-white" size={20} />
+            </div>
+            <div>
+              <h2 className="text-3xl font-bold text-gray-900">{info.titulo}</h2>
+              <p className="text-gray-600">{info.subtitulo}</p>
+            </div>
           </div>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {planesUsuario.map((plan, index) => (
-            <PlanCard 
-              key={plan.id_plan} 
-              plan={plan} 
-              tipoUsuario={tipo_usuario}
-              destacado={index === 1}
-            />
-          ))}
-        </div>
-      </section>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {planesUsuario.map((plan, index) => (
+              <PlanCard 
+                key={plan.id_plan} 
+                plan={plan} 
+                tipoUsuario={tipo_usuario}
+                destacado={index === 1}
+              />
+            ))}
+          </div>
+        </section>
+      </div>
     );
   };
   
@@ -358,7 +450,7 @@ function PreciosPage() {
           {isAuthenticated ? <VistaAutenticado /> : <VistaNoAutenticado />}
 
           {/* CTA Final */}
-          <div className="bg-gradient-to-r from-[#07767c] to-[#40E0D0] rounded-2xl p-12 text-center text-white shadow-2xl">
+          <div className="bg-gradient-to-r from-[#07767c] to-[#40E0D0] rounded-2xl p-12 text-center text-white shadow-2xl mt-16">
             <h2 className="text-3xl font-bold mb-4">¿Necesitas ayuda para elegir?</h2>
             <p className="text-xl mb-8 text-white/90">
               Nuestro equipo está listo para asesorarte y encontrar el plan perfecto para ti
@@ -378,9 +470,11 @@ function PreciosPage() {
         <ModalPagoSuscripcion
           id_usuario={id_usuario}
           tipo_usuario={selectedPlan.tipo_usuario}
+          planPreseleccionado={selectedPlan.id_plan}
           closeModal={() => {
             setIsPaymentModalOpen(false);
             setSelectedPlan(null);
+            fetchAllPlans(); // Recargar después de pagar
           }}
         />
       )}

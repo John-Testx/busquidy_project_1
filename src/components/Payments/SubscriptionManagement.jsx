@@ -1,16 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { CreditCard, CheckCircle, XCircle, AlertCircle, Loader2, Star } from 'lucide-react';
+import { CreditCard, CheckCircle, XCircle, AlertCircle, Loader2, Star, BadgeCheck, Ban  } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { useAuth } from '@/hooks';
-import { getAllSubscriptionPlans } from '@/api/paymentApi';
+import { getAllSubscriptionPlans, getActiveSubscription, cancelSubscription } from '@/api/paymentApi'; 
 import { useNavigate } from 'react-router-dom';
+import ModalPagoSuscripcion from '@/components/ModalPagoSuscripcion';
 
 const SubscriptionManagement = () => {
-  const { tipo_usuario } = useAuth();
+  const { tipo_usuario, id_usuario  } = useAuth();
   const navigate = useNavigate();
   const [availablePlans, setAvailablePlans] = useState([]);
+  const [activeSubscription, setActiveSubscription] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isCanceling, setIsCanceling] = useState(false);
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false); // ⭐ NUEVO
+  const [selectedPlan, setSelectedPlan] = useState(null); // ⭐ NUEVO
 
   useEffect(() => {
     fetchPlans();
@@ -20,27 +25,71 @@ const SubscriptionManagement = () => {
     try {
       setLoading(true);
       setError(null);
-      const plansData = await getAllSubscriptionPlans();
-      setAvailablePlans(plansData);
+
+      // Usamos Promise.allSettled para que si una falla, la otra pueda continuar
+      const [plansResult, activeSubResult] = await Promise.allSettled([
+        getAllSubscriptionPlans(),
+        getActiveSubscription()
+      ]);
+
+      // Manejar los planes
+      if (plansResult.status === 'fulfilled') {
+        setAvailablePlans(plansResult.value);
+      } else {
+        console.error('Error fetching plans:', plansResult.reason);
+        // Si fallan los planes, es un error crítico
+        setError('Error al cargar los planes de suscripción.');
+        setLoading(false);
+        return;
+      }
+
+      // Manejar la suscripción activa
+      if (activeSubResult.status === 'fulfilled') {
+        // Si el backend devuelve datos (incluso un objeto vacío si no hay sub), lo guardamos
+        setActiveSubscription(activeSubResult.value);
+      } else {
+        // Si falla con 404 (Not Found), significa que no hay suscripción, lo cual no es un error.
+        if (activeSubResult.reason?.response?.status === 404) {
+          console.log('No active subscription found (404), this is OK.');
+          setActiveSubscription(null);
+        } else {
+          // Otro error al buscar la suscripción (ej. 500)
+          console.error('Error fetching active subscription:', activeSubResult.reason);
+          setError('Error al verificar tu suscripción actual.');
+        }
+      }
+
     } catch (err) {
-      console.error('Error fetching plans:', err);
-      setError('Error al cargar los planes de suscripción.');
+      // Error general
+      console.error('Error fetching data:', err);
+      setError('Ocurrió un error inesperado.');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleSelectPlan = (planId) => {
-    // Determinar el tipo correcto para la ruta
-    let planType = 'freelancer';
-    
-    if (tipo_usuario === 'empresa_natural' || tipo_usuario === 'empresa_juridico') {
-      planType = 'empresa';
-    } else if (tipo_usuario === 'freelancer') {
-      planType = 'freelancer';
+  const handleCancelSubscription = async () => {
+    if (!window.confirm('¿Estás seguro de que deseas cancelar tu suscripción? Tu plan seguirá activo hasta la fecha de vencimiento, pero no se renovará.')) {
+      return;
     }
-    
-    navigate(`/select-plan/${planType}`, { state: { preselectedPlan: planId } });
+
+    try {
+      setIsCanceling(true);
+      const response = await cancelSubscription(); // Llamada a la API
+      toast.success(response.message || 'Suscripción cancelada con éxito.');
+      // Volver a cargar los datos para reflejar el estado "cancelada"
+      fetchPlans(); 
+    } catch (err) {
+      console.error('Error canceling subscription:', err);
+      toast.error(err.response?.data?.error || 'Error al cancelar la suscripción.');
+    } finally {
+      setIsCanceling(false);
+    }
+  };
+
+  const handleSelectPlan = (plan) => {
+    setSelectedPlan(plan);
+    setIsPaymentModalOpen(true);
   };
 
   if (loading) {
@@ -118,6 +167,56 @@ const SubscriptionManagement = () => {
         </div>
       </div>
 
+      {/* Tu Plan Actual */}
+      {activeSubscription && activeSubscription.id_suscripcion && (
+        <div className="bg-white rounded-2xl shadow-lg border-2 border-green-600 p-6">
+          <div className="flex justify-between items-start">
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <BadgeCheck className="text-green-600" size={24} />
+                <h3 className="text-xl font-bold text-gray-900">
+                  Tu Plan Actual
+                </h3>
+              </div>
+              <p className="text-2xl font-bold text-[#07767c] mb-1">
+                {activeSubscription.Plan?.nombre || 'Plan Desconocido'}
+              </p>
+              <p className="text-gray-600 text-sm">
+                Suscripción {activeSubscription.estado}.
+              </p>
+              <p className="text-gray-600 text-sm">
+                Válida hasta: {new Date(activeSubscription.fecha_fin).toLocaleDateString('es-CL')}
+              </p>
+            </div>
+            
+            {activeSubscription.estado === 'activa' && (
+              <button
+                onClick={handleCancelSubscription}
+                disabled={isCanceling}
+                className="bg-red-100 text-red-700 border border-red-300 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-red-200 disabled:opacity-50 flex items-center gap-2"
+              >
+                {isCanceling ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Ban className="w-4 h-4" />
+                )}
+                {isCanceling ? 'Cancelando...' : 'Cancelar Suscripción'}
+              </button>
+            )}
+            
+            {activeSubscription.estado === 'cancelada' && (
+               <p className="text-orange-600 bg-orange-100 border border-orange-300 px-4 py-2 rounded-lg text-sm font-semibold">
+                 Tu plan no se renovará.
+               </p>
+            )}
+
+          </div>
+          <p className="text-xs text-gray-500 mt-4">
+            Al cancelar, tu plan seguirá activo hasta la fecha de vencimiento, pero no se te cobrará el próximo período.
+          </p>
+        </div>
+      )}
+
       {/* Available Plans */}
       <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
         <h3 className="text-xl font-bold text-gray-900 mb-1">
@@ -133,6 +232,7 @@ const SubscriptionManagement = () => {
               const planPrice = parseFloat(plan.precio) || 0;
               const isFree = plan.es_plan_gratuito === 1 || planPrice === 0;
               const isFeatured = plan.es_destacado === 1;
+              const isCurrentPlan = activeSubscription && activeSubscription.Plan?.id_plan === plan.id_plan;
 
               return (
                 <div
@@ -236,14 +336,21 @@ const SubscriptionManagement = () => {
 
                   {/* Botón de selección */}
                   <button
-                    onClick={() => handleSelectPlan(plan.id_plan)}
+                    onClick={() => handleSelectPlan(plan)} // ⭐ Pasar el plan completo
+                    disabled={isCurrentPlan} 
                     className={`w-full font-bold py-3 px-6 rounded-xl transition-all duration-300 ${
-                      isFeatured
+                      isCurrentPlan 
+                        ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                        : isFeatured
                         ? 'bg-gradient-to-r from-[#07767c] to-[#05595d] hover:from-[#05595d] hover:to-[#07767c] text-white shadow-lg hover:shadow-xl'
                         : 'bg-white border-2 border-[#07767c] text-[#07767c] hover:bg-[#07767c] hover:text-white'
                     }`}
                   >
-                    {isFree ? 'Activar Plan Gratuito' : 'Seleccionar Plan'}
+                    {isCurrentPlan
+                      ? 'Plan Actual'
+                      : isFree
+                      ? 'Activar Plan Gratuito'
+                      : 'Mejorar Plan'}
                   </button>
                 </div>
               );
@@ -282,6 +389,18 @@ const SubscriptionManagement = () => {
           </div>
         </div>
       </div>
+      {isPaymentModalOpen && selectedPlan && (
+        <ModalPagoSuscripcion
+          id_usuario={id_usuario}
+          tipo_usuario={tipo_usuario}
+          planPreseleccionado={selectedPlan.id_plan}
+          closeModal={() => {
+            setIsPaymentModalOpen(false);
+            setSelectedPlan(null);
+            fetchPlans(); // Recargar después de pagar
+          }}
+        />
+      )}
     </div>
   );
 };
