@@ -78,29 +78,18 @@ const useSubscription = (id_usuario, tipo_usuario) => {
                 
                 // Si el backend tiene éxito, nos devolverá un estado 'APPROVED' directamente
                 if (response.status === 'APPROVED') {
-
-                    // ===============================================
-                    // =====      AQUÍ ESTÁ EL CAMBIO          =====
-                    // ===============================================
-                    
+ 
                     alert("¡Plan gratuito activado con éxito!"); // Opcional, para confirmar
                     
-                    // Redirigimos al panel de control, NO a payment/return
-                    // (Ajusta estas rutas si tu dashboard está en otro lugar)
                     if (tipo_usuario.includes('empresa')) {
-                        window.location.href = '/empresa'; 
+                        // Redirigir de vuelta a la página de gestión de suscripción
+                        window.location.href = '/empresa-profile/subscription'; 
                     } else if (tipo_usuario === 'freelancer') {
-                        window.location.href = '/freelancer';
+                        // Redirigir de vuelta a la página de gestión de suscripción
+                        window.location.href = '/freelancer-profile/subscription';
                     } else {
                         window.location.href = '/'; // Fallback a la home
                     }
-
-                    // La línea original que debes borrar es esta:
-                    // window.location.href = `${API_URL_FRONT}/payment/return?status=success&type=free_subscription`;
-                    
-                    // ===============================================
-                    // =====         FIN DEL CAMBIO             =====
-                    // ===============================================
 
                 } else {
                     throw new Error(response.error || 'No se pudo activar el plan gratuito');
