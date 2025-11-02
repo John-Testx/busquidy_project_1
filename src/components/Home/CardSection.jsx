@@ -19,36 +19,59 @@ import SecondaryRegisterModal from "@/components/Home/Modals/SecondaryRegisterMo
 
 function CardSection({ userType }) {
     const navigate = useNavigate();
-    const { isAuthenticated, tipo_usuario } = useAuth();
+    
+    const { 
+        isAuthenticated, 
+        tipo_usuario,
+        handleLogin,
+        handleRegister,
+        errors,
+        loading: authLoading
+    } = useAuth();
     
     // Estados para los modales
     const [showLoginModal, setShowLoginModal] = useState(false);
     const [showLoginSecondaryModal, setShowLoginSecondaryModal] = useState(false);
     const [showRegisterModal, setShowRegisterModal] = useState(false);
     const [showSecondaryRegisterModal, setShowSecondaryRegisterModal] = useState(false);
-    const [targetUserType, setTargetUserType] = useState(null); // 'freelancer' o 'empresa'
+    const [targetUserType, setTargetUserType] = useState(null);
+
+    // Estados para los formularios
+    const [loginFormData, setLoginFormData] = useState({ correo: "", contraseña: "" });
+    const updateLoginFormData = (key, value) => setLoginFormData((prev) => ({ ...prev, [key]: value }));
+
+    const [registerData, setRegisterData] = useState({
+        correo: "",
+        contraseña: "",
+        tipoUsuario: "",
+    });
+    const updateRegisterData = (key, value) => {
+        setRegisterData(prev => ({ ...prev, [key]: value }));
+    };
 
     // Función para manejar clic en los botones
     const handleCardClick = (e, tipoDestino, ruta) => {
-        // Si el usuario está autenticado, navegar directamente
         if (isAuthenticated) {
             navigate(ruta);
             return;
         }
-        
-        // Si no está autenticado, prevenir navegación y abrir modal de registro
         e.preventDefault();
-        setTargetUserType(tipoDestino);
-        setShowRegisterModal(true);
+        
+        setTargetUserType(tipoDestino); 
+        setShowLoginModal(true);
     };
 
-    // Función para manejar éxito de login/registro
+    // Función para manejar éxito de auth
     const handleAuthSuccess = () => {
         setShowLoginModal(false);
         setShowLoginSecondaryModal(false);
         setShowRegisterModal(false);
         setShowSecondaryRegisterModal(false);
         
+        // Limpiar formularios
+        setLoginFormData({ correo: "", contraseña: "" });
+        setRegisterData({ correo: "", contraseña: "", tipoUsuario: "" });
+
         // Navegar según el tipo de usuario target
         if (targetUserType === 'freelancer') {
             navigate('/freelancer');
@@ -59,13 +82,32 @@ function CardSection({ userType }) {
         setTargetUserType(null);
     };
 
+    const handleLoginSubmit = async () => {
+        await handleLogin(loginFormData.correo, loginFormData.contraseña, () => {
+            handleAuthSuccess();
+        });
+    };
+
+    const handleRegisterSubmit = async () => {
+        await handleRegister(
+            registerData.correo,
+            registerData.contraseña,
+            registerData.tipoUsuario,
+            () => {
+                // Limpiar form de registro
+                setRegisterData({ correo: "", contraseña: "", tipoUsuario: "" });
+                // Cerrar modales de registro
+                setShowSecondaryRegisterModal(false);
+                setShowRegisterModal(false);
+                // Abrir modal de login
+                setShowLoginModal(true);
+            }
+        );
+    };
+
     return (
         <>
             <div className="relative py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-50 via-white to-[#e6f7f1] overflow-hidden">
-                {/* Elementos decorativos de fondo */}
-                <div className="absolute top-0 left-0 w-96 h-96 bg-[#07767c]/5 rounded-full blur-3xl -ml-48 -mt-48"></div>
-                <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#40E0D0]/5 rounded-full blur-3xl -mr-48 -mb-48"></div>
-                
                 <div className="relative max-w-7xl mx-auto">
                     {/* Header Section */}
                     <div className="text-center mb-16">
@@ -86,29 +128,16 @@ function CardSection({ userType }) {
                         
                         {/* Tarjeta FreeLancer */}
                         <div className="group relative bg-white rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden border-2 border-transparent hover:border-[#07767c]/20">
-                            {/* Gradient overlay on hover */}
-                            <div className="absolute inset-0 bg-gradient-to-br from-[#07767c]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                            
-                            {/* Decorative element */}
-                            <div className="absolute top-0 right-0 w-40 h-40 bg-[#07767c]/5 rounded-full -mr-20 -mt-20 group-hover:scale-150 transition-transform duration-500"></div>
-                            
                             <div className="relative p-8 sm:p-10">
-                                {/* Icon Badge */}
                                 <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-[#07767c] to-[#055a5f] rounded-2xl mb-6 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-lg">
                                     <UserCircle className="text-white" size={32} />
                                 </div>
-
-                                {/* Title */}
                                 <h2 className="text-3xl font-bold text-gray-800 mb-4 group-hover:text-[#07767c] transition-colors">
                                     FREELANCER
                                 </h2>
-
-                                {/* Description */}
                                 <p className="text-gray-600 leading-relaxed mb-6 text-base">
                                     Busca proyectos de tu interés, publica tu CV y muestra tu perfil a miles de empresas que buscan tu talento.
                                 </p>
-
-                                {/* Features List */}
                                 <div className="space-y-3 mb-8">
                                     <div className="flex items-center gap-3 text-sm text-gray-700">
                                         <div className="w-5 h-5 bg-[#40E0D0]/20 rounded-full flex items-center justify-center flex-shrink-0">
@@ -129,17 +158,13 @@ function CardSection({ userType }) {
                                         <span>Aumenta tu visibilidad</span>
                                     </div>
                                 </div>
-
-                                {/* CTA Button */}
                                 <button 
                                     onClick={(e) => handleCardClick(e, 'freelancer', '/freelancer')}
                                     className="group/btn w-full bg-gradient-to-r from-[#07767c] to-[#055a5f] hover:from-[#055a5f] hover:to-[#043d42] text-white font-bold py-4 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 transform hover:-translate-y-1"
                                 >
-                                    <span>{userType === "freelancer" ? "Ir a mi panel" : "Comenzar como Freelancer"}</span>
+                                    <span>{tipo_usuario === "freelancer" ? "Ir a mi panel" : "Comenzar como Freelancer"}</span>
                                     <ArrowRight size={20} className="group-hover/btn:translate-x-1 transition-transform" />
                                 </button>
-
-                                {/* Stats badge */}
                                 <div className="mt-6 pt-6 border-t border-gray-100">
                                     <div className="flex items-center justify-center gap-2 text-sm">
                                         <Users size={16} className="text-[#07767c]" />
@@ -153,29 +178,16 @@ function CardSection({ userType }) {
 
                         {/* Tarjeta Empresa */}
                         <div className="group relative bg-white rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden border-2 border-transparent hover:border-[#40E0D0]/20">
-                            {/* Gradient overlay on hover */}
-                            <div className="absolute inset-0 bg-gradient-to-br from-[#40E0D0]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                            
-                            {/* Decorative element */}
-                            <div className="absolute top-0 right-0 w-40 h-40 bg-[#40E0D0]/5 rounded-full -mr-20 -mt-20 group-hover:scale-150 transition-transform duration-500"></div>
-                            
                             <div className="relative p-8 sm:p-10">
-                                {/* Icon Badge */}
                                 <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-[#40E0D0] to-[#20B0A0] rounded-2xl mb-6 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-lg">
                                     <Building2 className="text-white" size={32} />
                                 </div>
-
-                                {/* Title */}
                                 <h2 className="text-3xl font-bold text-gray-800 mb-4 group-hover:text-[#40E0D0] transition-colors">
                                     EMPRESA
                                 </h2>
-
-                                {/* Description */}
                                 <p className="text-gray-600 leading-relaxed mb-6 text-base">
                                     Publica proyectos, encuentra freelancers talentosos y haz crecer tu negocio con los mejores profesionales.
                                 </p>
-
-                                {/* Features List */}
                                 <div className="space-y-3 mb-8">
                                     <div className="flex items-center gap-3 text-sm text-gray-700">
                                         <div className="w-5 h-5 bg-[#07767c]/20 rounded-full flex items-center justify-center flex-shrink-0">
@@ -196,23 +208,19 @@ function CardSection({ userType }) {
                                         <span>Impulsa tu crecimiento</span>
                                     </div>
                                 </div>
-
-                                {/* CTA Button */}
                                 <button 
                                     onClick={(e) => handleCardClick(e, 'empresa', '/empresa')}
                                     className="group/btn w-full bg-gradient-to-r from-[#40E0D0] to-[#20B0A0] hover:from-[#20B0A0] hover:to-[#10A090] text-white font-bold py-4 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 transform hover:-translate-y-1"
                                 >
                                     <span>
                                         {
-                                            (userType === "empresa" || userType === "empresa_juridico" || userType === "empresa_natural")
+                                            (tipo_usuario === "empresa" || tipo_usuario === "empresa_juridico" || tipo_usuario === "empresa_natural")
                                             ? "Ir a mi panel" 
                                             : "Comenzar como Empresa"
                                         }
                                     </span>
                                     <ArrowRight size={20} className="group-hover/btn:translate-x-1 transition-transform" />
                                 </button>
-
-                                {/* Stats badge */}
                                 <div className="mt-6 pt-6 border-t border-gray-100">
                                     <div className="flex items-center justify-center gap-2 text-sm">
                                         <Building2 size={16} className="text-[#40E0D0]" />
@@ -244,13 +252,15 @@ function CardSection({ userType }) {
                     onClose={() => {
                         setShowLoginModal(false);
                         setTargetUserType(null);
+                        setLoginFormData({ correo: "", contraseña: "" });
                     }}
                     onOpenSecondary={() => {
                         setShowLoginModal(false);
-                        setShowLoginSecondaryModal(true);
+                        setShowLoginSecondaryModal(true); // ✅ ABRE LoginSecondaryModal
                     }}
                     onOpenRegister={() => {
                         setShowLoginModal(false);
+                        setLoginFormData({ correo: "", contraseña: "" });
                         setShowRegisterModal(true);
                     }}
                 />
@@ -261,12 +271,22 @@ function CardSection({ userType }) {
                     onClose={() => {
                         setShowLoginSecondaryModal(false);
                         setTargetUserType(null);
+                        setLoginFormData({ correo: "", contraseña: "" });
                     }}
                     onBack={() => {
                         setShowLoginSecondaryModal(false);
                         setShowLoginModal(true);
                     }}
-                    onSuccess={handleAuthSuccess}
+                    formData={loginFormData}
+                    setFormData={updateLoginFormData}
+                    handleLogin={handleLoginSubmit}
+                    loading={authLoading}
+                    errors={errors}
+                    onOpenRegister={() => {
+                        setShowLoginSecondaryModal(false);
+                        setLoginFormData({ correo: "", contraseña: "" });
+                        setShowRegisterModal(true);
+                    }}
                 />
             )}
 
@@ -275,6 +295,7 @@ function CardSection({ userType }) {
                     onClose={() => {
                         setShowRegisterModal(false);
                         setTargetUserType(null);
+                        setRegisterData({ correo: "", contraseña: "", tipoUsuario: "" });
                     }}
                     onOpenSecondary={() => {
                         setShowRegisterModal(false);
@@ -282,6 +303,7 @@ function CardSection({ userType }) {
                     }}
                     onOpenLogin={() => {
                         setShowRegisterModal(false);
+                        setRegisterData({ correo: "", contraseña: "", tipoUsuario: "" });
                         setShowLoginModal(true);
                     }}
                 />
@@ -292,15 +314,21 @@ function CardSection({ userType }) {
                     onClose={() => {
                         setShowSecondaryRegisterModal(false);
                         setTargetUserType(null);
+                        setRegisterData({ correo: "", contraseña: "", tipoUsuario: "" });
                     }}
                     onBack={() => {
                         setShowSecondaryRegisterModal(false);
                         setShowRegisterModal(true);
                     }}
-                    onSuccess={handleAuthSuccess}
+                    formData={registerData}
+                    setFormData={updateRegisterData}
+                    handleRegister={handleRegisterSubmit}
+                    loading={authLoading}
+                    errors={errors}
                     onOpenLogin={() => {
                         setShowSecondaryRegisterModal(false);
-                        setShowRegisterModal(true);
+                        setRegisterData({ correo: "", contraseña: "", tipoUsuario: "" });
+                        setShowLoginModal(true);
                     }}
                 />
             )}

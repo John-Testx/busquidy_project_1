@@ -7,12 +7,14 @@ import { toast } from 'react-toastify';
 import ModalPagoSuscripcion from "@/components/ModalPagoSuscripcion";
 import LoginModal from "@/components/Home/Modals/LoginModal";
 import LoginSecondaryModal from "@/components/Home/Modals/LoginSecondaryModal";
+import RegisterModal from "@/components/Home/Modals/RegisterModal"; 
+import SecondaryRegisterModal from "@/components/Home/Modals/SecondaryRegisterModal";
 import LoadingScreen from "@/components/LoadingScreen";
 import MainLayout from "@/components/Layouts/MainLayout";
 
 function PreciosPage() {
   const navigate = useNavigate();
-  const { isAuthenticated, tipo_usuario, id_usuario, refresh } = useAuth();
+  const { isAuthenticated, tipo_usuario, id_usuario, refresh, handleLogin, handleRegister, errors, loading: authLoading } = useAuth();
   
   const [planes, setPlanes] = useState({
     empresa_juridico: [],
@@ -26,8 +28,23 @@ function PreciosPage() {
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showLoginSecondaryModal, setShowLoginSecondaryModal] = useState(false);
-  const [activeSubscription, setActiveSubscription] = useState(null); // ⭐ NUEVO
-  const [isCanceling, setIsCanceling] = useState(false); // ⭐ NUEVO
+  const [activeSubscription, setActiveSubscription] = useState(null);
+  const [isCanceling, setIsCanceling] = useState(false);
+  const [showRegisterModal, setShowRegisterModal] = useState(false);
+  const [showSecondaryRegisterModal, setShowSecondaryRegisterModal] = useState(false);
+  const [loginFormData, setLoginFormData] = useState({ correo: "", contraseña: "" });
+
+  const updateLoginFormData = (key, value) => setLoginFormData((prev) => ({ ...prev, [key]: value }));
+
+  // Estado para el formulario de Registro
+  const [registerData, setRegisterData] = useState({
+    correo: "",
+    contraseña: "",
+    tipoUsuario: "",
+  });
+  const updateRegisterData = (key, value) => {
+      setRegisterData(prev => ({ ...prev, [key]: value }));
+  };
 
   useEffect(() => {
     fetchAllPlans();
@@ -130,6 +147,29 @@ function PreciosPage() {
     if (selectedPlan) {
       setIsPaymentModalOpen(true);
     }
+  };
+
+  const handleLoginSubmit = async () => {
+    await handleLogin(loginFormData.correo, loginFormData.contraseña, () => {
+        // Callback de éxito:
+        setLoginFormData({ correo: "", contraseña: "" }); // Limpia el formulario
+        handleLoginSuccess(); // Llama tu función de éxito existente
+    });
+};
+
+const handleRegisterSubmit = async () => {
+    await handleRegister(
+      registerData.correo,
+      registerData.contraseña,
+      registerData.tipoUsuario,
+      () => { // Callback de éxito
+        setShowSecondaryRegisterModal(false);
+        setShowRegisterModal(false);
+        setRegisterData({ correo: "", contraseña: "", tipoUsuario: "" });
+        toast.success("¡Registro exitoso! Ahora puedes iniciar sesión.");
+        setShowLoginModal(true); // Abrir modal de login tras registro exitoso
+      }
+    );
   };
 
   const PlanCard = ({ plan, tipoUsuario, destacado = false, compacto = false }) => {
@@ -491,22 +531,72 @@ function PreciosPage() {
           }}
           onOpenRegister={() => {
             setShowLoginModal(false);
-            setSelectedPlan(null);
+            setShowRegisterModal(true);
           }}
         />
       )}
 
       {showLoginSecondaryModal && (
         <LoginSecondaryModal
+            onClose={() => {
+                setShowLoginSecondaryModal(false);
+                setSelectedPlan(null);
+                setLoginFormData({ correo: "", contraseña: "" }); // Limpia el form al cerrar
+            }}
+            onBack={() => {
+                setShowLoginSecondaryModal(false);
+                setShowLoginModal(true);
+            }}
+            formData={loginFormData}
+            setFormData={updateLoginFormData}
+            errors={errors}
+            handleLogin={handleLoginSubmit}
+            loading={authLoading}
+            onOpenRegister={() => {
+                setShowLoginSecondaryModal(false);
+                setLoginFormData({ correo: "", contraseña: "" }); 
+                setShowRegisterModal(true); 
+            }}
+        />
+      )}
+      {showRegisterModal && (
+        <RegisterModal
           onClose={() => {
-            setShowLoginSecondaryModal(false);
-            setSelectedPlan(null);
+            setShowRegisterModal(false);
+            setRegisterData({ correo: "", contraseña: "", tipoUsuario: "" });
           }}
-          onBack={() => {
-            setShowLoginSecondaryModal(false);
+          onOpenSecondary={() => {
+            setShowRegisterModal(false);
+            setShowSecondaryRegisterModal(true);
+          }}
+          onOpenLogin={() => {
+            setShowRegisterModal(false);
+            setRegisterData({ correo: "", contraseña: "", tipoUsuario: "" });
             setShowLoginModal(true);
           }}
-          onSuccess={handleLoginSuccess}
+        />
+      )}
+
+      {showSecondaryRegisterModal && (
+        <SecondaryRegisterModal
+          onClose={() => {
+            setShowSecondaryRegisterModal(false);
+            setRegisterData({ correo: "", contraseña: "", tipoUsuario: "" });
+          }}
+          onBack={() => {
+            setShowSecondaryRegisterModal(false);
+            setShowRegisterModal(true);
+          }}
+          formData={registerData}
+          setFormData={updateRegisterData}
+          handleRegister={handleRegisterSubmit}
+          errors={errors}
+          loading={authLoading}
+          onOpenLogin={() => {
+            setShowSecondaryRegisterModal(false);
+            setRegisterData({ correo: "", contraseña: "", tipoUsuario: "" });
+            setShowLoginModal(true);
+          }}
         />
       )}
     </MainLayout>
