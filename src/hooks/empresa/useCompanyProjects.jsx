@@ -33,7 +33,6 @@ function useCompanyProjects({ userType, id_usuario }) {
       setProjects(data);
     } catch (err) {
       console.error('Error al cargar proyectos:', err);
-      setError('Error al cargar proyectos');
       toast.error('Algo salió mal al cargar los proyectos.');
     } finally {
       setLoading(false);

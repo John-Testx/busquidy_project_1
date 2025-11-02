@@ -114,13 +114,9 @@ function ModalCreateProject({ closeModal, id_usuario, addProject, terminologia, 
       console.log("📨 Respuesta del backend:", response);
 
       const newProject = {
-        ...finalData, // (ej: titulo, descripcion...)
-        ...response.newProject, // (Esto incluye el ID y cualquier otro dato del backend)
-        
-        // Asignación explícita del ID para asegurar la 'key' de React
-        id_proyecto: response.newProject.id_proyecto, // O 'response.newProject.id'
-        
-        // Estado y fecha que definimos localmente
+        id_proyecto: response.projectId,
+        ...response,
+        ...finalData,
         estado_publicacion: "sin publicar",
         fecha_creacion: new Date().toISOString(),
       };
