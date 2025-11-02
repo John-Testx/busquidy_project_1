@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { FaUser, FaClipboardList, FaCalendarAlt, FaBars, FaTimes, FaChevronRight, FaLock } from 'react-icons/fa';
+import { FaUser, FaClipboardList, FaCalendarAlt, FaBars, FaTimes, FaChevronRight, FaLock, FaCreditCard } from 'react-icons/fa';
 
 const SidebarFreelancer = ({ isPerfilIncompleto }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -26,6 +26,13 @@ const SidebarFreelancer = ({ isPerfilIncompleto }) => {
       icon: <FaCalendarAlt />,
       description: "Configura tu horario",
       requiresProfile: true // Solo visible si el perfil está completo
+    },
+    { 
+      path: "/freelancer-profile/subscription", 
+      name: "Mi Suscripción", 
+      icon: <FaCreditCard />,
+      description: "Gestiona tu plan",
+      requiresProfile: false
     },
   ];
 

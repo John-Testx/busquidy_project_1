@@ -23,6 +23,7 @@ const NotificationsPage = lazy(() => import('@/pages/Notifications/Notifications
 const PreciosPage = lazy(() => import('@pages/General/PreciosPage'));
 
 import LoadingScreen from '@/components/LoadingScreen';
+import SubscriptionManagement from '@/components/Payments/SubscriptionManagement';
 
 // Import Empresa components
 import { MyProjects, ViewFreelancer, ProjectView } from '@pages/Empresa';
@@ -99,6 +100,7 @@ const AppRoutes = () => {
           <Route path="view-profile" element={<ViewPerfilFreeLancer />} />
           <Route path="my-postulations" element={<MyPostulations />} />
           <Route path="availability" element={<MyAvailability />} />
+          <Route path="subscription" element={<SubscriptionManagement />} />
         </Route>        
       </Route>
 
@@ -113,6 +115,7 @@ const AppRoutes = () => {
           <Route path="info" element={<EmpresaInfo />} />
           <Route path="representante" element={<RepresentanteInfo />} />
           <Route path="acceso" element={<EmpresaAccess />} />
+          <Route path="subscription" element={<SubscriptionManagement />} />
         </Route>
 
         <Route path="/findfreelancer" element={<FindFreelancer />} />
