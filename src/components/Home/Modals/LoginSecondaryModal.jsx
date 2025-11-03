@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import Modal from "../Modal";
-import { ArrowLeft, Mail, Lock, AlertCircle, Loader2 } from "lucide-react";
+import { ArrowLeft, Mail, Lock, AlertCircle, Loader2, Eye, EyeOff } from "lucide-react";
 import { Link } from 'react-router-dom'; 
 
 const LoginSecondaryModal = ({ onClose, onBack, formData, setFormData, errors, handleLogin, loading, onOpenRegister }) => {
+    const [showPassword, setShowPassword] = useState(false);
+
     return (
         <Modal show={true} onClose={onClose} dismissOnClickOutside={true} size="lg">
             <div className="flex flex-col md:flex-row min-h-[600px]">
@@ -95,7 +97,7 @@ const LoginSecondaryModal = ({ onClose, onBack, formData, setFormData, errors, h
                                 )}
                             </div>
 
-                            {/* Password Input */}
+                            {/* Password Input CON OJITO */}
                             <div className="animate-[fadeIn_0.6s_ease-out]">
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
                                     Contraseña
@@ -103,19 +105,23 @@ const LoginSecondaryModal = ({ onClose, onBack, formData, setFormData, errors, h
                                 <div className="relative">
                                     <Lock size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 transition-colors duration-200" />
                                     <input
-                                        type="password"
+                                        type={showPassword ? "text" : "password"}
                                         placeholder="••••••••"
                                         value={formData.contraseña}
                                         onChange={(e) => setFormData('contraseña', e.target.value)}
-                                        className={`w-full pl-12 pr-4 py-3.5 bg-white border-2 rounded-xl transition-all duration-200 outline-none ${
+                                        className={`w-full pl-12 pr-12 py-3.5 bg-white border-2 rounded-xl transition-all duration-200 outline-none ${
                                             errors.contraseña 
                                                 ? 'border-red-500 focus:border-red-600' 
                                                 : 'border-gray-200 focus:border-[#07767c] focus:shadow-md'
                                         }`}
                                     />
-                                    {errors.contraseña && (
-                                        <AlertCircle size={20} className="absolute right-4 top-1/2 -translate-y-1/2 text-red-500 animate-[fadeIn_0.2s_ease-out]" />
-                                    )}
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors duration-200"
+                                    >
+                                        {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                                    </button>
                                 </div>
                                 {errors.contraseña && (
                                     <p className="text-red-500 text-sm mt-2 flex items-center gap-1 animate-[fadeIn_0.2s_ease-out]">
@@ -130,7 +136,7 @@ const LoginSecondaryModal = ({ onClose, onBack, formData, setFormData, errors, h
                                 <Link 
                                     to="/forgot-password"
                                     className="text-sm text-[#07767c] hover:text-[#055a5f] font-medium transition-colors duration-200 hover:underline"
-                                    onClick={onClose}  // Cierra el modal al hacer clic
+                                    onClick={onClose}
                                 >
                                     ¿Olvidaste tu contraseña?
                                 </Link>

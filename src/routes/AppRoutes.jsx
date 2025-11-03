@@ -26,6 +26,9 @@ const ResetPasswordPage = lazy(() => import('@pages/User/ResetPasswordPage'));
 const SettingsPage = lazy(() => import('@pages/Shared/SettingsPage'));
 const MyTransactionsPage = lazy(() => import('@pages/Shared/MyTransactionsPage'));
 
+import AuthCallback from '@/pages/User/AuthCallback';
+import CompleteProfile from '@/pages/User/CompleteProfile';
+
 import LoadingScreen from '@/components/LoadingScreen';
 import SubscriptionManagement from '@/components/Payments/SubscriptionManagement';
 
@@ -74,6 +77,10 @@ const AppRoutes = () => {
       <Route path="/unauthorized" element={<Unauthorized />} />
       <Route path="/forgot-password" element={<ForgotPasswordPage />} />
       <Route path="/reset-password" element={<ResetPasswordPage />} />
+
+      {/* Nuevas rutas de Callback de OAuth */}
+      <Route path="/auth/callback" element={<AuthCallback />} />
+      <Route path="/auth/complete-profile" element={<CompleteProfile />} />
 
       {/* Chat Routes */}
       <Route element={<ProtectedRoute allowedRoles={['freelancer', 'empresa_juridico', 'empresa_natural']} />}>
