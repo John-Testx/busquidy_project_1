@@ -21,6 +21,8 @@ const Empresa = lazy(()=> import('@pages/Empresa/Empresa'));
 const CrearTicketPublico = lazy(()=>import('@pages/Soporte/CrearTicketPublico'));
 const NotificationsPage = lazy(() => import('@/pages/Notifications/NotificationsPage'));
 const PreciosPage = lazy(() => import('@pages/General/PreciosPage'));
+const ForgotPasswordPage = lazy(() => import('@pages/User/ForgotPasswordPage'));
+const ResetPasswordPage = lazy(() => import('@pages/User/ResetPasswordPage'));
 
 import LoadingScreen from '@/components/LoadingScreen';
 import SubscriptionManagement from '@/components/Payments/SubscriptionManagement';
@@ -68,6 +70,8 @@ const AppRoutes = () => {
       <Route path="/notauthenticated" element={<NotAuthenticated />} />
       <Route path="/precios" element={<PreciosPage />} />
       <Route path="/unauthorized" element={<Unauthorized />} />
+      <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+      <Route path="/reset-password" element={<ResetPasswordPage />} />
 
       {/* Chat Routes */}
       <Route element={<ProtectedRoute allowedRoles={['freelancer', 'empresa_juridico', 'empresa_natural']} />}>
