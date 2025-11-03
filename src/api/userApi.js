@@ -115,3 +115,12 @@ export const resetPassword = async (token, nuevaContraseña) => {
   });
   return response.data;
 };
+
+/**
+ * Actualizar credenciales del usuario (email y/o contraseña)
+ * @param {Object} data - { currentPassword, newEmail?, newPassword? }
+ * @returns {Promise} Respuesta de la API
+ */
+export const updateCredentials = (data) => {
+  return apiClient.put(`${BASE}/update-credentials`, data);
+};

@@ -95,3 +95,12 @@ export const changeSubscriptionPlan = async (planId) => {
   const response = await apiClient.post("/subscriptions/change-plan", { planId });
   return response.data;
 };
+
+/**
+ * Obtiene las transacciones del usuario logueado
+ * @returns {Promise} - Lista de transacciones
+ */
+export const getMyTransactions = async () => {
+  const response = await apiClient.get("/payments/my-transactions");
+  return response.data;
+};

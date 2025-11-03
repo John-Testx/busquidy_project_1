@@ -23,6 +23,8 @@ const NotificationsPage = lazy(() => import('@/pages/Notifications/Notifications
 const PreciosPage = lazy(() => import('@pages/General/PreciosPage'));
 const ForgotPasswordPage = lazy(() => import('@pages/User/ForgotPasswordPage'));
 const ResetPasswordPage = lazy(() => import('@pages/User/ResetPasswordPage'));
+const SettingsPage = lazy(() => import('@pages/Shared/SettingsPage'));
+const MyTransactionsPage = lazy(() => import('@pages/Shared/MyTransactionsPage'));
 
 import LoadingScreen from '@/components/LoadingScreen';
 import SubscriptionManagement from '@/components/Payments/SubscriptionManagement';
@@ -78,6 +80,12 @@ const AppRoutes = () => {
         <Route path="/chat" element={<ChatPage />} />
       </Route>
 
+      {/* Shared Routes - Configuración y Transacciones */}
+      {/* <Route element={<ProtectedRoute allowedRoles={['freelancer', 'empresa_juridico', 'empresa_natural']} />}>
+        <Route path="/freelancer-profile/configuracion" element={<SettingsPage />} />
+        <Route path="/freelancer-profile/mis-transacciones" element={<MyTransactionsPage />} />
+      </Route> */}
+
       {/* Soporte Routes (Public and Private) */}
       <Route path="/busquidyGuia" element={<BusquidyGuia />} />
       <Route path="/soportehome" element={<SoporteHome />} />
@@ -105,6 +113,8 @@ const AppRoutes = () => {
           <Route path="my-postulations" element={<MyPostulations />} />
           <Route path="availability" element={<MyAvailability />} />
           <Route path="subscription" element={<SubscriptionManagement />} />
+          <Route path="configuracion" element={<SettingsPage />} />
+          <Route path="mis-transacciones" element={<MyTransactionsPage />} />
         </Route>        
       </Route>
 
@@ -120,6 +130,8 @@ const AppRoutes = () => {
           <Route path="representante" element={<RepresentanteInfo />} />
           <Route path="acceso" element={<EmpresaAccess />} />
           <Route path="subscription" element={<SubscriptionManagement />} />
+          <Route path="configuracion" element={<SettingsPage />} />
+          <Route path="mis-transacciones" element={<MyTransactionsPage />} />
         </Route>
 
         <Route path="/findfreelancer" element={<FindFreelancer />} />

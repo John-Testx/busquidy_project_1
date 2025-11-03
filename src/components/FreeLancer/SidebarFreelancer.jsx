@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { FaUser, FaClipboardList, FaCalendarAlt, FaBars, FaTimes, FaChevronRight, FaLock, FaCreditCard } from 'react-icons/fa';
+import { Settings, Receipt, FileText } from 'lucide-react';
 
 const SidebarFreelancer = ({ isPerfilIncompleto }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -11,21 +12,21 @@ const SidebarFreelancer = ({ isPerfilIncompleto }) => {
       name: "Mi Perfil / CV", 
       icon: <FaUser />,
       description: "Gestiona tu información",
-      requiresProfile: false // Siempre visible
+      requiresProfile: false
     },
     { 
       path: "/freelancer-profile/my-postulations", 
       name: "Mis Postulaciones", 
       icon: <FaClipboardList />,
       description: "Ver tus aplicaciones",
-      requiresProfile: true // Solo visible si el perfil está completo
+      requiresProfile: true
     },
     { 
       path: "/freelancer-profile/availability", 
       name: "Disponibilidad", 
       icon: <FaCalendarAlt />,
       description: "Configura tu horario",
-      requiresProfile: true // Solo visible si el perfil está completo
+      requiresProfile: true
     },
     { 
       path: "/freelancer-profile/subscription", 
@@ -34,14 +35,27 @@ const SidebarFreelancer = ({ isPerfilIncompleto }) => {
       description: "Gestiona tu plan",
       requiresProfile: false
     },
+    { 
+    path: '/freelancer-profile/mis-transacciones', 
+    name: 'Mis Transacciones', 
+    icon: <FileText />,
+    description: 'Historial de pagos',
+    requiresProfile: false
+  },
+  { 
+    path: '/freelancer-profile/configuracion', 
+    name: 'Configuración', 
+    icon: <Settings />,
+    description: 'Seguridad y cuenta',
+    requiresProfile: false
+  },
   ];
 
-  // Filtrar items según si el perfil está completo
   const visibleMenuItems = menuItems.filter(item => {
     if (item.requiresProfile) {
-      return !isPerfilIncompleto; // Solo mostrar si el perfil está completo
+      return !isPerfilIncompleto;
     }
-    return true; // Siempre mostrar items que no requieren perfil
+    return true;
   });
 
   return (
