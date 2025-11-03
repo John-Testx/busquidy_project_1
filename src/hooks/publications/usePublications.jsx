@@ -1,143 +1,227 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
-import { getPublications, getFreelancerApplications, createApplication } from '@/api/publicationsApi';
+import { useState, useEffect, useCallback } from 'react';
+import { getPublications, createApplication, checkUserApplication } from '@/api/publicationsApi';
+import { checkFreelancerProfileStatus } from '@/api/freelancerApi';
 
-const usePublications = (userType, id_usuario, filters) => {
+/**
+ * Custom hook para gestionar publicaciones y postulaciones
+ * @param {string} userType - Tipo de usuario
+ * @param {number} id_usuario - ID del usuario
+ * @param {Object} filters - Filtros aplicados
+ * @returns {Object} Estado y funciones para gestionar publicaciones
+ */
+function usePublications(userType, id_usuario, filters) {
   const [publications, setPublications] = useState([]);
-  const [appliedPublications, setAppliedPublications] = useState([]);
+  const [appliedPublications, setAppliedPublications] = useState(new Set());
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [modalMessage, setModalMessage] = useState({ show: false, message: '' });
+  const [modalMessage, setModalMessage] = useState({ show: false, message: '', type: 'success' });
 
-  // Fetch applied publications for freelancers
-  useEffect(() => {
-    const fetchAppliedPublications = async () => {
-      if (userType === 'freelancer' && id_usuario) {
-        try {
-          const data = await getFreelancerApplications(id_usuario);
-          setAppliedPublications(data.map(app => app.id_publicacion));
-        } catch (error) {
-          console.error('Error fetching applied publications:', error);
-          setError('Error al cargar las postulaciones');
-        }
-      }
-    };
-    fetchAppliedPublications();
-  }, [userType, id_usuario]);
-
-  // Fetch all publications
-  useEffect(() => {
-    const fetchPublications = async () => {
-      try {
-        setLoading(true);
-        const data = await getPublications();
-        const activePublications = data.filter(pub => pub.estado_publicacion === 'activo');
-        setPublications(activePublications);
-        setError(null);
-      } catch (error) {
-        console.error('Error fetching publications:', error);
-        setError('Error al cargar las publicaciones');
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchPublications();
+  /**
+   * Cargar publicaciones desde la API
+   */
+  const fetchPublications = useCallback(async () => {
+    try {
+      setLoading(true);
+      const data = await getPublications();
+      setPublications(data);
+    } catch (error) {
+      console.error('Error al cargar publicaciones:', error);
+      setModalMessage({
+        show: true,
+        message: 'Error al cargar las publicaciones',
+        type: 'error'
+      });
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  // Filter and sort publications
-  const filteredPublications = useMemo(() => {
-    let result = [...publications];
+  /**
+   * Verificar si el usuario ya postuló a una publicación
+   */
+  const checkIfApplied = useCallback(async (id_publicacion) => {
+    try {
+      const { hasApplied } = await checkUserApplication(id_publicacion);
+      return hasApplied;
+    } catch (error) {
+      console.error('Error al verificar postulación:', error);
+      return false;
+    }
+  }, []);
 
-    // Search filter
-    if (filters.searchText) {
-      result = result.filter(pub => 
-        pub.titulo.toLowerCase().includes(filters.searchText.toLowerCase())
+  /**
+   * Verificar el perfil del freelancer antes de postular
+   */
+  const verifyFreelancerProfile = useCallback(async () => {
+    if (userType !== 'freelancer' || !id_usuario) {
+      return { isComplete: false, message: 'Debes ser freelancer para postular' };
+    }
+
+    try {
+      const { isPerfilIncompleto } = await checkFreelancerProfileStatus(id_usuario);
+      
+      if (isPerfilIncompleto) {
+        return {
+          isComplete: false,
+          message: 'Debes completar tu perfil de freelancer para poder postular'
+        };
+      }
+      
+      return { isComplete: true };
+    } catch (error) {
+      console.error('Error al verificar perfil:', error);
+      return {
+        isComplete: false,
+        message: 'Error al verificar tu perfil. Intenta nuevamente.'
+      };
+    }
+  }, [userType, id_usuario]);
+
+  /**
+   * Aplicar a una publicación
+   */
+  const applyToPublication = useCallback(async (id_publicacion) => {
+    try {
+      // 1. Verificar perfil del freelancer
+      const profileCheck = await verifyFreelancerProfile();
+      
+      if (!profileCheck.isComplete) {
+        setModalMessage({
+          show: true,
+          message: profileCheck.message,
+          type: 'warning',
+          action: {
+            text: 'Completar Perfil',
+            link: '/freelancer/create-profile'
+          }
+        });
+        return { success: false, error: 'INCOMPLETE_PROFILE' };
+      }
+
+      // 2. Verificar si ya postuló
+      const hasApplied = await checkIfApplied(id_publicacion);
+      
+      if (hasApplied) {
+        setModalMessage({
+          show: true,
+          message: 'Ya has postulado a este proyecto',
+          type: 'info'
+        });
+        return { success: false, error: 'DUPLICATE_APPLICATION' };
+      }
+
+      // 3. Crear la postulación
+      const response = await createApplication(id_publicacion);
+      
+      // 4. Actualizar el estado local
+      setAppliedPublications(prev => new Set([...prev, id_publicacion]));
+      
+      setModalMessage({
+        show: true,
+        message: '¡Postulación enviada exitosamente!',
+        type: 'success'
+      });
+
+      return { success: true, data: response };
+    } catch (error) {
+      console.error('Error al postular:', error);
+      
+      // Manejar diferentes tipos de errores
+      const errorData = error.response?.data;
+      
+      if (errorData?.errorType === 'INCOMPLETE_PROFILE') {
+        setModalMessage({
+          show: true,
+          message: errorData.error || 'Debes completar tu perfil para postular',
+          type: 'warning',
+          action: {
+            text: 'Completar Perfil',
+            link: '/freelancer/create-profile'
+          }
+        });
+      } else if (errorData?.errorType === 'DUPLICATE_APPLICATION') {
+        setModalMessage({
+          show: true,
+          message: 'Ya has postulado a este proyecto',
+          type: 'info'
+        });
+        setAppliedPublications(prev => new Set([...prev, id_publicacion]));
+      } else {
+        setModalMessage({
+          show: true,
+          message: errorData?.error || 'Error al enviar la postulación. Intenta nuevamente.',
+          type: 'error'
+        });
+      }
+
+      return { success: false, error: errorData?.errorType || 'UNKNOWN_ERROR' };
+    }
+  }, [verifyFreelancerProfile, checkIfApplied]);
+
+  /**
+   * Verificar si una publicación está aplicada
+   */
+  const isPublicationApplied = useCallback((id_publicacion) => {
+    return appliedPublications.has(id_publicacion);
+  }, [appliedPublications]);
+
+  /**
+   * Cerrar el modal de mensaje
+   */
+  const closeModal = useCallback(() => {
+    setModalMessage({ show: false, message: '', type: 'success' });
+  }, []);
+
+  /**
+   * Aplicar filtros a las publicaciones
+   */
+  const filteredPublications = useCallback(() => {
+    let filtered = [...publications];
+
+    if (filters.search) {
+      const searchLower = filters.search.toLowerCase();
+      filtered = filtered.filter(pub =>
+        pub.titulo?.toLowerCase().includes(searchLower) ||
+        pub.descripcion?.toLowerCase().includes(searchLower) ||
+        pub.habilidades?.toLowerCase().includes(searchLower)
       );
     }
 
-    // Sort filter
-    if (filters.sortBy === 'fecha') {
-      result = result.sort((a, b) => new Date(b.fecha_publicacion) - new Date(a.fecha_publicacion));
-    } else if (filters.sortBy === 'salario') {
-      result = result.sort((a, b) => b.presupuesto - a.presupuesto);
+    if (filters.ubicacion) {
+      filtered = filtered.filter(pub =>
+        pub.ubicacion?.toLowerCase().includes(filters.ubicacion.toLowerCase())
+      );
     }
 
-    // Date filter
-    const today = new Date();
-    if (filters.date === 'hoy') {
-      result = result.filter(pub => {
-        const pubDate = new Date(pub.fecha_publicacion);
-        return pubDate.toDateString() === today.toDateString();
-      });
-    } else if (filters.date === 'semana') {
-      const oneWeekAgo = new Date(today);
-      oneWeekAgo.setDate(today.getDate() - 7);
-      result = result.filter(pub => {
-        const pubDate = new Date(pub.fecha_publicacion);
-        return pubDate >= oneWeekAgo;
-      });
-    } else if (filters.date === 'mes') {
-      const oneMonthAgo = new Date(today);
-      oneMonthAgo.setMonth(today.getMonth() - 1);
-      result = result.filter(pub => {
-        const pubDate = new Date(pub.fecha_publicacion);
-        return pubDate >= oneMonthAgo;
+    if (filters.presupuesto) {
+      filtered = filtered.filter(pub => {
+        const presupuesto = pub.presupuesto?.toLowerCase() || '';
+        return presupuesto.includes(filters.presupuesto.toLowerCase());
       });
     }
 
-    return result;
+    if (filters.tipo && filters.tipo !== 'todos') {
+      filtered = filtered.filter(pub => pub.tipo === filters.tipo);
+    }
+
+    return filtered;
   }, [publications, filters]);
 
-  // Check if publication is applied
-  const isPublicationApplied = useCallback((id_publicacion) => {
-    return appliedPublications.includes(id_publicacion);
-  }, [appliedPublications]);
-
-  // Apply to publication
-  const applyToPublication = useCallback(async (id_publicacion) => {
-    try {
-      if (userType !== 'freelancer') {
-        setModalMessage({
-          show: true,
-          message: 'Solo los freelancers pueden postular a publicaciones.'
-        });
-        return { success: false };
-      }
-
-      await createApplication(id_publicacion, id_usuario);
-      
-      setModalMessage({
-        show: true,
-        message: 'Postulación enviada exitosamente.'
-      });
-      setAppliedPublications(prev => [...prev, id_publicacion]);
-      
-      return { success: true };
-    } catch (error) {
-      console.error('Error applying to publication:', error);
-      setModalMessage({
-        show: true,
-        message: 'Error al enviar la postulación.'
-      });
-      return { success: false };
-    }
-  }, [userType, id_usuario]);
-
-  // Close modal
-  const closeModal = useCallback(() => {
-    setModalMessage({ show: false, message: '' });
-  }, []);
+  // Cargar publicaciones al montar el componente
+  useEffect(() => {
+    fetchPublications();
+  }, [fetchPublications]);
 
   return {
     publications,
-    filteredPublications,
-    appliedPublications,
+    filteredPublications: filteredPublications(),
     loading,
-    error,
     modalMessage,
-    isPublicationApplied,
     applyToPublication,
-    closeModal
+    isPublicationApplied,
+    checkIfApplied,
+    closeModal,
+    refreshPublications: fetchPublications
   };
-};
+}
 
 export default usePublications;
