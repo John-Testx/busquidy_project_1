@@ -1,6 +1,7 @@
 import React from "react";
 import Modal from "../Modal";
 import { ArrowLeft, Mail, Lock, AlertCircle, Loader2 } from "lucide-react";
+import { Link } from 'react-router-dom'; 
 
 const LoginSecondaryModal = ({ onClose, onBack, formData, setFormData, errors, handleLogin, loading, onOpenRegister }) => {
     return (
@@ -126,11 +127,15 @@ const LoginSecondaryModal = ({ onClose, onBack, formData, setFormData, errors, h
 
                             {/* Forgot Password */}
                             <div className="text-right animate-[fadeIn_0.7s_ease-out]">
-                                <a href="#" className="text-sm text-[#07767c] hover:text-[#055a5f] font-medium transition-colors duration-200 hover:underline">
+                                <Link 
+                                    to="/forgot-password"
+                                    className="text-sm text-[#07767c] hover:text-[#055a5f] font-medium transition-colors duration-200 hover:underline"
+                                    onClick={onClose}  // Cierra el modal al hacer clic
+                                >
                                     ¿Olvidaste tu contraseña?
-                                </a>
+                                </Link>
                             </div>
-
+                            
                             {/* Submit Button */}
                             <button 
                                 className="w-full bg-gradient-to-r from-[#07767c] to-[#055a5f] hover:from-[#055a5f] hover:to-[#043d42] text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 group transform hover:-translate-y-0.5 animate-[fadeIn_0.8s_ease-out]"

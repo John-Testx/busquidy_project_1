@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Building2, UserCircle, Shield, ChevronRight } from 'lucide-react';
+import { Building2, UserCircle, Shield, ChevronRight, CreditCard } from 'lucide-react';
 
 const sections = [
   { 
@@ -20,6 +20,12 @@ const sections = [
     label: 'Datos de Acceso', 
     icon: <Shield size={20} />,
     description: 'Seguridad y cuenta'
+  },
+  { 
+    path: 'subscription', 
+    label: 'Mi Suscripción', 
+    icon: <CreditCard size={20} />,
+    description: 'Gestiona tu plan'
   },
 ];
 

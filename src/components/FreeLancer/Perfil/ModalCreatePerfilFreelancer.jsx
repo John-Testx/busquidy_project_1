@@ -300,10 +300,10 @@ function ModalCreatePerfilFreelancer({ closeModal, id_usuario }) {
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-5xl max-h-[80vh] overflow-hidden flex flex-col">
         
         {/* Header - Más compacto */}
-        <div className="bg-gradient-to-r from-teal-600 to-teal-700 px-6 py-4 flex items-center justify-between border-b border-teal-800 rounded-t-2xl flex-shrink-0">
+        <div className="bg-gradient-to-r from-[#07767c] to-[#0a9fa6] px-6 py-4 flex items-center justify-between border-b border-[#07767c]/30 rounded-t-2xl flex-shrink-0">
           <div>
             <h2 className="text-xl font-bold text-white">Crear Perfil Profesional</h2>
-            <p className="text-teal-100 text-xs mt-1">Paso {currentStep} de {TOTAL_STEPS}: {STEP_TITLES[currentStep]}</p>
+            <p className="text-white/80 text-xs mt-1">Paso {currentStep} de {TOTAL_STEPS}: {STEP_TITLES[currentStep]}</p>
           </div>
           <button
             onClick={closeModal}

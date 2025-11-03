@@ -21,8 +21,11 @@ const Empresa = lazy(()=> import('@pages/Empresa/Empresa'));
 const CrearTicketPublico = lazy(()=>import('@pages/Soporte/CrearTicketPublico'));
 const NotificationsPage = lazy(() => import('@/pages/Notifications/NotificationsPage'));
 const PreciosPage = lazy(() => import('@pages/General/PreciosPage'));
+const ForgotPasswordPage = lazy(() => import('@pages/User/ForgotPasswordPage'));
+const ResetPasswordPage = lazy(() => import('@pages/User/ResetPasswordPage'));
 
 import LoadingScreen from '@/components/LoadingScreen';
+import SubscriptionManagement from '@/components/Payments/SubscriptionManagement';
 
 // Import Empresa components
 import { MyProjects, ViewFreelancer, ProjectView } from '@pages/Empresa';
@@ -67,6 +70,8 @@ const AppRoutes = () => {
       <Route path="/notauthenticated" element={<NotAuthenticated />} />
       <Route path="/precios" element={<PreciosPage />} />
       <Route path="/unauthorized" element={<Unauthorized />} />
+      <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+      <Route path="/reset-password" element={<ResetPasswordPage />} />
 
       {/* Chat Routes */}
       <Route element={<ProtectedRoute allowedRoles={['freelancer', 'empresa_juridico', 'empresa_natural']} />}>
@@ -99,6 +104,7 @@ const AppRoutes = () => {
           <Route path="view-profile" element={<ViewPerfilFreeLancer />} />
           <Route path="my-postulations" element={<MyPostulations />} />
           <Route path="availability" element={<MyAvailability />} />
+          <Route path="subscription" element={<SubscriptionManagement />} />
         </Route>        
       </Route>
 
@@ -113,6 +119,7 @@ const AppRoutes = () => {
           <Route path="info" element={<EmpresaInfo />} />
           <Route path="representante" element={<RepresentanteInfo />} />
           <Route path="acceso" element={<EmpresaAccess />} />
+          <Route path="subscription" element={<SubscriptionManagement />} />
         </Route>
 
         <Route path="/findfreelancer" element={<FindFreelancer />} />

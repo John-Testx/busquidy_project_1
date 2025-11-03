@@ -87,3 +87,31 @@ export const getMyUsage = async () => {
   const response = await apiClient.get('/me/usage');
   return response.data;
 };
+
+// =============================================
+// RECUPERACIÓN DE CONTRASEÑA
+// =============================================
+
+/**
+ * Solicita un enlace de recuperación de contraseña
+ * @param {string} correo - Correo del usuario
+ * @returns {Promise<Object>} Mensaje de confirmación
+ */
+export const requestPasswordReset = async (correo) => {
+  const response = await apiClient.post(`${BASE}/forgot-password`, { correo });
+  return response.data;
+};
+
+/**
+ * Resetea la contraseña usando el token
+ * @param {string} token - Token de reseteo
+ * @param {string} nuevaContraseña - Nueva contraseña
+ * @returns {Promise<Object>} Mensaje de confirmación
+ */
+export const resetPassword = async (token, nuevaContraseña) => {
+  const response = await apiClient.post(`${BASE}/reset-password`, {
+    token,
+    nuevaContraseña,
+  });
+  return response.data;
+};
