@@ -19,7 +19,7 @@ function InclusionLaboral({ perfilData, openAddModal, openEditModal }) {
         ) : (
           <button 
             onClick={() => openAddModal('inclusion_laboral')}
-            className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors font-semibold flex items-center gap-2"
+            className="px-4 py-2 bg-[#07767c] text-white rounded-lg hover:bg-[#05595d] transition-colors font-semibold flex items-center gap-2"
           >
             <Plus size={18} />
             Agregar

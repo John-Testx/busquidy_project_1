@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { AlertCircle, Loader } from "lucide-react";
 import LoadingScreen from "@/components/LoadingScreen";
 import ModalCreatePerfilFreelancer from "@components/FreeLancer/Perfil/ModalCreatePerfilFreelancer";
-import { checkProfileExists, getFreelancerProfile } from "@/api/freelancerApi";
+import { checkProfileExists } from "@/api/freelancerApi";
 import { useAuth } from "@/hooks";
 import useFreelancerProfile from '@/hooks/freelancer/useFreelancerProfile';
 import ModalGestionSeccion from '@/components/FreeLancer/Perfil/ModalGestionSeccion';
@@ -12,7 +12,8 @@ import ModalGestionSeccion from '@/components/FreeLancer/Perfil/ModalGestionSecc
 import ProfileCreationOptions from "@components/FreeLancer/Perfil/ProfileCreationOptions";
 import CreateProfileCv from "@/components/FreeLancer/Perfil/CreateProfileCv";
 
-// Componentes para perfil completo (NUEVOS)
+// Componentes para perfil completo
+import ProfileSidebar from '@/components/FreeLancer/Perfil/ProfileSidebar';
 import InformacionGeneral from '@/components/FreeLancer/Perfil/PerfilSections/InformacionGeneral';
 import Presentacion from '@/components/FreeLancer/Perfil/PerfilSections/Presentacion';
 import ExperienciaLaboral from '@/components/FreeLancer/Perfil/PerfilSections/ExperienciaLaboral';
@@ -32,7 +33,6 @@ function ViewPerfilFreeLancer() {
   const [showModal, setShowModal] = useState(false);
   const [creationMethod, setCreationMethod] = useState(null);
 
-  // Hook CRUD solo se usa cuando hay id_usuario y perfil completo
   const {
     freelancer,
     loading: loadingProfile,
@@ -70,10 +70,8 @@ function ViewPerfilFreeLancer() {
     }
   };
 
-  // Loading inicial
   if (loading) return <LoadingScreen />;
 
-  // Verificación de tipo de usuario
   if (userType !== "freelancer") {
     return (
       <div className="min-h-screen bg-gradient-to-br from-teal-50 via-cyan-50 to-blue-50 flex items-center justify-center px-4 py-16">
@@ -86,7 +84,7 @@ function ViewPerfilFreeLancer() {
               <div>
                 <h2 className="font-bold text-yellow-900 text-2xl mb-3">Acceso Restringido</h2>
                 <p className="text-yellow-800 text-lg mb-6">
-                  Esta sección solo está disponible para usuarios freelancer. Por favor, verifica tu tipo de cuenta.
+                  Esta sección solo está disponible para usuarios freelancer.
                 </p>
                 <button
                   onClick={() => navigate("/")}
@@ -102,7 +100,6 @@ function ViewPerfilFreeLancer() {
     );
   }
 
-  // Error general
   if (error) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-teal-50 via-cyan-50 to-blue-50 flex items-center justify-center px-4 py-16">
@@ -129,7 +126,7 @@ function ViewPerfilFreeLancer() {
     );
   }
 
-  // RENDER: Perfil Incompleto
+  // PERFIL INCOMPLETO
   if (isPerfilIncompleto) {
     return (
       <>
@@ -162,7 +159,6 @@ function ViewPerfilFreeLancer() {
     );
   }
 
-  // RENDER: Loading perfil completo
   if (loadingProfile && !freelancer) {
     return (
       <div className="min-h-screen bg-gray-50 flex justify-center items-center py-20">
@@ -174,7 +170,6 @@ function ViewPerfilFreeLancer() {
     );
   }
 
-  // Error del hook de perfil
   if (profileError) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -182,7 +177,7 @@ function ViewPerfilFreeLancer() {
           <p className="text-red-600 font-semibold">{profileError}</p>
           <button 
             onClick={refreshProfile}
-            className="mt-4 px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800"
+            className="mt-4 px-4 py-2 bg-[#07767c] text-white rounded-lg hover:bg-[#05595d] transition-colors"
           >
             Reintentar
           </button>
@@ -191,7 +186,6 @@ function ViewPerfilFreeLancer() {
     );
   }
 
-  // Si no hay datos del freelancer
   if (!freelancer) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -200,98 +194,79 @@ function ViewPerfilFreeLancer() {
     );
   }
 
-  // Determinar la función de submit según el modo del modal
   const handleModalSubmit = modalState.mode === 'add' ? handleAddSubmit : handleEditSubmit;
 
-  // RENDER: Perfil Completo con funcionalidad CRUD
+  // PERFIL COMPLETO CON LAYOUT DE 3 COLUMNAS
   return (
     <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-5xl mx-auto px-4">
-        {/* Header del Perfil */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
-          <div className="flex items-center gap-6">
-            <div className="w-24 h-24 bg-gradient-to-br from-[#07767c] to-[#05595d] rounded-full flex items-center justify-center">
-              <span className="text-3xl font-bold text-white">
-                {freelancer.antecedentesPersonales?.nombres?.[0]}{freelancer.antecedentesPersonales?.apellidos?.[0]}
-              </span>
-            </div>
-            <div className="flex-1">
-              <h1 className="text-3xl font-bold text-gray-900">
-                {freelancer.antecedentesPersonales?.nombres} {freelancer.antecedentesPersonales?.apellidos}
-              </h1>
-              <p className="text-gray-600 mt-1">
-                {freelancer.antecedentesPersonales?.ciudad}, {freelancer.antecedentesPersonales?.region}
-              </p>
-              {freelancer.freelancer?.calificacion_promedio && (
-                <div className="flex items-center gap-2 mt-2">
-                  <span className="text-yellow-500">★</span>
-                  <span className="font-semibold">{freelancer.freelancer.calificacion_promedio.toFixed(1)}</span>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
+      <div className="max-w-7xl mx-auto px-4">
+        {/* Grid de 3 columnas: Sidebar izquierdo + Contenido principal */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          
+          {/* SIDEBAR IZQUIERDO */}
+          <ProfileSidebar perfilData={freelancer} />
 
-        {/* Secciones del Perfil */}
-        <div className="space-y-6">
-          <InformacionGeneral 
-            perfilData={freelancer}
-            openEditModal={openEditModal}
-          />
-          
-          <Presentacion 
-            perfilData={freelancer}
-            openEditModal={openEditModal}
-          />
-          
-          <ExperienciaLaboral 
-            perfilData={freelancer}
-            openAddModal={openAddModal}
-            openEditModal={openEditModal}
-            handleDelete={handleDelete}
-          />
-          
-          <FormacionAcademica 
-            perfilData={freelancer}
-            openAddModal={openAddModal}
-            openEditModal={openEditModal}
-            handleDelete={handleDelete}
-          />
-          
-          <Conocimientos 
-            perfilData={freelancer}
-            openAddModal={openAddModal}
-            openEditModal={openEditModal}
-            handleDelete={handleDelete}
-          />
-          
-          <CursosCertificaciones 
-            perfilData={freelancer}
-            openAddModal={openAddModal}
-            openEditModal={openEditModal}
-            handleDelete={handleDelete}
-          />
-          
-          <PretensionesLaborales 
-            perfilData={freelancer}
-            openEditModal={openEditModal}
-          />
-          
-          <InclusionLaboral 
-            perfilData={freelancer}
-            openAddModal={openAddModal}
-            openEditModal={openEditModal}
-          />
-          
-          <Emprendimiento 
-            perfilData={freelancer}
-            openAddModal={openAddModal}
-            openEditModal={openEditModal}
-          />
+          {/* CONTENIDO PRINCIPAL (2 columnas) */}
+          <div className="lg:col-span-2 space-y-6">
+            <InformacionGeneral 
+              perfilData={freelancer}
+              openEditModal={openEditModal}
+            />
+            
+            <Presentacion 
+              perfilData={freelancer}
+              openEditModal={openEditModal}
+            />
+            
+            <ExperienciaLaboral 
+              perfilData={freelancer}
+              openAddModal={openAddModal}
+              openEditModal={openEditModal}
+              handleDelete={handleDelete}
+            />
+            
+            <FormacionAcademica 
+              perfilData={freelancer}
+              openAddModal={openAddModal}
+              openEditModal={openEditModal}
+              handleDelete={handleDelete}
+            />
+            
+            <Conocimientos 
+              perfilData={freelancer}
+              openAddModal={openAddModal}
+              openEditModal={openEditModal}
+              handleDelete={handleDelete}
+            />
+            
+            <CursosCertificaciones 
+              perfilData={freelancer}
+              openAddModal={openAddModal}
+              openEditModal={openEditModal}
+              handleDelete={handleDelete}
+            />
+            
+            <PretensionesLaborales 
+              perfilData={freelancer}
+              openEditModal={openEditModal}
+            />
+            
+            <InclusionLaboral 
+              perfilData={freelancer}
+              openAddModal={openAddModal}
+              openEditModal={openEditModal}
+            />
+            
+            <Emprendimiento 
+              perfilData={freelancer}
+              openAddModal={openAddModal}
+              openEditModal={openEditModal}
+            />
+          </div>
         </div>
       </div>
 
-      {/* Modal de Gestión de Secciones */}
+      {/* Modal de Gestión */}
       <ModalGestionSeccion
         isOpen={modalState.isOpen}
         onClose={closeModal}

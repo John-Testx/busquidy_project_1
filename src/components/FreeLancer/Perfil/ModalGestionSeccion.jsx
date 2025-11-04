@@ -8,14 +8,11 @@ import FormIdioma from './Forms/FormIdioma';
 import FormHabilidad from './Forms/FormHabilidad';
 import FormPresentacion from './Forms/FormPresentacion';
 import FormPretensiones from './Forms/FormPretensiones';
-import FormInclusionLaboral from './Forms/FormInclusionLaboral';      // NUEVO
-import FormEmprendimiento from './Forms/FormEmprendimiento';          // NUEVO
-import FormInformacionGeneral from './Forms/FormInformacionGeneral';  // NUEVO
-import FormFormacion from './Forms/FormFormacion';                    // NUEVO
+import FormInclusionLaboral from './Forms/FormInclusionLaboral';
+import FormEmprendimiento from './Forms/FormEmprendimiento';
+import FormInformacionGeneral from './Forms/FormInformacionGeneral';
+import FormFormacion from './Forms/FormFormacion';
 
-/**
- * Modal reutilizable para gestionar las secciones del perfil
- */
 function ModalGestionSeccion({ 
   isOpen, 
   onClose, 
@@ -27,7 +24,6 @@ function ModalGestionSeccion({
   const [formData, setFormData] = useState({});
   const [submitting, setSubmitting] = useState(false);
 
-  // Inicializar formData cuando cambie el currentItem
   useEffect(() => {
     if (mode === 'edit' && currentItem) {
       setFormData(currentItem);
@@ -51,7 +47,6 @@ function ModalGestionSeccion({
       if (mode === 'add') {
         result = await onSubmit(formData);
       } else {
-        // Para edit, necesitamos el ID del ítem
         const itemId = currentItem?.id_trabajo_practica || 
                        currentItem?.id_educacion_superior || 
                        currentItem?.id_educacion_basica_media ||
@@ -78,7 +73,6 @@ function ModalGestionSeccion({
     }
   };
 
-  // Renderizar el formulario correspondiente según la sección
   const renderForm = () => {
     const commonProps = {
       formData,
@@ -89,40 +83,28 @@ function ModalGestionSeccion({
     switch (sectionName) {
       case 'experiencia':
         return <FormExperiencia {...commonProps} />;
-      
       case 'educacion_superior':
         return <FormEducacionSuperior {...commonProps} />;
-      
       case 'educacion_basica':
         return <FormEducacionBasica {...commonProps} />;
-      
       case 'curso':
         return <FormCurso {...commonProps} />;
-      
       case 'idioma':
         return <FormIdioma {...commonProps} />;
-      
       case 'habilidad':
         return <FormHabilidad {...commonProps} />;
-      
       case 'presentacion':
         return <FormPresentacion {...commonProps} />;
-      
       case 'pretensiones':
         return <FormPretensiones {...commonProps} />;
-      
-      case 'inclusion_laboral':                          // NUEVO
+      case 'inclusion_laboral':
         return <FormInclusionLaboral {...commonProps} />;
-      
-      case 'emprendimiento':                             // NUEVO
+      case 'emprendimiento':
         return <FormEmprendimiento {...commonProps} />;
-      
-      case 'informacion_general':                        // NUEVO
+      case 'informacion_general':
         return <FormInformacionGeneral {...commonProps} />;
-      
-      case 'formacion':                                  // NUEVO
+      case 'formacion':
         return <FormFormacion {...commonProps} />;
-      
       default:
         return <p className="text-red-600">Sección no reconocida: {sectionName}</p>;
     }
@@ -138,10 +120,10 @@ function ModalGestionSeccion({
       habilidad: 'Habilidad',
       presentacion: 'Presentación',
       pretensiones: 'Pretensiones Laborales',
-      inclusion_laboral: 'Inclusión Laboral',          // NUEVO
-      emprendimiento: 'Emprendimiento',                // NUEVO
-      informacion_general: 'Información General',      // NUEVO
-      formacion: 'Nivel Educacional'                   // NUEVO
+      inclusion_laboral: 'Inclusión Laboral',
+      emprendimiento: 'Emprendimiento',
+      informacion_general: 'Información General',
+      formacion: 'Nivel Educacional'
     };
     
     const accion = mode === 'add' ? 'Agregar' : 'Editar';
@@ -149,14 +131,14 @@ function ModalGestionSeccion({
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
-          <h2 className="text-2xl font-bold text-gray-900">{getTitulo()}</h2>
+        <div className="sticky top-0 bg-gradient-to-r from-[#07767c] to-[#40E0D0] px-6 py-4 flex items-center justify-between rounded-t-xl">
+          <h2 className="text-2xl font-bold text-white">{getTitulo()}</h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
+            className="text-white hover:bg-white/20 rounded-full p-2 transition-colors"
             disabled={submitting}
           >
             <X size={24} />
@@ -180,9 +162,16 @@ function ModalGestionSeccion({
             <button
               type="submit"
               disabled={submitting}
-              className="px-6 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors font-semibold disabled:opacity-50"
+              className="px-6 py-2 bg-[#07767c] text-white rounded-lg hover:bg-[#05595d] transition-colors font-semibold disabled:opacity-50 flex items-center gap-2"
             >
-              {submitting ? 'Guardando...' : 'Guardar'}
+              {submitting ? (
+                <>
+                  <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent" />
+                  Guardando...
+                </>
+              ) : (
+                'Guardar'
+              )}
             </button>
           </div>
         </form>

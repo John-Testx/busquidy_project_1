@@ -15,14 +15,14 @@ function FormacionAcademica({ perfilData, openAddModal, openEditModal, handleDel
           <h3 className="font-bold text-gray-900">Nivel educacional</h3>
           <button 
             onClick={() => openEditModal('formacion', nivelEducacional)}
-            className="px-4 py-2 border-2 border-gray-800 text-gray-800 rounded-lg hover:bg-gray-800 hover:text-white transition-colors font-semibold flex items-center gap-2"
+            className="px-4 py-2 border-2 border-[#07767c] text-[#07767c] rounded-lg hover:bg-[#07767c] hover:text-white transition-colors font-semibold flex items-center gap-2"
           >
             <Edit size={18} />
             Editar
           </button>
         </div>
-        <div className="bg-gray-50 rounded-lg p-4">
-          <p className="text-red-600 font-bold">{nivelEducacional.nivel_academico || 'No especificado'}</p>
+        <div className="bg-gradient-to-br from-[#07767c]/10 to-[#40E0D0]/10 rounded-lg p-4 border border-[#07767c]/20">
+          <p className="text-[#07767c] font-bold text-lg">{nivelEducacional.nivel_academico || 'No especificado'}</p>
           <p className="text-sm text-gray-600">{nivelEducacional.estado || ''}</p>
         </div>
       </div>
@@ -33,7 +33,7 @@ function FormacionAcademica({ perfilData, openAddModal, openEditModal, handleDel
           <h3 className="font-bold text-gray-900">Educación superior</h3>
           <button 
             onClick={() => openAddModal('educacion_superior')}
-            className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors font-semibold flex items-center gap-2"
+            className="px-4 py-2 bg-[#07767c] text-white rounded-lg hover:bg-[#05595d] transition-colors font-semibold flex items-center gap-2"
           >
             <Plus size={18} />
             Agregar
@@ -43,10 +43,10 @@ function FormacionAcademica({ perfilData, openAddModal, openEditModal, handleDel
         {educacion_sup.length > 0 ? (
           <div className="space-y-4">
             {educacion_sup.map((edu, idx) => (
-              <div key={idx} className="bg-gray-50 rounded-lg p-4">
+              <div key={idx} className="border border-gray-200 rounded-lg p-4 hover:border-[#07767c] transition-colors">
                 <div className="flex items-start justify-between mb-2">
-                  <div className="flex items-center gap-2">
-                    <GraduationCap className="text-blue-600" size={20} />
+                  <div className="flex items-center gap-2 flex-1">
+                    <GraduationCap className="text-[#07767c]" size={20} />
                     <div>
                       <h4 className="font-bold text-gray-900">{edu.carrera}</h4>
                       {edu.estado && (
@@ -56,33 +56,27 @@ function FormacionAcademica({ perfilData, openAddModal, openEditModal, handleDel
                       )}
                     </div>
                   </div>
-                  <label className="flex items-center gap-2 text-sm text-gray-600">
-                    <input type="checkbox" className="rounded" defaultChecked />
-                    Mostrar en CV
-                  </label>
+                  <div className="flex gap-2">
+                    <button 
+                      onClick={() => openEditModal('educacion_superior', edu)}
+                      className="p-2 hover:bg-[#07767c]/10 rounded-lg transition-colors"
+                    >
+                      <Edit size={16} className="text-[#07767c]" />
+                    </button>
+                    <button 
+                      onClick={() => handleDelete(edu.id_educacion_superior, 'educacion_superior')}
+                      className="p-2 hover:bg-red-50 rounded-lg transition-colors"
+                    >
+                      <Trash2 size={16} className="text-red-600" />
+                    </button>
+                  </div>
                 </div>
                 <p className="text-sm text-gray-700 font-medium mb-1">
-                  {edu.ano_inicio} {edu.estado === 'Cursando' ? '(Estudiante)' : `(${edu.estado})`}
+                  {edu.ano_inicio} - {edu.ano_termino}
                 </p>
                 <p className="text-sm text-gray-600">
-                  {edu.institucion} - {edu.ciudad || 'Santiago'}, {edu.pais || 'Chile'}
+                  {edu.institucion}
                 </p>
-                <div className="flex gap-2 mt-3">
-                  <button 
-                    onClick={() => openEditModal('educacion_superior', edu)}
-                    className="px-3 py-1 border border-gray-300 rounded-lg text-sm hover:bg-gray-100 flex items-center gap-1"
-                  >
-                    <Edit size={14} />
-                    Editar
-                  </button>
-                  <button 
-                    onClick={() => handleDelete(edu.id_educacion_superior, 'educacion_superior')}
-                    className="px-3 py-1 border border-red-300 text-red-600 rounded-lg text-sm hover:bg-red-50 flex items-center gap-1"
-                  >
-                    <Trash2 size={14} />
-                    Eliminar
-                  </button>
-                </div>
               </div>
             ))}
           </div>
@@ -97,7 +91,7 @@ function FormacionAcademica({ perfilData, openAddModal, openEditModal, handleDel
           <h3 className="font-bold text-gray-900">Educación básica y media</h3>
           <button 
             onClick={() => openAddModal('educacion_basica')}
-            className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors font-semibold flex items-center gap-2"
+            className="px-4 py-2 bg-[#07767c] text-white rounded-lg hover:bg-[#05595d] transition-colors font-semibold flex items-center gap-2"
           >
             <Plus size={18} />
             Agregar
@@ -107,36 +101,30 @@ function FormacionAcademica({ perfilData, openAddModal, openEditModal, handleDel
         {educacion_basica.length > 0 ? (
           <div className="space-y-4">
             {educacion_basica.map((edu, idx) => (
-              <div key={idx} className="bg-gray-50 rounded-lg p-4">
+              <div key={idx} className="border border-gray-200 rounded-lg p-4 hover:border-[#07767c] transition-colors">
                 <div className="flex items-start justify-between mb-2">
                   <div>
                     <h4 className="font-bold text-gray-900">{edu.tipo}</h4>
                     <p className="text-sm text-gray-700">{edu.ano_inicio} - {edu.ano_termino}</p>
                   </div>
-                  <label className="flex items-center gap-2 text-sm text-gray-600">
-                    <input type="checkbox" className="rounded" defaultChecked />
-                    Mostrar en CV
-                  </label>
+                  <div className="flex gap-2">
+                    <button 
+                      onClick={() => openEditModal('educacion_basica', edu)}
+                      className="p-2 hover:bg-[#07767c]/10 rounded-lg transition-colors"
+                    >
+                      <Edit size={16} className="text-[#07767c]" />
+                    </button>
+                    <button 
+                      onClick={() => handleDelete(edu.id_educacion_basica_media, 'educacion_basica')}
+                      className="p-2 hover:bg-red-50 rounded-lg transition-colors"
+                    >
+                      <Trash2 size={16} className="text-red-600" />
+                    </button>
+                  </div>
                 </div>
                 <p className="text-sm text-gray-600 mb-3">
                   {edu.institucion} - {edu.ciudad}, {edu.pais}
                 </p>
-                <div className="flex gap-2">
-                  <button 
-                    onClick={() => openEditModal('educacion_basica', edu)}
-                    className="px-3 py-1 border border-gray-300 rounded-lg text-sm hover:bg-gray-100 flex items-center gap-1"
-                  >
-                    <Edit size={14} />
-                    Editar
-                  </button>
-                  <button 
-                    onClick={() => handleDelete(edu.id_educacion_basica_media, 'educacion_basica')}
-                    className="px-3 py-1 border border-red-300 text-red-600 rounded-lg text-sm hover:bg-red-50 flex items-center gap-1"
-                  >
-                    <Trash2 size={14} />
-                    Eliminar
-                  </button>
-                </div>
               </div>
             ))}
           </div>
