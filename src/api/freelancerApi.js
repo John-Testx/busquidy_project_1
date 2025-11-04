@@ -270,3 +270,72 @@ export const verifyUserProfileForPremium = async (tipo_usuario, id_usuario) => {
     throw error;
   }
 };
+
+// =============================================
+// FOTO DE PERFIL
+// =============================================
+
+/**
+ * Subir foto de perfil
+ * @param {File} photoFile - Archivo de imagen
+ * @param {number} id_usuario - ID del usuario freelancer
+ * @returns {Promise<Object>}
+ */
+export const uploadProfilePhoto = (photoFile, id_usuario) => {
+  const formData = new FormData();
+  formData.append("photo", photoFile);
+  return apiClient.post(`${BASE}/upload-photo/${id_usuario}`, formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+};
+
+/**
+ * Obtener URL de la foto de perfil
+ * @param {number} id_usuario - ID del usuario freelancer
+ * @returns {Promise<Object>}
+ */
+export const getProfilePhoto = async (id_usuario) => {
+  const response = await apiClient.get(`${BASE}/photo/${id_usuario}`);
+  return response.data;
+};
+
+// =============================================
+// DESCARGA DE CV BUSQUIDY
+// =============================================
+
+/**
+ * Descargar CV en formato Busquidy (PDF)
+ * @param {number} id_usuario - ID del usuario freelancer
+ * @returns {Promise<Blob>} Archivo PDF
+ */
+export const downloadBusquidyCV = async (id_usuario) => {
+  const response = await apiClient.get(`${BASE}/download-cv/${id_usuario}`, {
+    responseType: 'blob'
+  });
+  return response.data;
+};
+
+// =============================================
+// PREFERENCIAS
+// =============================================
+
+/**
+ * Obtener preferencias del freelancer
+ * @param {number} id_usuario - ID del usuario freelancer
+ * @returns {Promise<Object>}
+ */
+export const getPreferencias = async (id_usuario) => {
+  const response = await apiClient.get(`${BASE}/preferencias/${id_usuario}`);
+  return response.data;
+};
+
+/**
+ * Actualizar preferencias del freelancer
+ * @param {number} id_usuario - ID del usuario freelancer
+ * @param {Object} preferencias - { ofertas_empleo, practicas, trabajo_estudiantes }
+ * @returns {Promise<Object>}
+ */
+export const updatePreferencias = async (id_usuario, preferencias) => {
+  const response = await apiClient.put(`${BASE}/preferencias/${id_usuario}`, preferencias);
+  return response.data;
+};

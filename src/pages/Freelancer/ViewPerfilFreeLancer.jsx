@@ -33,10 +33,13 @@ function ViewPerfilFreeLancer() {
   const [showModal, setShowModal] = useState(false);
   const [creationMethod, setCreationMethod] = useState(null);
 
+  // ✅ Hook que maneja TODO el perfil (incluye las nuevas funciones)
   const {
     freelancer,
     loading: loadingProfile,
     error: profileError,
+    photoUrl,                      // ✅ NUEVA: URL de la foto
+    preferencias,                   // ✅ NUEVA: Preferencias del usuario
     modalState,
     openAddModal,
     openEditModal,
@@ -44,8 +47,19 @@ function ViewPerfilFreeLancer() {
     handleAddSubmit,
     handleEditSubmit,
     handleDelete,
+    handleUploadPhoto,              // ✅ NUEVA: Función para subir foto
+    handleDownloadCV,               // ✅ NUEVA: Función para descargar CV
+    handleUpdatePreferencias,       // ✅ NUEVA: Función para actualizar preferencias
     refreshProfile
   } = useFreelancerProfile(id_usuario);
+
+  // ✅ NUEVA: Handler para cambiar CV
+  const handleChangeCV = () => {
+    // Puedes navegar a una página específica o abrir un modal
+    // Por ahora, simplemente recarga para volver a subir CV
+    setCreationMethod('cv');
+    setIsPerfilIncompleto(true);
+  };
 
   useEffect(() => {
     if (!loading && isAuthenticated && id_usuario) {
@@ -196,15 +210,23 @@ function ViewPerfilFreeLancer() {
 
   const handleModalSubmit = modalState.mode === 'add' ? handleAddSubmit : handleEditSubmit;
 
-  // PERFIL COMPLETO CON LAYOUT DE 3 COLUMNAS
+  // ✅ PERFIL COMPLETO CON LAYOUT DE 3 COLUMNAS
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-7xl mx-auto px-4">
         {/* Grid de 3 columnas: Sidebar izquierdo + Contenido principal */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           
-          {/* SIDEBAR IZQUIERDO */}
-          <ProfileSidebar perfilData={freelancer} />
+          {/* ✅ SIDEBAR IZQUIERDO - AHORA CON TODAS LAS PROPS NECESARIAS */}
+          <ProfileSidebar 
+            perfilData={freelancer}
+            photoUrl={photoUrl}                        // ✅ URL de la foto
+            preferencias={preferencias}                 // ✅ Preferencias del usuario
+            onUploadPhoto={handleUploadPhoto}          // ✅ Función para subir foto
+            onDownloadCV={handleDownloadCV}            // ✅ Función para descargar CV
+            onChangeCV={handleChangeCV}                // ✅ Función para cambiar CV
+            onUpdatePreferencias={handleUpdatePreferencias} // ✅ Función para actualizar preferencias
+          />
 
           {/* CONTENIDO PRINCIPAL (2 columnas) */}
           <div className="lg:col-span-2 space-y-6">
