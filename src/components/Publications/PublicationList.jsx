@@ -1,7 +1,7 @@
 import React from 'react';
 import PublicationCard from './PublicationCard';
 import MessageModal from '@/components/MessageModal';
-import { usePublications } from '@/hooks';
+import { usePublications } from '@/hooks/';
 
 function PublicationList({ userType, id_usuario, filters }) {
   const {
@@ -78,6 +78,8 @@ function PublicationList({ userType, id_usuario, filters }) {
         {modalMessage.show && (
           <MessageModal 
             message={modalMessage.message} 
+            type={modalMessage.type}
+            action={modalMessage.action}
             closeModal={closeModal} 
           />
         )}

@@ -1,7 +1,9 @@
 import React from "react";
 import Modal from "../Modal";
 import { Mail, Chrome } from "lucide-react";
-import { FaMicrosoft, FaApple } from "react-icons/fa";
+import { FaMicrosoft } from "react-icons/fa";
+
+const API_URL = import.meta.env.VITE_API_URL
 
 const LoginModal = ({ onClose, onOpenSecondary, onOpenRegister }) => {
     return (
@@ -9,7 +11,6 @@ const LoginModal = ({ onClose, onOpenSecondary, onOpenRegister }) => {
             <div className="flex flex-col md:flex-row min-h-[600px]">
                 {/* Left Section - Hero */}
                 <div className="flex-1 bg-gradient-to-br from-[#07767c] via-[#055a5f] to-[#043d42] text-white p-12 flex flex-col justify-center relative overflow-hidden">
-                    {/* Decorative elements */}
                     <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-32 -mt-32 transition-transform duration-700 hover:scale-110"></div>
                     <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full -ml-24 -mb-24 transition-transform duration-700 hover:scale-110"></div>
                     
@@ -62,36 +63,27 @@ const LoginModal = ({ onClose, onOpenSecondary, onOpenRegister }) => {
                         </div>
 
                         <div className="space-y-3">
-                            {/* Email Button */}
-                            <button 
-                                className="w-full flex items-center gap-3 px-5 py-3.5 bg-white border-2 border-gray-200 rounded-xl text-gray-700 font-medium hover:border-[#07767c] hover:bg-[#07767c]/5 transition-all duration-200 shadow-sm hover:shadow-md group transform hover:-translate-y-0.5"
-                                onClick={onOpenSecondary}
-                            >
-                                <Mail size={20} className="text-[#07767c] group-hover:scale-110 transition-transform duration-200" />
-                                <span>Continuar con Correo Electrónico</span>
-                            </button>
-
                             {/* Google Button */}
-                            <button className="w-full flex items-center gap-3 px-5 py-3.5 bg-white border-2 border-gray-200 rounded-xl text-gray-700 font-medium hover:border-gray-300 hover:bg-gray-50 transition-all duration-200 shadow-sm hover:shadow-md group transform hover:-translate-y-0.5">
+                            <a 
+                                href={`${API_URL}/users/auth/google`}
+                                className="w-full flex items-center gap-3 px-5 py-3.5 bg-white border-2 border-gray-200 rounded-xl text-gray-700 font-medium hover:border-gray-300 hover:bg-gray-50 transition-all duration-200 shadow-sm hover:shadow-md group transform hover:-translate-y-0.5"
+                            >
                                 <Chrome size={20} className="text-red-500 group-hover:scale-110 transition-transform duration-200" />
                                 <span>Continuar con Google</span>
-                            </button>
+                            </a>
 
                             {/* Microsoft Button */}
-                            <button className="w-full flex items-center gap-3 px-5 py-3.5 bg-white border-2 border-gray-200 rounded-xl text-gray-700 font-medium hover:border-gray-300 hover:bg-gray-50 transition-all duration-200 shadow-sm hover:shadow-md group transform hover:-translate-y-0.5">
+                            <a 
+                                href={`${API_URL}/users/auth/microsoft`}
+                                className="w-full flex items-center gap-3 px-5 py-3.5 bg-white border-2 border-gray-200 rounded-xl text-gray-700 font-medium hover:border-gray-300 hover:bg-gray-50 transition-all duration-200 shadow-sm hover:shadow-md group transform hover:-translate-y-0.5"
+                            >
                                 <FaMicrosoft size={20} className="text-blue-500 group-hover:scale-110 transition-transform duration-200" />
                                 <span>Continuar con Microsoft</span>
-                            </button>
-
-                            {/* Apple Button */}
-                            <button className="w-full flex items-center gap-3 px-5 py-3.5 bg-white border-2 border-gray-200 rounded-xl text-gray-700 font-medium hover:border-gray-300 hover:bg-gray-50 transition-all duration-200 shadow-sm hover:shadow-md group transform hover:-translate-y-0.5">
-                                <FaApple size={20} className="text-gray-800 group-hover:scale-110 transition-transform duration-200" />
-                                <span>Continuar con Apple</span>
-                            </button>
+                            </a>
                         </div>
 
                         {/* Divider */}
-                        <div className="relative my-8">
+                        <div className="relative my-6">
                             <div className="absolute inset-0 flex items-center">
                                 <div className="w-full border-t border-gray-300"></div>
                             </div>
@@ -100,8 +92,17 @@ const LoginModal = ({ onClose, onOpenSecondary, onOpenRegister }) => {
                             </div>
                         </div>
 
+                        {/* Email Button - ABAJO */}
+                        <button 
+                            className="w-full flex items-center gap-3 px-5 py-3.5 bg-white border-2 border-gray-200 rounded-xl text-gray-700 font-medium hover:border-[#07767c] hover:bg-[#07767c]/5 transition-all duration-200 shadow-sm hover:shadow-md group transform hover:-translate-y-0.5"
+                            onClick={onOpenSecondary}
+                        >
+                            <Mail size={20} className="text-[#07767c] group-hover:scale-110 transition-transform duration-200" />
+                            <span>Continuar con Correo Electrónico</span>
+                        </button>
+
                         {/* Terms */}
-                        <p className="text-xs text-gray-500 text-center leading-relaxed animate-[fadeIn_0.6s_ease-out]">
+                        <p className="text-xs text-gray-500 text-center leading-relaxed animate-[fadeIn_0.6s_ease-out] mt-6">
                             Al unirte, aceptas nuestros{' '}
                             <a href="#" className="text-[#07767c] hover:underline transition-all duration-200">
                                 Términos de servicio

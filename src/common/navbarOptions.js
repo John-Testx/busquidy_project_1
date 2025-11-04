@@ -57,7 +57,7 @@ export const getNavbarOptions = (tipo_usuario) => {
             },
             {
                 label: "Configuración",
-                // link: "/freelancer-profile/availability",
+                link: "/freelancer-profile/availability",
                 icon: "bi bi-gear",
                 roles: ["freelancer"]
             },
@@ -76,7 +76,7 @@ export const getNavbarOptions = (tipo_usuario) => {
             },
             {
                 label: "Configuración",
-                // link: "/freelancer-profile/availability",
+                link: "/company-profile/configuracion",
                 icon: "bi bi-gear",
                 roles: ["empresa", "empresa_juridico", "empresa_natural"]
             },

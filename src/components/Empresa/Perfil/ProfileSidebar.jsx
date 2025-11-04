@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Building2, UserCircle, Shield, ChevronRight, CreditCard } from 'lucide-react';
+import { Building2, UserCircle, CreditCard, FileText, Settings, ChevronRight } from 'lucide-react';
 
 const sections = [
   { 
@@ -16,16 +16,22 @@ const sections = [
     description: 'Contacto principal'
   },
   { 
-    path: 'acceso', 
-    label: 'Datos de Acceso', 
-    icon: <Shield size={20} />,
-    description: 'Seguridad y cuenta'
-  },
-  { 
     path: 'subscription', 
     label: 'Mi Suscripción', 
     icon: <CreditCard size={20} />,
     description: 'Gestiona tu plan'
+  },
+  { 
+    path: 'mis-transacciones', 
+    label: 'Mis Transacciones', 
+    icon: <FileText size={20} />,
+    description: 'Historial de pagos'
+  },
+  { 
+    path: 'configuracion', 
+    label: 'Configuración', 
+    icon: <Settings size={20} />,
+    description: 'Seguridad y cuenta'
   },
 ];
 
@@ -87,7 +93,7 @@ function ProfileSidebar() {
                   )}
                 </NavLink>
               </li>
-            ))}
+            ))}            
           </ul>
         </nav>
 

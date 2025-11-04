@@ -1,9 +1,60 @@
-import React from "react";
+import React, { useState } from "react";
 import Modal from "../Modal";
-import { Mail, Chrome } from "lucide-react";
-import { FaMicrosoft, FaApple } from "react-icons/fa";
+import { Mail, Chrome, AlertCircle, Loader2 } from "lucide-react";
+import { FaMicrosoft } from "react-icons/fa";
 
-const RegisterModal = ({ onClose, onOpenSecondary, onOpenLogin }) => {
+const API_URL = import.meta.env.VITE_API_URL
+
+const RegisterModal = ({ onClose, onOpenSecondary, onOpenLogin, onOpenEmailVerification }) => {
+    const [email, setEmail] = useState("");
+    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
+
+    const validateEmail = (email) => {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    };
+
+    const handleContinueWithEmail = async () => {
+        setError("");
+        
+        if (!email) {
+            setError("El correo electrónico es obligatorio");
+            return;
+        }
+        
+        if (!validateEmail(email)) {
+            setError("Por favor, ingresa un correo electrónico válido");
+            return;
+        }
+
+        setLoading(true);
+        
+        try {
+            // Llamar al endpoint para enviar código de verificación
+            const response = await fetch(`${API_URL}/users/send-verification-code`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ correo: email }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Error al enviar código de verificación');
+            }
+
+            // Abrir modal de verificación de email
+            onOpenEmailVerification(email);
+            
+        } catch (err) {
+            setError(err.message || 'Error al enviar el código de verificación');
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <Modal show={true} onClose={onClose} dismissOnClickOutside={true} size="lg">
             <div className="flex flex-col md:flex-row min-h-[600px]">
@@ -58,36 +109,27 @@ const RegisterModal = ({ onClose, onOpenSecondary, onOpenLogin }) => {
                         </div>
 
                         <div className="space-y-3">
-                            {/* Email Button */}
-                            <button 
-                                className="w-full flex items-center gap-3 px-5 py-3.5 bg-white border-2 border-gray-200 rounded-xl text-gray-700 font-medium hover:border-[#07767c] hover:bg-[#07767c]/5 transition-all duration-200 shadow-sm hover:shadow-md group transform hover:-translate-y-0.5"
-                                onClick={onOpenSecondary}
-                            >
-                                <Mail size={20} className="text-[#07767c] group-hover:scale-110 transition-transform duration-200" />
-                                <span>Continuar con Correo Electrónico</span>
-                            </button>
-
                             {/* Google Button */}
-                            <button className="w-full flex items-center gap-3 px-5 py-3.5 bg-white border-2 border-gray-200 rounded-xl text-gray-700 font-medium hover:border-gray-300 hover:bg-gray-50 transition-all duration-200 shadow-sm hover:shadow-md group transform hover:-translate-y-0.5">
+                            <a 
+                                href={`${API_URL}/users/auth/google`}
+                                className="w-full flex items-center gap-3 px-5 py-3.5 bg-white border-2 border-gray-200 rounded-xl text-gray-700 font-medium hover:border-gray-300 hover:bg-gray-50 transition-all duration-200 shadow-sm hover:shadow-md group transform hover:-translate-y-0.5"
+                            >
                                 <Chrome size={20} className="text-red-500 group-hover:scale-110 transition-transform duration-200" />
                                 <span>Continuar con Google</span>
-                            </button>
+                            </a>
 
                             {/* Microsoft Button */}
-                            <button className="w-full flex items-center gap-3 px-5 py-3.5 bg-white border-2 border-gray-200 rounded-xl text-gray-700 font-medium hover:border-gray-300 hover:bg-gray-50 transition-all duration-200 shadow-sm hover:shadow-md group transform hover:-translate-y-0.5">
+                            <a 
+                                href={`${API_URL}/users/auth/microsoft`}
+                                className="w-full flex items-center gap-3 px-5 py-3.5 bg-white border-2 border-gray-200 rounded-xl text-gray-700 font-medium hover:border-gray-300 hover:bg-gray-50 transition-all duration-200 shadow-sm hover:shadow-md group transform hover:-translate-y-0.5"
+                            >
                                 <FaMicrosoft size={20} className="text-blue-500 group-hover:scale-110 transition-transform duration-200" />
                                 <span>Continuar con Microsoft</span>
-                            </button>
-
-                            {/* Apple Button */}
-                            <button className="w-full flex items-center gap-3 px-5 py-3.5 bg-white border-2 border-gray-200 rounded-xl text-gray-700 font-medium hover:border-gray-300 hover:bg-gray-50 transition-all duration-200 shadow-sm hover:shadow-md group transform hover:-translate-y-0.5">
-                                <FaApple size={20} className="text-gray-800 group-hover:scale-110 transition-transform duration-200" />
-                                <span>Continuar con Apple</span>
-                            </button>
+                            </a>
                         </div>
 
                         {/* Divider */}
-                        <div className="relative my-8">
+                        <div className="relative my-6">
                             <div className="absolute inset-0 flex items-center">
                                 <div className="w-full border-t border-gray-300"></div>
                             </div>
@@ -96,8 +138,63 @@ const RegisterModal = ({ onClose, onOpenSecondary, onOpenLogin }) => {
                             </div>
                         </div>
 
+                        {/* Email Input */}
+                        <div className="space-y-4">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    Correo Electrónico
+                                </label>
+                                <div className="relative">
+                                    <Mail size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 transition-colors duration-200" />
+                                    <input
+                                        type="email"
+                                        placeholder="tu@email.com"
+                                        value={email}
+                                        onChange={(e) => {
+                                            setEmail(e.target.value);
+                                            setError("");
+                                        }}
+                                        className={`w-full pl-12 pr-4 py-3.5 bg-white border-2 rounded-xl transition-all duration-200 outline-none ${
+                                            error 
+                                                ? 'border-red-500 focus:border-red-600' 
+                                                : 'border-gray-200 focus:border-[#07767c] focus:shadow-md'
+                                        }`}
+                                        disabled={loading}
+                                    />
+                                    {error && (
+                                        <AlertCircle size={20} className="absolute right-4 top-1/2 -translate-y-1/2 text-red-500 animate-[fadeIn_0.2s_ease-out]" />
+                                    )}
+                                </div>
+                                {error && (
+                                    <p className="text-red-500 text-sm mt-2 flex items-center gap-1 animate-[fadeIn_0.2s_ease-out]">
+                                        <AlertCircle size={16} />
+                                        {error}
+                                    </p>
+                                )}
+                            </div>
+
+                            {/* Continue Button */}
+                            <button 
+                                className="w-full flex items-center justify-center gap-3 px-5 py-3.5 bg-gradient-to-r from-[#07767c] to-[#055a5f] hover:from-[#055a5f] hover:to-[#043d42] text-white font-semibold rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl group transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
+                                onClick={handleContinueWithEmail}
+                                disabled={loading}
+                            >
+                                {loading ? (
+                                    <>
+                                        <Loader2 size={20} className="animate-spin" />
+                                        <span>Enviando código...</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Mail size={20} className="group-hover:scale-110 transition-transform duration-200" />
+                                        <span>Continuar con Correo Electrónico</span>
+                                    </>
+                                )}
+                            </button>
+                        </div>
+
                         {/* Terms */}
-                        <p className="text-xs text-gray-500 text-center leading-relaxed animate-[fadeIn_0.6s_ease-out]">
+                        <p className="text-xs text-gray-500 text-center leading-relaxed animate-[fadeIn_0.6s_ease-out] mt-6">
                             Al registrarte, aceptas nuestros{' '}
                             <a href="#" className="text-[#07767c] hover:underline transition-all duration-200">
                                 Términos de servicio

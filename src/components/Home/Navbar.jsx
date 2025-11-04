@@ -1,26 +1,26 @@
 import React, { useState, useEffect, useRef } from "react";
-import Modal from "./Modal";
-import RegisterModal from "./Modals/RegisterModal";
-import SecondaryRegisterModal from "./Modals/SecondaryRegisterModal";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import LoginModal from "./Modals/LoginModal";
-import LoginSecondaryModal from "./Modals/LoginSecondaryModal";
-import MessageModal from "../MessageModal";
 import { useAuth } from "@/hooks";
 import { getNavbarOptions, helpDropdownOptions } from "@/common/navbarOptions";
 import ProfileCircle from "../ProfileCircle";
 import NotificationIcon from '@/components/Notifications/NotificationIcon';
 import { getUserInitials } from "@/common/utils";
-import { checkProfileExists } from "@/api/freelancerApi"; // ✅ AÑADIR IMPORT
+import { checkProfileExists } from "@/api/freelancerApi";
+
+// ✅ IMPORTAR LOS MODALES MEJORADOS
+import LoginModal from "./Modals/LoginModal";
+import LoginSecondaryModal from "./Modals/LoginSecondaryModal";
+import RegisterModal from "./Modals/RegisterModal";
+import EmailVerificationModal from "./Modals/EmailVerificationModal";
+import SecondaryRegisterModal from "./Modals/SecondaryRegisterModal";
+import MessageModal from "../MessageModal";
+
 import { 
     Menu, 
     X, 
     ChevronDown, 
     HelpCircle, 
-    User, 
     LogOut,
-    Settings,
-    Bell,
     MessageSquare
 } from 'lucide-react';
 
@@ -31,27 +31,34 @@ function Navbar() {
     const { 
         isAuthenticated, 
         tipo_usuario, 
-        id_usuario, // ✅ AÑADIR id_usuario
+        id_usuario,
         handleLogin,
-        handleRegister, 
-        logout, 
-        errors, 
+        handleRegister,
+        logout,
+        errors,
         loading,
         message,
         clearMessage
     } = useAuth();
 
-    // ✅ AÑADIR estado para verificar perfil
     const [isPerfilIncompleto, setIsPerfilIncompleto] = useState(null);
+    const { navbarOptions: navOptions, profileLinks: dynamicProfileLinks } = getNavbarOptions(tipo_usuario);
 
-    // ✅ Obtener opciones dinámicas según tipo de usuario
-    const { navbarOptions: navOptions, profileLinks: dynamicProfileLinks, terminologia } = getNavbarOptions(tipo_usuario);
-
-    // Registration formData
-    const [registerData, setRegisterData] = useState({
-        correo: "",
-        contraseña: "",
-        tipoUsuario: "",
+    // ✅ ESTADOS DE MODALES
+    const [showLoginModal, setShowLoginModal] = useState(false);
+    const [showLoginSecondaryModal, setShowLoginSecondaryModal] = useState(false);
+    const [showRegisterModal, setShowRegisterModal] = useState(false);
+    const [showEmailVerification, setShowEmailVerification] = useState(false);
+    const [showSecondaryRegisterModal, setShowSecondaryRegisterModal] = useState(false);
+    
+    // ✅ ESTADOS DE DATOS
+    const [verifiedEmail, setVerifiedEmail] = useState('');
+    const [loginFormData, setLoginFormData] = useState({ correo: '', contraseña: '' });
+    const [registerFormData, setRegisterFormData] = useState({
+        correo: '',
+        contraseña: '',
+        confirmarContraseña: '',
+        tipoUsuario: ''
     });
 
     const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
@@ -62,7 +69,7 @@ function Navbar() {
     const profileMenuRef = useRef(null);
     const helpMenuRef = useRef(null);
 
-    // ✅ VERIFICAR PERFIL cuando el usuario esté autenticado
+    // Verificar perfil cuando el usuario esté autenticado
     useEffect(() => {
         const fetchProfileStatus = async () => {
             if (isAuthenticated && id_usuario && tipo_usuario === 'freelancer') {
@@ -78,23 +85,70 @@ function Navbar() {
         fetchProfileStatus();
     }, [id_usuario, isAuthenticated, tipo_usuario]);
 
-    const toggleProfileMenu = () => setIsProfileMenuOpen(prev => !prev);
-
-    const updateRegisterData = (key, value) => {
-        setRegisterData(prev => ({ ...prev, [key]: value }));
+    // ✅ FUNCIONES DE ACTUALIZACIÓN DE FORMULARIOS
+    const updateLoginFormData = (field, value) => {
+        setLoginFormData(prev => ({ ...prev, [field]: value }));
     };
 
+    const updateRegisterFormData = (field, value) => {
+        setRegisterFormData(prev => ({ ...prev, [field]: value }));
+    };
+
+    const clearLoginForm = () => {
+        setLoginFormData({ correo: '', contraseña: '' });
+    };
+
+    const clearRegisterForm = () => {
+        setRegisterFormData({ correo: '', contraseña: '', confirmarContraseña: '', tipoUsuario: '' });
+        setVerifiedEmail('');
+    };
+
+    // ✅ HANDLERS DE LOGIN
+    const handleLoginSubmit = async () => {
+        await handleLogin(
+            loginFormData.correo,
+            loginFormData.contraseña,
+            (tipoUsuario) => {
+                setShowLoginSecondaryModal(false);
+                setShowLoginModal(false);
+                clearLoginForm();
+                
+                // Redirigir según tipo de usuario
+                if (tipoUsuario === 'freelancer') {
+                    navigate('/freelancer');
+                } else if (tipoUsuario === 'empresa_juridico' || tipoUsuario === 'empresa_natural') {
+                    navigate('/empresa');
+                } else if (tipoUsuario === 'administrador') {
+                    navigate('/adminhome');
+                }
+            }
+        );
+    };
+
+    // ✅ HANDLERS DE REGISTRO
     const handleRegisterSubmit = async () => {
+        // Validar que las contraseñas coincidan
+        if (registerFormData.contraseña !== registerFormData.confirmarContraseña) {
+            alert('Las contraseñas no coinciden');
+            return;
+        }
+
         await handleRegister(
-            registerData.correo,
-            registerData.contraseña,
-            registerData.tipoUsuario,
+            verifiedEmail,
+            registerFormData.contraseña,
+            registerFormData.tipoUsuario,
             () => {
                 setShowSecondaryRegisterModal(false);
-                setShowRegisterModal(false);
                 clearRegisterForm();
             }
         );
+    };
+
+    // ✅ HANDLER CUANDO EMAIL ES VERIFICADO
+    const handleEmailVerified = (email) => {
+        setVerifiedEmail(email);
+        setShowEmailVerification(false);
+        setShowSecondaryRegisterModal(true);
     };
 
     const handleCloseMessageModal = () => {
@@ -112,36 +166,8 @@ function Navbar() {
         }
     };
 
-    // Modal states
-    const [showLoginModal, setShowLoginModal] = useState(false);
-    const [showLoginSecondaryModal, setShowLoginSecondaryModal] = useState(false);
-    const [showRegisterModal, setShowRegisterModal] = useState(false);
-    const [showSecondaryRegisterModal, setShowSecondaryRegisterModal] = useState(false);
-
-    // Form data for login
-    const [formData, setFormData] = useState({ correo: "", contraseña: "" });
-    const updateFormData = (key, value) => setFormData((prev) => ({ ...prev, [key]: value }));
-
-    const clearLoginForm = () => {
-        setFormData({ correo: "", contraseña: "" });
-    };
-
-    const clearRegisterForm = () => {
-        setRegisterData({ correo: "", contraseña: "", tipoUsuario: "" });
-    };
-
-    const handleLoginSubmit = async () => {
-        await handleLogin(formData.correo, formData.contraseña, (tipo_usuario) => {
-            setShowLoginSecondaryModal(false);
-            setShowLoginModal(false);
-            clearLoginForm();
-        });
-    };
-
-    const toggleHelpDropdown = () => {
-        setIsHelpDropdownOpen(!isHelpDropdownOpen);
-    };
-
+    const toggleProfileMenu = () => setIsProfileMenuOpen(prev => !prev);
+    const toggleHelpDropdown = () => setIsHelpDropdownOpen(!isHelpDropdownOpen);
     const isActive = (path) => location.pathname === path;
 
     const handleLogout = () => {
@@ -152,12 +178,10 @@ function Navbar() {
         navigate("/");
     };
 
-    // ✅ Filtrar links de perfil según roles Y estado del perfil
+    // Filtrar links de perfil según roles y estado del perfil
     const filteredProfileLinks = dynamicProfileLinks.filter(link => {
-        // Primero verificar si el rol coincide
         if (!link.roles.includes(tipo_usuario)) return false;
         
-        // Si es freelancer y el perfil está incompleto, filtrar opciones específicas
         if (tipo_usuario === 'freelancer' && isPerfilIncompleto) {
             const restrictedLinks = [
                 '/freelancer-profile/my-postulations',
@@ -169,7 +193,6 @@ function Navbar() {
         return true;
     });
 
-    // ✅ Función para manejar clics en links restringidos
     const handleRestrictedLinkClick = (e, link) => {
         if (tipo_usuario === 'freelancer' && isPerfilIncompleto) {
             const restrictedLinks = [
@@ -301,7 +324,7 @@ function Navbar() {
                         </div>
                     </nav>
 
-                    {/* Right Section - Auth Buttons / Profile */}
+                    {/* Right Section */}
                     <div className="hidden lg:flex items-center gap-3 ml-auto">
                         {!isAuthenticated ? (
                             <>
@@ -489,7 +512,7 @@ function Navbar() {
                 </div>
             )}
 
-            {/* MODALS */}
+            {/* ✅ MODALES - AHORA CON VERIFICACIÓN DE EMAIL */}
             {showLoginModal && (
                 <LoginModal
                     onClose={() => {
@@ -518,8 +541,8 @@ function Navbar() {
                         setShowLoginSecondaryModal(false);
                         setShowLoginModal(true);
                     }}
-                    formData={formData}
-                    setFormData={updateFormData}
+                    formData={loginFormData}
+                    setFormData={updateLoginFormData}
                     errors={errors}
                     handleLogin={handleLoginSubmit}
                     loading={loading}
@@ -546,6 +569,26 @@ function Navbar() {
                         clearRegisterForm();
                         setShowLoginModal(true);
                     }}
+                    onOpenEmailVerification={(email) => {
+                        setVerifiedEmail(email);
+                        setShowRegisterModal(false);
+                        setShowEmailVerification(true);
+                    }}
+                />
+            )}
+
+            {showEmailVerification && (
+                <EmailVerificationModal
+                    onClose={() => {
+                        setShowEmailVerification(false);
+                        clearRegisterForm();
+                    }}
+                    onBack={() => {
+                        setShowEmailVerification(false);
+                        setShowRegisterModal(true);
+                    }}
+                    email={verifiedEmail}
+                    onVerified={handleEmailVerified}
                 />
             )}
 
@@ -557,19 +600,19 @@ function Navbar() {
                     }}
                     onBack={() => {
                         setShowSecondaryRegisterModal(false);
-                        setShowRegisterModal(true);
+                        setShowEmailVerification(true);
                     }}
-                    formData={registerData}
-                    setFormData={updateRegisterData}
+                    formData={registerFormData}
+                    setFormData={updateRegisterFormData}
                     handleRegister={handleRegisterSubmit}
                     errors={errors}
                     loading={loading}
                     onOpenLogin={() => {
                         setShowSecondaryRegisterModal(false);
-                        setShowRegisterModal(false);
                         clearRegisterForm();
                         setShowLoginModal(true);
                     }}
+                    verifiedEmail={verifiedEmail}
                 />
             )}
 

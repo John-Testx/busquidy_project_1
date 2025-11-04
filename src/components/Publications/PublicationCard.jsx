@@ -3,11 +3,14 @@ import { FaLocationArrow, FaClock, FaMoneyBillAlt, FaStar, FaBookmark, FaRegBook
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import { BiHide, BiFlag } from 'react-icons/bi';
 import PublicationDetailModal from './PublicationDetailModal';
+import { checkUserApplication } from '@/api/publicationsApi';
 
-function PublicationCard({ publication, isApplied, onApply, id_usuario, userType }) {
+function PublicationCard({ publication, isApplied: isAppliedProp, onApply, id_usuario, userType }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
+  const [isApplied, setIsApplied] = useState(isAppliedProp);
+  const [checkingApplication, setCheckingApplication] = useState(false);
   const menuRef = useRef(null);
 
   const openModal = () => {
@@ -39,10 +42,34 @@ function PublicationCard({ publication, isApplied, onApply, id_usuario, userType
   const handleApply = async (e) => {
     e.stopPropagation();
     if (!isApplied) {
-      await onApply(publication.id_publicacion);
+      const result = await onApply(publication.id_publicacion);
+      if (result.success) {
+        setIsApplied(true);
+      }
     }
     setShowOptions(false);
   };
+
+  // Verificar estado de postulación al montar el componente
+  useEffect(() => {
+    const checkApplicationStatus = async () => {
+      if (!id_usuario || userType !== 'freelancer') {
+        return;
+      }
+
+      try {
+        setCheckingApplication(true);
+        const { hasApplied } = await checkUserApplication(publication.id_publicacion);
+        setIsApplied(hasApplied);
+      } catch (error) {
+        console.error('Error al verificar estado de postulación:', error);
+      } finally {
+        setCheckingApplication(false);
+      }
+    };
+
+    checkApplicationStatus();
+  }, [publication.id_publicacion, id_usuario, userType]);
 
   // Calcular tiempo desde publicación
   const getTimeAgo = () => {
@@ -63,7 +90,7 @@ function PublicationCard({ publication, isApplied, onApply, id_usuario, userType
 
   const empresaNombre = publication.empresa || 'Empresa no especificada';
   const empresaInicial = empresaNombre.charAt(0).toUpperCase();
-  const isRecommended = publication.recomendada || false; // Esto vendrá de la BD más adelante
+  const isRecommended = publication.recomendada || false;
 
   // Cerrar menú al hacer clic fuera
   useEffect(() => {
@@ -100,7 +127,7 @@ function PublicationCard({ publication, isApplied, onApply, id_usuario, userType
                 ⭐ Publicación Recomendada
               </span>
             )}
-            {isApplied && (
+            {isApplied && !checkingApplication && (
               <span className="bg-gradient-to-r from-green-400 to-emerald-500 text-white text-xs px-3 py-1 rounded-full font-bold shadow-md inline-block">
                 ✓ Aplicado
               </span>
@@ -114,11 +141,11 @@ function PublicationCard({ publication, isApplied, onApply, id_usuario, userType
             <h3 className="text-lg font-bold text-gray-900 leading-snug pr-8 group-hover:text-[#07767c] transition-colors line-clamp-2">
               {publication.titulo || 'Título no disponible'}
               {publication.tipo === 'tarea' ? (
-                <span className="px-3 py-1 bg-gradient-to-r from-green-100 to-green-50 text-green-700 rounded-lg text-sm font-semibold border border-green-300">
+                <span className="ml-2 px-3 py-1 bg-gradient-to-r from-green-100 to-green-50 text-green-700 rounded-lg text-sm font-semibold border border-green-300">
                   Tarea
                 </span>
               ) : (
-                <span className="px-3 py-1 bg-gradient-to-r from-blue-100 to-blue-50 text-blue-700 rounded-lg text-sm font-semibold border border-blue-300">
+                <span className="ml-2 px-3 py-1 bg-gradient-to-r from-blue-100 to-blue-50 text-blue-700 rounded-lg text-sm font-semibold border border-blue-300">
                   Proyecto
                 </span>
               )}
@@ -137,7 +164,7 @@ function PublicationCard({ publication, isApplied, onApply, id_usuario, userType
               {/* Menú desplegable */}
               {showOptions && (
                 <div className="absolute top-full right-0 mt-1 bg-white rounded-lg shadow-xl border border-gray-200 py-1 z-20 min-w-[180px]">
-                  {!isApplied && (
+                  {!isApplied && !checkingApplication && (
                     <button
                       className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2 transition-colors font-semibold"
                       onClick={handleApply}

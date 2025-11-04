@@ -1,13 +1,23 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { FaLocationArrow, FaClock, FaMoneyBillAlt, FaStar, FaTimes, FaCheckCircle, FaBookmark, FaRegBookmark } from 'react-icons/fa';
+import { FaLocationArrow, FaClock, FaMoneyBillAlt, FaStar, FaTimes, FaCheckCircle, FaBookmark, FaRegBookmark, FaExclamationTriangle } from 'react-icons/fa';
 import { BiShareAlt, BiFlag } from 'react-icons/bi';
 import { BsThreeDotsVertical } from 'react-icons/bs';
+import { useNavigate } from 'react-router-dom';
+import { checkUserApplication } from '@/api/publicationsApi';
 
-function PublicationDetailModal({ publication, isApplied, onClose, onApply, id_publicacion, id_usuario, userType }) {
+function PublicationDetailModal({ publication, isApplied: isAppliedProp, onClose, onApply, id_publicacion, id_usuario, userType }) {
   const [isSaved, setIsSaved] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
+  const [isApplied, setIsApplied] = useState(isAppliedProp);
+  const [isApplying, setIsApplying] = useState(false);
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [errorType, setErrorType] = useState('');
+  const [checkingApplication, setCheckingApplication] = useState(true);
+  
   const modalRef = useRef(null);
   const menuRef = useRef(null);
+  const navigate = useNavigate();
 
   const empresaNombre = publication.empresa || 'Empresa no especificada';
   const empresaInicial = empresaNombre.charAt(0).toUpperCase();
@@ -31,6 +41,27 @@ function PublicationDetailModal({ publication, isApplied, onClose, onApply, id_p
     ],
     recommendation: 78
   };
+
+  // Verificar si el usuario ya postuló al abrir el modal
+  useEffect(() => {
+    const checkApplicationStatus = async () => {
+      if (!id_usuario || userType !== 'freelancer') {
+        setCheckingApplication(false);
+        return;
+      }
+
+      try {
+        const { hasApplied } = await checkUserApplication(id_publicacion);
+        setIsApplied(hasApplied);
+      } catch (error) {
+        console.error('Error al verificar estado de postulación:', error);
+      } finally {
+        setCheckingApplication(false);
+      }
+    };
+
+    checkApplicationStatus();
+  }, [id_publicacion, id_usuario, userType]);
 
   // Cerrar modal al hacer clic fuera
   useEffect(() => {
@@ -56,6 +87,56 @@ function PublicationDetailModal({ publication, isApplied, onClose, onApply, id_p
       document.body.style.overflow = 'unset';
     };
   }, []);
+
+  // Cerrar error después de 5 segundos
+  useEffect(() => {
+    if (showError) {
+      const timer = setTimeout(() => {
+        setShowError(false);
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [showError]);
+
+  const handleApplyClick = async () => {
+    if (isApplied || isApplying) return;
+
+    setIsApplying(true);
+    setShowError(false);
+
+    try {
+      const result = await onApply(id_publicacion);
+
+      if (result.success) {
+        setIsApplied(true);
+      } else {
+        // Manejar errores específicos
+        if (result.error === 'INCOMPLETE_PROFILE') {
+          setErrorType('INCOMPLETE_PROFILE');
+          setErrorMessage('Debes completar tu perfil de freelancer para poder postular');
+        } else if (result.error === 'DUPLICATE_APPLICATION') {
+          setIsApplied(true);
+          setErrorMessage('Ya has postulado a este proyecto');
+        } else {
+          setErrorType('GENERAL');
+          setErrorMessage('Error al enviar la postulación. Intenta nuevamente.');
+        }
+        setShowError(true);
+      }
+    } catch (error) {
+      console.error('Error en handleApplyClick:', error);
+      setErrorType('GENERAL');
+      setErrorMessage('Error inesperado. Por favor intenta nuevamente.');
+      setShowError(true);
+    } finally {
+      setIsApplying(false);
+    }
+  };
+
+  const handleCompleteProfile = () => {
+    navigate('/freelancer/create-profile');
+    onClose();
+  };
 
   return (
     <>
@@ -135,8 +216,44 @@ function PublicationDetailModal({ publication, isApplied, onClose, onApply, id_p
             </div>
           </div>
 
+          {/* Mensaje de error */}
+          {showError && (
+            <div className="px-6 pt-4">
+              <div className={`flex items-start gap-3 p-4 rounded-lg border ${
+                errorType === 'INCOMPLETE_PROFILE' 
+                  ? 'bg-amber-50 border-amber-200' 
+                  : 'bg-red-50 border-red-200'
+              }`}>
+                <FaExclamationTriangle className={`text-xl flex-shrink-0 mt-0.5 ${
+                  errorType === 'INCOMPLETE_PROFILE' ? 'text-amber-600' : 'text-red-600'
+                }`} />
+                <div className="flex-1">
+                  <p className={`font-semibold ${
+                    errorType === 'INCOMPLETE_PROFILE' ? 'text-amber-900' : 'text-red-900'
+                  }`}>
+                    {errorMessage}
+                  </p>
+                  {errorType === 'INCOMPLETE_PROFILE' && (
+                    <button
+                      onClick={handleCompleteProfile}
+                      className="mt-2 px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg font-semibold text-sm transition-colors"
+                    >
+                      Completar Perfil Ahora
+                    </button>
+                  )}
+                </div>
+                <button
+                  onClick={() => setShowError(false)}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <FaTimes />
+                </button>
+              </div>
+            </div>
+          )}
+
           {/* Badge de estado aplicado */}
-          {isApplied && (
+          {isApplied && !checkingApplication && (
             <div className="px-6 pt-4">
               <div className="inline-flex items-center gap-2 bg-gradient-to-r from-green-400 to-emerald-500 text-white px-4 py-2 rounded-lg font-semibold text-sm">
                 <FaCheckCircle />
@@ -289,19 +406,26 @@ function PublicationDetailModal({ publication, isApplied, onClose, onApply, id_p
           <div className="sticky bottom-0 bg-white border-t border-gray-200 px-6 py-4">
             <button
               className={`w-full py-3.5 rounded-xl font-bold text-base transition-all duration-300 ${
-                isApplied 
+                isApplied || checkingApplication
                   ? 'bg-gray-100 cursor-not-allowed text-gray-500' 
+                  : isApplying
+                  ? 'bg-gray-300 cursor-wait text-gray-600'
                   : 'bg-gradient-to-r from-[#059669] to-[#10b981] text-white hover:shadow-lg hover:from-[#047857] hover:to-[#059669]'
               }`}
-              disabled={isApplied}
-              onClick={async (e) => {
-                e.stopPropagation();
-                if (!isApplied) {
-                  await onApply(id_publicacion);
-                }
-              }}
+              disabled={isApplied || isApplying || checkingApplication}
+              onClick={handleApplyClick}
             >
-              {isApplied ? (
+              {checkingApplication ? (
+                <span className="flex items-center justify-center gap-2">
+                  <div className="w-5 h-5 border-2 border-gray-400 border-t-gray-600 rounded-full animate-spin"></div>
+                  Verificando...
+                </span>
+              ) : isApplying ? (
+                <span className="flex items-center justify-center gap-2">
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  Enviando postulación...
+                </span>
+              ) : isApplied ? (
                 <span className="flex items-center justify-center gap-2">
                   <FaCheckCircle />
                   Ya aplicaste a este proyecto
