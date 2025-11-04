@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { jwtDecode } from "jwt-decode";
 import { loginUser, registerUser } from "@/api/userApi";
+import { errorAuth, successAuth } from "@/common/messagesResponses";
 
 function useAuth() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -10,38 +11,8 @@ function useAuth() {
     const [errors, setErrors] = useState({});
     const [message, setMessage] = useState({ show: false, text: "", type: "" });
 
-    /**
-     * Mensajes de error mejorados
-     */
-    const errorMessages = {
-        invalidEmail: "Por favor, ingresa un correo electrónico válido (ejemplo: usuario@correo.com)",
-        emptyEmail: "El correo electrónico es obligatorio",
-        shortPassword: "La contraseña debe contener al menos 6 caracteres para mayor seguridad",
-        emptyPassword: "La contraseña es obligatoria",
-        noUserType: "Por favor, selecciona si eres Empresa o Freelancer",
-        
-        // Mensajes de API comunes
-        userNotFound: "No encontramos una cuenta con este correo. ¿Quieres registrarte?",
-        wrongPassword: "La contraseña es incorrecta. Por favor, verifica e intenta de nuevo",
-        userExists: "Ya existe una cuenta con este correo. ¿Quieres iniciar sesión?",
-        networkError: "No pudimos conectar con el servidor. Verifica tu conexión a internet",
-        serverError: "Algo salió mal en nuestro servidor. Por favor, intenta nuevamente en unos momentos",
-        unauthorized: "Tu sesión ha expirado. Por favor, inicia sesión nuevamente",
-        timeout: "La solicitud tardó demasiado. Por favor, intenta de nuevo",
-        
-        // Mensajes genéricos
-        loginFailed: "No pudimos iniciar sesión. Verifica tus credenciales e intenta nuevamente",
-        registerFailed: "No pudimos completar tu registro. Por favor, intenta nuevamente"
-    };
-
-    /**
-     * Mensajes de éxito
-     */
-    const successMessages = {
-        loginSuccess: "¡Bienvenido de nuevo! Has iniciado sesión correctamente",
-        registerSuccess: "¡Cuenta creada exitosamente! Ahora puedes iniciar sesión",
-        logoutSuccess: "Has cerrado sesión correctamente. ¡Hasta pronto!"
-    };
+    const errorMessages = errorAuth;
+    const successMessages = successAuth;
 
     /**
      * Valida los campos de entrada con mensajes mejorados

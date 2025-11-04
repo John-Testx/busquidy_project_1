@@ -237,3 +237,25 @@ export const verifyUserProfileForPremium = async (tipo_usuario, id_usuario) => {
     throw error;
   }
 };
+
+
+// =============================================
+// LLAMADA A LA API DE RECOMENDACIÓN
+// =============================================
+
+
+/**
+ * Obtiene una lista de freelancers recomendados para un proyecto.
+ * @param {object} projectData - Los datos del proyecto.
+ * @param {string} projectData.categoria - La categoría del proyecto.
+ * @param {string[]} projectData.habilidades_requeridas - Array de habilidades.
+ */
+export const getRecommendedFreelancers = (projectData) => {
+    try {
+      console.log("Enviando a la API de recomendación:", projectData);
+      return apiClient.post('/recommend/freelancers', projectData);
+    } catch (error) {
+      console.error("Error al obtener recomendaciones de freelancers:", error);
+      throw error;
+    } 
+};

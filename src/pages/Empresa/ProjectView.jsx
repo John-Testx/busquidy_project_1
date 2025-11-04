@@ -3,37 +3,34 @@ import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Sparkles, Lock, Loader2, DollarSign, Calendar, Tag } from "lucide-react";
 import { getProjectById } from "@/api/projectsApi";
 import { getPostulationsForProject } from "@/api/publicationsApi";
-import PostulationCard from "@/components/Empresa/Projects/PostulationCard";
+import { getRecommendedFreelancers } from "@/api/freelancerApi";
 import LoadingScreen from "@/components/LoadingScreen";
 import MainLayout from "@/components/Layouts/MainLayout";
+import { projectStatus } from "@/common/projectStatus";
+
+// HELPERS 
+import { processSkills } from "@/utils/processSkills";
+
+// COMPONENTES DE TARJETA
+import PostulationCard from "@/components/Empresa/Projects/PostulationCard";
+import RecommendedFreelancerCard from '../../components/Empresa/Projects/RecommendedFreelancerCard';
+
 
 function ProjectView() {
     const { idProyecto } = useParams();
     const navigate = useNavigate();
     
+    const [project, setProject] = useState(null);
     const [projectDetails, setProjectDetails] = useState(null);
+
+    // 3. AÑADIR ESTADOS PARA LAS RECOMENDACIONES
+    const [recommended, setRecommended] = useState([]);
+    const [loadingRecs, setLoadingRecs] = useState(false);
+
     const [postulations, setPostulations] = useState([]);
     const [loading, setLoading] = useState(true);
     const [loadingPostulations, setLoadingPostulations] = useState(false);
     const [error, setError] = useState(null);
-
-    // Función helper para procesar habilidades
-    const processSkills = (skills) => {
-        if (!skills) return [];
-        
-        if (Array.isArray(skills)) return skills;
-        
-        if (typeof skills === 'string') {
-            try {
-                const parsed = JSON.parse(skills);
-                return Array.isArray(parsed) ? parsed : [];
-            } catch {
-                return skills.split(',').map(s => s.trim()).filter(s => s.length > 0);
-            }
-        }
-        
-        return [];
-    };
 
     useEffect(() => {
         const loadProjectData = async () => {
@@ -46,6 +43,8 @@ function ProjectView() {
                 setLoading(true);
                 setError(null);
                 const projectData = await getProjectById(idProyecto);
+                console.log("Datos del proyecto cargados:", projectData );
+                setProject(projectData);
                 setProjectDetails(projectData);
 
                 if (projectData.estado_publicacion === 'activo') {
@@ -71,46 +70,39 @@ function ProjectView() {
         loadProjectData();
     }, [idProyecto]);
 
-    // Función para formatear estado
-    const getStatusStyles = (status) => {
-        switch(status) {
-            case 'activo':
-                return {
-                    bg: 'bg-gradient-to-r from-emerald-100 to-emerald-50',
-                    text: 'text-emerald-700',
-                    border: 'border-emerald-300',
-                    label: 'Publicado'
+    // 4. AÑADIR NUEVO USEEFFECT PARA RECOMENDACIONES
+    // Se ejecuta SÓLO cuando el 'project' se ha cargado
+    useEffect(() => {
+        if (project) {
+            console.log("Cargando recomendaciones para el proyecto:", project);
+            console.log("Habilidades requeridas (raw):", project.habilidades_requeridas);
+        const fetchRecommendations = async () => {
+            setLoadingRecs(true);
+            try {
+                const skills = processSkills(project.habilidades_requeridas);
+                console.log("Habilidades procesadas para recomendaciones:", skills);
+                const apiRequestData = {
+                    categoria: project.categoria,
+                    habilidades_requeridas: skills,
                 };
-            case 'pendiente':
-                return {
-                    bg: 'bg-gradient-to-r from-amber-100 to-amber-50',
-                    text: 'text-amber-700',
-                    border: 'border-amber-300',
-                    label: 'Pendiente'
-                };
-            case 'finalizado':
-                return {
-                    bg: 'bg-gradient-to-r from-blue-100 to-blue-50',
-                    text: 'text-blue-700',
-                    border: 'border-blue-300',
-                    label: 'Finalizado'
-                };
-            case 'sin publicar':
-                return {
-                    bg: 'bg-gradient-to-r from-gray-100 to-gray-50',
-                    text: 'text-gray-700',
-                    border: 'border-gray-300',
-                    label: 'No Publicado'
-                };
-            default:
-                return {
-                    bg: 'bg-gradient-to-r from-gray-100 to-gray-50',
-                    text: 'text-gray-700',
-                    border: 'border-gray-300',
-                    label: status || 'Desconocido'
-                };
+                const response = await getRecommendedFreelancers(apiRequestData);
+                console.log("Recomendaciones recibidas de la API:", response.data);
+                setRecommended(response.data);
+
+            } catch (error) {
+                console.error("Error al cargar recomendaciones:", error);
+                setRecommended([]); // Poner vacío en caso de error
+            } finally {
+                setLoadingRecs(false);
+            }
+        };
+        
+        fetchRecommendations();
         }
-    };
+    }, [project]); // Depende de 'project'
+
+    // Función para formatear estado
+    const getStatusStyles = (status) => projectStatus(status);
 
     if (loading) {
         return <LoadingScreen />;
@@ -271,16 +263,26 @@ function ProjectView() {
                         <div className="space-y-6">
                             {/* Sección 1: Recomendaciones IA (Simulada) */}
                             <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
-                                <div className="flex items-center gap-3 mb-4">
-                                    <div className="w-10 h-10 bg-gradient-to-br from-purple-100 to-indigo-100 rounded-full flex items-center justify-center">
-                                        <Sparkles className="w-5 h-5 text-purple-600" />
+                                {/* Columna de Recomendaciones */}
+                                <div>
+                                <h2 className="text-xl font-bold text-gray-800 mb-4">
+                                    ✨ Freelancers Recomendados
+                                </h2>
+                                {loadingRecs ? (
+                                    <Loader2 className="w-8 h-8 text-[#07767c] animate-spin" label="Cargando recomendaciones..." />
+                                ) : recommended.length > 0 ? (
+                                    <div className="flex flex-col gap-4">
+                                    {/* Mostramos solo los 3 primeros, como mencionaste */}
+                                    {recommended.slice(0, 3).map((freelancer) => (
+                                        <RecommendedFreelancerCard key={freelancer.id_freelancer} freelancer={freelancer} />
+                                    ))}
                                     </div>
-                                    <h3 className="text-lg font-bold text-gray-900">Recomendaciones IA</h3>
-                                </div>
-                                <div className="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl p-4 border border-purple-200">
-                                    <p className="text-sm text-purple-900 leading-relaxed">
-                                        Sistema de recomendación IA en desarrollo. Próximamente podrás ver perfiles sugeridos aquí.
+                                ) : (
+                                    <p className="text-gray-500 text-sm">
+                                    No se encontraron recomendaciones automáticas. Puedes 
+                                    buscar y seleccionar freelancers manualmente.
                                     </p>
+                                )}
                                 </div>
                             </div>
 
