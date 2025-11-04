@@ -1,15 +1,18 @@
-import { Edit } from "lucide-react";
+import { Edit, Plus, Trash2 } from "lucide-react";
 
-function ExperienciaLaboral({ perfilData }) {
+function ExperienciaLaboral({ perfilData, openAddModal, openEditModal, handleDelete }) {
   const trabajo = perfilData.trabajoPractica || [];
 
   return (
     <section className="bg-white rounded-xl border border-gray-200 p-6">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-bold text-gray-900">Experiencia Laboral</h2>
-        <button className="px-4 py-2 border-2 border-gray-800 text-gray-800 rounded-lg hover:bg-gray-800 hover:text-white transition-colors font-semibold flex items-center gap-2">
-          <Edit size={18} />
-          Editar
+        <button 
+          onClick={() => openAddModal('experiencia')}
+          className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors font-semibold flex items-center gap-2"
+        >
+          <Plus size={18} />
+          Agregar
         </button>
       </div>
 
@@ -31,8 +34,17 @@ function ExperienciaLaboral({ perfilData }) {
                   <p className="text-sm text-gray-500">{exp.mes_inicio} {exp.ano_inicio}</p>
                 </div>
                 <div className="flex gap-2">
-                  <button className="p-2 hover:bg-gray-100 rounded-lg">
+                  <button 
+                    onClick={() => openEditModal('experiencia', exp)}
+                    className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                  >
                     <Edit size={18} className="text-gray-600" />
+                  </button>
+                  <button 
+                    onClick={() => handleDelete(exp.id_trabajo_practica, 'experiencia')}
+                    className="p-2 hover:bg-red-50 rounded-lg transition-colors"
+                  >
+                    <Trash2 size={18} className="text-red-600" />
                   </button>
                 </div>
               </div>
@@ -43,7 +55,7 @@ function ExperienciaLaboral({ perfilData }) {
           ))}
         </div>
       ) : (
-        <p className="text-gray-500 italic">No hay experiencia laboral registrada</p>
+        <p className="text-gray-500 italic text-center py-4">No hay experiencia laboral registrada</p>
       )}
     </section>
   );

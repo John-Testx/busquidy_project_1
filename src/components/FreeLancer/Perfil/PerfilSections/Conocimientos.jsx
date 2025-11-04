@@ -1,6 +1,6 @@
-import { Plus, Languages, XCircle } from "lucide-react";
+import { Plus, Languages, Trash2, Edit } from "lucide-react";
 
-function Conocimientos({ perfilData }) {
+function Conocimientos({ perfilData, openAddModal, openEditModal, handleDelete }) {
   const idiomas = perfilData.idiomas || [];
   const habilidades = perfilData.habilidades || [];
 
@@ -12,7 +12,10 @@ function Conocimientos({ perfilData }) {
       <div className="mb-6">
         <div className="flex items-center justify-between mb-4">
           <h3 className="font-bold text-gray-900">Idiomas</h3>
-          <button className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors font-semibold flex items-center gap-2">
+          <button 
+            onClick={() => openAddModal('idioma')}
+            className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors font-semibold flex items-center gap-2"
+          >
             <Plus size={18} />
             Agregar
           </button>
@@ -21,7 +24,7 @@ function Conocimientos({ perfilData }) {
         {idiomas.length > 0 ? (
           <div className="space-y-2">
             {idiomas.map((idioma, idx) => (
-              <div key={idx} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+              <div key={idx} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg group">
                 <div className="flex items-center gap-3">
                   <Languages className="text-blue-600" size={20} />
                   <span className="font-semibold text-gray-900">{idioma.idioma}</span>
@@ -30,9 +33,20 @@ function Conocimientos({ perfilData }) {
                   <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-lg text-sm font-medium">
                     {idioma.nivel}
                   </span>
-                  <button className="text-gray-600 hover:text-gray-900">
-                    <XCircle size={18} />
-                  </button>
+                  <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button 
+                      onClick={() => openEditModal('idioma', idioma)}
+                      className="text-gray-600 hover:text-gray-900 p-1"
+                    >
+                      <Edit size={16} />
+                    </button>
+                    <button 
+                      onClick={() => handleDelete(idioma.id_idioma, 'idioma')}
+                      className="text-red-600 hover:text-red-700 p-1"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
@@ -46,7 +60,10 @@ function Conocimientos({ perfilData }) {
       <div>
         <div className="flex items-center justify-between mb-4">
           <h3 className="font-bold text-gray-900">Habilidades</h3>
-          <button className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors font-semibold flex items-center gap-2">
+          <button 
+            onClick={() => openAddModal('habilidad')}
+            className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors font-semibold flex items-center gap-2"
+          >
             <Plus size={18} />
             Agregar
           </button>
@@ -67,9 +84,20 @@ function Conocimientos({ perfilData }) {
                       <span className="text-gray-700 text-xs font-medium">{hab.nivel}</span>
                     </div>
                   </div>
-                  <button className="opacity-0 group-hover:opacity-100 transition-opacity text-red-600 hover:text-red-700">
-                    <XCircle size={18} />
-                  </button>
+                  <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button 
+                      onClick={() => openEditModal('habilidad', hab)}
+                      className="text-gray-600 hover:text-gray-900 p-1"
+                    >
+                      <Edit size={16} />
+                    </button>
+                    <button 
+                      onClick={() => handleDelete(hab.id_habilidad, 'habilidad')}
+                      className="text-red-600 hover:text-red-700 p-1"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}

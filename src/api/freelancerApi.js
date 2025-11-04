@@ -21,8 +21,8 @@ export const createFreelancerProfile = (freelancerData, id_usuario) =>
     id_usuario,
   });
 
-export const updateProfileSection = (id_usuario, section, data) =>
-  apiClient.put(`${BASE}/update-freelancer/${id_usuario}/${section}`, data);
+// export const updateProfileSection = (id_usuario, section, data) =>
+//   apiClient.put(`${BASE}/update-freelancer/${id_usuario}/${section}`, data);
 
 /**
  * Obtiene el perfil de la empresa
@@ -59,6 +59,39 @@ export const uploadCV = (cvFile, id_usuario) => {
 
 export const getCVUrl = (id_freelancer) =>
   apiClient.get(`${BASE}/freelancer/${id_freelancer}/cv`);
+
+
+// =============================================
+// CRUD DE SECCIONES DEL PERFIL
+// =============================================
+
+/**
+ * Agregar un nuevo ítem a una sección del perfil
+ * @param {Object} sectionData - { tipo_seccion: 'experiencia', ...datos }
+ * @returns {Promise<Object>}
+ */
+export const addProfileSection = (sectionData) =>
+  apiClient.post(`${BASE}/profile/section`, sectionData);
+
+/**
+ * Actualizar un ítem existente de una sección
+ * @param {number} itemId - ID del ítem a actualizar
+ * @param {Object} sectionData - { tipo_seccion: 'experiencia', ...datos }
+ * @returns {Promise<Object>}
+ */
+export const updateProfileSection = (itemId, sectionData) =>
+  apiClient.put(`${BASE}/profile/section/${itemId}`, sectionData);
+
+/**
+ * Eliminar un ítem de una sección
+ * @param {number} itemId - ID del ítem a eliminar
+ * @param {string} tipo_seccion - Tipo de sección ('experiencia', 'idioma', etc.)
+ * @returns {Promise<Object>}
+ */
+export const deleteProfileSection = (itemId, tipo_seccion) =>
+  apiClient.delete(`${BASE}/profile/section/${itemId}`, { 
+    data: { tipo_seccion } 
+  });
 
 // =============================================
 // POSTULACIONES

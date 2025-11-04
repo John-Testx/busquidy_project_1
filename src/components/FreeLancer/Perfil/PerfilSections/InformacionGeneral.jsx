@@ -1,8 +1,15 @@
 import { Edit } from "lucide-react";
 
-function InformacionGeneral({ perfilData }) {
+function InformacionGeneral({ perfilData, openEditModal }) {
   const personal = perfilData.antecedentesPersonales || {};
   const freelancer = perfilData.freelancer || {};
+
+  // Combinar datos para el formulario de edición
+  const datosCompletos = {
+    ...personal,
+    correo_contacto: freelancer.correo_contacto,
+    telefono_contacto: freelancer.telefono_contacto
+  };
 
   return (
     <section className="bg-gray-100 rounded-xl p-6">
@@ -11,7 +18,10 @@ function InformacionGeneral({ perfilData }) {
           <h2 className="text-xl font-bold text-gray-900">Información General</h2>
           <span className="text-gray-500">📌</span>
         </div>
-        <button className="px-4 py-2 border-2 border-gray-800 text-gray-800 rounded-lg hover:bg-gray-800 hover:text-white transition-colors font-semibold flex items-center gap-2">
+        <button 
+          onClick={() => openEditModal('informacion_general', datosCompletos)}
+          className="px-4 py-2 border-2 border-gray-800 text-gray-800 rounded-lg hover:bg-gray-800 hover:text-white transition-colors font-semibold flex items-center gap-2"
+        >
           <Edit size={18} />
           Editar
         </button>

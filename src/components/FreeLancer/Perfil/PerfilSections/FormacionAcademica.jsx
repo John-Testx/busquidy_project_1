@@ -1,6 +1,6 @@
-import { Edit, Plus, GraduationCap, XCircle } from "lucide-react";
+import { Edit, Plus, GraduationCap, Trash2 } from "lucide-react";
 
-function FormacionAcademica({ perfilData }) {
+function FormacionAcademica({ perfilData, openAddModal, openEditModal, handleDelete }) {
   const educacion_sup = perfilData.educacionSuperior || [];
   const educacion_basica = perfilData.educacionBasicaMedia || [];
   const nivelEducacional = perfilData.nivelEducacional || {};
@@ -13,7 +13,10 @@ function FormacionAcademica({ perfilData }) {
       <div className="mb-6">
         <div className="flex items-center justify-between mb-4">
           <h3 className="font-bold text-gray-900">Nivel educacional</h3>
-          <button className="px-4 py-2 border-2 border-gray-800 text-gray-800 rounded-lg hover:bg-gray-800 hover:text-white transition-colors font-semibold flex items-center gap-2">
+          <button 
+            onClick={() => openEditModal('formacion', nivelEducacional)}
+            className="px-4 py-2 border-2 border-gray-800 text-gray-800 rounded-lg hover:bg-gray-800 hover:text-white transition-colors font-semibold flex items-center gap-2"
+          >
             <Edit size={18} />
             Editar
           </button>
@@ -28,7 +31,10 @@ function FormacionAcademica({ perfilData }) {
       <div className="mb-6">
         <div className="flex items-center justify-between mb-4">
           <h3 className="font-bold text-gray-900">Educación superior</h3>
-          <button className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors font-semibold flex items-center gap-2">
+          <button 
+            onClick={() => openAddModal('educacion_superior')}
+            className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors font-semibold flex items-center gap-2"
+          >
             <Plus size={18} />
             Agregar
           </button>
@@ -62,12 +68,18 @@ function FormacionAcademica({ perfilData }) {
                   {edu.institucion} - {edu.ciudad || 'Santiago'}, {edu.pais || 'Chile'}
                 </p>
                 <div className="flex gap-2 mt-3">
-                  <button className="px-3 py-1 border border-gray-300 rounded-lg text-sm hover:bg-gray-100">
-                    <Edit size={14} className="inline mr-1" />
+                  <button 
+                    onClick={() => openEditModal('educacion_superior', edu)}
+                    className="px-3 py-1 border border-gray-300 rounded-lg text-sm hover:bg-gray-100 flex items-center gap-1"
+                  >
+                    <Edit size={14} />
                     Editar
                   </button>
-                  <button className="px-3 py-1 border border-gray-300 rounded-lg text-sm hover:bg-gray-100">
-                    <XCircle size={14} className="inline mr-1" />
+                  <button 
+                    onClick={() => handleDelete(edu.id_educacion_superior, 'educacion_superior')}
+                    className="px-3 py-1 border border-red-300 text-red-600 rounded-lg text-sm hover:bg-red-50 flex items-center gap-1"
+                  >
+                    <Trash2 size={14} />
                     Eliminar
                   </button>
                 </div>
@@ -83,7 +95,10 @@ function FormacionAcademica({ perfilData }) {
       <div>
         <div className="flex items-center justify-between mb-4">
           <h3 className="font-bold text-gray-900">Educación básica y media</h3>
-          <button className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors font-semibold flex items-center gap-2">
+          <button 
+            onClick={() => openAddModal('educacion_basica')}
+            className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors font-semibold flex items-center gap-2"
+          >
             <Plus size={18} />
             Agregar
           </button>
@@ -107,12 +122,18 @@ function FormacionAcademica({ perfilData }) {
                   {edu.institucion} - {edu.ciudad}, {edu.pais}
                 </p>
                 <div className="flex gap-2">
-                  <button className="px-3 py-1 border border-gray-300 rounded-lg text-sm hover:bg-gray-100">
-                    <Edit size={14} className="inline mr-1" />
+                  <button 
+                    onClick={() => openEditModal('educacion_basica', edu)}
+                    className="px-3 py-1 border border-gray-300 rounded-lg text-sm hover:bg-gray-100 flex items-center gap-1"
+                  >
+                    <Edit size={14} />
                     Editar
                   </button>
-                  <button className="px-3 py-1 border border-gray-300 rounded-lg text-sm hover:bg-gray-100">
-                    <XCircle size={14} className="inline mr-1" />
+                  <button 
+                    onClick={() => handleDelete(edu.id_educacion_basica_media, 'educacion_basica')}
+                    className="px-3 py-1 border border-red-300 text-red-600 rounded-lg text-sm hover:bg-red-50 flex items-center gap-1"
+                  >
+                    <Trash2 size={14} />
                     Eliminar
                   </button>
                 </div>

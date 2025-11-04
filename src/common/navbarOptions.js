@@ -57,7 +57,7 @@ export const getNavbarOptions = (tipo_usuario) => {
             },
             {
                 label: "Configuración",
-                link: "/freelancer-profile/availability",
+                link: "/freelancer-profile/configuracion",
                 icon: "bi bi-gear",
                 roles: ["freelancer"]
             },
