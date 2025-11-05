@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Modal from "../Modal";
+import Modal from "../../Home/Modal";
 import { ArrowLeft, Lock, AlertCircle, Loader2, User, Briefcase, Building2, Eye, EyeOff } from "lucide-react";
 
 const SecondaryRegisterModal = ({ onClose, onBack, formData, setFormData, errors, handleRegister, loading, onOpenLogin, verifiedEmail }) => {

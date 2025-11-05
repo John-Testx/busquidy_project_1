@@ -5,10 +5,10 @@ import { useAuth } from "@/hooks";
 import { getSubscriptionPlans, getActiveSubscription, cancelSubscription } from "@/api/paymentApi";
 import { toast } from 'react-toastify';
 import ModalPagoSuscripcion from "@/components/ModalPagoSuscripcion";
-import LoginModal from "@/components/Home/Modals/LoginModal";
-import LoginSecondaryModal from "@/components/Home/Modals/LoginSecondaryModal";
-import RegisterModal from "@/components/Home/Modals/RegisterModal"; 
-import SecondaryRegisterModal from "@/components/Home/Modals/SecondaryRegisterModal";
+import LoginModal from "@/components/Auth/Modals/LoginModal";
+import LoginSecondaryModal from "@/components/Auth/Modals/LoginSecondaryModal";
+import RegisterModal from "@/components/Auth/Modals/RegisterModal"; 
+import SecondaryRegisterModal from "@/components/Auth/Modals/SecondaryRegisterModal";
 import LoadingScreen from "@/components/LoadingScreen";
 import MainLayout from "@/components/Layouts/MainLayout";
 

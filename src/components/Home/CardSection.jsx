@@ -12,10 +12,10 @@ import {
   TrendingUp
 } from 'lucide-react';
 import { useAuth } from "@/hooks";
-import LoginModal from "@/components/Home/Modals/LoginModal";
-import LoginSecondaryModal from "@/components/Home/Modals/LoginSecondaryModal";
-import RegisterModal from "@/components/Home/Modals/RegisterModal";
-import SecondaryRegisterModal from "@/components/Home/Modals/SecondaryRegisterModal";
+import LoginModal from "@/components/Auth/Modals/LoginModal";
+import LoginSecondaryModal from "@/components/Auth/Modals/LoginSecondaryModal";
+import RegisterModal from "@/components/Auth/Modals/RegisterModal";
+import SecondaryRegisterModal from "@/components/Auth/Modals/SecondaryRegisterModal";
 
 function CardSection({ userType }) {
     const navigate = useNavigate();

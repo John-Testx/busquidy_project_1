@@ -25,6 +25,10 @@ const ForgotPasswordPage = lazy(() => import('@pages/User/ForgotPasswordPage'));
 const ResetPasswordPage = lazy(() => import('@pages/User/ResetPasswordPage'));
 const SettingsPage = lazy(() => import('@pages/Shared/SettingsPage'));
 const MyTransactionsPage = lazy(() => import('@pages/Shared/MyTransactionsPage'));
+const RegisterPage = lazy(() => import('@/pages/User/RegisterPage'));
+const LoginPage = lazy(() => import('@/pages/User/LoginPage'));
+const PrivacyPolicyPage = lazy(() => import('@/pages/General/PrivacyPolicyPage'));
+const TermsOfServicePage = lazy(() => import('@/pages/General/TermsOfServicePage'));
 
 import AuthCallback from '@/pages/User/AuthCallback';
 import CompleteProfile from '@/pages/User/CompleteProfile';
@@ -68,6 +72,13 @@ const AppRoutes = () => {
     <Routes>
       {/* Public Routes */}
       <Route path="/" element={<Home />} />
+
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/register" element={<RegisterPage />} />
+      
+      <Route path="/privacidad" element={<PrivacyPolicyPage />} />
+      <Route path="/terminos" element={<TermsOfServicePage />} />
+
       <Route path="/busquidypage" element={<BusquidyPage />} />
       <Route path="/sobrenosotrospage" element={<AboutUsPage />} />
       <Route path="/projectlist" element={<ProjectList />} />

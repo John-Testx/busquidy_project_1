@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Modal from "../Modal";
+import Modal from "../../Home/Modal";
 import { ArrowLeft, Mail, AlertCircle, Loader2, CheckCircle } from "lucide-react";
 
 const API_URL = import.meta.env.VITE_API_URL;

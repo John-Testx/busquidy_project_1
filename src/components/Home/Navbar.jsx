@@ -8,11 +8,11 @@ import { getUserInitials } from "@/common/utils";
 import { checkProfileExists } from "@/api/freelancerApi";
 
 // ✅ IMPORTAR LOS MODALES MEJORADOS
-import LoginModal from "./Modals/LoginModal";
-import LoginSecondaryModal from "./Modals/LoginSecondaryModal";
-import RegisterModal from "./Modals/RegisterModal";
-import EmailVerificationModal from "./Modals/EmailVerificationModal";
-import SecondaryRegisterModal from "./Modals/SecondaryRegisterModal";
+import LoginModal from "../Auth/Modals/LoginModal";
+import LoginSecondaryModal from "../Auth/Modals/LoginSecondaryModal";
+import RegisterModal from "../Auth/Modals/RegisterModal";
+import EmailVerificationModal from "../Auth/Modals/EmailVerificationModal";
+import SecondaryRegisterModal from "../Auth/Modals/SecondaryRegisterModal";
 import MessageModal from "../MessageModal";
 
 import { 

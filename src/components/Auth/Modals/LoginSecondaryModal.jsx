@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Modal from "../Modal";
+import Modal from "../../Home/Modal";
 import { ArrowLeft, Mail, Lock, AlertCircle, Loader2, Eye, EyeOff } from "lucide-react";
 import { Link } from 'react-router-dom'; 
 
