@@ -1,17 +1,20 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { useParams } from 'react-router-dom';
 import io from 'socket.io-client';
-import { getConversations, getMessages, getUsersForChat, createConversation } from '@/api/chatApi';
+import { getConversations, getMessages, getUsersForChat, createConversation, getConversationById  } from '@/api/chatApi';
 import { useAuth } from '@/hooks';
 
 const SOCKET_SERVER_URL = "http://localhost:3001";
 
 const useChat = () => {
+  const { conversationId } = useParams();
   const [conversations, setConversations] = useState([]);
   const [selectedConversation, setSelectedConversation] = useState(null);
   const [messages, setMessages] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [solicitudData, setSolicitudData] = useState(null);
   const { id_usuario } = useAuth();
   const socket = useRef(null);
 
@@ -81,6 +84,37 @@ const useChat = () => {
       fetchConversations();
     }
   }, [id_usuario]);
+
+  // ✅ NUEVO: Cargar conversación desde URL
+  useEffect(() => {
+    const loadConversationFromUrl = async () => {
+      if (conversationId && id_usuario) {
+        try {
+          setLoading(true);
+          const response = await getConversationById(conversationId);
+          const { conversation, messages: fetchedMessages, solicitud } = response.data;
+
+          setSelectedConversation({
+            id_conversation: conversation.id_conversation,
+            user_one_id: conversation.id_user_one,
+            user_two_id: conversation.id_user_two,
+            user_one_email: conversation.user_one_email,
+            user_two_email: conversation.user_two_email
+          });
+          setMessages(fetchedMessages);
+          setSolicitudData(solicitud); // ✅ Guardar estado de solicitud
+          setError(null);
+        } catch (error) {
+          console.error("Error loading conversation:", error);
+          setError("No se pudo cargar la conversación");
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+
+    loadConversationFromUrl();
+  }, [conversationId, id_usuario]);
 
   // Fetch messages for selected conversation
   const fetchMessagesForConversation = useCallback(async (conversationId) => {
@@ -167,6 +201,7 @@ const useChat = () => {
     loading,
     error,
     id_usuario,
+    solicitudData,
     
     // Methods
     sendMessage,

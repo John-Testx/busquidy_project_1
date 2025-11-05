@@ -19,15 +19,15 @@ const ChatPage = () => {
     sortedConversations,
     handleNewConversation,
     id_usuario,
-    loading
+    loading,
+    solicitudData // ✅ NUEVO
   } = useChat();
 
-  // Estado para manejar vista móvil
   const [showChat, setShowChat] = useState(false);
 
   const handleSelectConversation = (conv) => {
     setSelectedConversation(conv);
-    setShowChat(true); // En móvil, mostrar el chat
+    setShowChat(true);
   };
 
   const handleBackToList = () => {
@@ -43,7 +43,6 @@ const ChatPage = () => {
         
         <div className="flex-1 flex overflow-hidden bg-gradient-to-br from-teal-50 via-cyan-50 to-white p-2 md:p-4 lg:p-6">
           <div className="flex w-full overflow-hidden rounded-xl md:rounded-2xl shadow-2xl border border-gray-200/50">
-            {/* Lista de conversaciones - oculta en móvil cuando hay chat seleccionado */}
             <div className={`${showChat ? 'hidden' : 'flex'} md:flex w-full md:w-1/3 lg:w-1/4`}>
               <ConversationList
                 conversations={conversations}
@@ -58,7 +57,6 @@ const ChatPage = () => {
               />
             </div>
 
-            {/* Ventana de chat - oculta en móvil cuando no hay chat seleccionado */}
             <div className={`${showChat ? 'flex' : 'hidden'} md:flex flex-1`}>
               <ChatWindow
                 key={selectedConversation?.id_conversation}
@@ -67,6 +65,7 @@ const ChatPage = () => {
                 onSendMessage={sendMessage}
                 otherUserEmail={getOtherUserEmail()}
                 currentUserId={id_usuario}
+                solicitudData={solicitudData} // ✅ PASAR PROP
                 onBack={handleBackToList}
               />
             </div>

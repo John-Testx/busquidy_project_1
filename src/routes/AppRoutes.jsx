@@ -25,6 +25,7 @@ const ForgotPasswordPage = lazy(() => import('@pages/User/ForgotPasswordPage'));
 const ResetPasswordPage = lazy(() => import('@pages/User/ResetPasswordPage'));
 const SettingsPage = lazy(() => import('@pages/Shared/SettingsPage'));
 const MyTransactionsPage = lazy(() => import('@pages/Shared/MyTransactionsPage'));
+const InterviewRequestPage = lazy(() => import('@/pages/InterviewRequestPage'));
 
 import AuthCallback from '@/pages/User/AuthCallback';
 import CompleteProfile from '@/pages/User/CompleteProfile';
@@ -85,13 +86,8 @@ const AppRoutes = () => {
       {/* Chat Routes */}
       <Route element={<ProtectedRoute allowedRoles={['freelancer', 'empresa_juridico', 'empresa_natural']} />}>
         <Route path="/chat" element={<ChatPage />} />
+        <Route path="/chat/:conversationId" element={<ChatPage />} />
       </Route>
-
-      {/* Shared Routes - Configuración y Transacciones */}
-      {/* <Route element={<ProtectedRoute allowedRoles={['freelancer', 'empresa_juridico', 'empresa_natural']} />}>
-        <Route path="/freelancer-profile/configuracion" element={<SettingsPage />} />
-        <Route path="/freelancer-profile/mis-transacciones" element={<MyTransactionsPage />} />
-      </Route> */}
 
       {/* Soporte Routes (Public and Private) */}
       <Route path="/busquidyGuia" element={<BusquidyGuia />} />
@@ -113,6 +109,7 @@ const AppRoutes = () => {
       <Route element={<ProtectedRoute allowedRoles={['freelancer']} />}>
         <Route path="/freelancer" element={<FreeLancer />} />
         <Route path="/mypostulations" element={<MyPostulations />} />
+        <Route path="/interview/request/:id_solicitud" element={<InterviewRequestPage />} />
         
         <Route path="/freelancer-profile" element={<FreelancerProfileLayout/>}>
           <Route index element={<ViewPerfilFreeLancer/>} />

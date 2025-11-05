@@ -37,3 +37,11 @@ export const getContactRequests = async () => {
   const response = await apiClient.get(BASE_URL);
   return response.data;
 };
+
+/**
+ * ✅ NUEVA: Obtener detalles de una solicitud específica
+ */
+export const getContactRequestById = async (id_solicitud) => {
+  const response = await apiClient.get(`${BASE_URL}/${id_solicitud}`);
+  return response.data;
+};
