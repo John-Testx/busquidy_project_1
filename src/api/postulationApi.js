@@ -3,7 +3,7 @@ import apiClient from './apiClient';
 const BASE_URL = '/postulations';
 
 /**
- * ✅ NUEVA: Contratar a un freelancer
+ * ✅ Contratar a un freelancer
  */
 export const hireFreelancer = async (id_postulacion) => {
   const response = await apiClient.post(`${BASE_URL}/${id_postulacion}/hire`);

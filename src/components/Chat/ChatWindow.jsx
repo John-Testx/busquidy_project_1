@@ -9,7 +9,7 @@ const ChatWindow = ({
   onSendMessage, 
   otherUserEmail, 
   currentUserId,
-  solicitudData, // ✅ NUEVO PROP
+  solicitudData,
   onBack 
 }) => {
   const [newMessage, setNewMessage] = useState('');
@@ -35,8 +35,14 @@ const ChatWindow = ({
         setShowAcceptanceOverlay(false);
         setChatEnabled(false);
       }
+    } else {
+      // Si no hay solicitud, verificar si hay mensajes para habilitar el chat
+      if (messages && messages.length > 0) {
+        setChatEnabled(true);
+        setShowAcceptanceOverlay(false);
+      }
     }
-  }, [solicitudData, id_usuario]);
+  }, [solicitudData, id_usuario, messages]);
 
   // Scroll to bottom when messages change
   useEffect(() => {
@@ -58,6 +64,8 @@ const ChatWindow = ({
   const handleAccept = () => {
     setShowAcceptanceOverlay(false);
     setChatEnabled(true);
+    // Recargar la página para actualizar los datos
+    window.location.reload();
   };
 
   const handleReject = () => {

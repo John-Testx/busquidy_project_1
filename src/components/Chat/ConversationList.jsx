@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Search, MessageSquarePlus, User, ChevronRight } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import NewChatModal from './NewChatModal';
 
 const ConversationList = ({
@@ -15,13 +15,6 @@ const ConversationList = ({
   id_usuario
 }) => {
   const [isNewChatModalOpen, setIsNewChatModalOpen] = useState(false);
-  const navigate = useNavigate();
-
-  const handleSelectConversation = (conv) => {
-    setSelectedConversation(conv);
-    // ✅ NAVEGAR A LA RUTA CON conversationId
-    navigate(`/chat/${conv.id_conversation}`);
-  };
 
   const formatLastMessageTime = (timestamp) => {
     if (!timestamp) return '';
@@ -92,9 +85,10 @@ const ConversationList = ({
               const isSelected = selectedConversation?.id_conversation === conv.id_conversation;
 
               return (
-                <button
+                <Link
                   key={conv.id_conversation}
-                  onClick={() => handleSelectConversation(conv)}
+                  to={`/chat/${conv.id_conversation}`}
+                  onClick={() => setSelectedConversation(conv)}
                   className={`w-full p-4 flex items-center gap-3 hover:bg-gray-50 transition-colors border-b border-gray-100 ${
                     isSelected ? 'bg-[#07767c]/5 border-l-4 border-l-[#07767c]' : ''
                   }`}
@@ -118,7 +112,7 @@ const ConversationList = ({
                   </div>
 
                   <ChevronRight size={18} className="text-gray-400 flex-shrink-0" />
-                </button>
+                </Link>
               );
             })
           )}
@@ -129,7 +123,7 @@ const ConversationList = ({
       <NewChatModal
         isOpen={isNewChatModalOpen}
         onClose={() => setIsNewChatModalOpen(false)}
-        onStartConversation={handleNewConversation}
+        onConversationStarted={handleNewConversation}
       />
     </>
   );

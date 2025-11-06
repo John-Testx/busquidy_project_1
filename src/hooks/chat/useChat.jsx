@@ -85,7 +85,7 @@ const useChat = () => {
     }
   }, [id_usuario]);
 
-  // ✅ NUEVO: Cargar conversación desde URL
+  // ✅ NUEVO: Cargar conversación desde URL con datos de solicitud
   useEffect(() => {
     const loadConversationFromUrl = async () => {
       if (conversationId && id_usuario) {
@@ -101,7 +101,7 @@ const useChat = () => {
             user_one_email: conversation.user_one_email,
             user_two_email: conversation.user_two_email
           });
-          setMessages(fetchedMessages);
+          setMessages(fetchedMessages || []);
           setSolicitudData(solicitud); // ✅ Guardar estado de solicitud
           setError(null);
         } catch (error) {

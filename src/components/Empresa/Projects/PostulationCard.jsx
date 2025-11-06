@@ -10,7 +10,7 @@ const PostulationCard = ({ postulant, onPostulantUpdate }) => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [isInterviewModalOpen, setIsInterviewModalOpen] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [hiringLoading, setHiringLoading] = useState(false); // ✅ NUEVO
+    const [hiringLoading, setHiringLoading] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     
@@ -73,9 +73,10 @@ const PostulationCard = ({ postulant, onPostulantUpdate }) => {
             await createContactRequest(requestData);
             setSuccessMessage('✅ Solicitud de chat enviada exitosamente');
 
-            setTimeout(() => {
-                setSuccessMessage('');
-            }, 3000);
+            // Actualizar la lista de postulantes
+            if (onPostulantUpdate) {
+                onPostulantUpdate();
+            }
 
         } catch (error) {
             console.error('❌ Error al enviar solicitud de chat:', error);
@@ -87,7 +88,7 @@ const PostulationCard = ({ postulant, onPostulantUpdate }) => {
         }
     };
 
-    // ✅ NUEVA FUNCIÓN: Contratar freelancer
+    // ✅ FUNCIÓN: Contratar freelancer
     const handleHireFreelancer = async () => {
         if (!window.confirm(`¿Estás seguro de que deseas contratar a ${postulant.nombre}?`)) {
             return;
@@ -98,18 +99,20 @@ const PostulationCard = ({ postulant, onPostulantUpdate }) => {
 
         try {
             const response = await hireFreelancer(postulant.id_postulacion);
-            setSuccessMessage('✅ Freelancer contratado exitosamente. Ya pueden chatear.');
+            setSuccessMessage(`✅ ${response.message || 'Freelancer contratado exitosamente'}. Ya pueden chatear.`);
 
-            // Opcional: Redirigir al chat después de 2 segundos
+            // Redirigir al chat después de 2 segundos
             if (response.id_conversation) {
                 setTimeout(() => {
                     navigate(`/chat/${response.id_conversation}`);
                 }, 2000);
             }
 
-            // Notificar al componente padre para actualizar la lista (opcional)
+            // Actualizar la lista de postulantes
             if (onPostulantUpdate) {
-                onPostulantUpdate();
+                setTimeout(() => {
+                    onPostulantUpdate();
+                }, 2500);
             }
 
         } catch (error) {
