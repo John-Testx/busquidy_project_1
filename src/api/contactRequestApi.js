@@ -25,7 +25,7 @@ export const createContactRequest = async (data) => {
  * @returns {Promise<Object>} Respuesta del servidor
  */
 export const respondContactRequest = async (id_solicitud, data) => {
-  const response = await apiClient.patch(`${BASE_URL}/${id_solicitud}/responder`, data);
+  const response = await apiClient.patch(`${BASE_URL}/${id_solicitud}/respond`, data);
   return response.data;
 };
 
@@ -35,5 +35,13 @@ export const respondContactRequest = async (id_solicitud, data) => {
  */
 export const getContactRequests = async () => {
   const response = await apiClient.get(BASE_URL);
+  return response.data;
+};
+
+/**
+ * ✅ NUEVA: Obtener detalles de una solicitud específica
+ */
+export const getContactRequestById = async (id_solicitud) => {
+  const response = await apiClient.get(`${BASE_URL}/${id_solicitud}`);
   return response.data;
 };

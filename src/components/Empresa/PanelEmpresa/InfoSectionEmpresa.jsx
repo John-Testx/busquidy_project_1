@@ -4,14 +4,13 @@ import {
   CheckCircle2, 
   CreditCard, 
 } from 'lucide-react';
-import { getMyUsage } from "@/api/userApi";
+// import { getMyUsage } from "@/api/userApi";
 import useAuth from "@/hooks/auth/useAuth";
 
 function InfoSectionEmpresa() {
     const [usage, setUsage] = useState(null);
     const [loadingUsage, setLoadingUsage] = useState(true);
 
-    // ✅ AGREGAR: Obtener tipo de usuario para terminología
     const { user } = useAuth();
     const esNatural = user?.tipo_usuario === 'empresa_natural';
     
@@ -20,19 +19,19 @@ function InfoSectionEmpresa() {
         plural: esNatural ? 'Tareas' : 'Proyectos'
     };
 
-    useEffect(() => {
-        const fetchUsage = async () => {
-            try {
-                const response = await getMyUsage();
-                setUsage(response.data);
-            } catch (error) {
-                console.error("Error al cargar uso del plan:", error);
-            } finally {
-                setLoadingUsage(false);
-            }
-        };
-        fetchUsage();
-    }, []);
+    // useEffect(() => {
+    //     const fetchUsage = async () => {
+    //         try {
+    //             const response = await getMyUsage();
+    //             setUsage(response.data);
+    //         } catch (error) {
+    //             console.error("Error al cargar uso del plan:", error);
+    //         } finally {
+    //             setLoadingUsage(false);
+    //         }
+    //     };
+    //     fetchUsage();
+    // }, []);
 
     return (
         <div className="w-full space-y-12">

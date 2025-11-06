@@ -8,6 +8,7 @@ import LoadingScreen from "@/components/LoadingScreen";
 import MainLayout from "@/components/Layouts/MainLayout";
 import { projectStatus } from "@/common/projectStatus";
 
+
 // HELPERS 
 import { processSkills } from "@/utils/processSkills";
 
@@ -46,6 +47,8 @@ function ProjectView() {
                 console.log("Datos del proyecto cargados:", projectData );
                 setProject(projectData);
                 setProjectDetails(projectData);
+
+                // <ProjectCandidates projectDetails={projectDetails} />
 
                 if (projectData.estado_publicacion === 'activo') {
                     setLoadingPostulations(true);

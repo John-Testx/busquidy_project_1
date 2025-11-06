@@ -1,25 +1,25 @@
 import React, { useEffect, useState } from "react";
 import { Search, CheckCircle2, CreditCard, } from 'lucide-react';
-import { getMyUsage } from "@/api/userApi";
+// import { getMyUsage } from "@/api/userApi";
 
 
 function InfoSectionFreelancer() {
-    const [usage, setUsage] = useState(null);
+    // const [usage, setUsage] = useState(null);
     const [loadingUsage, setLoadingUsage] = useState(true);
 
-        useEffect(() => {
-        const fetchUsage = async () => {
-            try {
-                const response = await getMyUsage();
-                setUsage(response.data);
-            } catch (error) {
-                console.error("Error al cargar uso del plan:", error);
-            } finally {
-                setLoadingUsage(false);
-            }
-        };
-        fetchUsage();
-    }, []);
+    //     useEffect(() => {
+    //     const fetchUsage = async () => {
+    //         try {
+    //             const response = await getMyUsage();
+    //             setUsage(response.data);
+    //         } catch (error) {
+    //             console.error("Error al cargar uso del plan:", error);
+    //         } finally {
+    //             setLoadingUsage(false);
+    //         }
+    //     };
+    //     fetchUsage();
+    // }, []);
 
     return(
         <div className="bg-gradient-to-b from-gray-50 to-white">

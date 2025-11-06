@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FaClock, FaCalendarAlt, FaPlus, FaTrash, FaCheckCircle, FaTimes } from 'react-icons/fa';
+import { getAvailability, addAvailability, deleteAvailability } from '@/api/availabilityApi';
 
 const diasSemana = ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"];
 
@@ -13,19 +14,30 @@ const MyAvailability = () => {
     const [viewMode, setViewMode] = useState('calendar'); // 'calendar' o 'list'
     const [showAddForm, setShowAddForm] = useState(false); // Controla el modal/drawer del formulario
 
-    // Simulación de datos para demo
-    useEffect(() => {
-        setAvailability([
-            { id_disponibilidad: 1, dia_semana: 'lunes', hora_inicio: '09:00', hora_fin: '11:00' },
-            { id_disponibilidad: 2, dia_semana: 'lunes', hora_inicio: '14:00', hora_fin: '16:00' },
-            { id_disponibilidad: 3, dia_semana: 'martes', hora_inicio: '10:00', hora_fin: '12:00' },
-            { id_disponibilidad: 4, dia_semana: 'miércoles', hora_inicio: '09:00', hora_fin: '11:00' },
-            { id_disponibilidad: 5, dia_semana: 'jueves', hora_inicio: '15:00', hora_fin: '17:00' },
-            { id_disponibilidad: 6, dia_semana: 'viernes', hora_inicio: '10:00', hora_fin: '13:00' },
-        ]);
-    }, []);
+    // 2. AÑADIR ESTADO DE CARGA
+    const [isLoading, setIsLoading] = useState(true);
 
-    const handleAddAvailability = () => {
+    // 3. REEMPLAZAR EL USEEFFECT DE SIMULACIÓN POR LA LLAMADA A LA API
+    useEffect(() => {
+        const loadAvailability = async () => {
+            setIsLoading(true);
+            try {
+                // getAvailability() obtiene la disponibilidad del freelancer autenticado (por token)
+                const response = await getAvailability(); 
+                setAvailability(response.data || []); // El controlador devuelve un array
+            } catch (err) {
+                console.error("Error al cargar la disponibilidad:", err);
+                setError("No se pudo cargar tu disponibilidad. Inténtalo de nuevo.");
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        loadAvailability();
+    }, []); // El array vacío asegura que se ejecute solo una vez al montar
+
+    // 4. MODIFICAR HANDLER PARA AÑADIR CON API (async)
+    const handleAddAvailability = async () => {
         if (!startTime || !endTime) {
             setError("Debes seleccionar una hora de inicio y fin.");
             return;
@@ -35,28 +47,54 @@ const MyAvailability = () => {
             return;
         }
 
-        const newId = Math.max(...availability.map(a => a.id_disponibilidad), 0) + 1;
-        const newAvailability = {
-            id_disponibilidad: newId,
-            dia_semana: selectedDay,
-            hora_inicio: startTime,
-            hora_fin: endTime
-        };
+        try {
+            const availabilityData = {
+                dia_semana: selectedDay,
+                hora_inicio: startTime,
+                hora_fin: endTime
+            };
 
-        setAvailability([...availability, newAvailability]);
-        setStartTime('');
-        setEndTime('');
-        setError('');
-        setSuccessMessage('Horario añadido exitosamente');
-        setShowAddForm(false); // Cerrar el formulario después de añadir
-        setTimeout(() => setSuccessMessage(''), 3000);
+            // Llamada a la API para añadir
+            const response = await addAvailability(availabilityData);
+
+            // El backend devuelve el nuevo objeto con su ID
+            // Lo añadimos al estado local
+            setAvailability([...availability, response.data]);
+
+            // Limpiar formulario y mostrar éxito
+            setStartTime('');
+            setEndTime('');
+            setError('');
+            setSuccessMessage('Horario añadido exitosamente');
+            setShowAddForm(false); // Cerrar el formulario después de añadir
+            setTimeout(() => setSuccessMessage(''), 3000);
+        
+        } catch (err) {
+            console.error("Error al añadir disponibilidad:", err);
+            // Capturar error de duplicado (409) o validación (400)
+            const apiError = err.response?.data?.message || "Error al guardar el horario.";
+            setError(apiError);
+        }
     };
 
-    const handleDelete = (availabilityId) => {
+    // 5. MODIFICAR HANDLER PARA ELIMINAR CON API (async)
+    const handleDelete = async (availabilityId) => {
         if (window.confirm("¿Estás seguro de que deseas eliminar este bloque de horario?")) {
-            setAvailability(availability.filter(a => a.id_disponibilidad !== availabilityId));
-            setSuccessMessage('Horario eliminado exitosamente');
-            setTimeout(() => setSuccessMessage(''), 3000);
+            try {
+                // Llamada a la API para eliminar
+                await deleteAvailability(availabilityId);
+
+                // Actualizar el estado local SÓLO si la API tuvo éxito
+                setAvailability(availability.filter(a => a.id_disponibilidad !== availabilityId));
+                setSuccessMessage('Horario eliminado exitosamente');
+                setTimeout(() => setSuccessMessage(''), 3000);
+
+            } catch (err) {
+                console.error("Error al eliminar disponibilidad:", err);
+                const apiError = err.response?.data?.message || "No se pudo eliminar el horario.";
+                setError(apiError);
+                setTimeout(() => setError(''), 3000);
+            }
         }
     };
 
@@ -156,6 +194,15 @@ const MyAvailability = () => {
                         <p className="text-green-800 font-semibold">{successMessage}</p>
                     </div>
                 )}
+                
+                {/* Error Message (para errores de carga o eliminación) */}
+                {error && !showAddForm && ( // Ocultar el error general si el formulario (que tiene su propio error) está abierto
+                     <div className="mb-6 bg-red-50 border-2 border-red-200 rounded-xl p-4 flex items-center gap-3">
+                        <FaTimes className="text-red-600 text-xl flex-shrink-0" />
+                        <p className="text-red-800 font-semibold">{error}</p>
+                    </div>
+                )}
+
 
                 {/* Calendar/List View */}
                 {viewMode === 'calendar' ? (
@@ -200,7 +247,7 @@ const MyAvailability = () => {
                                     </div>
 
                                     {/* Bloques de disponibilidad superpuestos */}
-                                    {diasSemana.map((dia, diaIndex) => {
+                                    {!isLoading && diasSemana.map((dia, diaIndex) => { // Asegurarse de no renderizar si está cargando
                                         const slots = availabilityByDay[dia];
                                         return slots.map(slot => {
                                             const top = timeToPosition(slot.hora_inicio);
@@ -255,7 +302,13 @@ const MyAvailability = () => {
                             </h3>
                         </div>
                         <div className="p-6">
-                            {availability.length === 0 ? (
+                            {/* AQUÍ AÑADIMOS EL MANEJO DE CARGA */}
+                            {isLoading ? (
+                                <div className="flex flex-col items-center justify-center py-16">
+                                    <FaClock className="text-gray-400 text-4xl animate-spin" />
+                                    <p className="text-gray-600 font-semibold text-lg mt-4">Cargando disponibilidad...</p>
+                                </div>
+                            ) : availability.length === 0 ? (
                                 <div className="flex flex-col items-center justify-center py-16">
                                     <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
                                         <FaCalendarAlt className="text-gray-400 text-4xl" />

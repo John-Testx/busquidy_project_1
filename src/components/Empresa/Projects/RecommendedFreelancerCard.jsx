@@ -31,12 +31,12 @@ function RecommendedFreelancerCard({ freelancer }) {
       {/* Reemplazamos <CardBody> con <div> */}
       <div className="flex flex-col items-center text-center p-6">
         
-        {/* Reemplazamos <Avatar> con <img> */}
+        {/* Reemplazamos <Avatar> con <img>
         <img
           src={freelancer.avatar_url || 'https://via.placeholder.com/150'}
           alt="Foto de perfil"
           className="w-24 h-24 rounded-full text-large mb-3 object-cover border border-gray-100"
-        />
+        /> */}
         
         <h4 className="font-bold text-lg text-gray-800">
           {freelancer.nombres} {freelancer.apellidos}
