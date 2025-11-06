@@ -30,6 +30,9 @@ const LoginPage = lazy(() => import('@/pages/User/LoginPage'));
 const PrivacyPolicyPage = lazy(() => import('@/pages/General/PrivacyPolicyPage'));
 const TermsOfServicePage = lazy(() => import('@/pages/General/TermsOfServicePage'));
 const InterviewRequestPage = lazy(() => import('@/pages/InterviewRequestPage'));
+const VerificarDocumentosPage = lazy(() => import('@/pages/User/VerificarDocumentosPage'));
+const VerificacionManagement = lazy(() => import('@/pages/Admin/VerificacionManagement'));
+const VerificacionDetalle = lazy(() => import('@/pages/Admin/VerificacionDetalle'));
 
 import AuthCallback from '@/pages/User/AuthCallback';
 import CompleteProfile from '@/pages/User/CompleteProfile';
@@ -89,6 +92,7 @@ const AppRoutes = () => {
       <Route path="/unauthorized" element={<Unauthorized />} />
       <Route path="/forgot-password" element={<ForgotPasswordPage />} />
       <Route path="/reset-password" element={<ResetPasswordPage />} />
+      <Route path="/verificar-documentos" element={<VerificarDocumentosPage />} />
 
       {/* Nuevas rutas de Callback de OAuth */}
       <Route path="/auth/callback" element={<AuthCallback />} />
@@ -165,6 +169,8 @@ const AppRoutes = () => {
                 <Route path="users/edit/:id" element={<UserEditPage />} />
                 <Route path="roles" element={<AdminRoles />} />
             </Route>
+            <Route path="/adminhome/verificaciones" element={<VerificacionManagement />} />
+            <Route path="/adminhome/verificaciones/detalle/:id" element={<VerificacionDetalle />} />
             <Route path="projectmanagement" element={<ProjectManagement />} />
             <Route path="reviewmanagement" element={<ReviewManagement />} />
             <Route path="supportmanagement" element={<SupportManagement />} />

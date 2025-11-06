@@ -3,6 +3,7 @@ import { NavLink } from "react-router-dom";
 import {
   Menu,
   X,
+  FileCheck,
   LayoutDashboard,
   Users,
   MessageSquare,
@@ -29,6 +30,12 @@ export default function SidebarAdmin() {
       title: "Gestión de Usuarios", 
       icon: <Users size={20} />, 
       path: "/adminhome/usermanagement" 
+    },
+    { 
+      id: "verificaciones", 
+      title: "Verificación de Documentos", 
+      icon: <FileCheck size={20} />,  
+      path: "/adminhome/verificaciones" 
     },
     { 
       id: "support", 
