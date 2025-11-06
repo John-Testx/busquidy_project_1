@@ -27,6 +27,7 @@ const InterviewRequestModal = ({ isOpen, onClose, postulant }) => {
 
   // Cargar disponibilidad del freelancer
   useEffect(() => {
+    console.log('Modal abierto:', isOpen, 'Postulant:', postulant);
     if (isOpen && postulant?.id_usuario) {
       fetchAvailability();
     }
@@ -39,7 +40,8 @@ const InterviewRequestModal = ({ isOpen, onClose, postulant }) => {
       
       // Necesitamos obtener el id_freelancer desde el id_usuario
       // Asumiendo que el backend puede manejar esto o ya tienes el id_freelancer
-      const response = await getFreelancerAvailability(postulant.id_usuario);
+      console.log('Cargando disponibilidad para usuario ID:', postulant);
+      const response = await getFreelancerAvailability(postulant.id_freelancer);
       setAvailability(response.data || []);
     } catch (err) {
       console.error('Error al cargar disponibilidad:', err);
