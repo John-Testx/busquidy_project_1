@@ -3,8 +3,8 @@ import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import TicketChat from "@/components/Soporte/TicketChat";
 import { getPublicTicketDetails, getPublicTicketMessages, sendPublicTicketMessage } from "@/api/supportApi";
 import { ArrowLeft, Clock, Tag, AlertTriangle, CheckCircle, Loader2, Mail } from "lucide-react";
-import { Footer, Navbar } from '@/components/Home/';
 import MainLayout from '@/components/layouts/MainLayout';
+import LoadingScreen from "@/components/LoadingScreen";
 
 function VerTicketPublico() {
   const { id_ticket } = useParams();
@@ -136,18 +136,7 @@ function VerTicketPublico() {
     );
   };
 
-  if (loading) {
-    return (
-      <MainLayout fullHeight>
-        <div className="h-screen flex items-center justify-center">
-          <div className="text-center">
-            <Loader2 className="w-10 h-10 md:w-12 md:h-12 animate-spin text-blue-600 mx-auto mb-4" />
-            <p className="text-gray-600 text-sm md:text-base">Cargando ticket...</p>
-          </div>
-        </div>
-      </MainLayout>
-    );
-  }
+  if (loading) return <LoadingScreen />;
 
   if (error || !ticket) {
     return (

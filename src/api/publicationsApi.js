@@ -22,13 +22,20 @@ export const getFreelancerApplications = async (id_usuario) => {
 /**
  * Crea una postulación a una publicación
  * @param {number} id_publicacion - ID de la publicación
- * @param {number} id_usuario - ID del usuario que postula
+ * @returns {Promise} Respuesta de la API
  */
-export const createApplication = async (id_publicacion, id_usuario) => {
-  const response = await apiClient.post(`/freelancer/postulacion/${id_publicacion}`, {
-    id_usuario,
-    id_publicacion
-  });
+export const createApplication = async (id_publicacion) => {
+  const response = await apiClient.post(`${BASE}/publicacion/${id_publicacion}/postular`);
+  return response.data;
+};
+
+/**
+ * Verifica si el usuario ya postuló a una publicación
+ * @param {number} id_publicacion - ID de la publicación
+ * @returns {Promise<{hasApplied: boolean}>}
+ */
+export const checkUserApplication = async (id_publicacion) => {
+  const response = await apiClient.get(`${BASE}/publicacion/${id_publicacion}/check-application`);
   return response.data;
 };
 

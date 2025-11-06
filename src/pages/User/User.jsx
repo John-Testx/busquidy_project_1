@@ -25,17 +25,19 @@ function User() {
     }, 500);
   };
 
-  // Example profile links for empresa/freelancer
-  const profileLinks = userType === "empresa"
-    ? [
-        { label: "Mi perfil", link: "/company-profile", icon: "bi bi-person" },
-        { label: "Mis publicaciones", link: "/myprojects", icon: "bi bi-file-earmark-text" },
-        { label: "Mejorar Busquidy", link: "#", icon: "bi bi-arrow-up-right-circle" }
-      ]
-    : [
-        { label: "Mi perfil", link: "/viewperfilfreelancer", icon: "bi bi-person" },
-        { label: "Mis postulaciones", link: "/mypostulations", icon: "bi bi-file-earmark-text" }
-      ];
+// Example profile links for empresa/freelancer
+  const isEmpresa = userType === "empresa" || userType === "empresa_juridico" || userType === "empresa_natural";
+
+  const profileLinks = isEmpresa
+    ? [
+        { label: "Mi perfil", link: "/company-profile", icon: "bi bi-person" },
+        { label: "Mis publicaciones", link: "/myprojects", icon: "bi bi-file-earmark-text" },
+        { label: "Mejorar Busquidy", link: "#", icon: "bi bi-arrow-up-right-circle" }
+      ]
+    : [ // Esto asume que si no es empresa, es freelancer
+        { label: "Mi perfil", link: "/viewperfilfreelancer", icon: "bi bi-person" },
+        { label: "Mis postulaciones", link: "/mypostulations", icon: "bi bi-file-earmark-text" }
+      ];
 
   return (
     <div style={{ marginTop: "80px" }}>
@@ -43,7 +45,7 @@ function User() {
       <Navbar userType={userType} options={navbarOptions} onLogout={handleLogout} profileLinks={profileLinks} />
 
       {/* Render content based on user type */}
-      {userType === "empresa" && (
+      {isEmpresa && (
         <>
           <EmpresaActionsCard />
           <InfoSectionEmpresa />

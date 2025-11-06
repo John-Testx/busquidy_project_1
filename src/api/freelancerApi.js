@@ -21,8 +21,8 @@ export const createFreelancerProfile = (freelancerData, id_usuario) =>
     id_usuario,
   });
 
-export const updateProfileSection = (id_usuario, section, data) =>
-  apiClient.put(`${BASE}/update-freelancer/${id_usuario}/${section}`, data);
+// export const updateProfileSection = (id_usuario, section, data) =>
+//   apiClient.put(`${BASE}/update-freelancer/${id_usuario}/${section}`, data);
 
 /**
  * Obtiene el perfil de la empresa
@@ -30,7 +30,7 @@ export const updateProfileSection = (id_usuario, section, data) =>
  * @returns {Promise<Object>} Datos del perfil de la empresa
  */
 export const getEmpresaProfile = async (id_usuario) => {
-  const response = await apiClient.get(`${EMPRESA_BASE}/${id_usuario}`);
+  const response = await apiClient.get(`${EMPRESA_BASE}/get/perfil-empresa/${id_usuario}`);
   return response.data;
 };
 
@@ -59,6 +59,39 @@ export const uploadCV = (cvFile, id_usuario) => {
 
 export const getCVUrl = (id_freelancer) =>
   apiClient.get(`${BASE}/freelancer/${id_freelancer}/cv`);
+
+
+// =============================================
+// CRUD DE SECCIONES DEL PERFIL
+// =============================================
+
+/**
+ * Agregar un nuevo ítem a una sección del perfil
+ * @param {Object} sectionData - { tipo_seccion: 'experiencia', ...datos }
+ * @returns {Promise<Object>}
+ */
+export const addProfileSection = (sectionData) =>
+  apiClient.post(`${BASE}/profile/section`, sectionData);
+
+/**
+ * Actualizar un ítem existente de una sección
+ * @param {number} itemId - ID del ítem a actualizar
+ * @param {Object} sectionData - { tipo_seccion: 'experiencia', ...datos }
+ * @returns {Promise<Object>}
+ */
+export const updateProfileSection = (itemId, sectionData) =>
+  apiClient.put(`${BASE}/profile/section/${itemId}`, sectionData);
+
+/**
+ * Eliminar un ítem de una sección
+ * @param {number} itemId - ID del ítem a eliminar
+ * @param {string} tipo_seccion - Tipo de sección ('experiencia', 'idioma', etc.)
+ * @returns {Promise<Object>}
+ */
+export const deleteProfileSection = (itemId, tipo_seccion) =>
+  apiClient.delete(`${BASE}/profile/section/${itemId}`, { 
+    data: { tipo_seccion } 
+  });
 
 // =============================================
 // POSTULACIONES
@@ -185,7 +218,7 @@ export const checkEmpresaProfileStatus = async (id_usuario) => {
 
 /**
  * Verifica el estado del perfil según el tipo de usuario para acceder a Premium
- * @param {string} tipo_usuario - Tipo de usuario (freelancer, empresa, administrador)
+ * @param {string} tipo_usuario - Tipo de usuario (freelancer, empresa, empresa_juridico, empresa_natural, administrador)
  * @param {number} id_usuario - ID del usuario
  * @returns {Promise<{isComplete: boolean, message?: string}>}
  */
@@ -209,7 +242,8 @@ export const verifyUserProfileForPremium = async (tipo_usuario, id_usuario) => {
       return { isComplete: true };
     } 
     
-    if (tipo_usuario === "empresa") {
+    // AQUÍ ESTÁ EL CAMBIO
+    if (tipo_usuario === "empresa" || tipo_usuario === "empresa_juridico" || tipo_usuario === "empresa_natural") {
       const response = await checkEmpresaProfileStatus(id_usuario);
       if (response.isPerfilIncompleto) {
         return {
@@ -235,4 +269,95 @@ export const verifyUserProfileForPremium = async (tipo_usuario, id_usuario) => {
     console.error("Error al verificar el perfil:", error);
     throw error;
   }
+};
+
+
+// =============================================
+// LLAMADA A LA API DE RECOMENDACIÓN
+// =============================================
+
+
+/**
+ * Obtiene una lista de freelancers recomendados para un proyecto.
+ * @param {object} projectData - Los datos del proyecto.
+ * @param {string} projectData.categoria - La categoría del proyecto.
+ * @param {string[]} projectData.habilidades_requeridas - Array de habilidades.
+ */
+export const getRecommendedFreelancers = (projectData) => {
+    try {
+      console.log("Enviando a la API de recomendación:", projectData);
+      return apiClient.post('/recommend/freelancers', projectData);
+    } catch (error) {
+      console.error("Error al obtener recomendaciones de freelancers:", error);
+      throw error;
+    } 
+};
+
+// =============================================
+// FOTO DE PERFIL
+// =============================================
+
+/**
+ * Subir foto de perfil
+ * @param {File} photoFile - Archivo de imagen
+ * @param {number} id_usuario - ID del usuario freelancer
+ * @returns {Promise<Object>}
+ */
+export const uploadProfilePhoto = (photoFile, id_usuario) => {
+  const formData = new FormData();
+  formData.append("photo", photoFile);
+  return apiClient.post(`${BASE}/upload-photo/${id_usuario}`, formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+};
+
+/**
+ * Obtener URL de la foto de perfil
+ * @param {number} id_usuario - ID del usuario freelancer
+ * @returns {Promise<Object>}
+ */
+export const getProfilePhoto = async (id_usuario) => {
+  const response = await apiClient.get(`${BASE}/photo/${id_usuario}`);
+  return response.data;
+};
+
+// =============================================
+// DESCARGA DE CV BUSQUIDY
+// =============================================
+
+/**
+ * Descargar CV en formato Busquidy (PDF)
+ * @param {number} id_usuario - ID del usuario freelancer
+ * @returns {Promise<Blob>} Archivo PDF
+ */
+export const downloadBusquidyCV = async (id_usuario) => {
+  const response = await apiClient.get(`${BASE}/download-cv/${id_usuario}`, {
+    responseType: 'blob'
+  });
+  return response.data;
+};
+
+// =============================================
+// PREFERENCIAS
+// =============================================
+
+/**
+ * Obtener preferencias del freelancer
+ * @param {number} id_usuario - ID del usuario freelancer
+ * @returns {Promise<Object>}
+ */
+export const getPreferencias = async (id_usuario) => {
+  const response = await apiClient.get(`${BASE}/preferencias/${id_usuario}`);
+  return response.data;
+};
+
+/**
+ * Actualizar preferencias del freelancer
+ * @param {number} id_usuario - ID del usuario freelancer
+ * @param {Object} preferencias - { ofertas_empleo, practicas, trabajo_estudiantes }
+ * @returns {Promise<Object>}
+ */
+export const updatePreferencias = async (id_usuario, preferencias) => {
+  const response = await apiClient.put(`${BASE}/preferencias/${id_usuario}`, preferencias);
+  return response.data;
 };

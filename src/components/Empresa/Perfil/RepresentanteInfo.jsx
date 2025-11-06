@@ -1,9 +1,10 @@
 import React from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { UserCircle, Mail, Phone, Briefcase } from 'lucide-react';
+import LoadingScreen from '@/components/LoadingScreen';
 
 function RepresentanteInfo() {
-    const { perfilData, setPerfilData, handleUpdateProfile } = useOutletContext();
+    const { perfilData, setPerfilData, handleUpdateProfile, loading } = useOutletContext();
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -18,6 +19,7 @@ function RepresentanteInfo() {
     };
 
     const { perfilRepresentante } = perfilData || {};
+    if (loading) return <LoadingScreen />;
 
     return (
         <div className="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden">

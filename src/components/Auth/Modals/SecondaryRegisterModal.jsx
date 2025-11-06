@@ -1,24 +1,36 @@
 import React, { useState } from "react";
-import Modal from "../Modal";
-import { ArrowLeft, Mail, Lock, AlertCircle, Loader2, User, Briefcase } from "lucide-react";
+import Modal from "../../Home/Modal";
+import { ArrowLeft, Lock, AlertCircle, Loader2, User, Briefcase, Building2, Eye, EyeOff } from "lucide-react";
 
-const SecondaryRegisterModal = ({ onClose, onBack, formData, setFormData, errors, handleRegister, loading, onOpenLogin }) => {
+const SecondaryRegisterModal = ({ onClose, onBack, formData, setFormData, errors, handleRegister, loading, onOpenLogin, verifiedEmail }) => {
     const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+    // 3 tipos de usuario
     const userTypes = [
-        {
-            value: "empresa",
-            label: "Empresa",
-            icon: Briefcase,
-            description: "Busco contratar talento",
-            color: "from-blue-500 to-blue-600"
-        },
         {
             value: "freelancer",
             label: "Freelancer",
             icon: User,
             description: "Busco proyectos",
-            color: "from-purple-500 to-purple-600"
+            detail: "Estudiante o profesional independiente",
+            color: "from-green-500 to-emerald-600"
+        },
+        {
+            value: "empresa_juridico",
+            label: "Empresa Jurídica",
+            icon: Building2,
+            description: "Busco contratar talento",
+            detail: "Empresa con RUT jurídico",
+            color: "from-blue-500 to-indigo-600"
+        },
+        {
+            value: "empresa_natural",
+            label: "Empresa Natural",
+            icon: Briefcase,
+            description: "Busco contratar talento",
+            detail: "Emprendedor con RUT natural",
+            color: "from-purple-500 to-pink-600"
         }
     ];
 
@@ -61,12 +73,12 @@ const SecondaryRegisterModal = ({ onClose, onBack, formData, setFormData, errors
                 </div>
 
                 {/* Right Section - Form */}
-                <div className="flex-1 p-12 flex flex-col justify-center bg-gray-50">
+                <div className="flex-1 p-8 flex flex-col justify-center bg-gray-50 overflow-y-auto max-h-screen">
                     <div className="max-w-md mx-auto w-full">
                         {/* Back Button */}
                         <button 
                             type="button" 
-                            className="flex items-center gap-2 text-gray-600 hover:text-[#07767c] transition-all duration-200 mb-6 group animate-[fadeIn_0.3s_ease-out]"
+                            className="flex items-center gap-2 text-gray-600 hover:text-[#07767c] transition-all duration-200 mb-4 group animate-[fadeIn_0.3s_ease-out]"
                             onClick={onBack}
                         >
                             <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform duration-200" />
@@ -74,21 +86,21 @@ const SecondaryRegisterModal = ({ onClose, onBack, formData, setFormData, errors
                         </button>
 
                         <div className="animate-[fadeIn_0.4s_ease-out]">
-                            <h3 className="text-3xl font-bold text-gray-800 mb-2">
+                            <h3 className="text-2xl font-bold text-gray-800 mb-1">
                                 Crear cuenta
                             </h3>
-                            <p className="text-gray-600 mb-8">
-                                Completa los siguientes datos para registrarte
+                            <p className="text-gray-600 mb-4 text-sm">
+                                Registrándote con: <strong className="text-[#07767c]">{verifiedEmail}</strong>
                             </p>
                         </div>
 
-                        <div className="space-y-5">
-                            {/* User Type Selection */}
+                        <div className="space-y-4">
+                            {/* User Type Selection - MÁS COMPACTO */}
                             <div className="animate-[fadeIn_0.5s_ease-out]">
-                                <label className="block text-sm font-medium text-gray-700 mb-3">
-                                    ¿Cómo quieres usar Busquidy?
+                                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                                    ¿Qué tipo de cuenta necesitas?
                                 </label>
-                                <div className="grid grid-cols-2 gap-3">
+                                <div className="space-y-2">
                                     {userTypes.map((type) => {
                                         const Icon = type.icon;
                                         const isSelected = formData.tipoUsuario === type.value;
@@ -98,23 +110,34 @@ const SecondaryRegisterModal = ({ onClose, onBack, formData, setFormData, errors
                                                 key={type.value}
                                                 type="button"
                                                 onClick={() => setFormData('tipoUsuario', type.value)}
-                                                className={`p-4 rounded-xl border-2 transition-all duration-200 text-left transform hover:-translate-y-0.5 ${
+                                                className={`w-full p-3 rounded-lg border-2 transition-all duration-200 text-left transform hover:-translate-y-0.5 ${
                                                     isSelected
                                                         ? 'border-[#07767c] bg-[#07767c]/5 shadow-md'
                                                         : 'border-gray-200 hover:border-gray-300 bg-white'
                                                 }`}
                                             >
-                                                <div className={`w-10 h-10 rounded-lg flex items-center justify-center mb-3 bg-gradient-to-br ${type.color} transition-transform duration-200 ${isSelected ? 'scale-110' : ''}`}>
-                                                    <Icon size={20} className="text-white" />
+                                                <div className="flex items-center gap-3">
+                                                    <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 bg-gradient-to-br ${type.color} transition-transform duration-200 ${isSelected ? 'scale-110' : ''}`}>
+                                                        <Icon size={20} className="text-white" />
+                                                    </div>
+                                                    <div className="flex-1">
+                                                        <p className={`font-bold text-sm mb-0.5 transition-colors duration-200 ${
+                                                            isSelected ? 'text-[#07767c]' : 'text-gray-800'
+                                                        }`}>
+                                                            {type.label}
+                                                        </p>
+                                                        <p className="text-xs text-gray-500">
+                                                            {type.detail}
+                                                        </p>
+                                                    </div>
+                                                    {isSelected && (
+                                                        <div className="w-5 h-5 bg-[#07767c] rounded-full flex items-center justify-center flex-shrink-0">
+                                                            <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                                            </svg>
+                                                        </div>
+                                                    )}
                                                 </div>
-                                                <p className={`font-semibold text-sm mb-1 transition-colors duration-200 ${
-                                                    isSelected ? 'text-[#07767c]' : 'text-gray-800'
-                                                }`}>
-                                                    {type.label}
-                                                </p>
-                                                <p className="text-xs text-gray-500">
-                                                    {type.description}
-                                                </p>
                                             </button>
                                         );
                                     })}
@@ -127,49 +150,19 @@ const SecondaryRegisterModal = ({ onClose, onBack, formData, setFormData, errors
                                 )}
                             </div>
 
-                            {/* Email Input */}
-                            <div className="animate-[fadeIn_0.6s_ease-out]">
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    Correo Electrónico
-                                </label>
-                                <div className="relative">
-                                    <Mail size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 transition-colors duration-200" />
-                                    <input
-                                        type="email"
-                                        placeholder="tu@email.com"
-                                        value={formData.correo}
-                                        onChange={(e) => setFormData('correo', e.target.value)}
-                                        className={`w-full pl-12 pr-4 py-3.5 bg-white border-2 rounded-xl transition-all duration-200 outline-none ${
-                                            errors.correo 
-                                                ? 'border-red-500 focus:border-red-600' 
-                                                : 'border-gray-200 focus:border-[#07767c] focus:shadow-md'
-                                        }`}
-                                    />
-                                    {errors.correo && (
-                                        <AlertCircle size={20} className="absolute right-4 top-1/2 -translate-y-1/2 text-red-500 animate-[fadeIn_0.2s_ease-out]" />
-                                    )}
-                                </div>
-                                {errors.correo && (
-                                    <p className="text-red-500 text-sm mt-2 flex items-center gap-1 animate-[fadeIn_0.2s_ease-out]">
-                                        <AlertCircle size={16} />
-                                        {errors.correo}
-                                    </p>
-                                )}
-                            </div>
-
                             {/* Password Input */}
-                            <div className="animate-[fadeIn_0.7s_ease-out]">
+                            <div className="animate-[fadeIn_0.6s_ease-out]">
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
                                     Contraseña
                                 </label>
                                 <div className="relative">
-                                    <Lock size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 transition-colors duration-200" />
+                                    <Lock size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 transition-colors duration-200" />
                                     <input
                                         type={showPassword ? "text" : "password"}
-                                        placeholder="Mínimo 8 caracteres"
+                                        placeholder="Mínimo 6 caracteres"
                                         value={formData.contraseña}
                                         onChange={(e) => setFormData('contraseña', e.target.value)}
-                                        className={`w-full pl-12 pr-12 py-3.5 bg-white border-2 rounded-xl transition-all duration-200 outline-none ${
+                                        className={`w-full pl-10 pr-10 py-3 bg-white border-2 rounded-xl transition-all duration-200 outline-none ${
                                             errors.contraseña 
                                                 ? 'border-red-500 focus:border-red-600' 
                                                 : 'border-gray-200 focus:border-[#07767c] focus:shadow-md'
@@ -178,18 +171,9 @@ const SecondaryRegisterModal = ({ onClose, onBack, formData, setFormData, errors
                                     <button
                                         type="button"
                                         onClick={() => setShowPassword(!showPassword)}
-                                        className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors duration-200"
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors duration-200"
                                     >
-                                        {showPassword ? (
-                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
-                                            </svg>
-                                        ) : (
-                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                            </svg>
-                                        )}
+                                        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                                     </button>
                                 </div>
                                 {errors.contraseña && (
@@ -198,34 +182,69 @@ const SecondaryRegisterModal = ({ onClose, onBack, formData, setFormData, errors
                                         {errors.contraseña}
                                     </p>
                                 )}
-                                {/* Password strength indicator */}
-                                {formData.contraseña && !errors.contraseña && (
-                                    <div className="mt-2 animate-[fadeIn_0.3s_ease-out]">
-                                        <div className="flex gap-1">
-                                            {[1, 2, 3, 4].map((level) => (
-                                                <div
-                                                    key={level}
-                                                    className={`h-1 flex-1 rounded-full transition-all duration-300 ${
-                                                        formData.contraseña.length >= level * 2
-                                                            ? formData.contraseña.length >= 8
-                                                                ? 'bg-green-500'
-                                                                : 'bg-yellow-500'
-                                                            : 'bg-gray-200'
-                                                    }`}
-                                                />
-                                            ))}
-                                        </div>
-                                        <p className="text-xs text-gray-500 mt-1">
-                                            {formData.contraseña.length < 8
-                                                ? `Faltan ${8 - formData.contraseña.length} caracteres`
-                                                : '¡Contraseña segura!'}
-                                        </p>
-                                    </div>
+                            </div>
+
+                            {/* Confirm Password Input - NUEVO */}
+                            <div className="animate-[fadeIn_0.7s_ease-out]">
+                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    Repetir Contraseña
+                                </label>
+                                <div className="relative">
+                                    <Lock size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 transition-colors duration-200" />
+                                    <input
+                                        type={showConfirmPassword ? "text" : "password"}
+                                        placeholder="Repite tu contraseña"
+                                        value={formData.confirmarContraseña}
+                                        onChange={(e) => setFormData('confirmarContraseña', e.target.value)}
+                                        className={`w-full pl-10 pr-10 py-3 bg-white border-2 rounded-xl transition-all duration-200 outline-none ${
+                                            errors.confirmarContraseña 
+                                                ? 'border-red-500 focus:border-red-600' 
+                                                : 'border-gray-200 focus:border-[#07767c] focus:shadow-md'
+                                        }`}
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors duration-200"
+                                    >
+                                        {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                    </button>
+                                </div>
+                                {errors.confirmarContraseña && (
+                                    <p className="text-red-500 text-sm mt-2 flex items-center gap-1 animate-[fadeIn_0.2s_ease-out]">
+                                        <AlertCircle size={16} />
+                                        {errors.confirmarContraseña}
+                                    </p>
                                 )}
                             </div>
 
+                            {/* Password strength indicator */}
+                            {formData.contraseña && !errors.contraseña && (
+                                <div className="animate-[fadeIn_0.3s_ease-out]">
+                                    <div className="flex gap-1">
+                                        {[1, 2, 3].map((level) => (
+                                            <div
+                                                key={level}
+                                                className={`h-1 flex-1 rounded-full transition-all duration-300 ${
+                                                    formData.contraseña.length >= level * 2
+                                                        ? formData.contraseña.length >= 6
+                                                            ? 'bg-green-500'
+                                                            : 'bg-yellow-500'
+                                                        : 'bg-gray-200'
+                                                }`}
+                                            />
+                                        ))}
+                                    </div>
+                                    <p className="text-xs text-gray-500 mt-1">
+                                        {formData.contraseña.length < 6
+                                            ? `Faltan ${6 - formData.contraseña.length} caracteres`
+                                            : '¡Contraseña segura!'}
+                                    </p>
+                                </div>
+                            )}
+
                             {/* Terms and Conditions */}
-                            <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg animate-[fadeIn_0.8s_ease-out]">
+                            <div className="bg-blue-50 border-l-4 border-blue-500 p-3 rounded-r-lg animate-[fadeIn_0.8s_ease-out]">
                                 <p className="text-xs text-gray-600 leading-relaxed">
                                     Al registrarte, aceptas nuestros{' '}
                                     <a href="#" className="text-[#07767c] hover:underline font-medium transition-colors duration-200">
@@ -240,7 +259,7 @@ const SecondaryRegisterModal = ({ onClose, onBack, formData, setFormData, errors
 
                             {/* Submit Button */}
                             <button 
-                                className="w-full bg-gradient-to-r from-[#07767c] to-[#055a5f] hover:from-[#055a5f] hover:to-[#043d42] text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 group transform hover:-translate-y-0.5 animate-[fadeIn_0.9s_ease-out]"
+                                className="w-full bg-gradient-to-r from-[#07767c] to-[#055a5f] hover:from-[#055a5f] hover:to-[#043d42] text-white font-semibold py-3.5 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 group transform hover:-translate-y-0.5 animate-[fadeIn_0.9s_ease-out]"
                                 onClick={handleRegister} 
                                 disabled={loading}
                             >
@@ -259,7 +278,7 @@ const SecondaryRegisterModal = ({ onClose, onBack, formData, setFormData, errors
                         </div>
 
                         {/* Login Link */}
-                        <p className="text-center text-gray-600 mt-6 animate-[fadeIn_1s_ease-out]">
+                        <p className="text-center text-gray-600 mt-4 text-sm animate-[fadeIn_1s_ease-out]">
                             ¿Ya tienes una cuenta?{' '}
                             <button onClick={onOpenLogin} className="text-[#07767c] hover:text-[#055a5f] font-semibold transition-colors duration-200">
                                 Iniciar sesión

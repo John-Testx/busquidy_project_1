@@ -29,18 +29,18 @@ const customSelectStyles = {
   }),
 };
 
-export default function StepProjectInfo({ control }) {
+export default function StepProjectInfo({ control, terminologia }) {
   return (
     <div className="space-y-6">
       <div>
         <h3 className="text-xl font-bold text-gray-800 mb-6 pb-3 border-b-2 border-[#07767c]/20">
-          Información del Proyecto
+          Información de{terminologia.singular === 'Tarea' ? ' la' : 'l'} {terminologia.singular}
         </h3>
       </div>
 
       <div className="space-y-2">
         <label className="block text-sm font-semibold text-gray-700">
-          Título del Proyecto <span className="text-red-500">*</span>
+          Título de{terminologia.singular === 'Tarea' ? ' la' : 'l'} {terminologia.singular} <span className="text-red-500">*</span>
         </label>
         <Controller
           name="titulo"
@@ -50,7 +50,7 @@ export default function StepProjectInfo({ control }) {
             <>
               <input
                 {...field}
-                placeholder="Ej: Desarrollo de sitio web corporativo"
+                placeholder={`Ej: ${terminologia.singular === 'Tarea' ? 'Edición de video' : 'Desarrollo de sitio web corporativo'}`}
                 className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#07767c]/20 focus:border-[#07767c] transition-colors ${
                   error ? 'border-red-500' : 'border-gray-300'
                 }`}

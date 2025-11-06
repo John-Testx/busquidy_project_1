@@ -17,6 +17,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import TableCommon from "@/common/TableCommon";
 import { useUserManagement } from "@/hooks";
+import LoadingScreen from "@/components/LoadingScreen";
 
 const UserTable = () => {
   const navigate = useNavigate();
@@ -163,16 +164,7 @@ const UserTable = () => {
     }
   ];
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <Loader2 className="w-12 h-12 text-[#07767c] animate-spin mx-auto mb-4" />
-          <p className="text-gray-600 font-medium">Cargando usuarios...</p>
-        </div>
-      </div>
-    );
-  }
+  if (loading) return <LoadingScreen />;
 
   return (
     <div className="space-y-6 p-6 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">

@@ -3,57 +3,57 @@ import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Sparkles, Lock, Loader2, DollarSign, Calendar, Tag } from "lucide-react";
 import { getProjectById } from "@/api/projectsApi";
 import { getPostulationsForProject } from "@/api/publicationsApi";
-import PostulationCard from "@/components/Empresa/Projects/PostulationCard";
+import { getRecommendedFreelancers } from "@/api/freelancerApi";
 import LoadingScreen from "@/components/LoadingScreen";
 import MainLayout from "@/components/Layouts/MainLayout";
+import { projectStatus } from "@/common/projectStatus";
+
+
+// HELPERS 
+import { processSkills } from "@/utils/processSkills";
+
+// COMPONENTES DE TARJETA
+import PostulationCard from "@/components/Empresa/Projects/PostulationCard";
+import RecommendedFreelancerCard from '../../components/Empresa/Projects/RecommendedFreelancerCard';
+
 
 function ProjectView() {
     const { idProyecto } = useParams();
     const navigate = useNavigate();
     
+    const [project, setProject] = useState(null);
     const [projectDetails, setProjectDetails] = useState(null);
+
+    // 3. AÑADIR ESTADOS PARA LAS RECOMENDACIONES
+    const [recommended, setRecommended] = useState([]);
+    const [loadingRecs, setLoadingRecs] = useState(false);
+
     const [postulations, setPostulations] = useState([]);
     const [loading, setLoading] = useState(true);
     const [loadingPostulations, setLoadingPostulations] = useState(false);
     const [error, setError] = useState(null);
 
-    // Función helper para procesar habilidades
-    const processSkills = (skills) => {
-        if (!skills) return [];
-        
-        if (Array.isArray(skills)) return skills;
-        
-        if (typeof skills === 'string') {
-            try {
-                const parsed = JSON.parse(skills);
-                return Array.isArray(parsed) ? parsed : [];
-            } catch {
-                return skills.split(',').map(s => s.trim()).filter(s => s.length > 0);
-            }
-        }
-        
-        return [];
-    };
-
     useEffect(() => {
         const loadProjectData = async () => {
+            if (!idProyecto || idProyecto === "undefined") {
+                 setError("ID de publicación inválido");
+                 setLoading(false);
+                 return;
+            }
             try {
                 setLoading(true);
                 setError(null);
-
-                // Cargar detalles del proyecto
                 const projectData = await getProjectById(idProyecto);
-                console.log('📊 Datos del proyecto cargados:', projectData);
-                console.log('📌 Estado de publicación:', projectData.estado_publicacion);
-                console.log('📌 Tipo de estado:', typeof projectData.estado_publicacion);
+                console.log("Datos del proyecto cargados:", projectData );
+                setProject(projectData);
                 setProjectDetails(projectData);
 
-                // Si está publicado, cargar postulaciones
+                // <ProjectCandidates projectDetails={projectDetails} />
+
                 if (projectData.estado_publicacion === 'activo') {
                     setLoadingPostulations(true);
                     try {
                         const postulationsData = await getPostulationsForProject(idProyecto);
-                        console.log('Postulaciones cargadas:', postulationsData);
                         setPostulations(Array.isArray(postulationsData) ? postulationsData : []);
                     } catch (postError) {
                         console.error('Error al cargar postulaciones:', postError);
@@ -64,57 +64,48 @@ function ProjectView() {
                 }
             } catch (err) {
                 console.error('Error al cargar proyecto:', err);
-                setError(err.message || 'Error al cargar los detalles del proyecto');
+                setError(err.message || 'Error al cargar los detalles');
             } finally {
                 setLoading(false);
             }
         };
 
-        if (idProyecto) {
-            loadProjectData();
-        }
+        loadProjectData();
     }, [idProyecto]);
 
-    // Función para formatear estado
-    const getStatusStyles = (status) => {
-        switch(status) {
-            case 'activo':
-                return {
-                    bg: 'bg-gradient-to-r from-emerald-100 to-emerald-50',
-                    text: 'text-emerald-700',
-                    border: 'border-emerald-300',
-                    label: 'Publicado'
+    // 4. AÑADIR NUEVO USEEFFECT PARA RECOMENDACIONES
+    // Se ejecuta SÓLO cuando el 'project' se ha cargado
+    useEffect(() => {
+        if (project) {
+            console.log("Cargando recomendaciones para el proyecto:", project);
+            console.log("Habilidades requeridas (raw):", project.habilidades_requeridas);
+        const fetchRecommendations = async () => {
+            setLoadingRecs(true);
+            try {
+                const skills = processSkills(project.habilidades_requeridas);
+                console.log("Habilidades procesadas para recomendaciones:", skills);
+                const apiRequestData = {
+                    categoria: project.categoria,
+                    habilidades_requeridas: skills,
                 };
-            case 'pendiente':
-                return {
-                    bg: 'bg-gradient-to-r from-amber-100 to-amber-50',
-                    text: 'text-amber-700',
-                    border: 'border-amber-300',
-                    label: 'Pendiente'
-                };
-            case 'finalizado':
-                return {
-                    bg: 'bg-gradient-to-r from-blue-100 to-blue-50',
-                    text: 'text-blue-700',
-                    border: 'border-blue-300',
-                    label: 'Finalizado'
-                };
-            case 'sin publicar':
-                return {
-                    bg: 'bg-gradient-to-r from-gray-100 to-gray-50',
-                    text: 'text-gray-700',
-                    border: 'border-gray-300',
-                    label: 'No Publicado'
-                };
-            default:
-                return {
-                    bg: 'bg-gradient-to-r from-gray-100 to-gray-50',
-                    text: 'text-gray-700',
-                    border: 'border-gray-300',
-                    label: status || 'Desconocido'
-                };
+                const response = await getRecommendedFreelancers(apiRequestData);
+                console.log("Recomendaciones recibidas de la API:", response.data);
+                setRecommended(response.data);
+
+            } catch (error) {
+                console.error("Error al cargar recomendaciones:", error);
+                setRecommended([]); // Poner vacío en caso de error
+            } finally {
+                setLoadingRecs(false);
+            }
+        };
+        
+        fetchRecommendations();
         }
-    };
+    }, [project]); // Depende de 'project'
+
+    // Función para formatear estado
+    const getStatusStyles = (status) => projectStatus(status);
 
     if (loading) {
         return <LoadingScreen />;
@@ -132,7 +123,7 @@ function ProjectView() {
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
                             </div>
-                            <h2 className="text-3xl font-bold mb-3 text-gray-900">Error al Cargar Proyecto</h2>
+                            <h2 className="text-3xl font-bold mb-3 text-gray-900">Error al Cargar Publicación</h2>
                             <p className="text-gray-600 text-lg">{error}</p>
                         </div>
                         <button
@@ -140,7 +131,7 @@ function ProjectView() {
                             className="w-full px-6 py-3 bg-gradient-to-r from-[#07767c] to-[#05595d] text-white font-semibold rounded-lg hover:from-[#05595d] hover:to-[#044449] transform hover:scale-105 transition-all duration-200 shadow-md"
                         >
                             <ArrowLeft size={20} className="transition-transform duration-200 group-hover:-translate-x-1" />
-                            <span>Volver a Mis Proyectos</span>
+                            <span>Volver a Mis Publicaciones</span>
                         </button>
                     </div>
                 </div>
@@ -154,7 +145,7 @@ function ProjectView() {
             <div className="min-h-screen flex flex-col">
                 <MainLayout >
                 <div className="flex-1 flex items-center justify-center bg-gradient-to-br from-teal-50 via-cyan-50 to-white">
-                    <p className="text-gray-600 text-lg">Proyecto no encontrado</p>
+                    <p className="text-gray-600 text-lg">Publicación no encontrada</p>
                 </div>
                 </ MainLayout>
             </div>
@@ -163,6 +154,16 @@ function ProjectView() {
 
     const statusStyle = getStatusStyles(projectDetails.estado_publicacion);
     const skills = processSkills(projectDetails.habilidades_requeridas);
+    console.log('Habilidades procesadas:', projectDetails.tipo);
+
+    // La creamos aquí usando los datos del proyecto
+    const terminologia = projectDetails.tipo === 'tarea' 
+        ? { singular: 'Tarea', plural: 'Tareas' } 
+        : { singular: 'Proyecto', plural: 'Proyectos' };
+        
+    const articulo = terminologia.singular === 'Tarea' ? 'la' : 'el';
+    const delOdeLa = terminologia.singular === 'Tarea' ? 'de la' : 'del';
+    const esteOesta = terminologia.singular === 'Tarea' ? 'esta' : 'este';
 
     return (
         <div className="min-h-screen flex flex-col bg-gradient-to-br from-teal-50 via-cyan-50 to-white">
@@ -176,7 +177,7 @@ function ProjectView() {
                         className="flex items-center gap-2 text-[#07767c] hover:text-[#055a5f] font-medium mb-6 transition-colors duration-200"
                     >
                         <ArrowLeft size={20} className="transition-transform duration-200 group-hover:-translate-x-1" />
-                        <span>Volver a Mis Proyectos</span>
+                        <span>Volver a Mis {terminologia.plural}</span>
                     </button>
 
                     {/* Layout de dos columnas */}
@@ -201,7 +202,7 @@ function ProjectView() {
                                         <svg className="w-5 h-5 text-[#07767c]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h7" />
                                         </svg>
-                                        Descripción del Proyecto
+                                        Descripción {delOdeLa} {terminologia.singular}
                                     </h2>
                                     <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
                                         {projectDetails.descripcion || 'Sin descripción'}
@@ -265,16 +266,26 @@ function ProjectView() {
                         <div className="space-y-6">
                             {/* Sección 1: Recomendaciones IA (Simulada) */}
                             <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
-                                <div className="flex items-center gap-3 mb-4">
-                                    <div className="w-10 h-10 bg-gradient-to-br from-purple-100 to-indigo-100 rounded-full flex items-center justify-center">
-                                        <Sparkles className="w-5 h-5 text-purple-600" />
+                                {/* Columna de Recomendaciones */}
+                                <div>
+                                <h2 className="text-xl font-bold text-gray-800 mb-4">
+                                    ✨ Freelancers Recomendados
+                                </h2>
+                                {loadingRecs ? (
+                                    <Loader2 className="w-8 h-8 text-[#07767c] animate-spin" label="Cargando recomendaciones..." />
+                                ) : recommended.length > 0 ? (
+                                    <div className="flex flex-col gap-4">
+                                    {/* Mostramos solo los 3 primeros, como mencionaste */}
+                                    {recommended.slice(0, 3).map((freelancer) => (
+                                        <RecommendedFreelancerCard key={freelancer.id_freelancer} freelancer={freelancer} />
+                                    ))}
                                     </div>
-                                    <h3 className="text-lg font-bold text-gray-900">Recomendaciones IA</h3>
-                                </div>
-                                <div className="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl p-4 border border-purple-200">
-                                    <p className="text-sm text-purple-900 leading-relaxed">
-                                        Sistema de recomendación IA en desarrollo. Próximamente podrás ver perfiles sugeridos aquí.
+                                ) : (
+                                    <p className="text-gray-500 text-sm">
+                                    No se encontraron recomendaciones automáticas. Puedes 
+                                    buscar y seleccionar freelancers manualmente.
                                     </p>
+                                )}
                                 </div>
                             </div>
 
@@ -300,7 +311,7 @@ function ProjectView() {
                                             <Lock className="w-6 h-6 text-gray-500" />
                                         </div>
                                         <p className="text-sm text-gray-600 leading-relaxed">
-                                            Publica tu proyecto para recibir y gestionar postulaciones.
+                                            Publica tu {terminologia.singular.toLowerCase()} para recibir y gestionar postulaciones.
                                         </p>
                                     </div>
                                 ) : postulations.length === 0 ? (
@@ -311,7 +322,7 @@ function ProjectView() {
                                             </svg>
                                         </div>
                                         <p className="text-sm text-amber-800 leading-relaxed">
-                                            Aún no hay postulaciones para este proyecto.
+                                            Aún no hay postulaciones para {esteOesta} {terminologia.singular.toLowerCase()}.
                                         </p>
                                     </div>
                                 ) : (

@@ -1,22 +1,14 @@
 import React from "react";
-import { Loader2, AlertTriangle } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 import usePaymentData from "@/hooks/payment/usePaymentData";
 import { ProjectPaymentSection } from './Project';
 import { SubscriptionPaymentSection } from './Subscription';
+import LoadingScreen from "@/components/LoadingScreen";
 
 function PaymentTable() {
   const { pagoProyecto, pagoSuscripcion, loading, error, handleRefresh } = usePaymentData();
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-[400px]">
-        <div className="text-center">
-          <Loader2 className="w-12 h-12 text-[#07767c] animate-spin mx-auto mb-4" />
-          <p className="text-lg text-gray-600 font-medium">Cargando datos...</p>
-        </div>
-      </div>
-    );
-  }
+  if (loading) return <LoadingScreen />;
 
   if (error) {
     return (

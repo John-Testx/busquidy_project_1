@@ -1,11 +1,9 @@
 import apiClient from "./apiClient";
-
 const BASE = "/users";
 
 // =============================================
 // GESTIÓN DE USUARIOS (Admin)
 // =============================================
-
 export const getUsuarios = async () => {
   const response = await apiClient.get(`${BASE}/get/usuarios`);
   return response.data;
@@ -65,7 +63,7 @@ export const loginUser = async (correo, contraseña) => {
  * Registra un nuevo usuario
  * @param {string} correo - Correo del usuario
  * @param {string} contraseña - Contraseña del usuario
- * @param {string} tipo_usuario - Tipo de usuario (freelancer, empresa, administrador)
+ * @param {string} tipo_usuario - Tipo de usuario: 'freelancer', 'empresa_juridico', 'empresa_natural'
  * @returns {Promise<Object>} Datos del usuario registrado
  */
 export const registerUser = async (correo, contraseña, tipo_usuario) => {
@@ -75,4 +73,94 @@ export const registerUser = async (correo, contraseña, tipo_usuario) => {
     tipo_usuario,
   });
   return response.data;
+};
+
+// =============================================
+// USO DEL PLAN
+// =============================================
+
+/**
+ * Obtiene el uso del plan del usuario logueado
+ * @returns {Promise<Object>} Información del plan y uso de créditos
+ */
+export const getMyUsage = async () => {
+  const response = await apiClient.get('/me/usage');
+  return response.data;
+};
+
+// =============================================
+// RECUPERACIÓN DE CONTRASEÑA
+// =============================================
+
+/**
+ * Solicita un enlace de recuperación de contraseña
+ * @param {string} correo - Correo del usuario
+ * @returns {Promise<Object>} Mensaje de confirmación
+ */
+export const requestPasswordReset = async (correo) => {
+  const response = await apiClient.post(`${BASE}/forgot-password`, { correo });
+  return response.data;
+};
+
+/**
+ * Resetea la contraseña usando el token
+ * @param {string} token - Token de reseteo
+ * @param {string} nuevaContraseña - Nueva contraseña
+ * @returns {Promise<Object>} Mensaje de confirmación
+ */
+export const resetPassword = async (token, nuevaContraseña) => {
+  const response = await apiClient.post(`${BASE}/reset-password`, {
+    token,
+    nuevaContraseña,
+  });
+  return response.data;
+};
+
+/**
+ * Actualizar credenciales del usuario (email y/o contraseña)
+ * @param {Object} data - { currentPassword, newEmail?, newPassword? }
+ * @returns {Promise} Respuesta de la API
+ */
+export const updateCredentials = (data) => {
+  return apiClient.put(`${BASE}/update-credentials`, data);
+};
+
+/**
+ * Enviar código de verificación al correo
+ */
+export const sendVerificationCode = async (correo) => {
+  try {
+    const response = await apiClient.post('/users/send-verification-code', { correo });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { error: 'Error al enviar código de verificación' };
+  }
+};
+
+/**
+ * Verificar código de correo electrónico
+ */
+export const verifyEmailCode = async (correo, codigo) => {
+  try {
+    const response = await apiClient.post('/users/verify-email-code', { correo, codigo });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { error: 'Código incorrecto o expirado' };
+  }
+};
+
+/**
+ * Registrar usuario con correo verificado
+ */
+export const registerWithVerifiedEmail = async (correo, contraseña, tipoUsuario) => {
+  try {
+    const response = await apiClient.post('/users/register', {
+      correo,
+      contraseña,
+      tipo_usuario: tipoUsuario
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { error: 'Error al registrar usuario' };
+  }
 };

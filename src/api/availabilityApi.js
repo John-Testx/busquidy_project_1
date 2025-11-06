@@ -26,3 +26,8 @@ export const deleteAvailability = (availabilityId) => {
   // The backend route is DELETE /:id_disponibilidad
   return apiClient.delete(`${BASE_URL}/${availabilityId}`);
 };
+
+// ✅ NUEVA FUNCIÓN: Obtener disponibilidad de un freelancer específico
+export const getFreelancerAvailability = (id_freelancer) => {
+  return apiClient.get(`${BASE_URL}/freelancer/${id_freelancer}`);
+};

@@ -1,8 +1,10 @@
 import React from "react";
 import DisputeTable from "@/components/Admin/Dispute/DisputeTable";
 import { Scale } from "lucide-react";
+import LoadingScreen from "@/components/LoadingScreen";
 
 function DisputeManagement() {
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 md:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">

@@ -1,7 +1,8 @@
 import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 import { usePaymentAnalytics } from '@/hooks';
-import { Loader2, AlertTriangle, BarChart3, PieChart as PieChartIcon } from 'lucide-react';
+import { AlertTriangle, BarChart3, PieChart as PieChartIcon } from 'lucide-react';
+import LoadingScreen from '@/components/LoadingScreen';
 
 const PaymentAnalytics = () => {
   const {
@@ -228,16 +229,7 @@ const PaymentAnalytics = () => {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-[400px]">
-        <div className="text-center">
-          <Loader2 className="w-12 h-12 text-[#07767c] animate-spin mx-auto mb-4" />
-          <p className="text-lg text-gray-600 font-medium">Cargando datos de análisis...</p>
-        </div>
-      </div>
-    );
-  }
+  if (loading) return <LoadingScreen />;
 
   if (error) {
     return (

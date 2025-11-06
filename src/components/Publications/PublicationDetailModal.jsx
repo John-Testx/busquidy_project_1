@@ -1,226 +1,441 @@
-import React, { useState } from 'react';
-import { FaLocationArrow, FaClock, FaMoneyBillAlt, FaStar, FaTimes, FaBuilding, FaUserTie, FaCheckCircle } from 'react-icons/fa';
-import { BsBookmarkPlus, BsFillBookmarkFill } from 'react-icons/bs';
-import { BiShareAlt } from 'react-icons/bi';
-import CompanyReviewModal from './CompanyReviewModal';
+import React, { useState, useEffect, useRef } from 'react';
+import { FaLocationArrow, FaClock, FaMoneyBillAlt, FaStar, FaTimes, FaCheckCircle, FaBookmark, FaRegBookmark, FaExclamationTriangle } from 'react-icons/fa';
+import { BiShareAlt, BiFlag } from 'react-icons/bi';
+import { BsThreeDotsVertical } from 'react-icons/bs';
+import { useNavigate } from 'react-router-dom';
+import { checkUserApplication } from '@/api/publicationsApi';
 
-function PublicationDetailModal({ publication, isApplied, onClose, onApply, id_publicacion, id_usuario, userType }) {
-  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+function PublicationDetailModal({ publication, isApplied: isAppliedProp, onClose, onApply, id_publicacion, id_usuario, userType }) {
   const [isSaved, setIsSaved] = useState(false);
+  const [showOptions, setShowOptions] = useState(false);
+  const [isApplied, setIsApplied] = useState(isAppliedProp);
+  const [isApplying, setIsApplying] = useState(false);
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [errorType, setErrorType] = useState('');
+  const [checkingApplication, setCheckingApplication] = useState(true);
+  
+  const modalRef = useRef(null);
+  const menuRef = useRef(null);
+  const navigate = useNavigate();
 
   const empresaNombre = publication.empresa || 'Empresa no especificada';
   const empresaInicial = empresaNombre.charAt(0).toUpperCase();
 
+  // Datos de reseñas mock (no funcionales)
+  const reviewsData = {
+    rating: publication.rating || 3.91,
+    totalReviews: 110,
+    distribution: [
+      { stars: 5, percentage: 51 },
+      { stars: 4, percentage: 21 },
+      { stars: 3, percentage: 13 },
+      { stars: 2, percentage: 6 },
+      { stars: 1, percentage: 9 }
+    ],
+    categories: [
+      { name: 'Ambiente de trabajo', score: 4.0 },
+      { name: 'Salario y prestaciones', score: 3.35 },
+      { name: 'Oportunidades de carrera', score: 3.03 },
+      { name: 'Director general', score: 3.21 }
+    ],
+    recommendation: 78
+  };
+
+  // Verificar si el usuario ya postuló al abrir el modal
+  useEffect(() => {
+    const checkApplicationStatus = async () => {
+      if (!id_usuario || userType !== 'freelancer') {
+        setCheckingApplication(false);
+        return;
+      }
+
+      try {
+        const { hasApplied } = await checkUserApplication(id_publicacion);
+        setIsApplied(hasApplied);
+      } catch (error) {
+        console.error('Error al verificar estado de postulación:', error);
+      } finally {
+        setCheckingApplication(false);
+      }
+    };
+
+    checkApplicationStatus();
+  }, [id_publicacion, id_usuario, userType]);
+
+  // Cerrar modal al hacer clic fuera
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (modalRef.current && !modalRef.current.contains(event.target)) {
+        onClose();
+      }
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setShowOptions(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [onClose]);
+
+  // Prevenir scroll del body cuando el modal está abierto
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, []);
+
+  // Cerrar error después de 5 segundos
+  useEffect(() => {
+    if (showError) {
+      const timer = setTimeout(() => {
+        setShowError(false);
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [showError]);
+
+  const handleApplyClick = async () => {
+    if (isApplied || isApplying) return;
+
+    setIsApplying(true);
+    setShowError(false);
+
+    try {
+      const result = await onApply(id_publicacion);
+
+      if (result.success) {
+        setIsApplied(true);
+      } else {
+        // Manejar errores específicos
+        if (result.error === 'INCOMPLETE_PROFILE') {
+          setErrorType('INCOMPLETE_PROFILE');
+          setErrorMessage('Debes completar tu perfil de freelancer para poder postular');
+        } else if (result.error === 'DUPLICATE_APPLICATION') {
+          setIsApplied(true);
+          setErrorMessage('Ya has postulado a este proyecto');
+        } else {
+          setErrorType('GENERAL');
+          setErrorMessage('Error al enviar la postulación. Intenta nuevamente.');
+        }
+        setShowError(true);
+      }
+    } catch (error) {
+      console.error('Error en handleApplyClick:', error);
+      setErrorType('GENERAL');
+      setErrorMessage('Error inesperado. Por favor intenta nuevamente.');
+      setShowError(true);
+    } finally {
+      setIsApplying(false);
+    }
+  };
+
+  const handleCompleteProfile = () => {
+    navigate('/freelancer/create-profile');
+    onClose();
+  };
+
   return (
     <>
       {/* Modal Overlay */}
-      <div className="fixed top-0 left-0 w-full h-full bg-black/70 backdrop-blur-sm flex justify-center items-center z-[1000] p-4">
+      <div className="fixed top-0 left-0 w-full h-full bg-black/50 backdrop-blur-sm flex justify-center items-center z-[1000] p-4">
         {/* Modal Content */}
-        <div className="bg-white rounded-3xl w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl relative animate-[modalSlideIn_0.3s_ease-out]">
+        <div ref={modalRef} className="bg-white rounded-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto shadow-2xl relative animate-[modalSlideIn_0.3s_ease-out]">
           
-          {/* Header mejorado */}
-          <div className="relative bg-gradient-to-br from-[#07767c] via-[#05595d] to-[#043d42] px-8 pt-8 pb-20 rounded-t-3xl">
-            {/* Close Button */}
-            <button 
-              className="absolute top-6 right-6 z-10 w-11 h-11 flex items-center justify-center bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white rounded-full transition-all duration-200 hover:rotate-90"
-              onClick={onClose}
-            >
-              <FaTimes className="text-xl" />
-            </button>
-
-            {/* Action buttons en header */}
-            <div className="absolute top-6 right-20 z-10 flex gap-2">
-              <button 
-                className="w-11 h-11 flex items-center justify-center bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white rounded-full transition-all duration-200 hover:scale-110"
-                onClick={() => setIsSaved(!isSaved)}
-              >
-                {isSaved ? <BsFillBookmarkFill className="text-lg" /> : <BsBookmarkPlus className="text-lg" />}
-              </button>
-              <button 
-                className="w-11 h-11 flex items-center justify-center bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white rounded-full transition-all duration-200 hover:scale-110"
-              >
-                <BiShareAlt className="text-lg" />
-              </button>
+          {/* Header limpio y espacioso */}
+          <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between z-10">
+            <div className="flex items-center gap-3 flex-1">
+              <div className="w-12 h-12 bg-gradient-to-br from-[#07767c] to-[#40E0D0] rounded-xl flex items-center justify-center flex-shrink-0">
+                <span className="text-white font-bold text-lg">{empresaInicial}</span>
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm text-gray-500 mb-0.5">Publicado por</p>
+                <p className="font-bold text-gray-900 truncate">{empresaNombre}</p>
+              </div>
+              <div className="flex items-center gap-1 bg-yellow-50 px-3 py-1.5 rounded-lg">
+                <FaStar className="text-yellow-500 text-sm" />
+                <span className="font-semibold text-gray-900 text-sm">{reviewsData.rating}</span>
+              </div>
             </div>
 
-            {/* Badge de estado */}
-            {isApplied && (
-              <div className="inline-flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded-full font-bold text-sm mb-4">
+            <div className="flex items-center gap-2 ml-4">
+              {/* Menú de opciones */}
+              <div className="relative" ref={menuRef}>
+                <button 
+                  className="w-10 h-10 flex items-center justify-center hover:bg-gray-100 text-gray-600 rounded-lg transition-colors"
+                  onClick={() => setShowOptions(!showOptions)}
+                >
+                  <BsThreeDotsVertical className="text-lg" />
+                </button>
+
+                {showOptions && (
+                  <div className="absolute top-full right-0 mt-1 bg-white rounded-lg shadow-xl border border-gray-200 py-1 z-20 min-w-[160px]">
+                    <button
+                      className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2 transition-colors"
+                      onClick={() => {
+                        setIsSaved(!isSaved);
+                        setShowOptions(false);
+                      }}
+                    >
+                      {isSaved ? <FaBookmark className="text-[#07767c]" /> : <FaRegBookmark />}
+                      {isSaved ? 'Guardado' : 'Guardar'}
+                    </button>
+                    <button
+                      className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2 transition-colors"
+                      onClick={() => {
+                        console.log('Compartir');
+                        setShowOptions(false);
+                      }}
+                    >
+                      <BiShareAlt />
+                      Compartir
+                    </button>
+                    <button
+                      className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 transition-colors"
+                      onClick={() => {
+                        console.log('Denunciar');
+                        setShowOptions(false);
+                      }}
+                    >
+                      <BiFlag />
+                      Denunciar
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              <button 
+                className="w-10 h-10 flex items-center justify-center hover:bg-gray-100 text-gray-600 rounded-lg transition-all duration-200 hover:rotate-90"
+                onClick={onClose}
+              >
+                <FaTimes className="text-xl" />
+              </button>
+            </div>
+          </div>
+
+          {/* Mensaje de error */}
+          {showError && (
+            <div className="px-6 pt-4">
+              <div className={`flex items-start gap-3 p-4 rounded-lg border ${
+                errorType === 'INCOMPLETE_PROFILE' 
+                  ? 'bg-amber-50 border-amber-200' 
+                  : 'bg-red-50 border-red-200'
+              }`}>
+                <FaExclamationTriangle className={`text-xl flex-shrink-0 mt-0.5 ${
+                  errorType === 'INCOMPLETE_PROFILE' ? 'text-amber-600' : 'text-red-600'
+                }`} />
+                <div className="flex-1">
+                  <p className={`font-semibold ${
+                    errorType === 'INCOMPLETE_PROFILE' ? 'text-amber-900' : 'text-red-900'
+                  }`}>
+                    {errorMessage}
+                  </p>
+                  {errorType === 'INCOMPLETE_PROFILE' && (
+                    <button
+                      onClick={handleCompleteProfile}
+                      className="mt-2 px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg font-semibold text-sm transition-colors"
+                    >
+                      Completar Perfil Ahora
+                    </button>
+                  )}
+                </div>
+                <button
+                  onClick={() => setShowError(false)}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <FaTimes />
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Badge de estado aplicado */}
+          {isApplied && !checkingApplication && (
+            <div className="px-6 pt-4">
+              <div className="inline-flex items-center gap-2 bg-gradient-to-r from-green-400 to-emerald-500 text-white px-4 py-2 rounded-lg font-semibold text-sm">
                 <FaCheckCircle />
                 <span>Ya aplicaste a este proyecto</span>
               </div>
-            )}
+            </div>
+          )}
 
-            {/* Título */}
-            <h2 className="text-4xl font-bold text-white mb-6 pr-24 leading-tight">
+          {/* Título */}
+          <div className="px-6 pt-4 pb-6">
+            <h2 className="text-3xl font-bold text-gray-900 leading-tight mb-6">
               {publication.titulo || 'Título no disponible'}
             </h2>
 
-            {/* Empresa info en header */}
-            <div className="flex items-center gap-4">
-              <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center flex-shrink-0 border-2 border-white/30">
-                <span className="text-white font-bold text-2xl">{empresaInicial}</span>
+            {/* Info cards horizontales */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="bg-gradient-to-br from-blue-50 to-blue-100/50 rounded-xl p-4 border border-blue-200/50">
+                <div className="flex items-center gap-2 mb-2">
+                  <FaLocationArrow className="text-blue-600 text-sm" />
+                  <span className="text-xs font-semibold text-blue-900 uppercase tracking-wide">Ubicación</span>
+                </div>
+                <p className="text-sm font-bold text-gray-900">{publication.ubicacion || 'No especificada'}</p>
               </div>
-              <div>
-                <p className="text-white/90 text-sm font-medium mb-1">Publicado por</p>
-                <p className="text-white font-bold text-xl">{empresaNombre}</p>
-                <div className="flex items-center gap-2 mt-1">
-                  <div className="flex items-center gap-1 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full">
-                    <FaStar className="text-yellow-300 text-sm" />
-                    <span className="text-white font-semibold text-sm">{publication.rating || 'N/A'}</span>
-                  </div>
+
+              <div className="bg-gradient-to-br from-purple-50 to-purple-100/50 rounded-xl p-4 border border-purple-200/50">
+                <div className="flex items-center gap-2 mb-2">
+                  <FaClock className="text-purple-600 text-sm" />
+                  <span className="text-xs font-semibold text-purple-900 uppercase tracking-wide">Duración</span>
                 </div>
+                <p className="text-sm font-bold text-gray-900">{publication.duracion_estimada || 'No especificada'}</p>
               </div>
-            </div>
-          </div>
 
-          {/* Tarjeta elevada con info clave */}
-          <div className="px-8 -mt-12 relative z-10">
-            <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-6">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="flex items-center gap-4">
-                  <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg shadow-blue-500/30">
-                    <FaLocationArrow className="text-white text-xl" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs text-gray-500 font-medium mb-1 uppercase tracking-wide">Ubicación</p>
-                    <p className="text-base font-bold text-gray-900 truncate">{publication.ubicacion || 'No especificada'}</p>
-                  </div>
+              <div className="bg-gradient-to-br from-green-50 to-green-100/50 rounded-xl p-4 border border-green-200/50">
+                <div className="flex items-center gap-2 mb-2">
+                  <FaMoneyBillAlt className="text-green-600 text-sm" />
+                  <span className="text-xs font-semibold text-green-900 uppercase tracking-wide">Presupuesto</span>
                 </div>
-
-                <div className="flex items-center gap-4">
-                  <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg shadow-purple-500/30">
-                    <FaClock className="text-white text-xl" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs text-gray-500 font-medium mb-1 uppercase tracking-wide">Duración</p>
-                    <p className="text-base font-bold text-gray-900 truncate">{publication.duracion_estimada || 'No especificada'}</p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-4">
-                  <div className="w-14 h-14 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg shadow-green-500/30">
-                    <FaMoneyBillAlt className="text-white text-xl" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs text-gray-500 font-medium mb-1 uppercase tracking-wide">Presupuesto</p>
-                    <p className="text-base font-bold text-green-600 truncate">{publication.presupuesto || 'A convenir'}</p>
-                  </div>
-                </div>
+                <p className="text-sm font-bold text-green-700">{publication.presupuesto || 'A convenir'}</p>
               </div>
             </div>
           </div>
 
-          {/* Contenido del modal */}
-          <div className="px-8 py-8">
+          {/* Contenido principal */}
+          <div className="px-6 pb-6 space-y-6">
             
-            {/* Description Section */}
-            <div className="mb-8">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-1.5 h-8 bg-gradient-to-b from-[#07767c] to-[#40E0D0] rounded-full"></div>
-                <h3 className="text-2xl font-bold text-gray-900 m-0">Descripción del Proyecto</h3>
-              </div>
-              <div className="bg-gray-50 border border-gray-200 rounded-xl p-6">
-                <p className="text-gray-700 leading-relaxed text-base">
-                  {publication.descripcion || 'No se proporcionó descripción para este proyecto.'}
-                </p>
-              </div>
+            {/* Descripción */}
+            <div>
+              <h3 className="text-lg font-bold text-gray-900 mb-3">Descripción del Proyecto</h3>
+              <p className="text-gray-700 leading-relaxed">
+                {publication.descripcion || 'No se proporcionó descripción para este proyecto.'}
+              </p>
             </div>
 
-            {/* Skills Section */}
-            <div className="mb-8">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-1.5 h-8 bg-gradient-to-b from-[#07767c] to-[#40E0D0] rounded-full"></div>
-                <h3 className="text-2xl font-bold text-gray-900 m-0">Habilidades Requeridas</h3>
-              </div>
+            {/* Habilidades */}
+            <div>
+              <h3 className="text-lg font-bold text-gray-900 mb-3">Habilidades Requeridas</h3>
               {publication.habilidades ? (
-                <div className="flex flex-wrap gap-3">
+                <div className="flex flex-wrap gap-2">
                   {publication.habilidades.split(',').map((skill, index) => (
                     <span 
                       key={index}
-                      className="px-5 py-2.5 bg-gradient-to-r from-[#07767c]/10 to-[#40E0D0]/10 text-[#07767c] rounded-xl text-sm font-bold border-2 border-[#07767c]/20 hover:border-[#07767c]/40 transition-all duration-200 hover:shadow-md"
+                      className="px-4 py-2 bg-gradient-to-r from-[#07767c]/10 to-[#40E0D0]/10 text-[#07767c] rounded-lg text-sm font-semibold border border-[#07767c]/20 hover:border-[#07767c]/40 transition-colors"
                     >
                       {skill.trim()}
                     </span>
                   ))}
                 </div>
               ) : (
-                <div className="bg-gray-50 border border-gray-200 rounded-xl p-6">
-                  <p className="text-gray-500 italic text-center">No se especificaron habilidades requeridas.</p>
-                </div>
+                <p className="text-gray-500 italic">No se especificaron habilidades requeridas.</p>
               )}
             </div>
 
-            {/* Información adicional */}
-            <div className="mb-8 bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl p-6">
-              <div className="flex items-start gap-3">
-                <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <span className="text-white text-lg">💡</span>
+            {/* Sección de Reseñas de la Empresa */}
+            <div className="bg-gradient-to-br from-gray-50 to-gray-100/50 rounded-xl p-6 border border-gray-200">
+              <h3 className="text-lg font-bold text-gray-900 mb-4">Reseñas de {empresaNombre}</h3>
+              
+              {/* Rating general */}
+              <div className="flex items-start gap-6 mb-6">
+                <div className="text-center">
+                  <div className="text-5xl font-bold text-gray-900 mb-2">{reviewsData.rating}</div>
+                  <div className="flex items-center justify-center gap-1 mb-2">
+                    {[...Array(5)].map((_, i) => (
+                      <FaStar key={i} className={i < Math.floor(reviewsData.rating) ? 'text-yellow-400' : 'text-gray-300'} />
+                    ))}
+                  </div>
+                  <p className="text-sm text-gray-600">{reviewsData.totalReviews} Evaluaciones</p>
                 </div>
-                <div>
-                  <h4 className="font-bold text-gray-900 mb-2">Consejos para aplicar</h4>
+
+                {/* Distribución de estrellas */}
+                <div className="flex-1 space-y-2">
+                  {reviewsData.distribution.map((item) => (
+                    <div key={item.stars} className="flex items-center gap-2 text-sm">
+                      <span className="w-3 text-gray-600">{item.stars}</span>
+                      <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
+                        <div 
+                          className={`h-full rounded-full ${
+                            item.stars === 5 ? 'bg-green-500' : 
+                            item.stars === 4 ? 'bg-lime-500' : 
+                            item.stars === 3 ? 'bg-yellow-400' : 
+                            item.stars === 2 ? 'bg-orange-400' : 
+                            'bg-red-400'
+                          }`}
+                          style={{ width: `${item.percentage}%` }}
+                        ></div>
+                      </div>
+                      <span className="w-10 text-right text-gray-600">{item.percentage}%</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Categorías de evaluación */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                {reviewsData.categories.map((category, index) => (
+                  <div key={index} className="text-center">
+                    <div className="text-3xl font-bold text-[#07767c] mb-1">{category.score}</div>
+                    <p className="text-xs text-gray-600">{category.name}</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* Recomendación */}
+              <div className="bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200 rounded-lg p-4">
+                <p className="text-center">
+                  <span className="text-2xl font-bold text-orange-600">{reviewsData.recommendation}%</span>
+                  <span className="text-sm text-gray-700 ml-2">profesionales recomiendan trabajar aquí</span>
+                </p>
+              </div>
+            </div>
+
+            {/* Consejos */}
+            <div className="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-5">
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 bg-gradient-to-br from-amber-400 to-orange-500 rounded-lg flex items-center justify-center flex-shrink-0 text-white text-lg">
+                  💡
+                </div>
+                <div className="flex-1">
+                  <h4 className="font-bold text-gray-900 mb-2">Consejos para tu postulación</h4>
                   <ul className="text-sm text-gray-700 space-y-1">
-                    <li>• Revisa cuidadosamente los requisitos del proyecto</li>
-                    <li>• Asegúrate de tener las habilidades necesarias</li>
-                    <li>• Prepara un portafolio relevante</li>
+                    <li>• Revisa cuidadosamente los requisitos</li>
+                    <li>• Destaca tu experiencia relevante</li>
+                    <li>• Sé claro sobre tu disponibilidad</li>
                   </ul>
                 </div>
               </div>
             </div>
+          </div>
 
-            {/* Action Buttons */}
-            <div className="space-y-3 pt-6 border-t-2 border-gray-100">
-              <button
-                className={`w-full py-5 rounded-xl border-none cursor-pointer font-bold text-lg transition-all duration-300 shadow-lg ${
-                  isApplied 
-                    ? 'bg-gray-200 cursor-not-allowed text-gray-500' 
-                    : 'bg-gradient-to-r from-[#07767c] to-[#05595d] text-white hover:from-[#05595d] hover:to-[#043d42] hover:shadow-xl hover:-translate-y-1'
-                }`}
-                disabled={isApplied}
-                onClick={async (e) => {
-                  e.stopPropagation();
-                  if (!isApplied) {
-                    await onApply(id_publicacion);
-                  }
-                }}
-              >
-                {isApplied ? (
-                  <span className="flex items-center justify-center gap-3">
-                    <FaCheckCircle />
-                    Ya aplicaste a este proyecto
-                  </span>
-                ) : (
-                  <span className="flex items-center justify-center gap-3">
-                    <FaUserTie />
-                    Postularme al Proyecto
-                  </span>
-                )}
-              </button>
-
-              {!isApplied && (
-                <button 
-                  className="w-full py-4 bg-white border-2 border-[#07767c] text-[#07767c] rounded-xl cursor-pointer font-bold text-base hover:bg-[#07767c] hover:text-white transition-all duration-300 hover:shadow-lg"
-                  onClick={() => setIsReviewModalOpen(true)}
-                >
-                  <span className="flex items-center justify-center gap-2">
-                    <FaStar />
-                    Dejar Reseña a la Empresa
-                  </span>
-                </button>
+          {/* Footer con acciones */}
+          <div className="sticky bottom-0 bg-white border-t border-gray-200 px-6 py-4">
+            <button
+              className={`w-full py-3.5 rounded-xl font-bold text-base transition-all duration-300 ${
+                isApplied || checkingApplication
+                  ? 'bg-gray-100 cursor-not-allowed text-gray-500' 
+                  : isApplying
+                  ? 'bg-gray-300 cursor-wait text-gray-600'
+                  : 'bg-gradient-to-r from-[#059669] to-[#10b981] text-white hover:shadow-lg hover:from-[#047857] hover:to-[#059669]'
+              }`}
+              disabled={isApplied || isApplying || checkingApplication}
+              onClick={handleApplyClick}
+            >
+              {checkingApplication ? (
+                <span className="flex items-center justify-center gap-2">
+                  <div className="w-5 h-5 border-2 border-gray-400 border-t-gray-600 rounded-full animate-spin"></div>
+                  Verificando...
+                </span>
+              ) : isApplying ? (
+                <span className="flex items-center justify-center gap-2">
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  Enviando postulación...
+                </span>
+              ) : isApplied ? (
+                <span className="flex items-center justify-center gap-2">
+                  <FaCheckCircle />
+                  Ya aplicaste a este proyecto
+                </span>
+              ) : (
+                'Postularme al Proyecto'
               )}
-            </div>
+            </button>
           </div>
         </div>
-
-        {/* Company Review Modal */}
-        <CompanyReviewModal 
-          isOpen={isReviewModalOpen}
-          onClose={() => setIsReviewModalOpen(false)}
-          onReviewButtonClick={() => setIsReviewModalOpen(true)}
-          id_identificador={id_publicacion}
-          id_usuario={id_usuario}
-          userType={userType}
-        />
       </div>
     </>
   );

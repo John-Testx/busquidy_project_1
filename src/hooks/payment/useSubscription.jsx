@@ -57,6 +57,49 @@ const useSubscription = (id_usuario, tipo_usuario) => {
                 throw new Error('Plan no seleccionado o inválido');
             }
 
+            // Verificamos si es gratuito Y es_plan_gratuito (doble seguridad)
+            if (plan.precio <= 0 && plan.es_plan_gratuito) {
+                
+                // Si es gratuito, llamamos a la API con un flag
+                // Nota: El backend (Parte C) debe ser modificado para manejar esto
+                const freePaymentData = {
+                    amount: 0,
+                    buyOrder: `SUB-FREE-${id_usuario}-${Date.now()}`,
+                    sessionId: `Session-${id_usuario}`,
+                    plan: plan.id_plan,
+                    tipoUsuario: tipo_usuario,
+                    metodoPago: 'gratuito', // Marcador especial
+                    returnUrl: `${API_URL_FRONT}/payment/return`, // Aunque no se usará para redirigir
+                    isFreePlan: true // Flag especial
+                };
+
+                // Usamos la misma función de API, pero el backend reaccionará al flag 'isFreePlan'
+                const response = await createSubscriptionTransaction(freePaymentData);
+                
+                // Si el backend tiene éxito, nos devolverá un estado 'APPROVED' directamente
+                if (response.status === 'APPROVED') {
+ 
+                    alert("¡Plan gratuito activado con éxito!"); // Opcional, para confirmar
+                    
+                    if (tipo_usuario.includes('empresa')) {
+                        // Redirigir de vuelta a la página de gestión de suscripción
+                        window.location.href = '/empresa-profile/subscription'; 
+                    } else if (tipo_usuario === 'freelancer') {
+                        // Redirigir de vuelta a la página de gestión de suscripción
+                        window.location.href = '/freelancer-profile/subscription';
+                    } else {
+                        window.location.href = '/'; // Fallback a la home
+                    }
+
+                } else {
+                    throw new Error(response.error || 'No se pudo activar el plan gratuito');
+                }
+                
+                // Detenemos la ejecución aquí
+                return; 
+            }
+            // --- Si NO es gratuito, continuamos con el flujo normal de Webpay ---
+
             const paymentData = {
                 amount: plan.precio,
                 buyOrder: `SUB-${id_usuario}-${Date.now()}`,
@@ -65,8 +108,9 @@ const useSubscription = (id_usuario, tipo_usuario) => {
                 tipoUsuario: tipo_usuario,
                 metodoPago,
                 returnUrl: `${API_URL_FRONT}/payment/return`
+                // No enviamos 'isFreePlan' o es 'false'
             };
-
+            
             const { url, token } = await createSubscriptionTransaction(paymentData);
 
             if (!url || !token) {

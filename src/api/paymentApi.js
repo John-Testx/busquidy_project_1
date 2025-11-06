@@ -58,3 +58,49 @@ export const createSubscriptionTransaction = async (paymentData) => {
   );
   return response.data;
 };
+
+/**
+ * Obtiene TODOS los planes de suscripción sin filtro
+ * @returns {Promise} - Lista completa de planes
+ */
+export const getAllSubscriptionPlans = async () => {
+  const response = await apiClient.get("/payments/plan");
+  return response.data;
+};
+
+/**
+ * Obtiene la suscripción activa del usuario
+ * @returns {Promise} - Suscripción activa
+ */
+export const getActiveSubscription = async () => {
+  const response = await apiClient.get("/subscriptions/active");
+  return response.data;
+};
+
+/**
+ * Cancela la suscripción activa
+ * @returns {Promise} - Confirmación de cancelación
+ */
+export const cancelSubscription = async () => {
+  const response = await apiClient.post("/subscriptions/cancel");
+  return response.data;
+};
+
+/**
+ * Cambia el plan de suscripción
+ * @param {number} planId - ID del nuevo plan
+ * @returns {Promise} - URL de checkout o confirmación
+ */
+export const changeSubscriptionPlan = async (planId) => {
+  const response = await apiClient.post("/subscriptions/change-plan", { planId });
+  return response.data;
+};
+
+/**
+ * Obtiene las transacciones del usuario logueado
+ * @returns {Promise} - Lista de transacciones
+ */
+export const getMyTransactions = async () => {
+  const response = await apiClient.get("/payments/my-transactions");
+  return response.data;
+};

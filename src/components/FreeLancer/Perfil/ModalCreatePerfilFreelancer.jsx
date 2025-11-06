@@ -4,18 +4,18 @@ import { initialFreelancerData } from "@/common/consts";
 import { createFreelancerProfile } from "@/api/freelancerApi";
 
 // Componentes de cada paso
-import StepPresentacion from "./Sections/StepPresentacion";
-import StepDatosPersonales from "./Sections/StepDatosPersonales";
-import StepInclusionLaboral from "./Sections/StepInclusionLaboral";
-import StepEmprendimiento from "./Sections/StepEmprendimiento";
-import StepExperiencia from "./Sections/StepExperiencia";
-import StepNivelEducacional from "./Sections/StepNivelEducacional";
-import StepEducacionSuperior from "./Sections/StepEducacionSuperior";
-import StepEducacionBasica from "./Sections/StepEducacionBasica";
-import StepIdiomas from "./Sections/StepIdiomas";
-import StepHabilidades from "./Sections/StepHabilidades";
-import StepCursos from "./Sections/StepCursos";
-import StepPretensiones from "./Sections/StepPretensiones";
+import StepPresentacion from "./FormSections/StepPresentacion";
+import StepDatosPersonales from "./FormSections/StepDatosPersonales";
+import StepInclusionLaboral from "./FormSections/StepInclusionLaboral";
+import StepEmprendimiento from "./FormSections/StepEmprendimiento";
+import StepExperiencia from "./FormSections/StepExperiencia";
+import StepNivelEducacional from "./FormSections/StepNivelEducacional";
+import StepEducacionSuperior from "./FormSections/StepEducacionSuperior";
+import StepEducacionBasica from "./FormSections/StepEducacionBasica";
+import StepIdiomas from "./FormSections/StepIdiomas";
+import StepHabilidades from "./FormSections/StepHabilidades";
+import StepCursos from "./FormSections/StepCursos";
+import StepPretensiones from "./FormSections/StepPretensiones";
 
 const TOTAL_STEPS = 12;
 
@@ -300,10 +300,10 @@ function ModalCreatePerfilFreelancer({ closeModal, id_usuario }) {
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-5xl max-h-[80vh] overflow-hidden flex flex-col">
         
         {/* Header - Más compacto */}
-        <div className="bg-gradient-to-r from-teal-600 to-teal-700 px-6 py-4 flex items-center justify-between border-b border-teal-800 rounded-t-2xl flex-shrink-0">
+        <div className="bg-gradient-to-r from-[#07767c] to-[#0a9fa6] px-6 py-4 flex items-center justify-between border-b border-[#07767c]/30 rounded-t-2xl flex-shrink-0">
           <div>
             <h2 className="text-xl font-bold text-white">Crear Perfil Profesional</h2>
-            <p className="text-teal-100 text-xs mt-1">Paso {currentStep} de {TOTAL_STEPS}: {STEP_TITLES[currentStep]}</p>
+            <p className="text-white/80 text-xs mt-1">Paso {currentStep} de {TOTAL_STEPS}: {STEP_TITLES[currentStep]}</p>
           </div>
           <button
             onClick={closeModal}
