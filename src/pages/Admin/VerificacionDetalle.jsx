@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { 
   getUserVerificationDetails, 
-  approveUserVerification, 
-  rejectUserVerification 
+  approveUser, 
+  rejectUser, 
 } from '@/api/adminApi';
 import { 
   FileText, 
@@ -50,7 +50,7 @@ const VerificacionDetalle = () => {
 
     setProcessing(true);
     try {
-      await approveUserVerification(parseInt(id));
+      await approveUser(parseInt(id));
       alert('✅ Usuario aprobado exitosamente');
       navigate('/adminhome/verificaciones');
     } catch (error) {
