@@ -10,6 +10,9 @@ function useAuth() {
     const [loading, setLoading] = useState(true);
     const [errors, setErrors] = useState({});
     const [message, setMessage] = useState({ show: false, text: "", type: "" });
+    
+    // ✅ NUEVO: Estado completo del usuario
+    const [user, setUser] = useState(null);
 
     const errorMessages = errorAuth;
     const successMessages = successAuth;
@@ -20,21 +23,18 @@ function useAuth() {
     const validate = ({ correo, contraseña, tipoUsuario, isRegister }) => {
         const newErrors = {};
         
-        // Validación de correo
         if (!correo) {
             newErrors.correo = errorMessages.emptyEmail;
         } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo)) {
             newErrors.correo = errorMessages.invalidEmail;
         }
         
-        // Validación de contraseña
         if (!contraseña) {
             newErrors.contraseña = errorMessages.emptyPassword;
         } else if (contraseña.length < 6) {
             newErrors.contraseña = errorMessages.shortPassword;
         }
         
-        // Validación de tipo de usuario (solo en registro)
         if (isRegister && !tipoUsuario) {
             newErrors.tipoUsuario = errorMessages.noUserType;
         }
@@ -47,10 +47,8 @@ function useAuth() {
      * Interpreta y mejora los mensajes de error de la API
      */
     const parseApiError = (error) => {
-        // Si el error tiene un mensaje específico de la API
         const apiMessage = error.error || error.message || "";
         
-        // Mapeo de errores comunes de la API
         const errorMap = {
             "user not found": errorMessages.userNotFound,
             "usuario no encontrado": errorMessages.userNotFound,
@@ -73,7 +71,6 @@ function useAuth() {
             "503": errorMessages.serverError
         };
 
-        // Buscar coincidencia parcial en el mensaje de error
         const lowerMessage = apiMessage.toLowerCase();
         for (const [key, message] of Object.entries(errorMap)) {
             if (lowerMessage.includes(key)) {
@@ -81,7 +78,6 @@ function useAuth() {
             }
         }
 
-        // Si no hay coincidencia, retornar el mensaje original o uno genérico
         return apiMessage || errorMessages.loginFailed;
     };
 
@@ -95,20 +91,33 @@ function useAuth() {
         if (token) {
             try {
                 const decoded = jwtDecode(token);
+                const estadoVerificacion = sessionStorage.getItem("estado_verificacion") || 'no_verificado';
+                
                 setTipoUsuario(decoded.tipo_usuario || null);
                 setIdUsuario(decoded.id_usuario || null);
+                
+                // ✅ Actualizar el objeto user completo
+                setUser({
+                    id_usuario: decoded.id_usuario,
+                    tipo_usuario: decoded.tipo_usuario,
+                    estado_verificacion: estadoVerificacion
+                });
+                
             } catch (e) {
                 console.error("Error decoding token:", e);
                 sessionStorage.removeItem("token");
                 sessionStorage.removeItem("tipo_usuario");
                 sessionStorage.removeItem("correo");
+                sessionStorage.removeItem("estado_verificacion");
                 setTipoUsuario(null);
                 setIdUsuario(null);
+                setUser(null);
                 setIsAuthenticated(false);
             }
         } else {
             setTipoUsuario(null);
             setIdUsuario(null);
+            setUser(null);
         }
 
         setLoading(false);
@@ -127,7 +136,6 @@ function useAuth() {
      * Maneja el inicio de sesión del usuario
      */
     const handleLogin = async (correo, contraseña, onSuccess) => {
-        // Validar primero - si falla, NO mostrar modal
         if (!validate({ correo, contraseña })) return;
         
         setLoading(true);
@@ -136,35 +144,55 @@ function useAuth() {
         try {
             const data = await loginUser(correo, contraseña);
 
-            // Guardar datos en sessionStorage
             sessionStorage.setItem("token", data.token);
             sessionStorage.setItem("tipo_usuario", data.tipo_usuario);
             sessionStorage.setItem("correo", correo);
             
-            // Actualizar estado
+            // ✅ Obtener el estado_verificacion del usuario
+            try {
+                const response = await fetch(`${import.meta.env.VITE_API_URL}/users/me`, {
+                    headers: {
+                        'Authorization': `Bearer ${data.token}`
+                    }
+                });
+                const userData = await response.json();
+                sessionStorage.setItem("estado_verificacion", userData.estado_verificacion || 'no_verificado');
+                
+                // ✅ Actualizar el estado user
+                const decoded = jwtDecode(data.token);
+                setUser({
+                    id_usuario: decoded.id_usuario,
+                    tipo_usuario: decoded.tipo_usuario,
+                    estado_verificacion: userData.estado_verificacion || 'no_verificado'
+                });
+            } catch (error) {
+                console.error('Error obteniendo estado de verificación:', error);
+                sessionStorage.setItem("estado_verificacion", 'no_verificado');
+                
+                const decoded = jwtDecode(data.token);
+                setUser({
+                    id_usuario: decoded.id_usuario,
+                    tipo_usuario: decoded.tipo_usuario,
+                    estado_verificacion: 'no_verificado'
+                });
+            }
+            
             setIsAuthenticated(true);
             
-            // Decodificar token para obtener datos del usuario
             const decoded = jwtDecode(data.token);
             setTipoUsuario(decoded.tipo_usuario || null);
             setIdUsuario(decoded.id_usuario || null);
             
-            // Mostrar mensaje de éxito
             setMessage({ 
                 show: true, 
                 text: successMessages.loginSuccess, 
                 type: "success" 
             });
             
-            // Ejecutar callback de éxito INMEDIATAMENTE (sin setTimeout)
             onSuccess?.(data.tipo_usuario);
             
         } catch (err) {
-            // Interpretar error
             const errorMessage = parseApiError(err);
-            
-            // CRÍTICO: Solo mostrar MessageModal para errores graves (servidor, red)
-            // NO para errores de credenciales incorrectas
             const lowerMessage = errorMessage.toLowerCase();
             const isCredentialError = lowerMessage.includes('contraseña') || 
                                        lowerMessage.includes('password') ||
@@ -173,10 +201,8 @@ function useAuth() {
                                        lowerMessage.includes('no encontramos');
             
             if (isCredentialError) {
-                // Error de credenciales: mostrar en el campo
                 setErrors({ contraseña: errorMessage });
             } else {
-                // Error grave: mostrar en MessageModal
                 setMessage({ show: true, text: errorMessage, type: "error" });
             }
             
@@ -190,7 +216,6 @@ function useAuth() {
      * Maneja el registro de un nuevo usuario
      */
     const handleRegister = async (correo, contraseña, tipoUsuario, onSuccess) => {
-        // Validar primero - si falla, NO mostrar modal
         if (!validate({ correo, contraseña, tipoUsuario, isRegister: true })) return;
         
         setLoading(true);
@@ -199,31 +224,24 @@ function useAuth() {
         try {
             await registerUser(correo, contraseña, tipoUsuario);
             
-            // Mostrar mensaje de éxito
             setMessage({ 
                 show: true, 
                 text: successMessages.registerSuccess, 
                 type: "success" 
             });
             
-            // Ejecutar callback INMEDIATAMENTE (sin setTimeout)
             onSuccess?.();
             
         } catch (err) {
-            // Interpretar error
             const errorMessage = parseApiError(err);
-            
-            // CRÍTICO: Solo mostrar MessageModal para errores graves
             const lowerMessage = errorMessage.toLowerCase();
             const isUserExistsError = lowerMessage.includes('ya existe') || 
                                        lowerMessage.includes('already exists') ||
                                        lowerMessage.includes('already registered');
             
             if (isUserExistsError) {
-                // Usuario ya existe: mostrar en el campo de correo
                 setErrors({ correo: errorMessage });
             } else {
-                // Error grave: mostrar en MessageModal
                 setMessage({ show: true, text: errorMessage, type: "error" });
             }
             
@@ -240,14 +258,15 @@ function useAuth() {
         sessionStorage.removeItem("token");
         sessionStorage.removeItem("tipo_usuario");
         sessionStorage.removeItem("correo");
+        sessionStorage.removeItem("estado_verificacion");
         
-        // Mostrar mensaje de cierre de sesión
         setMessage({ 
             show: true, 
             text: successMessages.logoutSuccess, 
             type: "info" 
         });
         
+        setUser(null);
         refresh();
     };
 
@@ -270,7 +289,7 @@ function useAuth() {
         errors,
         message,
         clearMessage,
-        user: { tipo_usuario, id_usuario },
+        user, // ✅ Exportar el objeto user completo
     };
 }
 

@@ -1,7 +1,8 @@
 import apiClient from "./apiClient";
 
 const BASE = "/admin/role";
-const DISPUTE_BASE = "/admin/disputes"; // <- NUEVO
+const DISPUTE_BASE = "/admin/disputes";
+const VERIFICATION_BASE = "/admin/verificacion"; // ✅ NUEVO
 
 // ============= ROLES =============
 export const getAllAdminRoles = () => apiClient.get(`${BASE}/get`);
@@ -9,7 +10,7 @@ export const createAdminRole = (role) => apiClient.post(`${BASE}/create`, role);
 export const updateAdminRole = (id, role) => apiClient.put(`${BASE}/${id}`, role);
 export const deleteAdminRole = (id) => apiClient.delete(`${BASE}/${id}`);
 
-// ============= DISPUTAS Y REEMBOLSOS (NUEVO) =============
+// ============= DISPUTAS Y REEMBOLSOS =============
 
 /**
  * Obtiene todos los proyectos con pagos en garantía
@@ -33,41 +34,41 @@ export const refundProjectPayment = async (id_proyecto) => {
 // ============= VERIFICACIÓN DE DOCUMENTOS (NUEVO) =============
 
 /**
- * Obtiene usuarios pendientes de verificación
+ * Obtiene usuarios pendientes de verificación (estado 'en_revision')
  * @returns {Promise<Array>} Lista de usuarios en revisión
  */
 export const getPendingVerifications = async () => {
-  const response = await apiClient.get('/admin/verificaciones/pendientes');
+  const response = await apiClient.get(`${VERIFICATION_BASE}/usuarios`);
   return response.data;
 };
 
 /**
  * Obtiene detalles de verificación de un usuario
- * @param {number} id_usuario - ID del usuario
+ * @param {number} userId - ID del usuario
  * @returns {Promise<Object>} Usuario y sus documentos
  */
-export const getUserVerificationDetails = async (id_usuario) => {
-  const response = await apiClient.get(`/admin/verificaciones/usuario/${id_usuario}`);
+export const getUserVerificationDetails = async (userId) => {
+  const response = await apiClient.get(`${VERIFICATION_BASE}/documentos/${userId}`);
   return response.data;
 };
 
 /**
  * Aprueba la verificación de un usuario
- * @param {number} id_usuario - ID del usuario
+ * @param {number} userId - ID del usuario
  * @returns {Promise<Object>} Mensaje de confirmación
  */
-export const approveUserVerification = async (id_usuario) => {
-  const response = await apiClient.post('/admin/verificaciones/aprobar', { id_usuario });
+export const approveUser = async (userId) => {
+  const response = await apiClient.post(`${VERIFICATION_BASE}/approve/${userId}`);
   return response.data;
 };
 
 /**
  * Rechaza la verificación de un usuario
- * @param {number} id_usuario - ID del usuario
- * @param {string} motivo - Motivo del rechazo
+ * @param {number} userId - ID del usuario
+ * @param {Object} rejectData - { documentos: [{ id_documento, comentario }] }
  * @returns {Promise<Object>} Mensaje de confirmación
  */
-export const rejectUserVerification = async (id_usuario, motivo) => {
-  const response = await apiClient.post('/admin/verificaciones/rechazar', { id_usuario, motivo });
+export const rejectUser = async (userId, rejectData) => {
+  const response = await apiClient.post(`${VERIFICATION_BASE}/reject/${userId}`, rejectData);
   return response.data;
 };

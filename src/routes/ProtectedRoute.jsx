@@ -1,32 +1,52 @@
 import React from 'react';
-import { Navigate, Outlet } from 'react-router-dom';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks';
 import LoadingScreen from '@/components/LoadingScreen';
 
 /**
- * A protected route component that checks for authentication and user roles.
- * @param {object} props
- * @param {string[]} props.allowedRoles - An array of roles allowed to access the route.
- * e.g., ['freelancer', 'empresa']
+ * Rutas protegidas con control de verificación
+ * @param {string[]} allowedRoles - Roles permitidos para acceder
  */
 function ProtectedRoute({ allowedRoles }) {
-  const { isAuthenticated, tipo_usuario, loading } = useAuth();
+  const { isAuthenticated, user, loading } = useAuth();
+  const location = useLocation();
+
+  // Lista de rutas permitidas para usuarios no verificados
+  const allowedPathsForUnverified = [
+    '/verificar-documentos',
+    '/soporte',
+    '/configuracion',
+    '/notifications',
+    '/chat',
+  ];
 
   if (loading) {
     return <LoadingScreen />;
   }
 
   if (!isAuthenticated) {
-    // If not authenticated, redirect to a "not authenticated" page or login
     return <Navigate to="/notauthenticated" replace />;
   }
 
-  if (allowedRoles && !allowedRoles.includes(tipo_usuario)) {
-    // If the user's role is not allowed, redirect to an "unauthorized" page
+  if (allowedRoles && !allowedRoles.includes(user.tipo_usuario)) {
     return <Navigate to="/unauthorized" replace />;
   }
 
-  // If authenticated and role is allowed, render the child routes
+  // LÓGICA DE BLOQUEO POR VERIFICACIÓN
+  if (user.estado_verificacion !== 'verificado') {
+    const currentPath = location.pathname;
+    
+    // Verificar si la ruta actual está en la lista de permitidas
+    const isAllowedPath = allowedPathsForUnverified.some(path => 
+      currentPath.startsWith(path)
+    );
+
+    if (!isAllowedPath) {
+      // Redirigir a página de verificación
+      return <Navigate to="/verificar-documentos" replace />;
+    }
+  }
+
   return <Outlet />;
 }
 

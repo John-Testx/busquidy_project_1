@@ -68,7 +68,15 @@ const VerificacionDetalle = () => {
 
     setProcessing(true);
     try {
-      await rejectUserVerification(parseInt(id), rejectReason);
+      // Crear el objeto con comentarios para todos los documentos
+      const rejectData = {
+        documentos: documents.map(doc => ({
+          id_documento: doc.id_documento,
+          comentario: rejectReason // Mismo comentario para todos
+        }))
+      };
+
+      await rejectUser(parseInt(id), rejectData);
       alert('❌ Usuario rechazado');
       navigate('/adminhome/verificaciones');
     } catch (error) {
