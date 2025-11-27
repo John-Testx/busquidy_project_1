@@ -235,6 +235,7 @@ function Navbar() {
     const userInitials = getUserInitials();
 
     return (
+        console.log("Rendering Navbar with tipo_usuario:", tipo_usuario),
         <header 
             className={`fixed top-0 left-0 right-0 z-[1000] transition-all duration-300 ${
                 scrolled 

@@ -95,6 +95,7 @@ const DocumentUploader = ({ tipoUsuario, documentos, onUploadComplete, isUploadi
       
       onUploadComplete();
     } catch (error) {
+      console.error('Error al subir documentos:', error);
       alert('Error al subir documentos: ' + (error.error || error.message));
       setIsUploading(false);
     }

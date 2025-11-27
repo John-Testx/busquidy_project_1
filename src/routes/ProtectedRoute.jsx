@@ -34,6 +34,8 @@ function ProtectedRoute({ allowedRoles }) {
 
   // LÓGICA DE BLOQUEO POR VERIFICACIÓN
   if (user.estado_verificacion !== 'verificado') {
+    console.log("Usuario ", user);
+    // console.log("Usuario no verificado, estado:", user.estado_verificacion);
     const currentPath = location.pathname;
     
     // Verificar si la ruta actual está en la lista de permitidas
