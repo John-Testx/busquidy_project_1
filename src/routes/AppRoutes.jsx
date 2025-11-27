@@ -69,6 +69,8 @@ import EmpresaProfileLayout from '@/pages/Empresa/EmpresaProfileLayout';
 import EmpresaInfo from '@/components/Empresa/Perfil/EmpresaInfo';
 import RepresentanteInfo from '@/components/Empresa/Perfil/RepresentanteInfo';
 import EmpresaAccess from '@/components/Empresa/Perfil/EmpresaAccess';
+import ManageBusquidyTest from '@/pages/Admin/ManageBusquidyTest';
+
 
 const AppRoutes = () => {
   return (
@@ -169,6 +171,7 @@ const AppRoutes = () => {
                 <Route path="users/edit/:id" element={<UserEditPage />} />
                 <Route path="roles" element={<AdminRoles />} />
             </Route>
+            <Route path="busquidy-test" element={<ManageBusquidyTest />} />
             <Route path="/adminhome/verificaciones" element={<VerificacionManagement />} />
             <Route path="/adminhome/verificaciones/detalle/:id" element={<VerificacionDetalle />} />
             <Route path="projectmanagement" element={<ProjectManagement />} />

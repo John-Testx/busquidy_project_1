@@ -38,6 +38,12 @@ export default function SidebarAdmin() {
       path: "/adminhome/verificaciones" 
     },
     { 
+      id: "busquidymentaltest", 
+      title: "Test Mental Busquidy", 
+      icon: <FileCheck size={20} />,  
+      path: "/adminhome/busquidy-test" 
+    },
+    { 
       id: "support", 
       title: "Soporte", 
       icon: <MessageSquare size={20} />, 
