@@ -15,6 +15,11 @@ import io from "socket.io-client";
 // Soko doki na jama da ore wa mou hitori no anata
 // Sada-Chan, Kaya-Chan*/
 
+//Gladius roma imperium
+//Ubist nostrum imperium
+//Ne plora matrem roma
+//Denuo florebis
+
 function App() {
   const [connectedUsers, setConnectedUsers] = useState(0);
   const socketRef = useRef(null);
