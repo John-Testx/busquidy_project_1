@@ -5,11 +5,12 @@ import LittleSearchSection from "@/components/FreeLancer/PanelFreelancer/LittleS
 import LoadingScreen from "@/components/LoadingScreen";
 import InfoSectionFreelancer from "@/components/FreeLancer/PanelFreelancer/InfoSectionFreelancer";
 import { Footer, Navbar } from '@/components/Home/';
+import { useAuth } from "@/hooks/index";
 
 
 function FreeLancer() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [loading, setLoading] = useState(true);
+    const {loading} = useAuth();
     const [logoutStatus, setLogoutStatus] = useState("");
     const [userType, setUserType] = useState(null);
     const navigate = useNavigate();

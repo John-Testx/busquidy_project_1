@@ -18,6 +18,7 @@ const SoporteHome = lazy(() => import('@pages/Soporte/SoporteHome'));
 const ProjectList = lazy(() =>import('@/pages/Publications/ProjectList'));
 const UserManagement = lazy(()=> import('@pages/Admin/UserManagement'));
 const Empresa = lazy(()=> import('@pages/Empresa/Empresa'));
+const TakeTest = lazy(() => import('@/pages/Freelancer/TakeTest'));
 const CrearTicketPublico = lazy(()=>import('@pages/Soporte/CrearTicketPublico'));
 const NotificationsPage = lazy(() => import('@/pages/Notifications/NotificationsPage'));
 const PreciosPage = lazy(() => import('@pages/General/PreciosPage'));
@@ -135,6 +136,7 @@ const AppRoutes = () => {
           <Route path="availability" element={<MyAvailability />} />
           <Route path="subscription" element={<SubscriptionManagement />} />
           <Route path="configuracion" element={<SettingsPage />} />
+          <Route path="take-test" element={<TakeTest />} />
           <Route path="mis-transacciones" element={<MyTransactionsPage />} />
         </Route>        
       </Route>
