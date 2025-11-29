@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import TicketChat from "@/components/Soporte/TicketChat";
 import { getTicketDetails, getTicketMessages, sendTicketMessage } from "@/api/supportApi";
 import { ArrowLeft, Clock, User, Tag, AlertTriangle, CheckCircle, Loader2 } from "lucide-react";
-import MainLayout from '@/components/layouts/MainLayout';
+import MainLayout from '@/components/Layouts/MainLayout';
 import LoadingScreen from "@/components/LoadingScreen";
 
 function VerTicket() {
