@@ -8,7 +8,7 @@ import { CheckCircle, AlertCircle, Loader2, Send, FileCheck } from 'lucide-react
 
 const VerificarDocumentosPage = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, refetchUser } = useAuth();
   
   const [documents, setDocuments] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -34,6 +34,9 @@ const VerificarDocumentosPage = () => {
   const handleUploadComplete = async () => {
     setUploading(false);
     await loadDocuments();
+
+    await refetchUser();
+
     alert('✅ Documentos subidos exitosamente. Tu cuenta está en revisión.');
   };
 
