@@ -5,40 +5,16 @@ import LittleSearchSection from "@/components/FreeLancer/PanelFreelancer/LittleS
 import LoadingScreen from "@/components/LoadingScreen";
 import InfoSectionFreelancer from "@/components/FreeLancer/PanelFreelancer/InfoSectionFreelancer";
 import { Footer, Navbar } from '@/components/Home/';
+import { useAuth } from "@/hooks/index";
+
 
 function FreeLancer() {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [loading, setLoading] = useState(true);
+    const {loading} = useAuth();
     const [logoutStatus, setLogoutStatus] = useState("");
     const [userType, setUserType] = useState(null);
     const navigate = useNavigate();
-
-    useEffect(() => {
-        const checkAuth = () => {
-            const token = sessionStorage.getItem('token');    
-            setIsAuthenticated(!!token);
-            
-            if (token) {
-                try {
-                    const decoded = jwtDecode(token);
-                    console.log("Decoded token:", decoded);
-                    setUserType(decoded.tipo_usuario);
-                } catch (error) {
-                    console.error("Error decodificando el token:", error);
-                }
-            }
-            
-            setTimeout(() => {
-                setLoading(false);
-            }, 500);
-        };
-     
-        window.addEventListener('storage', checkAuth);
-        checkAuth();
-   
-        return () => window.removeEventListener('storage', checkAuth);
-    }, []);
-
+    
     return (
         <div>
             {loading && <LoadingScreen />}

@@ -164,3 +164,13 @@ export const registerWithVerifiedEmail = async (correo, contraseña, tipoUsuario
     throw error.response?.data || { error: 'Error al registrar usuario' };
   }
 };
+
+/**
+ * Obtiene la información del usuario autenticado actualmente
+ * usando su token.
+ * @returns {Promise<Object>} Datos del usuario (incluyendo estado_verificacion)
+ */
+export const getMe = async () => {
+  const response = await apiClient.get(`${BASE}/me`);
+  return response.data;
+};

@@ -62,7 +62,7 @@ function Home() {
                 )} */}
 
                     <>
-                        {console.log("Rendering home for unknown user type")}
+                        {/* {console.log("Rendering home for unknown user type")} */}
                         <CardSection userType={tipo_usuario} />
                         <InfoSectionHome tipo_usuario={tipo_usuario} id_usuario={id_usuario} />
                     </>

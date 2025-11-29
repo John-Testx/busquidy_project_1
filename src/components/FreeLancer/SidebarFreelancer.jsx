@@ -36,19 +36,26 @@ const SidebarFreelancer = ({ isPerfilIncompleto }) => {
       requiresProfile: false
     },
     { 
-    path: '/freelancer-profile/mis-transacciones', 
-    name: 'Mis Transacciones', 
-    icon: <FileText />,
-    description: 'Historial de pagos',
-    requiresProfile: false
-  },
-  { 
-    path: '/freelancer-profile/configuracion', 
-    name: 'Configuración', 
-    icon: <Settings />,
-    description: 'Seguridad y cuenta',
-    requiresProfile: false
-  },
+      path: '/freelancer-profile/mis-transacciones', 
+      name: 'Mis Transacciones', 
+      icon: <FileText />,
+      description: 'Historial de pagos',
+      requiresProfile: false
+    },
+    { 
+      path: '/freelancer-profile/take-test', 
+      name: 'Test Busquidy', 
+      icon: <FileText />,
+      description: 'Test Busquidy de compromiso y responsabilidad',
+      requiresProfile: false
+    },
+    { 
+      path: '/freelancer-profile/configuracion', 
+      name: 'Configuración', 
+      icon: <Settings />,
+      description: 'Seguridad y cuenta',
+      requiresProfile: false
+    },
   ];
 
   const visibleMenuItems = menuItems.filter(item => {

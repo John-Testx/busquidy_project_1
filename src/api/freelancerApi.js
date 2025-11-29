@@ -9,6 +9,7 @@ const EMPRESA_BASE = "/empresa";
 
 export const checkProfileExists = async (id_usuario) => {
   const response = await apiClient.get(`${BASE}/get/${id_usuario}`);
+  console.log("checkProfileExists response:", response.data);
   return response.data;
 };
 
