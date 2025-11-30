@@ -126,10 +126,7 @@ const AppRoutes = () => {
       {/* Freelancer Routes */}
       <Route element={<ProtectedRoute allowedRoles={['freelancer']} />}>
         <Route path="/freelancer" element={<FreeLancer />} />
-        <Route path="/mypostulations" element={<MyPostulations />} />
         <Route path="/interview/request/:id_solicitud" element={<InterviewRequestPage />} />
-        <Route path="/mis-trabajos" element={<MyActiveProjects />} />
-        <Route path="/freelancer/proyecto/:idProyecto" element={<ActiveProjectDetail />} />
         
         <Route path="/freelancer-profile" element={<FreelancerProfileLayout/>}>
           <Route index element={<ViewPerfilFreeLancer/>} />
@@ -141,7 +138,7 @@ const AppRoutes = () => {
           <Route path="take-test" element={<TakeTest />} />
           <Route path="mis-transacciones" element={<MyTransactionsPage />} />
           <Route path="mis-trabajos" element={<MyActiveProjects />} />
-          <Route path="freelancer/proyecto/:idProyecto" element={<ActiveProjectDetail />} />
+          <Route path="mis-trabajos/:idProyecto" element={<ActiveProjectDetail />} />
           
         </Route>        
       </Route>

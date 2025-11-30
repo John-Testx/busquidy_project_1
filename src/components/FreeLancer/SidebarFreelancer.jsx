@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { FaUser, FaClipboardList, FaCalendarAlt, FaBars, FaTimes, FaChevronRight, FaLock, FaCreditCard } from 'react-icons/fa';
-import { Settings, Receipt, FileText } from 'lucide-react';
+import { FaUser, FaClipboardList, FaCalendarAlt, FaBars, FaTimes, FaChevronRight, FaLock, FaCreditCard, FaBriefcase  } from 'react-icons/fa';
+import { Settings, Receipt, FileText, Banknote, ShieldCheck } from 'lucide-react';
 
 const SidebarFreelancer = ({ isPerfilIncompleto }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -24,7 +24,7 @@ const SidebarFreelancer = ({ isPerfilIncompleto }) => {
     { 
       path: "/freelancer-profile/mis-trabajos", 
       name: "Mis Trabajos", 
-      icon: <FaClipboardList />,
+      icon: <FaBriefcase  />,
       description: "Ver tus trabajos",
       requiresProfile: true
     },
@@ -45,14 +45,14 @@ const SidebarFreelancer = ({ isPerfilIncompleto }) => {
     { 
       path: '/freelancer-profile/mis-transacciones', 
       name: 'Mis Transacciones', 
-      icon: <FileText />,
+      icon: <Banknote />,
       description: 'Historial de pagos',
       requiresProfile: false
     },
     { 
       path: '/freelancer-profile/take-test', 
       name: 'Test Busquidy', 
-      icon: <FileText />,
+      icon: <ShieldCheck />,
       description: 'Test Busquidy de compromiso y responsabilidad',
       requiresProfile: false
     },
