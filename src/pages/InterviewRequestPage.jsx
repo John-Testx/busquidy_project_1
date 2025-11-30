@@ -48,7 +48,7 @@ const InterviewRequestPage = () => {
         respuesta,
         nueva_fecha: respuesta === 'reprogramar' ? nuevaFecha : null
       };
-
+      console.log('Datos enviados para responder:', data);
       await respondContactRequest(id_solicitud, data);
       
       setSuccess(
