@@ -7,7 +7,7 @@ const AuthCallback = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
-    const { refresh } = useAuth(); // Usamos refresh para actualizar el estado
+    const { refetchUser } = useAuth(); // Usamos refresh para actualizar el estado
 
     const getRedirectPath = (tipoUsuario) => {
         if (tipoUsuario === 'freelancer') {
@@ -37,7 +37,7 @@ const AuthCallback = () => {
             }
             
             // Refresca el estado de autenticación del hook
-            refresh(); 
+            refetchUser(); 
             
             // Redirige al panel correcto
             const redirectPath = getRedirectPath(tipo_usuario);
@@ -47,7 +47,7 @@ const AuthCallback = () => {
             // Falló, redirige al inicio
             navigate('/');
         }
-    }, [location, navigate, refresh]); // Dependencias del useEffect
+    }, [location, navigate, refetchUser]); // Dependencias del useEffect
 
     return (
         <div>

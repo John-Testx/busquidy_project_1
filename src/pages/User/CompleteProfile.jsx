@@ -8,7 +8,7 @@ import { Briefcase, Building, User, CheckCircle2, Loader2 } from 'lucide-react';
 const CompleteProfile = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const { refresh } = useAuth();
+    const { refetchUser } = useAuth();
     
     const [tempToken, setTempToken] = useState(null);
     const [profile, setProfile] = useState(null);
@@ -54,7 +54,7 @@ const CompleteProfile = () => {
             sessionStorage.setItem("correo", profile.email);
             sessionStorage.setItem("tipo_usuario", tipo_usuario);
 
-            refresh();
+            refetchUser();
             // 👇 Redirigimos dinámicamente
             if (tipo_usuario === 'freelancer') {
                 navigate('/freelancer');
