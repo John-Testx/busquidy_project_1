@@ -22,6 +22,13 @@ const SidebarFreelancer = ({ isPerfilIncompleto }) => {
       requiresProfile: true
     },
     { 
+      path: "/freelancer-profile/mis-trabajos", 
+      name: "Mis Trabajos", 
+      icon: <FaClipboardList />,
+      description: "Ver tus trabajos",
+      requiresProfile: true
+    },
+    { 
       path: "/freelancer-profile/availability", 
       name: "Disponibilidad", 
       icon: <FaCalendarAlt />,

@@ -140,6 +140,8 @@ const AppRoutes = () => {
           <Route path="configuracion" element={<SettingsPage />} />
           <Route path="take-test" element={<TakeTest />} />
           <Route path="mis-transacciones" element={<MyTransactionsPage />} />
+          <Route path="mis-trabajos" element={<MyActiveProjects />} />
+          <Route path="freelancer/proyecto/:idProyecto" element={<ActiveProjectDetail />} />
           
         </Route>        
       </Route>

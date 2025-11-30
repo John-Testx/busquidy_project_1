@@ -27,9 +27,8 @@ const MyActiveProjects = () => {
 
     return (
         <div className="min-h-screen bg-gray-50">
-            <MainLayout>
-                <div className="pt-24 pb-12 px-4 max-w-5xl mx-auto">
-                    <h1 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+            <div className="pt-24 pb-12 px-4 max-w-5xl mx-auto">
+                <h1 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
                         <Briefcase className="text-[#07767c]" />
                         Mis Trabajos Activos
                     </h1>
@@ -76,7 +75,6 @@ const MyActiveProjects = () => {
                         </div>
                     )}
                 </div>
-            </MainLayout>
         </div>
     );
 };

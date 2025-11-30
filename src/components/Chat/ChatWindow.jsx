@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Send, ArrowLeft, User } from 'lucide-react';
+import { Send, ArrowLeft, User, Clock, AlertCircle } from 'lucide-react';
 import ChatAcceptanceOverlay from './ChatAcceptanceOverlay';
 import { useAuth } from '@/hooks';
+import { MessageSquare } from 'lucide-react'; // También añade este
 
 const ChatWindow = ({ 
   conversation, 
@@ -18,7 +19,6 @@ const ChatWindow = ({
   const messagesEndRef = useRef(null);
   const { id_usuario } = useAuth();
 
-  // ✅ VERIFICAR SI DEBE MOSTRAR EL OVERLAY DE ACEPTACIÓN
   useEffect(() => {
     if (solicitudData) {
       const isReceptor = solicitudData.id_receptor === id_usuario;
@@ -36,7 +36,6 @@ const ChatWindow = ({
         setChatEnabled(false);
       }
     } else {
-      // Si no hay solicitud, verificar si hay mensajes para habilitar el chat
       if (messages && messages.length > 0) {
         setChatEnabled(true);
         setShowAcceptanceOverlay(false);
@@ -44,7 +43,6 @@ const ChatWindow = ({
     }
   }, [solicitudData, id_usuario, messages]);
 
-  // Scroll to bottom when messages change
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
@@ -64,7 +62,6 @@ const ChatWindow = ({
   const handleAccept = () => {
     setShowAcceptanceOverlay(false);
     setChatEnabled(true);
-    // Recargar la página para actualizar los datos
     window.location.reload();
   };
 
@@ -83,18 +80,20 @@ const ChatWindow = ({
 
   if (!conversation) {
     return (
-      <div className="flex-1 flex items-center justify-center bg-gray-50">
-        <div className="text-center text-gray-500">
-          <User size={64} className="mx-auto mb-4 opacity-50" />
-          <p className="text-lg">Selecciona una conversación para comenzar</p>
+      <div className="flex-1 flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
+        <div className="text-center p-8">
+          <div className="w-24 h-24 bg-gradient-to-br from-gray-200 to-gray-300 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+            <User size={48} className="text-gray-500" />
+          </div>
+          <h3 className="text-xl font-bold text-gray-700 mb-2">Sin conversación seleccionada</h3>
+          <p className="text-gray-500">Selecciona una conversación de la lista para comenzar a chatear</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex-1 flex flex-col bg-white relative">
-      {/* ✅ OVERLAY DE ACEPTACIÓN (si aplica) */}
+    <div className="flex-1 flex flex-col bg-white relative h-full">
       {showAcceptanceOverlay && solicitudData && (
         <ChatAcceptanceOverlay 
           solicitud={solicitudData}
@@ -103,32 +102,44 @@ const ChatWindow = ({
         />
       )}
 
-      {/* Header */}
-      <div className="bg-gradient-to-r from-[#07767c] to-[#0a9199] text-white p-4 flex items-center gap-3 shadow-lg">
-        {/* Botón volver (móvil) */}
+      {/* Header mejorado */}
+      <div className="bg-gradient-to-r from-[#07767c] via-[#088890] to-[#0a9199] text-white px-4 py-4 flex items-center gap-3 shadow-lg relative overflow-hidden flex-shrink-0">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-16 -mt-16"></div>
+        <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full -ml-12 -mb-12"></div>
+        
         <button 
           onClick={onBack}
-          className="md:hidden p-2 hover:bg-white/10 rounded-lg transition-colors"
+          className="md:hidden p-2 hover:bg-white/20 rounded-xl transition-all duration-200 relative z-10"
         >
-          <ArrowLeft size={20} />
+          <ArrowLeft size={22} strokeWidth={2} />
         </button>
 
-        <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-          <User size={20} />
+        <div className="w-12 h-12 bg-white/30 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-lg relative z-10">
+          <User size={24} strokeWidth={2} />
         </div>
-        <div className="flex-1">
-          <h3 className="font-semibold">{otherUserEmail}</h3>
-          <p className="text-xs text-teal-100">
-            {chatEnabled ? 'En línea' : 'Chat no disponible'}
-          </p>
+        
+        <div className="flex-1 relative z-10">
+          <h3 className="font-bold text-lg">{otherUserEmail}</h3>
+          <div className="flex items-center gap-1.5 mt-0.5">
+            <div className={`w-2 h-2 rounded-full ${chatEnabled ? 'bg-green-400 animate-pulse' : 'bg-gray-400'}`}></div>
+            <p className="text-xs text-teal-100 font-medium">
+              {chatEnabled ? 'Disponible' : 'No disponible'}
+            </p>
+          </div>
         </div>
       </div>
 
-      {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-50">
+      {/* Messages area mejorada */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gradient-to-br from-gray-50 to-white custom-scrollbar">
         {messages.length === 0 ? (
           <div className="flex items-center justify-center h-full">
-            <p className="text-gray-400">No hay mensajes aún. ¡Comienza la conversación!</p>
+            <div className="text-center p-8">
+              <div className="w-20 h-20 bg-gradient-to-br from-gray-200 to-gray-300 rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                <MessageSquare size={36} className="text-gray-500" />
+              </div>
+              <p className="text-gray-500 font-medium mb-1">No hay mensajes aún</p>
+              <p className="text-sm text-gray-400">¡Comienza la conversación!</p>
+            </div>
           </div>
         ) : (
           <>
@@ -137,23 +148,22 @@ const ChatWindow = ({
               return (
                 <div
                   key={msg.id_message || index}
-                  className={`flex ${isOwnMessage ? 'justify-end' : 'justify-start'}`}
+                  className={`flex ${isOwnMessage ? 'justify-end' : 'justify-start'} animate-in fade-in slide-in-from-bottom-2 duration-300`}
                 >
                   <div
-                    className={`max-w-[70%] rounded-2xl px-4 py-2 shadow-sm ${
+                    className={`max-w-[75%] md:max-w-[60%] rounded-2xl px-4 py-3 shadow-md ${
                       isOwnMessage
-                        ? 'bg-gradient-to-r from-[#07767c] to-[#0a9199] text-white'
-                        : 'bg-white text-gray-800 border border-gray-200'
+                        ? 'bg-gradient-to-br from-[#07767c] to-[#0a9199] text-white rounded-br-md'
+                        : 'bg-white text-gray-800 border border-gray-200 rounded-bl-md'
                     }`}
                   >
-                    <p className="break-words">{msg.message_text}</p>
-                    <p
-                      className={`text-xs mt-1 ${
-                        isOwnMessage ? 'text-teal-100' : 'text-gray-500'
-                      }`}
-                    >
-                      {formatMessageTime(msg.created_at)}
-                    </p>
+                    <p className="break-words leading-relaxed">{msg.message_text}</p>
+                    <div className={`flex items-center gap-1 mt-2 ${isOwnMessage ? 'justify-end' : 'justify-start'}`}>
+                      <Clock size={12} className={isOwnMessage ? 'text-teal-200' : 'text-gray-400'} />
+                      <p className={`text-xs ${isOwnMessage ? 'text-teal-100' : 'text-gray-500'}`}>
+                        {formatMessageTime(msg.created_at)}
+                      </p>
+                    </div>
                   </div>
                 </div>
               );
@@ -163,38 +173,37 @@ const ChatWindow = ({
         )}
       </div>
 
-      {/* ✅ MENSAJE SI EL CHAT ESTÁ RECHAZADO */}
+      {/* Mensaje de chat rechazado */}
       {!chatEnabled && !showAcceptanceOverlay && (
-        <div className="bg-red-50 border-t border-red-200 p-4 text-center">
-          <p className="text-red-700 font-medium">
-            Esta conversación no está disponible
-          </p>
-          <p className="text-sm text-red-600">
-            La solicitud de chat fue rechazada
-          </p>
+        <div className="bg-gradient-to-r from-red-50 to-pink-50 border-t-2 border-red-200 p-4 text-center flex-shrink-0">
+          <div className="flex items-center justify-center gap-2 mb-1">
+            <AlertCircle size={18} className="text-red-600" />
+            <p className="text-red-700 font-bold">Conversación no disponible</p>
+          </div>
+          <p className="text-sm text-red-600">La solicitud de chat fue rechazada</p>
         </div>
       )}
 
-      {/* Input */}
+      {/* Input mejorado */}
       <form 
         onSubmit={handleSendMessage} 
-        className={`p-4 bg-white border-t border-gray-200 ${!chatEnabled && 'opacity-50'}`}
+        className={`p-4 bg-white border-t border-gray-200 flex-shrink-0 ${!chatEnabled && 'opacity-50'}`}
       >
-        <div className="flex gap-2">
+        <div className="flex gap-3 items-center">
           <input
             type="text"
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
-            placeholder={chatEnabled ? "Escribe un mensaje..." : "Chat no disponible"}
+            placeholder={chatEnabled ? "Escribe tu mensaje..." : "Chat no disponible"}
             disabled={!chatEnabled}
-            className="flex-1 px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-[#07767c] focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
+            className="flex-1 px-5 py-3 bg-gray-50 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#07767c]/50 focus:border-[#07767c] focus:bg-white disabled:bg-gray-100 disabled:cursor-not-allowed transition-all duration-200 text-gray-800"
           />
           <button
             type="submit"
             disabled={!newMessage.trim() || !chatEnabled}
-            className="px-6 py-2 bg-gradient-to-r from-[#07767c] to-[#0a9199] text-white rounded-full hover:from-[#055a5f] hover:to-[#077d84] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-md hover:shadow-lg"
+            className="px-6 py-3 bg-gradient-to-r from-[#07767c] to-[#0a9199] text-white rounded-2xl hover:from-[#055a5f] hover:to-[#077d84] transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2 shadow-lg hover:shadow-xl font-medium"
           >
-            <Send size={18} />
+            <Send size={20} strokeWidth={2} />
             <span className="hidden sm:inline">Enviar</span>
           </button>
         </div>

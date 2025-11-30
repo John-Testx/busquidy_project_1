@@ -70,10 +70,9 @@ const ActiveProjectDetail = () => {
 
     return (
         <div className="min-h-screen bg-gray-50">
-            <MainLayout>
-                <div className="pt-24 pb-12 px-4 max-w-6xl mx-auto">
+            <div className="pt-24 pb-12 px-4 max-w-6xl mx-auto">
                     {/* Header */}
-                    <button onClick={() => navigate("/mis-trabajos")} className="flex items-center gap-2 text-[#07767c] font-medium mb-6 hover:underline">
+                    <button onClick={() => navigate("/freelancer-profile/mis-trabajos")} className="flex items-center gap-2 text-[#07767c] font-medium mb-6 hover:underline">
                         <ArrowLeft size={20} /> Volver a Mis Trabajos
                     </button>
 
@@ -137,7 +136,6 @@ const ActiveProjectDetail = () => {
                         </div>
                     </div>
                 </div>
-            </MainLayout>
         </div>
     );
 };
