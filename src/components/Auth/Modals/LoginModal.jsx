@@ -1,6 +1,7 @@
 import React from "react";
 import Modal from "../../Home/Modal";
-import { Mail, Chrome } from "lucide-react";
+import { Mail } from "lucide-react"; // Remove Chrome
+import { FcGoogle } from "react-icons/fc"; // Add Google Icon
 import { FaMicrosoft } from "react-icons/fa";
 import AuthHero from "../AuthHero";
 
@@ -37,7 +38,7 @@ const LoginModal = ({ onClose, onOpenSecondary, onOpenRegister }) => {
                                 href={`${API_URL}/users/auth/google`}
                                 className="w-full flex items-center gap-3 px-5 py-3.5 bg-white border-2 border-gray-200 rounded-xl text-gray-700 font-medium hover:border-gray-300 hover:bg-gray-50 transition-all duration-200 shadow-sm hover:shadow-md group transform hover:-translate-y-0.5"
                             >
-                                <Chrome size={20} className="text-red-500 group-hover:scale-110 transition-transform duration-200" />
+                                <FcGoogle size={20} className="group-hover:scale-110 transition-transform duration-200" />
                                 <span>Continuar con Google</span>
                             </a>
 
