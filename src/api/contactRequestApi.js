@@ -24,9 +24,9 @@ export const createContactRequest = async (data) => {
  * @param {string} data.nueva_fecha - Nueva fecha si se reprograma (opcional)
  * @returns {Promise<Object>} Respuesta del servidor
  */
-export const respondContactRequest = async (id, estado) => {
+export const respondContactRequest = async (id_solicitud, estado) => {
     // Asegúrate de enviar { estado } como objeto
-    const response = await apiClient.patch(`/contact-requests/${id}/respond`, { estado });
+    const response = await apiClient.patch(`${BASE_URL}/${id_solicitud}/respond`, { estado });
     return response.data;
 };
 

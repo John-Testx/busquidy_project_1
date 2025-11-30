@@ -37,22 +37,17 @@ export const getNavbarOptions = (tipo_usuario) => {
         ],
 
         profileLinks: [
-            {
+             {
                 label: "Mi perfil",
                 link: "/freelancer-profile/view-profile",
                 icon: "bi bi-person",
                 roles: ["freelancer"]
             },
+
             {
-                label: "Mis postulaciones",
-                link: "/freelancer-profile/my-postulations",
-                icon: "bi bi-file-earmark-text",
-                roles: ["freelancer"]
-            },
-            {
-                label: "Mis Disponibilidad",
-                link: "/freelancer-profile/availability",
-                icon: "bi bi-calendar-check",
+                label: "Panel de Control",
+                link: "/freelancer-profile",
+                icon: "bi bi-kanban",
                 roles: ["freelancer"]
             },
             {

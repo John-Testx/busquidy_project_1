@@ -1,6 +1,6 @@
 import apiClient from './apiClient';
 
-const BASE_URL = '/postulations';
+const BASE_URL = '/projects/postulations';
 
 /**
  * ✅ Contratar a un freelancer

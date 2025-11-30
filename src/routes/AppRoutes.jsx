@@ -45,7 +45,7 @@ import SubscriptionManagement from '@/components/Payments/SubscriptionManagement
 import { MyProjects, ViewFreelancer, ProjectView } from '@pages/Empresa';
 
 // Import Freelancer components
-import { FreeLancer, MyPostulations, ViewPerfilFreeLancer, FreelancerProfileLayout} from '@pages/Freelancer';
+import { FreeLancer, MyPostulations, ViewPerfilFreeLancer, FreelancerProfileLayout, MyActiveProjects, ActiveProjectDetail} from '@pages/Freelancer';
 
 import VideoCallPage from "@pages/Video/VideoCallPage";
 import MyCallsPage from "@pages/Video/MyCallsPage";
@@ -126,7 +126,6 @@ const AppRoutes = () => {
       {/* Freelancer Routes */}
       <Route element={<ProtectedRoute allowedRoles={['freelancer']} />}>
         <Route path="/freelancer" element={<FreeLancer />} />
-        <Route path="/mypostulations" element={<MyPostulations />} />
         <Route path="/interview/request/:id_solicitud" element={<InterviewRequestPage />} />
         
         <Route path="/freelancer-profile" element={<FreelancerProfileLayout/>}>
@@ -138,6 +137,9 @@ const AppRoutes = () => {
           <Route path="configuracion" element={<SettingsPage />} />
           <Route path="take-test" element={<TakeTest />} />
           <Route path="mis-transacciones" element={<MyTransactionsPage />} />
+          <Route path="mis-trabajos" element={<MyActiveProjects />} />
+          <Route path="mis-trabajos/:idProyecto" element={<ActiveProjectDetail />} />
+          
         </Route>        
       </Route>
 
