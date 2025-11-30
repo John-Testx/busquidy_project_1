@@ -94,7 +94,7 @@ function FreelancerList({ userType, id_usuario }) {
         }
     }, [successMessage, errorMessage]);
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (profileWarning) {
             setMessage(profileWarning);
             setShowMessageModal(true);
