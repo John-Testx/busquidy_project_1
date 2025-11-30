@@ -11,53 +11,7 @@ function Footer() {
     return (
         <footer className="bg-gray-50 py-10 px-5 border-t border-gray-200 w-full mt-auto">
             <div className="flex flex-wrap justify-between mb-5 px-0 md:px-12 lg:px-14">
-                {/* Primera columna - Categorías */}
-                <div className={`flex-1 min-w-[200px] mx-0 md:mx-5 mb-6 md:mb-0 ${activeIndex === 0 ? "active" : ""}`}>
-                    <h3 
-                        onClick={() => toggleColumn(0)}
-                        className="text-lg font-bold text-gray-800 mb-4 flex justify-between items-center mr-5 cursor-pointer md:cursor-default relative after:content-[''] after:block after:w-1/2 after:h-0.5 after:bg-teal-700 after:absolute after:left-0 after:-bottom-1 after:transition-all after:duration-300 hover:after:w-full md:after:hidden"
-                    >
-                        Categorías
-                        <i className={`bi bi-chevron-down ml-2 transition-transform duration-300 ${activeIndex === 0 ? "rotate-180" : "rotate-0"} opacity-0 md:opacity-0`}></i>
-                    </h3>
-                    <ul className={`list-none p-0 overflow-hidden transition-all duration-300 ease-in-out ${activeIndex === 0 ? "max-h-[500px]" : "max-h-0 md:max-h-none"}`}>
-                        <li className={`my-2 transition-opacity duration-300 ${activeIndex === 0 ? "opacity-100" : "opacity-0 md:opacity-100"}`}>
-                            <a href="#" className="no-underline text-gray-800 hover:text-teal-700 transition-colors duration-300">
-                                Programación y tecnología
-                            </a>
-                        </li>
-                        <li className={`my-2 transition-opacity duration-300 ${activeIndex === 0 ? "opacity-100" : "opacity-0 md:opacity-100"}`}>
-                            <a href="#" className="no-underline text-gray-800 hover:text-teal-700 transition-colors duration-300">
-                                Marketing digital
-                            </a>
-                        </li>
-                        <li className={`my-2 transition-opacity duration-300 ${activeIndex === 0 ? "opacity-100" : "opacity-0 md:opacity-100"}`}>
-                            <a href="#" className="no-underline text-gray-800 hover:text-teal-700 transition-colors duration-300">
-                                Diseño Gráfico
-                            </a>
-                        </li>
-                        <li className={`my-2 transition-opacity duration-300 ${activeIndex === 0 ? "opacity-100" : "opacity-0 md:opacity-100"}`}>
-                            <a href="#" className="no-underline text-gray-800 hover:text-teal-700 transition-colors duration-300">
-                                Asistencia Virtual
-                            </a>
-                        </li>
-                        <li className={`my-2 transition-opacity duration-300 ${activeIndex === 0 ? "opacity-100" : "opacity-0 md:opacity-100"}`}>
-                            <a href="#" className="no-underline text-gray-800 hover:text-teal-700 transition-colors duration-300">
-                                Animación y 3D
-                            </a>
-                        </li>
-                        <li className={`my-2 transition-opacity duration-300 ${activeIndex === 0 ? "opacity-100" : "opacity-0 md:opacity-100"}`}>
-                            <a href="#" className="no-underline text-gray-800 hover:text-teal-700 transition-colors duration-300">
-                                Edición de Video
-                            </a>
-                        </li>
-                        <li className={`my-2 transition-opacity duration-300 ${activeIndex === 0 ? "opacity-100" : "opacity-0 md:opacity-100"}`}>
-                            <a href="#" className="no-underline text-gray-800 hover:text-teal-700 transition-colors duration-300">
-                                Ver más+
-                            </a>
-                        </li>
-                    </ul>
-                </div>
+                
 
                 {/* Segunda columna - Acerca de nosotros */}
                 <div className={`flex-1 min-w-[200px] mx-0 md:mx-5 mb-6 md:mb-0 ${activeIndex === 1 ? "active" : ""}`}>

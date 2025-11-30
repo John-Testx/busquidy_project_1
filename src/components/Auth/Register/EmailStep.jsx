@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Mail, Chrome, AlertCircle, Loader2 } from "lucide-react";
+import { Mail, AlertCircle, Loader2 } from "lucide-react";
+import { FcGoogle } from "react-icons/fc"; // <--- Use this for the Google logo
 import { FaMicrosoft } from "react-icons/fa";
 import { validateEmail } from "@/utils/authUtils";
 
@@ -47,7 +48,7 @@ function EmailStep({ onEmailSubmitted, onOpenLogin, onBack }) {
                 href={`${API_URL}/users/auth/google`}
                 className="w-full flex items-center gap-3 px-5 py-3.5 bg-white border-2 border-gray-200 rounded-xl text-gray-700 font-medium hover:border-gray-300 hover:bg-gray-50 transition-all duration-200 shadow-sm hover:shadow-md group transform hover:-translate-y-0.5"
             >
-                <Chrome size={20} className="text-red-500 group-hover:scale-110 transition-transform duration-200" />
+                <FcGoogle size={20} className="group-hover:scale-110 transition-transform duration-200" />
                 <span>Continuar con Google</span>
             </a>
 

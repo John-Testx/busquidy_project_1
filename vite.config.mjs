@@ -26,32 +26,32 @@ export default defineConfig(({ mode }) => {
     build: {
       rollupOptions: {
         output: {
-          manualChunks(id) {
-            // This is the only logic you need.
-            // It targets the giant vendor file.
-            if (id.includes('node_modules')) {
+          // manualChunks(id) {
+          //   // This is the only logic you need.
+          //   // It targets the giant vendor file.
+          //   if (id.includes('node_modules')) {
               
               
-              return 'vendor'; // Put ALL node_modules into a single 'vendor' chunk
+          //     return 'vendor'; // Put ALL node_modules into a single 'vendor' chunk
               
               
-              // // Group React libraries
-              // if (id.includes('react-dom') || id.includes('react-router-dom') || id.includes('react')) {
-              //   return 'vendor-react';
-              // }
+          //     // // Group React libraries
+          //     // if (id.includes('react-dom') || id.includes('react-router-dom') || id.includes('react')) {
+          //     //   return 'vendor-react';
+          //     // }
 
-              // // Group Bootstrap
-              // if (id.includes('bootstrap')) {
-              //   return 'vendor-bootstrap';
-              // }
+          //     // // Group Bootstrap
+          //     // if (id.includes('bootstrap')) {
+          //     //   return 'vendor-bootstrap';
+          //     // }
 
-              // // Put all other node_modules in a "core" chunk
-              // return 'vendor-core';
-            }
+          //     // // Put all other node_modules in a "core" chunk
+          //     // return 'vendor-core';
+          //   }
             
-            // Let Vite handle all your app code (/src/) automatically.
-            // Don't add rules for /src/components/ or /src/pages/.
-          }
+          //   // Let Vite handle all your app code (/src/) automatically.
+          //   // Don't add rules for /src/components/ or /src/pages/.
+          // }
         }
       }
     },

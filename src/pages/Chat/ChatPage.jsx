@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { useChat } from '@/hooks';
 import ConversationList from '@/components/Chat/ConversationList';
 import ChatWindow from '@/components/Chat/ChatWindow';
-import MainLayout from '@/components/layouts/MainLayout';
+import MainLayout from '@/components/Layouts/MainLayout';
 import LoadingScreen from '@/components/LoadingScreen';
 
 const ChatPage = () => {
