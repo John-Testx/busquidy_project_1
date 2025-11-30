@@ -12,18 +12,6 @@ export const getNavbarOptions = (tipo_usuario) => {
         plural: esNatural ? 'Tareas' : 'Proyectos'
     };
 
-<<<<<<< HEAD
-export const navbarOptions = [
-    { label: "Inicio", link: "/", roles: ["freelancer", "empresa", null] },
-//    { label: "Freelancer", link: "/freelancer", roles: ["freelancer"] },
-//    { label: "Empresa", link: "/empresa", roles: ["empresa"] },
-    { label: "Busquidy", link: "/busquidypage", roles: ["freelancer", "empresa", null] },
-    { label: "Sobre Nosotros", link: "/sobrenosotrospage", roles: ["freelancer", "empresa", null] },
-    { label: "Comunidad", link: "/comunidadpage", roles: ["freelancer", "empresa", null] },
-    { label: "Reuniones", link: "/my-calls", roles: ["freelancer", "empresa", null] },
-    // Help dropdown can be handled separately if needed
-];
-=======
     return {
         navbarOptions: [
             { 
@@ -47,7 +35,6 @@ export const navbarOptions = [
                 roles: ["freelancer", "empresa", "empresa_juridico", "empresa_natural", null] 
             },
         ],
->>>>>>> 9faa7e8e2b8755e26790222d32c45633f805a392
 
         profileLinks: [
             {
