@@ -26,7 +26,10 @@ const VideoCallPage = () => {
     const [newMessage, setNewMessage] = useState('');
     const [showChat, setShowChat] = useState(false);
 
-    // Tu función para configurar los listeners del DataChannel (sin cambios)
+    // --- (Toda tu lógica de JavaScript: setupDataChannelListeners, createPeerConnection, useEffect, etc. va aquí sin cambios) ---
+    // (Por brevedad, se omite el JS que ya tenías, pégalo aquí)
+    // ...
+    // Función para configurar los listeners del DataChannel
     const setupDataChannelListeners = (dataChannel, targetUserId) => {
         dataChannel.onmessage = (event) => {
             try {
@@ -44,7 +47,7 @@ const VideoCallPage = () => {
         dataChannel.onerror = (error) => console.error(`Error en DataChannel con ${targetUserId}:`, error);
     };
 
-    // Tu función para crear el Peer Connection (sin cambios)
+    // Función para crear el Peer Connection (sin cambios)
     const createPeerConnection = (targetUserId, isInitiator = false) => {
         const peerConnection = new RTCPeerConnection({
             iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
@@ -219,6 +222,9 @@ const VideoCallPage = () => {
     const hangUp = () => {
         navigate('/my-calls');
     };
+    // ...
+    // --- Fin de la lógica JS ---
+
     // === LÓGICA PARA EL DISEÑO DINÁMICO ===
     const numPeers = Object.keys(peers).length;
 
@@ -226,14 +232,27 @@ const VideoCallPage = () => {
         <div className="flex h-screen bg-gray-900 text-white overflow-hidden">
             <div className="flex-1 flex flex-col relative">
                 
-                <div className={`flex-grow p-4 transition-all duration-500 ${numPeers === 0 ? 'flex justify-center items-center' : 'grid grid-cols-1 md:grid-cols-2 gap-4'}`}>
-                    <div className={`relative bg-black rounded-lg overflow-hidden shadow-lg transition-all duration-500 ${numPeers === 0 ? 'w-full max-w-4xl h-full max-h-[75vh]' : 'w-full h-full'}`}>
+                {/* --- CAMBIO 1 (Layout) ---
+                  // Se añadió 'items-center' al estado de la grilla (cuando numPeers > 0).
+                  // Esto centrará verticalmente los videos si no ocupan todo el alto.
+                */}
+                <div className={`flex-grow p-4 transition-all duration-500 ${numPeers === 0 ? 'flex justify-center items-center' : 'grid grid-cols-1 md:grid-cols-2 gap-4 items-center'}`}>
+                    
+                    {/* --- CAMBIO 2 (Layout) ---
+                      // Se reemplazaron las clases de tamaño ('h-full max-h-[75vh]') por 'aspect-video'.
+                      // 'aspect-video' fuerza una proporción 16:9, evitando que se estire.
+                      // Se aplica tanto si estás solo (numPeers === 0) como acompañado.
+                    */}
+                    <div className={`relative bg-black rounded-lg overflow-hidden shadow-lg transition-all duration-500 ${numPeers === 0 ? 'w-full max-w-4xl aspect-video' : 'w-full aspect-video'}`}>
                         <video ref={myVideoRef} autoPlay muted playsInline className="w-full h-full object-contain" />
                         <p className="absolute bottom-2 left-2 bg-black bg-opacity-50 px-2 py-1 rounded">Tú</p>
                     </div>
 
                     {Object.keys(peers).map(peerId => (
-                        <div key={peerId} className="relative bg-black rounded-lg overflow-hidden shadow-lg w-full h-full">
+                        // --- CAMBIO 3 (Layout) ---
+                        // Se reemplazó 'h-full' por 'aspect-video'.
+                        // Esto fuerza el contenedor del compañero a tener proporción 16:9.
+                        <div key={peerId} className="relative bg-black rounded-lg overflow-hidden shadow-lg w-full aspect-video">
                             <video autoPlay playsInline ref={node => { if (node) node.srcObject = peers[peerId]; }} className="w-full h-full object-contain" />
                             <p className="absolute bottom-2 left-2 bg-black bg-opacity-50 px-2 py-1 rounded">Usuario {peerId.substring(0, 6)}</p>
                         </div>
@@ -252,6 +271,10 @@ const VideoCallPage = () => {
                 </button>
             </div>
 
+            {/* --- (SIN CAMBIOS EN EL CHAT) ---
+              // Se mantienen las clases originales 'md:relative' y 'md:translate-x-0'.
+              // El chat se mostrará fijo en pantallas grandes (desktop).
+            */}
             <div className={`w-80 bg-gray-800 flex flex-col transition-transform duration-300 transform ${showChat ? 'translate-x-0' : 'translate-x-full'} absolute right-0 top-0 h-full z-20 md:relative md:translate-x-0`}>
                 <div className="p-4 border-b border-gray-700 text-center font-bold">Chat de la Reunión (P2P)</div>
                 <div className="flex-1 p-4 overflow-y-auto">
