@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useChat } from '@/hooks';
 import ConversationList from '@/components/Chat/ConversationList';
@@ -27,6 +27,23 @@ const ChatPage = () => {
   } = useChat();
 
   const [showChat, setShowChat] = useState(false);
+
+  useEffect(() => {
+  if (selectedConversation) {
+    // Verificar si hay solicitud pendiente para esta conversación
+    const fetchSolicitudStatus = async () => {
+      try {
+        // Debes crear este endpoint o usar uno existente que busque solicitudes por usuario y postulacion
+        // Sugerencia: GET /api/contact-requests/pending?conversationId=...
+        const res = await api.get(`/solicitudes/check-status/${selectedConversation.id}`);
+        setSolicitudData(res.data); // Pasar esto a ChatWindow
+      } catch (error) {
+        console.error("Error checking request status", error);
+      }
+    };
+    fetchSolicitudStatus();
+  }
+}, [selectedConversation]);
 
   const handleSelectConversation = (conv) => {
     setSelectedConversation(conv);

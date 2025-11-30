@@ -21,7 +21,8 @@ import {
     ChevronDown, 
     HelpCircle, 
     LogOut,
-    MessageSquare
+    MessageSquare,
+    MessageCircle
 } from 'lucide-react';
 
 function Navbar() {
@@ -344,6 +345,15 @@ function Navbar() {
                             </>
                         ) : (
                             <div className="flex items-center gap-4">
+                                <Link 
+                                    to="/chat" 
+                                    className="p-2 text-gray-600 hover:text-[#07767c] hover:bg-gray-50 rounded-lg transition-colors relative"
+                                    title="Mensajes"
+                                >
+                                    <MessageCircle size={20} />
+                                    {/* Opcional: Si quisieras poner un badge de mensajes no leídos en el futuro */}
+                                    <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                                </Link>
                                 <NotificationIcon />
 
                                 <div className="relative" ref={profileMenuRef}>
@@ -453,6 +463,14 @@ function Navbar() {
                                 </Link>
                             ))}
                         </div>
+                        <Link 
+                            to="/chat"
+                            onClick={() => setIsMenuOpen(false)}
+                            className="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 rounded-lg"
+                        >
+                            <MessageCircle size={18} />
+                            <span>Mensajes</span>
+                        </Link>
 
                         <div className="pt-4 border-t border-gray-100 space-y-2">
                             {!isAuthenticated ? (

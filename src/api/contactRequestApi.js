@@ -25,7 +25,7 @@ export const createContactRequest = async (data) => {
  * @returns {Promise<Object>} Respuesta del servidor
  */
 export const respondContactRequest = async (id_solicitud, data) => {
-  const response = await apiClient.patch(`${BASE_URL}/${id_solicitud}/respond`, data);
+  const response = await apiClient.patch(`${BASE_URL}/${id_solicitud}/responder`, data);
   return response.data;
 };
 
