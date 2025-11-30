@@ -1,8 +1,17 @@
-// Nueva función para obtener las iniciales del correo
-export const getUserInitials = () => {
-  const email = sessionStorage.getItem("correo") || "";
+/**
+ * Obtiene las iniciales del usuario basado en su correo.
+ * Prioriza el objeto user del contexto, luego sessionStorage.
+ * @param {Object} [user] - Objeto de usuario (opcional)
+ * @returns {string} Iniciales (ej: "JU") o "NN"
+ */
+export const getUserInitials = (user) => {
+  // Intentar obtener correo de: 1. Objeto user, 2. SessionStorage
+  const email = user?.correo || user?.email || sessionStorage.getItem("correo") || "";
+  
+  if (!email) return "NN";
+
   const namePart = email.split("@")[0];
-  return namePart.slice(0, 2).toUpperCase() || "NN";
+  return namePart.slice(0, 2).toUpperCase();
 };
 
 /**
