@@ -72,11 +72,11 @@ function AboutUsPage() {
             <div className="pt-24 pb-16">
                 {/* Hero Section */}
                 <section className="relative overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 opacity-10"></div>
+                    <div className="absolute inset-0 bg-gradient-to-br from-[#e6f7f1] via-[#f0faf6] opacity-60"></div>
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 relative">
                         <div className="text-center">
                             <h1 className="text-5xl font-bold text-gray-900 mb-6">
-                                Sobre <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">Busquidy</span>
+                                Sobre <span className="text-transparent bg-clip-text bg-gradient-to-br from-[#07767c] to-[#055a5f]">Busquidy</span>
                             </h1>
                             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
                                 Conectando el talento universitario con las oportunidades del futuro
@@ -90,7 +90,7 @@ function AboutUsPage() {
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                         <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12">
                             <h2 className="text-3xl font-bold text-gray-900 mb-6">
-                                Nuestra Misión: <span className="text-blue-600">Cerrando la Brecha del Talento</span>
+                                Nuestra Misión: <span className="text-[#07767c]">Cerrando la Brecha del Talento</span>
                             </h2>
                             <p className="text-lg text-gray-600 mb-8">
                                 Busquidy fue fundada con la convicción de que existe una brecha estructural entre el vasto talento de los estudiantes universitarios y las necesidades dinámicas de las PYMEs, emprendedores e individuos que requieren apoyo flexible y confiable.
@@ -133,7 +133,7 @@ function AboutUsPage() {
                 </section>
 
                 {/* Stats Section */}
-                <section className="py-16 bg-gradient-to-r from-blue-600 to-purple-600">
+                <section className="py-16 bg-gradient-to-br from-[#07767c] to-[#055a5f]">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
                             {stats.map((stat, index) => (
@@ -154,7 +154,7 @@ function AboutUsPage() {
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                         <div className="text-center mb-12">
                             <h2 className="text-3xl font-bold text-gray-900 mb-4">
-                                La Diferencia Busquidy: <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">Confianza y Tecnología</span>
+                                La Diferencia Busquidy: <span className="text-transparent bg-clip-text bg-gradient-to-br from-[#07767c] to-[#055a5f]">Confianza y Tecnología</span>
                             </h2>
                             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
                                 Nuestra plataforma está diseñada para superar los desafíos de la informalidad y la inseguridad que a menudo se encuentran en el mercado laboral.
@@ -165,7 +165,7 @@ function AboutUsPage() {
                             {values.map((value, index) => (
                                 <div key={index} className="group hover:scale-105 transition-transform duration-300">
                                     <div className="bg-white rounded-xl shadow-lg p-8 h-full border border-gray-100 hover:shadow-2xl transition-shadow">
-                                        <div className="bg-gradient-to-br from-blue-600 to-purple-600 text-white rounded-lg p-3 w-fit mb-6">
+                                        <div className="bg-gradient-to-br from-[#07767c] to-[#055a5f] text-white rounded-lg p-3 w-fit mb-6">
                                             <value.icon className="w-8 h-8" />
                                         </div>
                                         <h3 className="text-xl font-bold text-gray-900 mb-4">{value.title}</h3>
@@ -190,7 +190,7 @@ function AboutUsPage() {
                         <div className="grid md:grid-cols-3 gap-8">
                             {founders.map((founder, index) => (
                                 <div key={index} className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-shadow">
-                                    <div className="bg-gradient-to-br from-blue-600 to-purple-600 p-8">
+                                    <div className="bg-gradient-to-br from-[#07767c] to-[#055a5f] p-8">
                                         <img 
                                             src={founder.image} 
                                             alt={founder.name}
@@ -212,7 +212,7 @@ function AboutUsPage() {
                 {/* CTA Section */}
                 <section className="py-16">
                     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-                        <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-12 text-center text-white">
+                        <div className="bg-gradient-to-br from-[#07767c] to-[#055a5f] rounded-2xl p-12 text-center text-white">
                             <h2 className="text-3xl font-bold mb-4">¿Listo para unirte a Busquidy?</h2>
                             <p className="text-xl mb-8 text-white/90">
                                 Sé parte de la revolución que está transformando el mercado laboral chileno
