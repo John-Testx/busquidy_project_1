@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
 function Footer() {
@@ -12,6 +13,8 @@ function Footer() {
         <footer className="bg-gray-50 py-10 px-5 border-t border-gray-200 w-full mt-auto">
             <div className="flex flex-wrap justify-between mb-5 px-0 md:px-12 lg:px-14">
                 
+                {/* Primera Columna (Invisible en el original, placeholder para layout) */}
+                 <div className="hidden md:block flex-1 min-w-[200px]"></div>
 
                 {/* Segunda columna - Acerca de nosotros */}
                 <div className={`flex-1 min-w-[200px] mx-0 md:mx-5 mb-6 md:mb-0 ${activeIndex === 1 ? "active" : ""}`}>
@@ -24,29 +27,29 @@ function Footer() {
                     </h3>
                     <ul className={`list-none p-0 overflow-hidden transition-all duration-300 ease-in-out ${activeIndex === 1 ? "max-h-[500px]" : "max-h-0 md:max-h-none"}`}>
                         <li className={`my-2 transition-opacity duration-300 ${activeIndex === 1 ? "opacity-100" : "opacity-0 md:opacity-100"}`}>
-                            <a href="#" className="no-underline text-gray-800 hover:text-teal-700 transition-colors duration-300">
+                            <Link to="/sobrenosotrospage" className="no-underline text-gray-800 hover:text-teal-700 transition-colors duration-300">
                                 Sobre nosotros
-                            </a>
+                            </Link>
                         </li>
                         <li className={`my-2 transition-opacity duration-300 ${activeIndex === 1 ? "opacity-100" : "opacity-0 md:opacity-100"}`}>
-                            <a href="#" className="no-underline text-gray-800 hover:text-teal-700 transition-colors duration-300">
+                            <Link to="/register" className="no-underline text-gray-800 hover:text-teal-700 transition-colors duration-300">
                                 Únete a Busquidy
-                            </a>
+                            </Link>
                         </li>
                         <li className={`my-2 transition-opacity duration-300 ${activeIndex === 1 ? "opacity-100" : "opacity-0 md:opacity-100"}`}>
-                            <a href="#" className="no-underline text-gray-800 hover:text-teal-700 transition-colors duration-300">
+                            <Link to="/terminos" className="no-underline text-gray-800 hover:text-teal-700 transition-colors duration-300">
                                 Políticas de Busquidy
-                            </a>
+                            </Link>
                         </li>
                         <li className={`my-2 transition-opacity duration-300 ${activeIndex === 1 ? "opacity-100" : "opacity-0 md:opacity-100"}`}>
-                            <a href="#" className="no-underline text-gray-800 hover:text-teal-700 transition-colors duration-300">
+                            <Link to="/terminos" className="no-underline text-gray-800 hover:text-teal-700 transition-colors duration-300">
                                 Términos de servicio
-                            </a>
+                            </Link>
                         </li>
                         <li className={`my-2 transition-opacity duration-300 ${activeIndex === 1 ? "opacity-100" : "opacity-0 md:opacity-100"}`}>
-                            <a href="#" className="no-underline text-gray-800 hover:text-teal-700 transition-colors duration-300">
+                            <Link to="/privacidad" className="no-underline text-gray-800 hover:text-teal-700 transition-colors duration-300">
                                 Política de privacidad
-                            </a>
+                            </Link>
                         </li>
                     </ul>
                 </div>
@@ -62,19 +65,19 @@ function Footer() {
                     </h3>
                     <ul className={`list-none p-0 overflow-hidden transition-all duration-300 ease-in-out ${activeIndex === 2 ? "max-h-[500px]" : "max-h-0 md:max-h-none"}`}>
                         <li className={`my-2 transition-opacity duration-300 ${activeIndex === 2 ? "opacity-100" : "opacity-0 md:opacity-100"}`}>
-                            <a href="#" className="no-underline text-gray-800 hover:text-teal-700 transition-colors duration-300">
+                            <Link to="/soportehome" className="no-underline text-gray-800 hover:text-teal-700 transition-colors duration-300">
                                 Soporte al cliente
-                            </a>
+                            </Link>
                         </li>
                         <li className={`my-2 transition-opacity duration-300 ${activeIndex === 2 ? "opacity-100" : "opacity-0 md:opacity-100"}`}>
-                            <a href="#" className="no-underline text-gray-800 hover:text-teal-700 transition-colors duration-300">
+                            <Link to="/soportehome" className="no-underline text-gray-800 hover:text-teal-700 transition-colors duration-300">
                                 Soporte IA
-                            </a>
+                            </Link>
                         </li>
                         <li className={`my-2 transition-opacity duration-300 ${activeIndex === 2 ? "opacity-100" : "opacity-0 md:opacity-100"}`}>
-                            <a href="#" className="no-underline text-gray-800 hover:text-teal-700 transition-colors duration-300">
+                            <Link to="/busquidyGuia" className="no-underline text-gray-800 hover:text-teal-700 transition-colors duration-300">
                                 Busquidy guía
-                            </a>
+                            </Link>
                         </li>
                     </ul>
                 </div>
@@ -90,29 +93,29 @@ function Footer() {
                     </h3>
                     <ul className={`list-none p-0 overflow-hidden transition-all duration-300 ease-in-out ${activeIndex === 3 ? "max-h-[500px]" : "max-h-0 md:max-h-none"}`}>
                         <li className={`my-2 transition-opacity duration-300 ${activeIndex === 3 ? "opacity-100" : "opacity-0 md:opacity-100"}`}>
-                            <a href="#" className="no-underline text-gray-800 hover:text-teal-700 transition-colors duration-300">
+                            <Link to="/busquidypage" className="no-underline text-gray-800 hover:text-teal-700 transition-colors duration-300">
                                 Comunidad
-                            </a>
+                            </Link>
                         </li>
                         <li className={`my-2 transition-opacity duration-300 ${activeIndex === 3 ? "opacity-100" : "opacity-0 md:opacity-100"}`}>
-                            <a href="#" className="no-underline text-gray-800 hover:text-teal-700 transition-colors duration-300">
+                            <Link to="/precios" className="no-underline text-gray-800 hover:text-teal-700 transition-colors duration-300">
                                 Busquidy Pro
-                            </a>
+                            </Link>
                         </li>
                         <li className={`my-2 transition-opacity duration-300 ${activeIndex === 3 ? "opacity-100" : "opacity-0 md:opacity-100"}`}>
-                            <a href="#" className="no-underline text-gray-800 hover:text-teal-700 transition-colors duration-300">
+                            <Link to="/busquidyGuia" className="no-underline text-gray-800 hover:text-teal-700 transition-colors duration-300">
                                 Certificado Busquidy
-                            </a>
+                            </Link>
                         </li>
                         <li className={`my-2 transition-opacity duration-300 ${activeIndex === 3 ? "opacity-100" : "opacity-0 md:opacity-100"}`}>
-                            <a href="#" className="no-underline text-gray-800 hover:text-teal-700 transition-colors duration-300">
+                            <Link to="/freelancer" className="no-underline text-gray-800 hover:text-teal-700 transition-colors duration-300">
                                 FreeLancer
-                            </a>
+                            </Link>
                         </li>
                         <li className={`my-2 transition-opacity duration-300 ${activeIndex === 3 ? "opacity-100" : "opacity-0 md:opacity-100"}`}>
-                            <a href="#" className="no-underline text-gray-800 hover:text-teal-700 transition-colors duration-300">
+                            <Link to="/empresa" className="no-underline text-gray-800 hover:text-teal-700 transition-colors duration-300">
                                 Empresa
-                            </a>
+                            </Link>
                         </li>
                     </ul>
                 </div>
@@ -121,16 +124,29 @@ function Footer() {
                 <div className="flex-1 min-w-[200px] mx-0 md:mx-5 text-center">
                     <h3 className="text-lg font-bold text-gray-800 mb-4">Síguenos</h3>
                     <div className="flex justify-center my-5 gap-3">
-                        <a href="#" className="text-gray-800 text-2xl transition-colors duration-300 hover:text-teal-700">
+                        <a 
+                            href="https://www.facebook.com/profile.php?id=61584482157440" 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            className="text-gray-800 text-2xl transition-colors duration-300 hover:text-teal-700"
+                        >
                             <i className="bi bi-facebook"></i>
                         </a>
-                        <a href="#" className="text-gray-800 text-2xl transition-colors duration-300 hover:text-teal-700">
+                        <a 
+                            href="https://www.instagram.com/busquidy_company/" 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            className="text-gray-800 text-2xl transition-colors duration-300 hover:text-teal-700"
+                        >
                             <i className="bi bi-instagram"></i>
                         </a>
-                        <a href="#" className="text-gray-800 text-2xl transition-colors duration-300 hover:text-teal-700">
-                            <i className="bi bi-tiktok"></i>
-                        </a>
-                        <a href="#" className="text-gray-800 text-2xl transition-colors duration-300 hover:text-teal-700">
+                        
+                        <a 
+                            href="https://x.com/Busquidy" 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            className="text-gray-800 text-2xl transition-colors duration-300 hover:text-teal-700"
+                        >
                             <i className="bi bi-twitter-x"></i>
                         </a>
                     </div>

@@ -8,6 +8,8 @@ import {
     FaPhoneSlash, FaDesktop, FaPaperPlane, FaComment, FaCommentSlash
 } from 'react-icons/fa';
 
+const API_URL = import.meta.env.VITE_API_URL_2;
+
 const VideoCallPage = () => {
     const { roomId } = useParams();
     const navigate = useNavigate();
@@ -71,7 +73,7 @@ const VideoCallPage = () => {
     // === EFECTO PRINCIPAL CORREGIDO Y ROBUSTO ===
     useEffect(() => {
         // Usa tu IP correcta para asegurar la conexión
-        socketRef.current = io("http://localhost:3001");
+        socketRef.current = io(API_URL);
         const socket = socketRef.current; // Usar una variable local para la limpieza
 
         // --- MANEJADORES DE EVENTOS DE SOCKET (Definidos afuera) ---

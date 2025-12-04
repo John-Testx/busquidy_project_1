@@ -4,7 +4,7 @@ import io from 'socket.io-client';
 import { getConversations, getMessages, getUsersForChat, createConversation, getConversationById  } from '@/api/chatApi';
 import { useAuth } from '@/hooks';
 
-const SOCKET_SERVER_URL = "http://localhost:3001";
+const SOCKET_SERVER_URL = import.meta.env.VITE_API_URL_2 || 'http://localhost:3001';
 
 const useChat = () => {
   const { conversationId } = useParams();
