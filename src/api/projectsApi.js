@@ -82,3 +82,18 @@ export const getAllProjects = () => apiClient.get(`${BASE}/getProjects`);
 
 export const updateProjectState = (id_proyecto, estado_publicacion) =>
   apiClient.put(`${BASE}/update-proyecto-state/${id_proyecto}`, { estado_publicacion });
+
+/**
+ * Subir Boleta de Honorarios (Freelancer -> Cliente Jurídico)
+ * @param {number} idProyecto
+ * @param {File} file - Archivo PDF
+ */
+export const uploadInvoice = async (idProyecto, file) => {
+  const formData = new FormData();
+  formData.append("boleta", file);
+  
+  const response = await apiClient.post(`/projects/${idProyecto}/upload-invoice`, formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+  return response.data;
+};

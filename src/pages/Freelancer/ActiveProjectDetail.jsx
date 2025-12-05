@@ -4,8 +4,9 @@ import { getProjectById } from "@/api/projectsApi";
 import { uploadDeliverable } from "@/api/deliverablesApi";
 import DeliverablesList from "@/pages/Shared/DeliverablesList";
 import LoadingScreen from "@/components/LoadingScreen";
-import { ArrowLeft, Upload, FileText, CheckCircle, MessageSquare, Briefcase } from "lucide-react";
+import { ArrowLeft, Upload, FileText, CheckCircle, MessageSquare, Briefcase, Receipt } from "lucide-react";
 import Swal from 'sweetalert2';
+import { uploadInvoice } from "@/api/projectsApi"; // Importa la función
 
 const ActiveProjectDetail = () => {
     const { idProyecto } = useParams();
@@ -60,6 +61,35 @@ const ActiveProjectDetail = () => {
                 setRefreshDeliverables(prev => prev + 1);
             } catch (error) {
                 Swal.fire('Error', 'No se pudo subir el entregable.', 'error');
+            }
+        }
+    };
+
+    const handleUploadInvoice = async () => {
+        const { value: file } = await Swal.fire({
+            title: 'Subir Boleta de Honorarios',
+            text: 'Este cliente requiere boleta para liberar el pago. Sube tu PDF aquí.',
+            input: 'file',
+            inputAttributes: {
+                'accept': 'application/pdf',
+                'aria-label': 'Sube tu boleta de honorarios'
+            },
+            showCancelButton: true,
+            confirmButtonText: 'Subir Boleta',
+            confirmButtonColor: '#07767c',
+        });
+
+        if (file) {
+            try {
+                // Mostrar loading
+                Swal.fire({ title: 'Subiendo...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+                
+                await uploadInvoice(idProyecto, file);
+                
+                Swal.fire('¡Éxito!', 'Boleta subida correctamente. El cliente ya puede liberar el pago.', 'success');
+            } catch (error) {
+                console.error(error);
+                Swal.fire('Error', 'No se pudo subir el documento.', 'error');
             }
         }
     };
@@ -142,6 +172,24 @@ const ActiveProjectDetail = () => {
                     <div className="space-y-6">
                         <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
                             <h3 className="font-bold text-gray-900 mb-4 text-lg">Acciones Rápidas</h3>
+                            {/* NUEVO: Sección de Boletas (Solo visible si el proyecto está activo y requiere boleta) */}
+                            {/* Puedes condicionar esto a si project.requiere_boleta es true, o dejarlo siempre disponible */}
+                            {project.estado_publicacion !== 'finalizado' && (
+                                <div className="bg-white rounded-2xl shadow-lg border border-amber-100 p-6">
+                                    <h3 className="font-bold text-gray-900 mb-2 text-lg flex items-center gap-2">
+                                        <Receipt className="text-amber-500" /> Facturación
+                                    </h3>
+                                    <p className="text-xs text-gray-500 mb-4">
+                                        Si el cliente es una empresa, debes subir tu boleta para recibir el pago.
+                                    </p>
+                                    <button 
+                                        onClick={handleUploadInvoice}
+                                        className="w-full flex items-center justify-center gap-2 py-3 bg-amber-50 text-amber-700 font-semibold rounded-xl hover:bg-amber-100 transition-colors border border-amber-200"
+                                    >
+                                        <Upload size={18} /> Subir Boleta
+                                    </button>
+                                </div>
+                            )}
                             <button 
                                 onClick={() => navigate('/chat/0')}
                                 className="w-full flex items-center justify-center gap-2 py-3 bg-gray-100 text-gray-700 font-semibold rounded-xl hover:bg-gray-200 transition-colors"

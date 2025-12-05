@@ -104,3 +104,19 @@ export const getMyTransactions = async () => {
   const response = await apiClient.get("/payments/my-transactions");
   return response.data;
 };
+
+/**
+ * [ADMIN - TESORERÍA] Obtener órdenes de pago pendientes de ejecución manual
+ */
+export const getPendingExecutionPayments = async () => {
+  const response = await apiClient.get("/admin/payments/pending-execution");
+  return response.data;
+};
+
+/**
+ * [ADMIN - TESORERÍA] Marcar una orden de pago como ejecutada (Transferencia realizada)
+ */
+export const markPaymentAsProcessed = async (idOrden) => {
+  const response = await apiClient.post(`/admin/payments/execute/${idOrden}`);
+  return response.data;
+};

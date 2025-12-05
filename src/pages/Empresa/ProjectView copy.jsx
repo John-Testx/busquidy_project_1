@@ -104,8 +104,17 @@ function ProjectView() {
 
     const handleReleasePayment = async () => {
         const result = await Swal.fire({
-            title: '¿Confirmar finalización?',
-            text: "Al confirmar, indicas que el trabajo fue entregado satisfactoriamente. Se liberará el pago al freelancer.",
+            title: '¿Liberar fondos?',
+            html: `
+                <div class="text-left text-sm">
+                    <p>Al confirmar:</p>
+                    <ul class="list-disc pl-5 mt-2 space-y-1">
+                        <li>Se transferirá el <b>95%</b> al freelancer.</li>
+                        <li>Se generará tu <b>Factura de Comisión (5%)</b>.</li>
+                        <li>El proyecto se marcará como finalizado.</li>
+                    </ul>
+                </div>
+            `,
             icon: 'question',
             showCancelButton: true,
             confirmButtonColor: '#10B981',
@@ -116,12 +125,38 @@ function ProjectView() {
 
         if (result.isConfirmed) {
             try {
-                await apiClient.post(`/projects/release-payment/${idProyecto}`);
-                Swal.fire('¡Éxito!', 'El proyecto ha sido finalizado y el pago liberado.', 'success');
+                // Mostrar loading mientras procesa
+                Swal.fire({ title: 'Procesando...', text: 'Generando documentos...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+                const response = await apiClient.post(`/projects/release-payment/${idProyecto}`);
+                
+                // Éxito: Mostrar links a documentos
+                Swal.fire({
+                    title: '¡Pago Liberado!',
+                    html: `
+                        <p class="mb-4">El proceso ha sido exitoso.</p>
+                        <div class="flex flex-col gap-2">
+                            <a href="${response.data.documents.factura_comision}" target="_blank" class="text-blue-600 underline">📥 Descargar Factura Comisión</a>
+                            <a href="${response.data.documents.orden_pago}" target="_blank" class="text-blue-600 underline">📥 Ver Comprobante de Egreso</a>
+                        </div>
+                    `,
+                    icon: 'success'
+                });
                 loadProjectData();
+
             } catch (error) {
-                console.error(error);
-                Swal.fire('Error', 'No se pudo liberar el pago.', 'error');
+                // Manejo específico del error "Falta Boleta"
+                if (error.response && error.response.data.error === "REQUISITO_BLOQUEANTE") {
+                    Swal.fire({
+                        title: 'Requiere Boleta de Honorarios',
+                        text: error.response.data.message,
+                        icon: 'warning',
+                        confirmButtonText: 'Entendido'
+                    });
+                } else {
+                    console.error(error);
+                    Swal.fire('Error', error.response?.data?.error || 'No se pudo liberar el pago.', 'error');
+                }
             }
         }
     };
