@@ -87,7 +87,7 @@ function ViewFreelancer() {
                             <p className="text-red-700 mb-6">
                                 {typeof error === 'string' 
                                     ? error 
-                                    : 'No pudimos encontrar los datos del freelancer. Por favor, intenta nuevamente.'}
+                                    : 'No pudimos encontrar los datos del estudiante. Por favor, intenta nuevamente.'}
                             </p>
                             <button
                                 onClick={() => navigate("/")}
@@ -110,7 +110,7 @@ function ViewFreelancer() {
                                     </div>
                                 </div>
                                 <p className="text-gray-600 text-lg">
-                                    Cargando perfil del freelancer...
+                                    Cargando perfil del estudiante...
                                 </p>
                             </div>
                         </div>

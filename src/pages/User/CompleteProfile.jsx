@@ -83,7 +83,7 @@ const CompleteProfile = () => {
     const options = [
         {
             type: 'freelancer',
-            title: 'Freelancer',
+            title: 'Estudiante',
             description: 'Ofrece tus servicios profesionales',
             icon: User,
             color: 'from-[#07767c] to-[#055a5f]',

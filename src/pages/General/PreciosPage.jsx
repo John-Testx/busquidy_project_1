@@ -270,9 +270,9 @@ const handleRegisterSubmit = async () => {
     const planFreelancer = getPlanGratuito(planes.freelancer);
 
     const planesGratuitos = [
-      { plan: planEmpresaJuridico, tipo: 'empresa_juridico', titulo: 'Empresas (Cliente Jurídico)', icono: TrendingUp, gradiente: 'from-blue-500 to-indigo-600' },
-      { plan: planEmpresaNatural, tipo: 'empresa_natural', titulo: 'Empresas (Cliente Natural)', icono: Zap, gradiente: 'from-purple-500 to-pink-600' },
-      { plan: planFreelancer, tipo: 'freelancer', titulo: 'Freelancers (Estudiantes)', icono: Sparkles, gradiente: 'from-green-500 to-emerald-600' }
+      { plan: planEmpresaJuridico, tipo: 'empresa_juridico', titulo: 'Cliente Jurídico', icono: TrendingUp, gradiente: 'from-blue-500 to-indigo-600' },
+      { plan: planEmpresaNatural, tipo: 'empresa_natural', titulo: 'Cliente Natural', icono: Zap, gradiente: 'from-purple-500 to-pink-600' },
+      { plan: planFreelancer, tipo: 'freelancer', titulo: 'Estudiantes', icono: Sparkles, gradiente: 'from-green-500 to-emerald-600' }
     ].filter(item => item.plan !== null);
 
     if (planesGratuitos.length === 0) {
@@ -362,7 +362,7 @@ const handleRegisterSubmit = async () => {
         gradiente: 'from-purple-500 to-pink-600'
       },
       freelancer: {
-        titulo: 'Planes para Freelancers',
+        titulo: 'Planes para Estudiantes',
         subtitulo: 'Diseñado para estudiantes y freelancers emergentes',
         icono: Sparkles,
         gradiente: 'from-green-500 to-emerald-600'

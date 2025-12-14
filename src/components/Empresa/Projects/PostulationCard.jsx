@@ -99,7 +99,7 @@ const PostulationCard = ({ postulant, onPostulantUpdate }) => {
 
         try {
             const response = await hireFreelancer(postulant.id_postulacion);
-            setSuccessMessage(`✅ ${response.message || 'Freelancer contratado exitosamente'}. Ya pueden chatear.`);
+            setSuccessMessage(`✅ ${response.message || 'Estudiante contratado exitosamente'}. Ya pueden chatear.`);
 
             // Redirigir al chat después de 2 segundos
             if (response.id_conversation) {
@@ -116,9 +116,9 @@ const PostulationCard = ({ postulant, onPostulantUpdate }) => {
             }
 
         } catch (error) {
-            console.error('❌ Error al contratar freelancer:', error);
+            console.error('❌ Error al contratar a estudiante:', error);
             setErrorMessage(
-                error.response?.data?.error || 'Error al contratar al freelancer'
+                error.response?.data?.error || 'Error al contratar al estudiante'
             );
         } finally {
             setHiringLoading(false);

@@ -219,7 +219,7 @@ const InfoSectionHome = ({ tipo_usuario, id_usuario }) => {
                             <Feature
                                 icon={<Zap className="text-[#07767c]" size={24} />}
                                 title="Herramientas de gestión avanzada"
-                                description="Integra a los freelancers en tu equipo y en tus proyectos sin problemas con nuestras herramientas profesionales."
+                                description="Integra a los estudiantes en tu equipo y en tus proyectos sin problemas con nuestras herramientas profesionales."
                             />
                             <Feature
                                 icon={<TrendingUp className="text-[#07767c]" size={24} />}

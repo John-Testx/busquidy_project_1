@@ -111,8 +111,8 @@ const UserEditPage = () => {
                 onChange={(e) => updateField('tipo_usuario', e.target.value)}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#07767c] focus:border-transparent transition-all outline-none appearance-none bg-white cursor-pointer"
               >
-                <option value="freelancer">Freelancer</option>
-                <option value="empresa">Empresa</option>
+                <option value="freelancer">estudiante</option>
+                <option value="empresa">Cliente</option>
                 <option value="administrador">Administrador</option>
               </select>
               <p className="text-xs text-gray-500 mt-1">

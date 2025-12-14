@@ -27,7 +27,7 @@ function EmpresaActionsCard({ terminologia }) {
                             </div>
                             <div>
                                 <h3 className="text-2xl font-bold text-white">
-                                    Buscar FreeLancer
+                                    Buscar Estudiante
                                 </h3>
                                 <p className="text-white/80 text-sm">
                                     Encuentra el talento ideal
@@ -38,7 +38,7 @@ function EmpresaActionsCard({ terminologia }) {
                     
                     <div className="p-6">
                         <p className="text-gray-600 text-base mb-6 leading-relaxed">
-                            Explora nuestra comunidad de profesionales verificados y encuentra el freelancer perfecto para tu {term.singular.toLowerCase()}
+                            Explora nuestra comunidad de profesionales verificados y encuentra el estudiante perfecto para tu {term.singular.toLowerCase()}
                         </p>
                         
                         <Link to="/findfreelancer" className="block">
@@ -75,7 +75,7 @@ function EmpresaActionsCard({ terminologia }) {
                     
                     <div className="p-6">
                         <p className="text-gray-600 text-base mb-6 leading-relaxed">
-                            Publica tu {term.singular.toLowerCase()} y permite que los freelancers calificados te encuentren y te envíen sus mejores propuestas
+                            Publica tu {term.singular.toLowerCase()} y permite que los estudiantes calificados te encuentren y te envíen sus mejores propuestas
                         </p>
                         
                         <Link to="/myprojects" className="block">

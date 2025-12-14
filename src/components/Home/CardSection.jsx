@@ -119,7 +119,7 @@ function CardSection({ userType }) {
                             Elige tu camino profesional
                         </h2>
                         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-                            Ya seas freelancer o empresa, tenemos las herramientas perfectas para ti
+                            Ya seas estudiante o cliente, tenemos las herramientas perfectas para ti
                         </p>
                     </div>
 
@@ -133,10 +133,10 @@ function CardSection({ userType }) {
                                     <UserCircle className="text-white" size={32} />
                                 </div>
                                 <h2 className="text-3xl font-bold text-gray-800 mb-4 group-hover:text-[#07767c] transition-colors">
-                                    FREELANCER
+                                    ESTUDIANTE
                                 </h2>
                                 <p className="text-gray-600 leading-relaxed mb-6 text-base">
-                                    Busca proyectos de tu interés, publica tu CV y muestra tu perfil a miles de empresas que buscan tu talento.
+                                    Busca proyectos de tu interés, publica tu CV y muestra tu perfil a miles de clientes que buscan tu talento.
                                 </p>
                                 <div className="space-y-3 mb-8">
                                     <div className="flex items-center gap-3 text-sm text-gray-700">
@@ -162,14 +162,14 @@ function CardSection({ userType }) {
                                     onClick={(e) => handleCardClick(e, 'freelancer', '/freelancer')}
                                     className="group/btn w-full bg-gradient-to-r from-[#07767c] to-[#055a5f] hover:from-[#055a5f] hover:to-[#043d42] text-white font-bold py-4 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 transform hover:-translate-y-1"
                                 >
-                                    <span>{tipo_usuario === "freelancer" ? "Ir a mi panel" : "Comenzar como Freelancer"}</span>
+                                    <span>{tipo_usuario === "freelancer" ? "Ir a mi panel" : "Comenzar como Estudiante"}</span>
                                     <ArrowRight size={20} className="group-hover/btn:translate-x-1 transition-transform" />
                                 </button>
                                 <div className="mt-6 pt-6 border-t border-gray-100">
                                     <div className="flex items-center justify-center gap-2 text-sm">
                                         <Users size={16} className="text-[#07767c]" />
                                         <span className="text-gray-600">
-                                            Únete a <span className="font-bold text-[#07767c]">+10,000</span> freelancers
+                                            Únete a <span className="font-bold text-[#07767c]">+10,000</span> estudiantes
                                         </span>
                                     </div>
                                 </div>
@@ -183,10 +183,10 @@ function CardSection({ userType }) {
                                     <Building2 className="text-white" size={32} />
                                 </div>
                                 <h2 className="text-3xl font-bold text-gray-800 mb-4 group-hover:text-[#40E0D0] transition-colors">
-                                    EMPRESA
+                                    CLIENTES
                                 </h2>
                                 <p className="text-gray-600 leading-relaxed mb-6 text-base">
-                                    Publica proyectos, encuentra freelancers talentosos y haz crecer tu negocio con los mejores profesionales.
+                                    Publica proyectos, encuentra estudiantes talentosos y haz crecer tu negocio con los mejores profesionales.
                                 </p>
                                 <div className="space-y-3 mb-8">
                                     <div className="flex items-center gap-3 text-sm text-gray-700">
@@ -199,7 +199,7 @@ function CardSection({ userType }) {
                                         <div className="w-5 h-5 bg-[#07767c]/20 rounded-full flex items-center justify-center flex-shrink-0">
                                             <Search size={12} className="text-[#40E0D0]" />
                                         </div>
-                                        <span>Encuentra freelancers verificados</span>
+                                        <span>Encuentra estudiantes verificados</span>
                                     </div>
                                     <div className="flex items-center gap-3 text-sm text-gray-700">
                                         <div className="w-5 h-5 bg-[#07767c]/20 rounded-full flex items-center justify-center flex-shrink-0">
@@ -216,7 +216,7 @@ function CardSection({ userType }) {
                                         {
                                             (tipo_usuario === "empresa" || tipo_usuario === "empresa_juridico" || tipo_usuario === "empresa_natural")
                                             ? "Ir a mi panel" 
-                                            : "Comenzar como Empresa"
+                                            : "Comenzar como Cliente"
                                         }
                                     </span>
                                     <ArrowRight size={20} className="group-hover/btn:translate-x-1 transition-transform" />
@@ -225,7 +225,7 @@ function CardSection({ userType }) {
                                     <div className="flex items-center justify-center gap-2 text-sm">
                                         <Building2 size={16} className="text-[#40E0D0]" />
                                         <span className="text-gray-600">
-                                            Únete a <span className="font-bold text-[#40E0D0]">+5,000</span> empresas
+                                            Únete a <span className="font-bold text-[#40E0D0]">+5,000</span> clientes
                                         </span>
                                     </div>
                                 </div>

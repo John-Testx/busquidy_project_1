@@ -98,7 +98,7 @@ function InfoSectionEmpresa() {
             <section className="w-full px-4 sm:px-6 lg:px-8 py-12 bg-gradient-to-br from-[#07767c]/5 via-white to-[#07767c]/5 rounded-2xl">
                 <div className="max-w-5xl mx-auto">
                     <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 text-center mb-12 leading-tight">
-                        Freelancers competentes en todos los campos a solo un click
+                        Estudiantes competentes en todos los campos a solo un click
                     </h2>
                     
                     <div className="space-y-6">

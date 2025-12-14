@@ -98,7 +98,7 @@ function ViewPerfilFreeLancer() {
               <div>
                 <h2 className="font-bold text-yellow-900 text-2xl mb-3">Acceso Restringido</h2>
                 <p className="text-yellow-800 text-lg mb-6">
-                  Esta sección solo está disponible para usuarios freelancer.
+                  Esta sección solo está disponible para usuarios estudiantes.
                 </p>
                 <button
                   onClick={() => navigate("/")}
@@ -203,7 +203,7 @@ function ViewPerfilFreeLancer() {
   if (!freelancer) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <p className="text-gray-600">No se encontró el perfil del freelancer</p>
+        <p className="text-gray-600">No se encontró el perfil del estudiante</p>
       </div>
     );
   }

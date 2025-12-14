@@ -120,7 +120,7 @@ const RefundConfirmModal = ({ isOpen, onClose, onConfirm, project }) => {
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-red-500 mt-0.5">•</span>
-                <span>El freelancer no recibirá el pago</span>
+                <span>El estudiante no recibirá el pago</span>
               </li>
             </ul>
           </div>
@@ -527,7 +527,7 @@ export default function DisputeTable() {
                     </button>
                   ) : (
                     <div className="text-center py-2 text-sm text-gray-500 font-medium">
-                      {dispute.estado_pago === 'LIBERADO' ? '✅ Ya liberado al freelancer' : '💰 Ya reembolsado a la empresa'}
+                      {dispute.estado_pago === 'LIBERADO' ? '✅ Ya liberado al estudiante' : '💰 Ya reembolsado a la empresa'}
                     </div>
                   )}
                 </div>

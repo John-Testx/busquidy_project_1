@@ -31,7 +31,7 @@ function TermsOfServicePage() {
                         <section>
                             <h2 className="text-2xl font-bold text-gray-900 mb-4 border-b pb-2">1. Aceptación de los Términos</h2>
                             <p>
-                                Al registrarse y utilizar la plataforma <strong>Busquidy</strong> ("la Plataforma"), usted acepta cumplir con estos Términos y Condiciones. Si no está de acuerdo con alguna parte de los términos, no podrá acceder al servicio. Busquidy actúa como un intermediario tecnológico que conecta a estudiantes/freelancers con empresas y particulares.
+                                Al registrarse y utilizar la plataforma <strong>Busquidy</strong> ("la Plataforma"), usted acepta cumplir con estos Términos y Condiciones. Si no está de acuerdo con alguna parte de los términos, no podrá acceder al servicio. Busquidy actúa como un intermediario tecnológico que conecta a estudiantes con clientes y particulares.
                             </p>
                         </section>
 

@@ -42,7 +42,7 @@ function RecommendedFreelancerCard({ freelancer }) {
           {freelancer.nombres} {freelancer.apellidos}
         </h4>
         <p className="text-sm text-gray-500">
-          {freelancer.descripcion?.substring(0, 80) || "Freelancer de Busquidy"}...
+          {freelancer.descripcion?.substring(0, 80) || "Estudiante usuario de Busquidy"}...
         </p>
 
         <div className="flex gap-1 items-center my-2">

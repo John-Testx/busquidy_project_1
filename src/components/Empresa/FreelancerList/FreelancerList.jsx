@@ -243,7 +243,7 @@ function FreelancerList({ userType, id_usuario }) {
                         <div className="mb-6 flex items-center justify-between">
                             <div>
                                 <h2 className="text-2xl font-bold text-gray-900 mb-1">
-                                    Freelancers Disponibles
+                                    Estudiantes Disponibles
                                 </h2>
                                 <p className="text-gray-600">
                                     <span className="font-bold text-[#07767c]">{freelancers.length}</span> profesionales encontrados
@@ -408,9 +408,9 @@ function FreelancerList({ userType, id_usuario }) {
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                     </svg>
                                 </div>
-                                <h3 className="text-2xl font-bold text-gray-800 mb-2">No se encontraron freelancers</h3>
+                                <h3 className="text-2xl font-bold text-gray-800 mb-2">No se encontraron Estudiantes</h3>
                                 <p className="text-gray-600 text-center max-w-md mb-6">
-                                    No hay freelancers que coincidan con los filtros actuales
+                                    No hay Estudiantes que coincidan con los filtros actuales
                                 </p>
                                 <button 
                                     onClick={() => handleFilterChange({ search: "", location: "", rating: null, skills: "" })}
