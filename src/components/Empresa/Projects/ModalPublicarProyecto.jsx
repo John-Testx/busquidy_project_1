@@ -81,7 +81,7 @@ const ModalPublicarProyecto = ({
               <div>
                 <p className="text-sm font-semibold text-blue-900 mb-1">¿Por qué pagar?</p>
                 <p className="text-sm text-blue-800 leading-relaxed">
-                  Al publicar tu {terminologia?.singular.toLowerCase() || 'proyecto'}, el monto será retenido de forma segura hasta que el trabajo sea completado y aprobado. Esto protege tanto a tu empresa como al freelancer.
+                  Al publicar tu {terminologia?.singular.toLowerCase() || 'proyecto'}, el monto será retenido de forma segura hasta que el trabajo sea completado y aprobado. Esto protege tanto a tu empresa como al estudiante.
                 </p>
               </div>
             </div>

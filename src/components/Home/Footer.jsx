@@ -109,12 +109,12 @@ function Footer() {
                         </li>
                         <li className={`my-2 transition-opacity duration-300 ${activeIndex === 3 ? "opacity-100" : "opacity-0 md:opacity-100"}`}>
                             <Link to="/freelancer" className="no-underline text-gray-800 hover:text-teal-700 transition-colors duration-300">
-                                FreeLancer
+                                Estudiante
                             </Link>
                         </li>
                         <li className={`my-2 transition-opacity duration-300 ${activeIndex === 3 ? "opacity-100" : "opacity-0 md:opacity-100"}`}>
                             <Link to="/empresa" className="no-underline text-gray-800 hover:text-teal-700 transition-colors duration-300">
-                                Empresa
+                                Cliente
                             </Link>
                         </li>
                     </ul>

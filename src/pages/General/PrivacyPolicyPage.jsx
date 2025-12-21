@@ -96,7 +96,7 @@ function PrivacyPolicyPage() {
                             <p>Utilizamos tus datos exclusivamente para los siguientes fines:</p>
                             <ul className="list-disc list-inside mt-4 space-y-2 ml-4">
                                 <li><strong>Verificación de Identidad:</strong> Para garantizar la seguridad de la comunidad y prevenir fraudes, validamos manualmente los documentos subidos.</li>
-                                <li><strong>Conexión Laboral:</strong> Utilizamos algoritmos para recomendar freelancers a empresas y viceversa, basándonos en habilidades y requisitos.</li>
+                                <li><strong>Conexión Laboral:</strong> Utilizamos algoritmos para recomendar estudiantes a clientes y viceversa, basándonos en habilidades y requisitos.</li>
                                 <li><strong>Procesamiento de Pagos:</strong> Gestionamos los pagos en custodia (Escrow) y suscripciones para asegurar el cumplimiento de los servicios.</li>
                                 <li><strong>Comunicaciones:</strong> Te enviamos notificaciones sobre el estado de tus proyectos, mensajes de chat y actualizaciones de la plataforma.</li>
                                 <li><strong>Mejora del Servicio:</strong> Analizamos datos anonimizados para mejorar la experiencia de usuario y la estabilidad técnica (Cloud SQL, Node.js).</li>

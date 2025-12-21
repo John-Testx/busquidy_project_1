@@ -214,7 +214,7 @@ const UserTable = () => {
         <div className="bg-white p-5 rounded-xl shadow-lg hover:shadow-xl transition-shadow border-l-4 border-green-500">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-500 font-medium mb-1">Freelancers</p>
+              <p className="text-sm text-gray-500 font-medium mb-1">Estudiantes</p>
               <p className="text-3xl font-bold text-gray-800">{stats.freelancers}</p>
             </div>
             <div className="bg-green-100 p-3 rounded-full">
@@ -265,8 +265,8 @@ const UserTable = () => {
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#07767c] focus:border-transparent transition-all outline-none"
             >
               <option value="all">Todos</option>
-              <option value="empresa">Empresas</option>
-              <option value="freelancer">Freelancers</option>
+              <option value="empresa">Clientes</option>
+              <option value="freelancer">Estudiantes</option>
               <option value="administrador">Administradores</option>
             </select>
           </div>

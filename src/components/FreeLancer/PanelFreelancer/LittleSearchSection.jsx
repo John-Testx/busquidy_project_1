@@ -167,11 +167,11 @@ function LittleSearchSection() {
                     </div>
                     <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-center border border-white/20">
                         <p className="text-3xl font-bold text-white mb-1">5K+</p>
-                        <p className="text-white/80 text-sm">Empresas</p>
+                        <p className="text-white/80 text-sm">Clientes</p>
                     </div>
                     <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-center border border-white/20">
                         <p className="text-3xl font-bold text-white mb-1">15K+</p>
-                        <p className="text-white/80 text-sm">Freelancers</p>
+                        <p className="text-white/80 text-sm">Estudiantes</p>
                     </div>
                     <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 text-center border border-white/20">
                         <p className="text-3xl font-bold text-white mb-1">98%</p>

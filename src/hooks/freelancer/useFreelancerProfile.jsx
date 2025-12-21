@@ -58,8 +58,8 @@ function useFreelancerProfile(id_usuario) {
         throw new Error('Estructura de datos incorrecta');
       }
     } catch (err) {
-      console.error("Error al obtener los datos del freelancer:", err);
-      setError(err.response?.data?.error || err.message || 'Error al cargar el perfil del freelancer');
+      console.error("Error al obtener los datos del estudiante:", err);
+      setError(err.response?.data?.error || err.message || 'Error al cargar el perfil del estudiante');
     } finally {
       setLoading(false);
     }

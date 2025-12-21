@@ -139,7 +139,7 @@ function EmpresaInfo() {
                   className="w-full p-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#07767c]/20 focus:border-[#07767c] transition-all duration-200 outline-none resize-none hover:border-gray-300"
                 />
                 <p className="text-xs text-gray-500 mt-2">
-                  Esta descripción será visible para los freelancers
+                  Esta descripción será visible para los estudiantes
                 </p>
               </div>
             </div>

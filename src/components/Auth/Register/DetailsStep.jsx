@@ -17,9 +17,9 @@ function DetailsStep({ email, onRegisterSuccess, onBack, onOpenLogin }) {
     const { handleRegister, loading, errors, clearMessage } = useAuth();
 
     const userTypes = [
-        { value: "freelancer", label: "Freelancer", icon: User, detail: "Estudiante o profesional" },
-        { value: "empresa_juridico", label: "Empresa Jurídica", icon: Building2, detail: "Empresa con RUT jurídico" },
-        { value: "empresa_natural", label: "Empresa Natural", icon: Briefcase, detail: "Emprendedor con RUT natural" },
+        { value: "freelancer", label: "Estudiante", icon: User, detail: "Estudiante o profesional" },
+        { value: "empresa_juridico", label: "Cliente Jurídico", icon: Building2, detail: "Empresa con RUT jurídico" },
+        { value: "empresa_natural", label: "Cliente Natural", icon: Briefcase, detail: "Persona con RUT natural" },
     ];
     
     const handleChange = (e) => {

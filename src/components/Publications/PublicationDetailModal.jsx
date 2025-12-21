@@ -113,7 +113,7 @@ function PublicationDetailModal({ publication, isApplied: isAppliedProp, onClose
         // Manejar errores específicos
         if (result.error === 'INCOMPLETE_PROFILE') {
           setErrorType('INCOMPLETE_PROFILE');
-          setErrorMessage('Debes completar tu perfil de freelancer para poder postular');
+          setErrorMessage('Debes completar tu perfil de estudiante para poder postular');
         } else if (result.error === 'DUPLICATE_APPLICATION') {
           setIsApplied(true);
           setErrorMessage('Ya has postulado a este proyecto');

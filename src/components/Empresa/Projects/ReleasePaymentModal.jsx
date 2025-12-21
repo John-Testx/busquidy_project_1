@@ -78,7 +78,7 @@ const ReleasePaymentModal = ({ isOpen, onClose, onConfirm, project, terminologia
                 </span>
               </div>
               <div className="border-t border-gray-300 pt-2 flex justify-between items-center">
-                <span className="text-gray-900 font-semibold">Pago al freelancer:</span>
+                <span className="text-gray-900 font-semibold">Pago al estudiante:</span>
                 <span className="font-bold text-emerald-600 text-lg">
                   ${Number(montoFreelancer).toLocaleString('es-CL')}
                 </span>
@@ -92,7 +92,7 @@ const ReleasePaymentModal = ({ isOpen, onClose, onConfirm, project, terminologia
               ✅ Al confirmar esta acción:
             </p>
             <ul className="text-emerald-700 text-sm space-y-1 list-disc list-inside">
-              <li>El freelancer recibirá el pago acordado</li>
+              <li>El estudiante recibirá el pago acordado</li>
               <li>Se marcará como finalizado el estado de {term}</li>
               <li>Esta acción <span className="font-bold">NO se puede deshacer</span></li>
             </ul>

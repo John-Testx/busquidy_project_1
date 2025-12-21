@@ -90,7 +90,7 @@ function ViewProjects({ userType, id_usuario, terminologia, tipoParaBackend }) {
             console.log('✅ Respuesta del servidor:', response);
             
             setMessage(
-                `El pago de $${Number(projectToRelease.presupuesto * 0.90).toLocaleString('es-CL')} fue liberado exitosamente al freelancer. El ${terminologia.singular.toLowerCase()} "${projectToRelease.titulo}" ha sido marcado como completado.`
+                `El pago de $${Number(projectToRelease.presupuesto * 0.90).toLocaleString('es-CL')} fue liberado exitosamente al estudiante. El ${terminologia.singular.toLowerCase()} "${projectToRelease.titulo}" ha sido marcado como completado.`
             );
             setMessageType('success');
             setShowMessageModal(true);

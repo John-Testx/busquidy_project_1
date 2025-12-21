@@ -10,7 +10,7 @@ const SecondaryRegisterModal = ({ onClose, onBack, formData, setFormData, errors
     const userTypes = [
         {
             value: "freelancer",
-            label: "Freelancer",
+            label: "Estudiante",
             icon: User,
             description: "Busco proyectos",
             detail: "Estudiante o profesional independiente",
@@ -18,7 +18,7 @@ const SecondaryRegisterModal = ({ onClose, onBack, formData, setFormData, errors
         },
         {
             value: "empresa_juridico",
-            label: "Empresa Jurídica",
+            label: "Cliente Jurídico",
             icon: Building2,
             description: "Busco contratar talento",
             detail: "Empresa con RUT jurídico",
@@ -26,7 +26,7 @@ const SecondaryRegisterModal = ({ onClose, onBack, formData, setFormData, errors
         },
         {
             value: "empresa_natural",
-            label: "Empresa Natural",
+            label: "Cliente Natural",
             icon: Briefcase,
             description: "Busco contratar talento",
             detail: "Emprendedor con RUT natural",

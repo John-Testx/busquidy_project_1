@@ -118,7 +118,7 @@ const InterviewRequestModal = ({ isOpen, onClose, postulant }) => {
         <div className="mb-6">
           <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
             <Clock size={20} className="text-[#07767c]" />
-            Disponibilidad del Freelancer
+            Disponibilidad del Estudiante
           </h4>
           
           {loadingAvailability ? (
@@ -128,7 +128,7 @@ const InterviewRequestModal = ({ isOpen, onClose, postulant }) => {
           ) : availability.length === 0 ? (
             <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
               <p className="text-sm text-amber-800">
-                Este freelancer aún no ha configurado su disponibilidad.
+                Este estudiante aún no ha configurado su disponibilidad.
               </p>
             </div>
           ) : (
@@ -167,7 +167,7 @@ const InterviewRequestModal = ({ isOpen, onClose, postulant }) => {
               disabled={loading}
             />
             <p className="text-xs text-gray-500 mt-1">
-              Intenta elegir un horario dentro de la disponibilidad del freelancer
+              Intenta elegir un horario dentro de la disponibilidad del estudiante
             </p>
           </div>
 
@@ -179,7 +179,7 @@ const InterviewRequestModal = ({ isOpen, onClose, postulant }) => {
             <textarea
               value={formData.mensaje_solicitud}
               onChange={(e) => setFormData({ ...formData, mensaje_solicitud: e.target.value })}
-              placeholder="Escribe un mensaje para el freelancer..."
+              placeholder="Escribe un mensaje para el estudiante..."
               rows="4"
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#07767c] focus:border-transparent resize-none"
               disabled={loading}

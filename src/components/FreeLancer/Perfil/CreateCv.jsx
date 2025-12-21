@@ -1,5 +1,3 @@
-// Crear CV con un perfil de freelancer ya creado.
-
 import React, { useState } from "react";
 import { FileText, User, Briefcase, GraduationCap, Lightbulb, Save, AlertCircle, CheckCircle } from "lucide-react";
 import DatosPersonalesModal from "../DatosPersonalesModal";

@@ -9,7 +9,6 @@ import { Footer, Navbar } from '@/components/Home/';
 function BusquidyPage() {
     // Estado para los mensajes de logout
     const [logoutStatus, setLogoutStatus] = useState("");
-    // Estado para el tipo de usuario: "empresa" o "freelancer"
 
     const navigate = useNavigate(); 
 
