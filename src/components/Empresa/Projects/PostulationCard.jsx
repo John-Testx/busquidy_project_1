@@ -273,7 +273,7 @@ const PostulationCard = ({ postulant, onPostulantUpdate }) => {
                         </button>
 
                         {isDropdownOpen && !haySolicitudPendiente && !estaContratado && (
-                            <div className="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-2xl border border-gray-200 z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                            <div className="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-2xl border border-gray-200 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
                                 <button
                                     onClick={handleOpenInterviewModal}
                                     className="w-full flex items-center gap-3 px-4 py-3 text-left text-gray-700 hover:bg-[#07767c]/5 transition-colors border-b border-gray-100"

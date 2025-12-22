@@ -275,7 +275,7 @@ function ProjectView() {
 
                             {/* ✅ TABS: Solo si NO hay freelancer contratado */}
                             {!hiredFreelancer && (
-                                <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+                                <div className="bg-white rounded-2xl shadow-lg border border-gray-100">
                                     <div className="flex border-b border-gray-200">
                                         <button
                                             onClick={() => setActiveTab('postulaciones')}
